@@ -62,13 +62,13 @@
           style="width: 70%; height: 100%;"
         >
           <div 
+            v-if="selected"
             class="d-flex flex-row"
             style="padding: 20px" 
           >
             <div style="width: 55%;">
               <p style="font-weight: 200">
                 {{ selected.id }}
-                {{ selected }}
               </p>
               <div class="d-flex flex-row align-center">
                 <h1 style="font-weight: 900; font-size: 3em; line-height: 0.9">
@@ -116,7 +116,7 @@
                 <h2>
                   Modules In Progress:
                 </h2>
-                <div style="overflow: auto; height: 200px;">
+                <div style="overflow: auto; max-height: 200px;">
                   <div 
                     v-for="i in ['CS231', 'MAT530', 'HIS777']"
                     :key="i"
@@ -138,6 +138,27 @@
                   </div>
                 </div>
               </div>
+              <v-divider class="my-2"></v-divider>
+              <h2>
+                Other:
+              </h2>
+              <div 
+                style="overflow: auto; max-height: 180px;"
+                class="d-flex flex-row flex-wrap"
+              >
+                <div
+                  v-for="(value, key) in selected.misc"
+                  :key="key"
+                  style="width: 30%;"
+                  class="mx-1"
+                >
+                  <v-text-field
+                    :label="key"
+                    outlined
+                    v-model="selected.misc[key]"
+                  ></v-text-field>
+                </div>
+              </div>
             </div>
             <div 
               style="width: 45%;" 
@@ -150,6 +171,14 @@
                 no-resize
               ></v-textarea>
             </div>
+          </div>
+          <div 
+            v-else
+            class="d-flex flex-column align-center justify-center mt-10"
+          >
+            <span style="font-weight: 200; font-size: 2em;">
+              select a student to view their profile
+            </span>
           </div>
         </v-sheet>
       </div>
@@ -164,62 +193,33 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
-const students = ref([
-  {
-    id: '329420',
-    name: 'John Doe',
-    email: 'john@snhu.edu',
-    points: 100,
-    activeStatus: 'active',
-    note: ''
-  },
-  {
-    id: '2039203',
-    name: 'Jane Doe',
-    email: 'jane@snhu.edu',
-    points: 100,
-    activeStatus: 'active',
-    note: ''
-  },
-  {
-    id: '334423',
-    name: 'John Smith',
-    email: 'john@snhu.edu',
-    points: 100,
-    activeStatus: 'inactive',
-    note: ''
-  }
-])
+const students = ref([])
 
-const selected = ref(students.value[0])
+const selected = ref(undefined)
 const editing = ref(false)
 
 async function fetchGoogleSheetsData() {
-  const key = 'AIzaSyDJtifzdi9ZJI1zsyZYCeTHXEXJlgHnLl8'
+  const key = 'AIzaSyDjXnz5jBG7LoYlhWERA85b2ypKu1VPbws'
   const range = 'Students'
   const spreadsheetId = '1bW-aQRn-GAbTsNkV2VB9xtBFT3n-LPrSJXua_NA2G6Y'
   const res = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}/?key=${key}`)
   const data = await res.json()
-  console.log(data)
 
   students.value = data.values.slice(1).map((row: any) => {
+    const misc = data.values[0].slice(6).reduce((acc: any, category: string, index: number) => {
+      if (category === '') return acc
+      acc[category] = row[index + 6] ?? ''
+      return acc
+    }, {})
     return {
       name: row[0],
       id: row[1],
       email: row[2],
       points: row[3],
       activeStatus: row[4],
-      note: row[5]
+      note: row[5],
+      misc
     }
-  })
-
-  data.values[0].slice(6).forEach((category: string) => {
-    if (category === '') return
-    const idx = data.values[0].indexOf(category)
-    data.values.slice(1).forEach((studentData: any, index: number) => {
-      // @ts-ignore
-      students.value[index][category] = studentData[idx]
-    })
   })
 }
 </script>
