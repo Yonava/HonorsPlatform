@@ -52,7 +52,7 @@
                 {{ student.name }}
               </div>
               <div style="font-size: 0.9em;">
-                {{ student.id }} - {{ student.email }} - {{ student.activeStatus }}
+                {{ student.rowNum }} - {{ student.email }} - {{ student.activeStatus }}
               </div>
             </div>
           </div>
@@ -191,27 +191,33 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import axios from 'axios'
+import { getStudentData } from './SheetsAPI'
 
 const students = ref([])
 
 const selected = ref(undefined)
 const editing = ref(false)
 
-async function fetchGoogleSheetsData() {
-  const key = 'AIzaSyDjXnz5jBG7LoYlhWERA85b2ypKu1VPbws'
-  const range = 'Students'
-  const spreadsheetId = '1bW-aQRn-GAbTsNkV2VB9xtBFT3n-LPrSJXua_NA2G6Y'
-  const res = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${range}/?key=${key}`)
-  const data = await res.json()
+onMounted(async () => {
+  await fetchGoogleSheetsData()
+})
 
-  students.value = data.values.slice(1).map((row: any) => {
-    const misc = data.values[0].slice(6).reduce((acc: any, category: string, index: number) => {
+async function fetchGoogleSheetsData() {
+  students.value = []
+  const data = await getStudentData()
+
+  data.slice(1).forEach((row: any, index: number) => {
+    const misc = data[0].slice(6).reduce((acc: any, category: string, index: number) => {
       if (category === '') return acc
       acc[category] = row[index + 6] ?? ''
       return acc
     }, {})
-    return {
+    if (row.length === 0) return
+    // @ts-ignore
+    students.value.push({
+      rowNum: index + 2,
       name: row[0],
       id: row[1],
       email: row[2],
@@ -219,8 +225,28 @@ async function fetchGoogleSheetsData() {
       activeStatus: row[4],
       note: row[5],
       misc
-    }
+    })
   })
+
+  // let rowNum = 0;
+  // students.value = data.slice(1).map((row: any) => {
+  //   rowNum++;
+  //   const misc = data[0].slice(6).reduce((acc: any, category: string, index: number) => {
+  //     if (category === '') return acc
+  //     acc[category] = row[index + 6] ?? ''
+  //     return acc
+  //   }, {})
+  //   return {
+  //     rowNum,
+  //     name: row[0],
+  //     id: row[1],
+  //     email: row[2],
+  //     points: row[3],
+  //     activeStatus: row[4],
+  //     note: row[5],
+  //     misc
+  //   }
+  // })
 }
 </script>
 
