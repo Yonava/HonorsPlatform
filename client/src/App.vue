@@ -10,7 +10,10 @@
           size="x-large" 
           class="mr-2"
         ></v-icon>
-        <h1 @click="fetchGoogleSheetsData" style="font-weight: 700;">
+        <h1 
+          @click="test" 
+          style="font-weight: 700;"
+        >
           Students
         </h1>
         <p class="ml-2">
@@ -164,6 +167,14 @@
               style="width: 45%;" 
               class="ml-5 d-flex flex-column"
             >
+              <span 
+                @click="deleteStudent(selected.rowNum)"
+                style="color: red; cursor: pointer" 
+                class="d-flex align-center mb-2 delete-student"
+              >
+                <v-icon>mdi-delete</v-icon>
+                delete {{ selected.name }} permanently
+              </span>
               <v-textarea
                 v-model="selected.note"
                 clearable
@@ -192,8 +203,8 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { getStudentData, deleteStudent } from './SheetsAPI'
 import axios from 'axios'
-import { getStudentData } from './SheetsAPI'
 
 const students = ref([])
 
@@ -204,19 +215,36 @@ onMounted(async () => {
   await fetchGoogleSheetsData()
 })
 
+async function deleteStudentFromSheet(rowNum: number) {
+  deleteStudent(rowNum)
+  await fetchGoogleSheetsData()
+}
+
+async function test() {
+  const res = await axios.request({
+    method: 'get',
+    url: 'https://www.imdb.com/',
+    headers: {
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36"
+    }
+  })
+  console.log(res)
+}
+
 async function fetchGoogleSheetsData() {
   students.value = []
   const data = await getStudentData()
 
   data.slice(1).forEach((row: any, index: number) => {
+    if (row.length === 0) return
     const misc = data[0].slice(6).reduce((acc: any, category: string, index: number) => {
       if (category === '') return acc
       acc[category] = row[index + 6] ?? ''
       return acc
     }, {})
-    if (row.length === 0) return
     // @ts-ignore
     students.value.push({
+      // + 1 for header row, + 1 for 0-indexing
       rowNum: index + 2,
       name: row[0],
       id: row[1],
@@ -227,26 +255,6 @@ async function fetchGoogleSheetsData() {
       misc
     })
   })
-
-  // let rowNum = 0;
-  // students.value = data.slice(1).map((row: any) => {
-  //   rowNum++;
-  //   const misc = data[0].slice(6).reduce((acc: any, category: string, index: number) => {
-  //     if (category === '') return acc
-  //     acc[category] = row[index + 6] ?? ''
-  //     return acc
-  //   }, {})
-  //   return {
-  //     rowNum,
-  //     name: row[0],
-  //     id: row[1],
-  //     email: row[2],
-  //     points: row[3],
-  //     activeStatus: row[4],
-  //     note: row[5],
-  //     misc
-  //   }
-  // })
 }
 </script>
 
@@ -282,5 +290,10 @@ async function fetchGoogleSheetsData() {
 
 .module-card:hover {
   background: #143875;
+}
+
+.delete-student:hover {
+  color: #e74c3c;
+  text-decoration: underline;
 }
 </style>
