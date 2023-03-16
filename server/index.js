@@ -1,48 +1,18 @@
-import * as path from 'path';
-import { google } from 'googleapis';
-import credentials from './credentials.json';
+import express from "express";
 
-export default class GoogleSheet {
-  spreadsheetId = '1bW-aQRn-GAbTsNkV2VB9xtBFT3n-LPrSJXua_NA2G6Y';
-  sheets;
-  static instance;
+const app = express();
 
-  static async getInstance() {
-    if (!GoogleSheet.instance) {
-      GoogleSheet.instance = await new GoogleSheet().init();
-    }
+app.get("/", (req, res) => {
+  res.json("Hello World!");
+});
 
-    return GoogleSheet.instance;
-  }
-
-  async init() {
-    const config = {
-      credentials,
-      scopes: ['https://www.googleapis.com/auth/spreadsheets']
-    };
-
-    const auth = await google.auth.getClient(config);
-    this.sheets = google.sheets({ 
-      version: 'v4', 
-      auth 
-    });
-
-    return this;
-  }
-
-  async getStudents() {
-    const response = await this.sheets.spreadsheets.values.get({
-      spreadsheetId: this.spreadsheetId,
-      range: 'Students',
-    });
-
-    return response.data.values;
-  }
-
-  async deleteStudent(row) {
-    await this.sheets.spreadsheets.values.update({
-      spreadsheetId: this.spreadsheetId,
-      range: `Students!A${row}:Z${row}:clear`,
-    });
-  }
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(__dirname + '/public/'));
+  app.get(/.*/, (req, res) => res.sendFile(__dirname + '/public/index.html'));
 }
+
+const port = process.env.PORT || 1010;
+
+app.listen(port, () => {
+  console.log("listening on port " + port);
+});

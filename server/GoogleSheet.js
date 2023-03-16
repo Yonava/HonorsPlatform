@@ -1,6 +1,5 @@
 import * as path from 'path';
 import { google } from 'googleapis';
-import credentials from './credentials.json';
 
 export default class GoogleSheet {
   spreadsheetId = '1bW-aQRn-GAbTsNkV2VB9xtBFT3n-LPrSJXua_NA2G6Y';
@@ -17,7 +16,7 @@ export default class GoogleSheet {
 
   async init() {
     const config = {
-      credentials,
+      keyFilename: path.join(process.cwd(), 'credentials.json'),
       scopes: ['https://www.googleapis.com/auth/spreadsheets']
     };
 
