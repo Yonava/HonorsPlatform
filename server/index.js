@@ -1,9 +1,18 @@
 import express from "express";
+import GoogleSheet from "./GoogleSheet.js";
 
 const app = express();
+const sheetInstance = await GoogleSheet.getInstance();
 
-app.get("/", (req, res) => {
-  res.json("Hello World!");
+app.get("/students", async (req, res) => {
+  const students = await sheetInstance.getStudents();
+  res.json(students);
+});
+
+app.delete("/students/:row", async (req, res) => {
+  const { row } = req.params;
+  await sheetInstance.deleteStudent(row);
+  res.json({ success: true });
 });
 
 if (process.env.NODE_ENV === 'production') {

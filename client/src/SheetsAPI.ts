@@ -5,5 +5,5 @@ export async function getStudents() {
 }
 
 export async function deleteStudent(row: number) {
-  await axios.delete(`/api/students/${row}`);
+  axios.delete(`/api/students/${row}`);
 }

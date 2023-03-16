@@ -39,9 +39,9 @@ export default class GoogleSheet {
   }
 
   async deleteStudent(row) {
-    await this.sheets.spreadsheets.values.update({
+    await this.sheets.spreadsheets.values.clear({
       spreadsheetId: this.spreadsheetId,
-      range: `Students!A${row}:Z${row}:clear`,
+      range: `Students!A${row}:Z${row}`,
     });
   }
 }

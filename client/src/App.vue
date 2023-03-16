@@ -165,7 +165,7 @@
               class="ml-5 d-flex flex-column"
             >
               <span 
-                @click="deleteStudent(selected.rowNum)"
+                @click="reqDeleteStudent(selected.rowNum)"
                 style="color: red; cursor: pointer" 
                 class="d-flex align-center mb-2 delete-student"
               >
@@ -211,9 +211,10 @@ onMounted(async () => {
   await fetchGoogleSheetsData()
 })
 
-async function deleteStudentFromSheet(rowNum: number) {
-  deleteStudent(rowNum)
-  await fetchGoogleSheetsData()
+async function reqDeleteStudent(rowNum: number) {
+  await deleteStudent(rowNum);
+  await new Promise(resolve => setTimeout(resolve, 1000));
+  await fetchGoogleSheetsData();
 }
 
 async function fetchGoogleSheetsData() {
@@ -255,7 +256,6 @@ async function fetchGoogleSheetsData() {
 .selected-student-card {
   background: rgba(255,255,255, 0.7);
   box-shadow: 0 0 10px rgba(0,0,0,0.2);
-  border: 1px solid rgba(0,0,0);
 }
 
 .student-card:hover {
