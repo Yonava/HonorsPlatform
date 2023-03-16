@@ -10,10 +10,7 @@
           size="x-large" 
           class="mr-2"
         ></v-icon>
-        <h1 
-          @click="test" 
-          style="font-weight: 700;"
-        >
+        <h1 style="font-weight: 700;">
           Students
         </h1>
         <p class="ml-2">
@@ -203,8 +200,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { getStudentData, deleteStudent } from './SheetsAPI'
-import axios from 'axios'
+import { getStudents, deleteStudent } from './SheetsAPI'
 
 const students = ref([])
 
@@ -220,20 +216,9 @@ async function deleteStudentFromSheet(rowNum: number) {
   await fetchGoogleSheetsData()
 }
 
-async function test() {
-  const res = await axios.request({
-    method: 'get',
-    url: 'https://www.imdb.com/',
-    headers: {
-      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36"
-    }
-  })
-  console.log(res)
-}
-
 async function fetchGoogleSheetsData() {
   students.value = []
-  const data = await getStudentData()
+  const data = await getStudents()
 
   data.slice(1).forEach((row: any, index: number) => {
     if (row.length === 0) return
@@ -242,7 +227,6 @@ async function fetchGoogleSheetsData() {
       acc[category] = row[index + 6] ?? ''
       return acc
     }, {})
-    // @ts-ignore
     students.value.push({
       // + 1 for header row, + 1 for 0-indexing
       rowNum: index + 2,
