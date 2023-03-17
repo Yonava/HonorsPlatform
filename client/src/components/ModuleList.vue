@@ -20,6 +20,11 @@
         mdi-close
       </v-icon>
     </div>
+    <div v-if="modules.length === 0">
+      <span style="color: red; font-size: 1.25em">
+        No modules in progress
+      </span>
+    </div>
   </div>
 </template>
 

@@ -57,6 +57,6 @@ async function fetchModules() {
 
 function reqDeleteModule(moduleCourseCode) {
   // make a request to delete the module
-  console.log(props.studentId, moduleCourseCode)
+  modules.value.splice(modules.value.findIndex(module => module.courseCode === moduleCourseCode), 1)
 }
 </script>

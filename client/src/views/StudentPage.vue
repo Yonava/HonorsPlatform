@@ -88,6 +88,7 @@ onMounted(async () => {
 })
 
 async function reqDeleteStudent(rowNum: number) {
+  selected.value = undefined
   await deleteStudent(rowNum);
   loadingStudents.value = true;
   await new Promise(resolve => setTimeout(resolve, 1000));
@@ -95,7 +96,6 @@ async function reqDeleteStudent(rowNum: number) {
 }
 
 async function fetchStudents() {
-  selected.value = undefined
   loadingStudents.value = true
   students.value = []
   const data = await getStudents()
