@@ -1,23 +1,41 @@
 <template>
-  <div
-    style="position: relative; width: 100%"
-    class="d-flex flex-column align-center mt-2"
-  >
+  <div style="width: 100%">
     <div
-      v-for="student in students"
-      :key="student"
-      @click="selectStudent(student)"
-      :class="[
-        'mb-2',
-        'student-card',
-        selected === student ? 'selected-student-card' : ''
-      ]"
+      v-if="!loading"
+      style="position: relative; width: 100%"
+      class="d-flex flex-column align-center mt-2"
     >
-      <div style="font-weight: 900; font-size: 1.25em;">
-        {{ student.name }}
+      <div
+        v-for="student in students"
+        :key="student"
+        @click="selectStudent(student)"
+        :class="[
+          'mb-2',
+          'student-card',
+          selected === student ? 'selected-student-card' : ''
+        ]"
+      >
+        <div style="font-weight: 900; font-size: 1.25em;">
+          {{ student.name }}
+        </div>
+        <div style="font-size: 0.9em;">
+          {{ student.rowNum }} - {{ student.email }} - {{ student.activeStatus }}
+        </div>
       </div>
-      <div style="font-size: 0.9em;">
-        {{ student.rowNum }} - {{ student.email }} - {{ student.activeStatus }}
+      <div v-if="students.length === 0">
+        <div class="d-flex justify-center">
+          no students in system
+        </div>
+      </div>
+    </div>
+    <div v-else-if="loading">
+      <div class="d-flex justify-center">
+        <v-progress-circular 
+          color="blue darken-4"
+          size="32"
+          indeterminate
+          class="mt-12" 
+        ></v-progress-circular>
       </div>
     </div>
   </div>
@@ -29,6 +47,10 @@ import { ref, defineProps, defineEmits } from 'vue'
 const props = defineProps({
   students: {
     type: Array,
+    required: true
+  },
+  loading: {
+    type: Boolean,
     required: true
   }
 })
