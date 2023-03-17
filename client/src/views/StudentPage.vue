@@ -95,6 +95,7 @@ async function reqDeleteStudent(rowNum: number) {
 }
 
 async function fetchStudents() {
+  selected.value = undefined
   loadingStudents.value = true
   students.value = []
   const data = await getStudents()
