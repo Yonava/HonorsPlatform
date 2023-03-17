@@ -33,29 +33,11 @@
           border 
           style="width: 25%; height: 100%; overflow: auto;"
           class="d-flex flex-column align-center"
-        >
-          <div
-            style="position: relative; width: 100%"
-            class="d-flex flex-column align-center mt-2"
-          >
-            <div
-              v-for="student in students"
-              :key="student"
-              @click="selected = student"
-              :class="[
-                'mb-2',
-                'student-card',
-                selected === student ? 'selected-student-card' : ''
-              ]"
-            >
-              <div style="font-weight: 900; font-size: 1.25em;">
-                {{ student.name }}
-              </div>
-              <div style="font-size: 0.9em;">
-                {{ student.rowNum }} - {{ student.email }} - {{ student.activeStatus }}
-              </div>
-            </div>
-          </div>
+        >  
+          <StudentList 
+            :students="students"
+            @select="selected = $event"
+          />
         </v-sheet>
         <v-sheet 
           color="blue-lighten-5" 
@@ -201,6 +183,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue' 
 import { getStudents, deleteStudent } from '../SheetsAPI'
+import StudentList from '../components/StudentList.vue'
 
 const students = ref([])
 
@@ -244,26 +227,6 @@ async function fetchGoogleSheetsData() {
 </script>
 
 <style scoped>
-.student-card {
-  width: 92%;
-  background: rgba(255,255,255, 0.5);
-  border-radius: 5px;
-  padding: 10px;
-  cursor: pointer;
-  transition: 350ms;
-}
-
-.selected-student-card {
-  background: rgba(255,255,255, 0.7);
-  box-shadow: 0 0 10px rgba(0,0,0,0.2);
-}
-
-.student-card:hover {
-  background: rgba(255,255,255, 0.7);
-  box-shadow: 0 0 10px rgba(0,0,0,0.2);
-  transform: scale(0.98)
-}
-
 .module-card {
   background: #467ada;
   border-radius: 10px;
