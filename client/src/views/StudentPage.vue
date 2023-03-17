@@ -33,21 +33,10 @@
           border 
           style="width: 5%; height: 100%; background: green"
         >
-          <!-- <v-icon 
-            icon="mdi-sort"  
-          ></v-icon> -->
-          <b style="font-size: 0.9rem; text-decoration: underline">
-            Sort By:
-          </b>
-          <div
-            v-for="sort in sortOptions"
-            :key="sort"
-            class="d-flex justify-center align-center flex-column mt-2"
-            style="width: 100%; height: 50px; cursor: pointer; text-align: center;"
-          >
-            <v-icon>{{ sort.icon }}</v-icon>
-            <p style="font-size: 0.9rem; line-height: 1.1;">{{ sort.label }}</p>
-          </div>
+          <SortPanel 
+            :students="students"
+            @update="students = $event"
+          />
         </v-sheet>
         <v-sheet 
           color="blue-lighten-4" 
@@ -102,18 +91,13 @@ import { getStudents, deleteStudent, updateStudent } from '../SheetsAPI'
 import StudentAddModal from '../components/StudentAddModal.vue'
 import StudentList from '../components/StudentList.vue'
 import StudentDetail from '../components/StudentDetail.vue'
+import SortPanel from '../components/SortPanel.vue'
 
 const students = ref([])
 const studentAttrs = ref([])
 const loadingStudents = ref(false)
 const updatingStudent = ref(false)
 const showAddModal = ref(false)
-
-const sortOptions = ref([
-  { label: 'Name', icon: 'mdi-sort-alphabetical-ascending' },
-  { label: 'Points', icon: 'mdi-sort-numeric-ascending' },
-  { label: 'Active Status', icon: 'mdi-sort-variant' },
-])
 
 const selected = ref(undefined)
 
