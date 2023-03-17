@@ -19,11 +19,12 @@
           }"
           class="ml-2"
         >
-          ({{ students.length }})
+          ({{ displayStudents.length }})
         </p>
       </div>
       <input 
-        placeholder="search name, id, status, pts, etc"
+        v-model="filterQuery"
+        placeholder="filter by name, id, email or note"
         class="search-input"
         type="text"
       >
@@ -76,7 +77,7 @@
           class="d-flex flex-column align-center"
         >  
           <StudentList
-            :students="students"
+            :students="displayStudents"
             :loading="loadingStudents"
             @select="selected = $event"
           />
@@ -117,7 +118,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue' 
+import { ref, onMounted, computed } from 'vue' 
 import { getStudents, deleteStudent, updateStudent } from '../SheetsAPI'
 import StudentAddModal from '../components/StudentAddModal.vue'
 import StudentList from '../components/StudentList.vue'
@@ -129,6 +130,7 @@ const studentAttrs = ref([])
 const loadingStudents = ref(false)
 const updatingStudent = ref(false)
 const showAddModal = ref(false)
+const filterQuery = ref('')
 
 const selected = ref(undefined)
 
@@ -172,6 +174,15 @@ async function fetchStudents() {
   })
   loadingStudents.value = false
 }
+
+const displayStudents = computed(() => {
+  if (filterQuery.value === '') return students.value
+  return students.value.filter((student: any) => {
+    const query = filterQuery.value.toLowerCase();
+    const values = Object.values(student).join(' ').toLowerCase();
+    return values.includes(query)
+  })
+})
 
 async function reqUpdateStudent() {
   updatingStudent.value = true
