@@ -17,8 +17,9 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, defineProps, watch } from 'vue'
+import { getModules } from '../SheetsAPI'
 import ModuleList from '../components/ModuleList.vue'
 
 const modules = ref([])
@@ -37,21 +38,7 @@ watch(() => props.studentId, async () => {
 
 async function fetchModules() {
   loadingModules.value = true
-  await new Promise(resolve => setTimeout(resolve, 1000))
-  modules.value = [
-    {
-      courseCode: `CS${Math.floor(Math.random() * 1000)}`,
-      description: 'this is a short description of the module'
-    },
-    {
-      courseCode: `MAT${Math.floor(Math.random() * 1000)}`,
-      description: 'this is a short description of the module'
-    },
-    {
-      courseCode: `HIS${Math.floor(Math.random() * 1000)}`,
-      description: 'this is a short description of the module'
-    }
-  ]
+  modules.value = await getModules(props.studentId)
   loadingModules.value = false
 }
 

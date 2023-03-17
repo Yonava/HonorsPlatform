@@ -76,7 +76,7 @@
           ></v-text-field>
         </div>
         <div v-if="Object.keys(student.misc).length === 0">
-          No additional information. Allocate custom data tracking on google sheets
+          No additional information. Allocate custom data tracking on google sheets.
         </div>
       </div>
     </div>

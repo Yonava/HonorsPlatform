@@ -7,3 +7,15 @@ export async function getStudents() {
 export async function deleteStudent(row: number) {
   axios.delete(`/api/students/${row}`);
 }
+
+export async function addStudent(student: any) {
+  axios.post("/api/students", student);
+}
+
+export async function updateStudent(student: any) {
+  axios.put("/api/students", student);
+}
+
+export async function getModules(studentId: string) {
+  return (await axios.get(`/api/modules/${studentId}`)).data;
+}

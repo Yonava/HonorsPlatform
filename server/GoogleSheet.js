@@ -44,4 +44,46 @@ export default class GoogleSheet {
       range: `Students!A${row}:Z${row}`,
     });
   }
+
+  async addStudent(student) {
+    await this.sheets.spreadsheets.values.append({
+      spreadsheetId: this.spreadsheetId,
+      range: 'Students',
+      valueInputOption: 'USER_ENTERED',
+      resource: {
+        values: [student]
+      }
+    });
+  }
+
+  async updateStudent(row, student) {
+    await this.sheets.spreadsheets.values.update({
+      spreadsheetId: this.spreadsheetId,
+      range: `Students!A${row}:Z${row}`,
+      valueInputOption: 'USER_ENTERED',
+      resource: {
+        values: [student]
+      }
+    });
+  }
+
+  async getModules(studentId) {
+    const response = await this.sheets.spreadsheets.values.get({
+      spreadsheetId: this.spreadsheetId,
+      range: 'Modules',
+    });
+
+    const modules = response.data.values
+      .slice(1)
+      .filter(row => row[0] === studentId);
+
+    return modules.map(row => {
+      return {
+        studentId: row[0] ?? '',
+        courseCode: row[1] ?? '',
+        description: row[2] ?? '',
+        term: row[3] ?? '',
+      };
+    });
+  }
 }

@@ -3,15 +3,22 @@
     <div 
       v-for="mod in modules"
       :key="mod.courseCode"
-      class="module-card mb-1 d-flex flex-row align-center"
+      class="module-card pa-2 d-flex flex-row align-center"
     >
-      <h4 style="color: rgba(255,255,255,0.9); font-size: 1.25em">
-        {{ mod.courseCode }}
-      </h4>
-      <span 
-        class="ml-2" 
-        style="color: white; line-height: 1.1; font-weight: 300;"
-      >{{ mod.description }}</span>
+      <div style="d-flex flex-column align-center">
+        <div style="color: white; opacity: 0.75; font-size: 0.75em;">
+          {{ mod.term }}
+        </div>
+        <div class="d-flex flex-row align-center mb-1">
+          <h4 style="color: rgba(255,255,255,0.9); font-size: 1.25em; line-height: 0;">
+            {{ mod.courseCode }}
+          </h4>
+          <span 
+            class="ml-2" 
+            style="color: white; line-height: 1.1; font-weight: 300;"
+          >{{ mod.description }}</span>
+        </div>
+      </div>
       <v-icon 
         @click="reqDeleteModule(mod.courseCode)"
         color="white"
@@ -49,7 +56,6 @@ const reqDeleteModule = (moduleCourseCode) => {
 .module-card {
   background: #467ada;
   border-radius: 10px;
-  padding: 10px;
   transition: 300ms;
   box-shadow: 0 0 10px rgba(0,0,0,0.2);
 }
