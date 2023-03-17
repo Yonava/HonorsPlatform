@@ -62,11 +62,7 @@ export default class GoogleSheet {
     const studentData = [...Object.values(rest)]
 
     if (Object.values(misc).length > 0) {
-      const { data } = await this.sheets.spreadsheets.values.get({
-        spreadsheetId: this.spreadsheetId,
-        range: 'Students!G1:Z1',
-      });
-      studentData.push(...data.values[0].map(cat => misc[cat] ?? ''))
+      studentData.push(...(await this.getMiscCategories()).map(cat => misc[cat] ?? ''))
     }
 
     await this.sheets.spreadsheets.values.update({
@@ -77,6 +73,15 @@ export default class GoogleSheet {
         values: [studentData]
       }
     });
+  }
+
+  async getMiscCategories() {
+    const { data } = await this.sheets.spreadsheets.values.get({
+      spreadsheetId: this.spreadsheetId,
+      range: 'Students!G1:Z1',
+    });
+
+    return data.values[0];
   }
 
   async getModules(studentId) {

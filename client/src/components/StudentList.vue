@@ -19,7 +19,7 @@
           {{ student.name }}
         </div>
         <div style="font-size: 0.9em;">
-          {{ student.rowNum }} - {{ student.email }} - {{ student.activeStatus }}
+          {{ student.id }} - {{ student.email }} - {{ student.activeStatus }}
         </div>
       </div>
       <div v-if="students.length === 0">

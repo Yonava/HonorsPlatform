@@ -5,7 +5,7 @@
       class="px-5"
     >
       <div
-        @click="fetchStudents"
+        @click="showAddModal = true"
         class="d-flex align-center"
         style="cursor: pointer;"
       >
@@ -28,10 +28,27 @@
         class="d-flex flex-row"
       >
         <v-sheet 
+          class="d-flex align-center flex-column flex-start pt-3"
           color="blue-darken-2" 
           border 
           style="width: 5%; height: 100%; background: green"
-        ></v-sheet>
+        >
+          <!-- <v-icon 
+            icon="mdi-sort"  
+          ></v-icon> -->
+          <b style="font-size: 0.9rem; text-decoration: underline">
+            Sort By:
+          </b>
+          <div
+            v-for="sort in sortOptions"
+            :key="sort"
+            class="d-flex justify-center align-center flex-column mt-2"
+            style="width: 100%; height: 50px; cursor: pointer; text-align: center;"
+          >
+            <v-icon>{{ sort.icon }}</v-icon>
+            <p style="font-size: 0.9rem; line-height: 1.1;">{{ sort.label }}</p>
+          </div>
+        </v-sheet>
         <v-sheet 
           color="blue-lighten-4" 
           border 
@@ -70,18 +87,33 @@
         style="position: absolute; bottom: 0; right: 0; mix-blend-mode: multiply; margin: 20px;" 
       >
     </v-main>
+    <StudentAddModal 
+      :show="showAddModal"
+      :studentAttrs="studentAttrs"
+      @close="showAddModal = false"
+      @reFetchStudents="fetchStudents"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue' 
 import { getStudents, deleteStudent, updateStudent } from '../SheetsAPI'
+import StudentAddModal from '../components/StudentAddModal.vue'
 import StudentList from '../components/StudentList.vue'
 import StudentDetail from '../components/StudentDetail.vue'
 
 const students = ref([])
+const studentAttrs = ref([])
 const loadingStudents = ref(false)
 const updatingStudent = ref(false)
+const showAddModal = ref(false)
+
+const sortOptions = ref([
+  { label: 'Name', icon: 'mdi-sort-alphabetical-ascending' },
+  { label: 'Points', icon: 'mdi-sort-numeric-ascending' },
+  { label: 'Active Status', icon: 'mdi-sort-variant' },
+])
 
 const selected = ref(undefined)
 
@@ -90,17 +122,19 @@ onMounted(async () => {
 })
 
 async function reqDeleteStudent() {
-  selected.value = undefined
   await deleteStudent(selected.value.rowNum);
+  selected.value = undefined
   loadingStudents.value = true;
   await new Promise(resolve => setTimeout(resolve, 1000));
   await fetchStudents();
 }
 
 async function fetchStudents() {
+  console.log('fetching students')
   loadingStudents.value = true
   students.value = []
   const data = await getStudents()
+  studentAttrs.value = data[0]
 
   data.slice(1).forEach((row: any, index: number) => {
     if (row.length === 0) return
