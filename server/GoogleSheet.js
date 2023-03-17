@@ -58,28 +58,25 @@ export default class GoogleSheet {
   }
 
   async updateStudent(student) {
-    // get first row of sheet
-    // const miscCategories = await this.sheets.spreadsheets.values.get({
-    //   spreadsheetId: this.spreadsheetId,
-    //   range: 'Students!G1:Z1',
-    // });
+    const { misc, rowNum, ...rest } = student
+    const studentData = [...Object.values(rest)]
 
-    const { misc, rowNum, ...rest} = student
-    const studentData = [
-      ...Object.values(rest),
-    ]
+    if (Object.values(misc).length > 0) {
+      const { data } = await this.sheets.spreadsheets.values.get({
+        spreadsheetId: this.spreadsheetId,
+        range: 'Students!G1:Z1',
+      });
+      studentData.push(...data.values[0].map(cat => misc[cat] ?? ''))
+    }
 
-    console.log(studentData)
-    // response.forEach
-
-    // await this.sheets.spreadsheets.values.update({
-    //   spreadsheetId: this.spreadsheetId,
-    //   range: `Students!A${row}:Z${row}`,
-    //   valueInputOption: 'USER_ENTERED',
-    //   resource: {
-    //     values: [studentData]
-    //   }
-    // });
+    await this.sheets.spreadsheets.values.update({
+      spreadsheetId: this.spreadsheetId,
+      range: `Students!A${rowNum}:Z${rowNum}`,
+      valueInputOption: 'USER_ENTERED',
+      resource: {
+        values: [studentData]
+      }
+    });
   }
 
   async getModules(studentId) {
