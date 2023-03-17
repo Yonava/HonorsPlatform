@@ -1,5 +1,6 @@
 import * as path from 'path';
 import { google } from 'googleapis';
+// import { mapStudentToArray } from './utils';
 
 export default class GoogleSheet {
   spreadsheetId = '1bW-aQRn-GAbTsNkV2VB9xtBFT3n-LPrSJXua_NA2G6Y';
@@ -56,15 +57,29 @@ export default class GoogleSheet {
     });
   }
 
-  async updateStudent(row, student) {
-    await this.sheets.spreadsheets.values.update({
-      spreadsheetId: this.spreadsheetId,
-      range: `Students!A${row}:Z${row}`,
-      valueInputOption: 'USER_ENTERED',
-      resource: {
-        values: [student]
-      }
-    });
+  async updateStudent(student) {
+    // get first row of sheet
+    // const miscCategories = await this.sheets.spreadsheets.values.get({
+    //   spreadsheetId: this.spreadsheetId,
+    //   range: 'Students!G1:Z1',
+    // });
+
+    const { misc, rowNum, ...rest} = student
+    const studentData = [
+      ...Object.values(rest),
+    ]
+
+    console.log(studentData)
+    // response.forEach
+
+    // await this.sheets.spreadsheets.values.update({
+    //   spreadsheetId: this.spreadsheetId,
+    //   range: `Students!A${row}:Z${row}`,
+    //   valueInputOption: 'USER_ENTERED',
+    //   resource: {
+    //     values: [studentData]
+    //   }
+    // });
   }
 
   async getModules(studentId) {

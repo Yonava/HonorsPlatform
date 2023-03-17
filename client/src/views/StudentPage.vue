@@ -51,7 +51,8 @@
           <div v-if="selected">
             <StudentDetail 
               :student="selected"
-              @delete="reqDeleteStudent(selected.rowNum)"
+              @update="reqUpdateStudent"
+              @delete="reqDeleteStudent"
             />
           </div>
           <div 
@@ -74,12 +75,13 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue' 
-import { getStudents, deleteStudent } from '../SheetsAPI'
+import { getStudents, deleteStudent, updateStudent } from '../SheetsAPI'
 import StudentList from '../components/StudentList.vue'
 import StudentDetail from '../components/StudentDetail.vue'
 
 const students = ref([])
 const loadingStudents = ref(false)
+const updatingStudent = ref(false)
 
 const selected = ref(undefined)
 
@@ -87,9 +89,9 @@ onMounted(async () => {
   await fetchStudents()
 })
 
-async function reqDeleteStudent(rowNum: number) {
+async function reqDeleteStudent() {
   selected.value = undefined
-  await deleteStudent(rowNum);
+  await deleteStudent(selected.value.rowNum);
   loadingStudents.value = true;
   await new Promise(resolve => setTimeout(resolve, 1000));
   await fetchStudents();
@@ -110,15 +112,21 @@ async function fetchStudents() {
     students.value.push({
       // + 1 for header row, + 1 for 0-indexing
       rowNum: index + 2,
-      name: row[0],
-      id: row[1],
-      email: row[2],
-      points: row[3],
-      activeStatus: row[4],
-      note: row[5],
+      name: row[0] ?? '',
+      id: row[1] ?? '',
+      email: row[2] ?? '',
+      points: row[3] ?? 0,
+      activeStatus: row[4] ?? '',
+      note: row[5] ?? '',
       misc
     })
   })
   loadingStudents.value = false
+}
+
+async function reqUpdateStudent() {
+  updatingStudent.value = true
+  await updateStudent(selected.value)
+  updatingStudent.value = false
 }
 </script>

@@ -4,6 +4,7 @@
     style="width: 100%; padding: 20px"
   >
     <div style="width: 55%;">
+      <v-btn @click="$emit('update')">update data</v-btn>
       <p style="font-weight: 200">
         {{ student.id }}
       </p>
@@ -85,7 +86,7 @@
       class="ml-5 d-flex flex-column"
     >
       <span 
-        @click="reqDeleteStudent(student.rowNum)"
+        @click="reqDeleteStudent"
         style="color: red; cursor: pointer" 
         class="d-flex align-center mb-2 delete-student"
       >
@@ -113,12 +114,15 @@ const props = defineProps({
   }
 })
 
-const emits = defineEmits(['delete'])
+const emits = defineEmits([
+  'delete', 
+  'update'
+])
 
 const editing = ref(false)
 
-const reqDeleteStudent = (rowNum) => {
-  emits('delete', rowNum)
+const reqDeleteStudent = () => {
+  emits('delete')
 }
 </script>
 

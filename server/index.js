@@ -2,6 +2,7 @@ import express from "express";
 import GoogleSheet from "./GoogleSheet.js";
 
 const app = express();
+app.use(express.json());
 const sheetInstance = await GoogleSheet.getInstance();
 
 app.get("/students", async (req, res) => {
@@ -15,10 +16,9 @@ app.delete("/students/:row", async (req, res) => {
   res.json({ success: true });
 });
 
-app.put("/students/:row", async (req, res) => {
-  const { row } = req.params;
+app.put("/students", async (req, res) => {
   const student = req.body;
-  await sheetInstance.updateStudent(row, student);
+  await sheetInstance.updateStudent(student);
   res.json({ success: true });
 });
 
