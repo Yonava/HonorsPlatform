@@ -4,11 +4,7 @@
       color="blue-darken-2"
       class="px-5"
     >
-      <div
-        @click="showAddModal = true"
-        class="d-flex align-center"
-        style="cursor: pointer;"
-      >
+      <div class="d-flex align-center">
         <v-icon 
           icon="mdi-account-group" 
           size="x-large" 
@@ -17,10 +13,45 @@
         <h1 style="font-weight: 700;">
           Students
         </h1>
-        <p class="ml-2">
+        <p 
+          :style="{
+            opacity: loadingStudents ? 0 : 1,
+          }"
+          class="ml-2"
+        >
           ({{ students.length }})
         </p>
       </div>
+      <input 
+        placeholder="search name, id, status, pts, etc"
+        class="search-input"
+        type="text"
+      >
+      <v-spacer></v-spacer>
+      <v-btn 
+        @click="showAddModal = true"
+        class="ml-5"
+        style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240);"
+      >
+        <v-icon 
+          icon="mdi-plus" 
+          size="large" 
+          class="mr-2"
+        ></v-icon>
+        Add Student
+      </v-btn>
+      <v-btn 
+        @click="refreshBtn"
+        class="ml-3"
+        style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240);"
+      >
+        <v-icon 
+          icon="mdi-refresh" 
+          size="large" 
+          class="mr-2"
+        ></v-icon>
+        Refresh Data
+      </v-btn>
     </v-app-bar>
     <v-main>
       <div 
@@ -147,4 +178,44 @@ async function reqUpdateStudent() {
   await updateStudent(selected.value)
   updatingStudent.value = false
 }
+
+async function refreshBtn() {
+  selected.value = undefined;
+  await fetchStudents();
+}
 </script>
+
+<style scoped>
+.search-input {
+  background: rgba(0, 0, 0, 0.3); 
+  color: rgb(240, 240, 240); 
+  border-radius: 50px; 
+  padding: 3px; 
+  padding-left: 15px;
+  border: none; 
+  width: 500px; 
+  font-size: 1.4em; 
+  font-weight: 200; 
+  box-shadow: 2px 1px 4px rgba(0, 0, 0, 0.5);
+  margin-left: 25px;
+  transition: 0.3s ease;
+}
+
+.search-input:focus {
+  width: 750px;
+  box-shadow: 3px 2px 9px rgba(0, 0, 0, 0.5);
+  outline: none;
+}
+
+.search-input:focus::placeholder {
+  color: transparent;
+}
+
+.search-input:hover {
+  box-shadow: 3px 2px 9px rgba(0, 0, 0, 0.5);
+}
+
+.search-input::placeholder {
+  color: rgba(255, 255, 255, 0.569);
+}
+</style>
