@@ -16,8 +16,10 @@
       v-for="sort in sortOptions"
       :key="sort"
       @click="sortStudents(sort)"
-      class="d-flex justify-center align-center flex-column mt-2 px-2"
-      :style="`width: 100%; height: 65px; cursor: pointer; text-align: center; ${activeSort === sort ? 'background: rgba(255, 255, 255, 0.2);' : ''}`"
+      class="sort-box d-flex justify-center align-center flex-column px-2"
+      :style="{
+        background: activeSort === sort ? 'rgba(255, 255, 255, 0.2)' : ''
+      }"
     >
       <v-icon>{{ sort.icon() }}</v-icon>
       <p style="font-size: 0.9rem; line-height: 1.1; user-select: none">{{ sort.label }}</p>
@@ -111,3 +113,16 @@ const sortOptions = ref<SortOption[]>([
   },
 ])
 </script>
+
+<style scoped>
+.sort-box {
+  width: 100%; 
+  height: 65px; 
+  cursor: pointer; 
+  text-align: center; 
+}
+
+.sort-box:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+</style>

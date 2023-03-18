@@ -16,10 +16,12 @@
         ]"
       >
         <div style="font-weight: 900; font-size: 1.25em;">
-          {{ student.name }}
+          {{ student.name || '(No Name)' }}
         </div>
         <div style="font-size: 0.9em;">
-          {{ student.id }} - {{ student.email }} - {{ student.activeStatus }}
+          {{ student.id || '(No ID)' }} - 
+          {{ student.email || '(No Email)' }} - 
+          {{ student.activeStatus || '(No Active Status)' }}
         </div>
       </div>
       <div v-if="students.length === 0">

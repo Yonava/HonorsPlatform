@@ -4,22 +4,27 @@
     style="width: 100%; padding: 20px"
   >
     <div style="width: 55%;">
-      <v-btn @click="$emit('update')">update data</v-btn>
       <p style="font-weight: 200">
         {{ student.id }}
       </p>
       <div class="d-flex flex-row align-center">
-        <h1 style="font-weight: 900; font-size: 3em; line-height: 0.9">
-          {{ student.name }}
-        </h1>
-        <v-icon 
-          class="ml-4"
-          size="large"
-          style="cursor: pointer;"
-          @click="editing = !editing"
+        <input 
+          v-model="student.name"
+          placeholder="Name"
+          type="text" 
+          class="student-name-input"
         >
-          mdi-pencil
-        </v-icon>
+        <v-spacer></v-spacer>
+        <v-btn 
+          @click="reqUpdateStudent"
+          :loading="updatingStudent"
+          :color="upToDate ? 'green' : 'blue-darken-2'"
+          :style="{
+            cursor: upToDate ? 'default' : 'pointer',
+          }"
+          rounded
+          class="ml-7"
+        >{{ upToDate ? 'All Synced Up!' : 'update profile' }}</v-btn>
       </div>
       <v-divider class="my-2"></v-divider>
       <v-text-field
@@ -103,9 +108,10 @@
   </div>
 </template>
 
-<script setup>
-import { ref, defineProps, defineEmits } from 'vue'
+<script setup lang="ts">
+import { ref, defineProps, defineEmits, watch, toRefs } from 'vue'
 import ModuleFetch from './ModuleFetch.vue'
+import { updateStudent } from '../SheetsAPI'
 
 const props = defineProps({
   student: {
@@ -114,15 +120,38 @@ const props = defineProps({
   }
 })
 
-const emits = defineEmits([
-  'delete', 
-  'update'
-])
+const emits = defineEmits(['delete'])
+const reqDeleteStudent = () => emits('delete')
 
-const editing = ref(false)
+const editingName = ref(false)
+const updatingStudent = ref(false)
+const upToDate = ref(false)
 
-const reqDeleteStudent = () => {
-  emits('delete')
+const { student } = toRefs(props)
+let studentWatcher = () => {}
+
+watch(student, () => {
+  upToDate.value = false
+})
+
+watch(upToDate, (val) => {
+  if (val) {
+    console.log('watching')
+    studentWatcher = watch(student, () => {
+      upToDate.value = false
+    }, { deep: true })
+  } else {
+    console.log('unwatching')
+    studentWatcher()
+  }
+})
+
+async function reqUpdateStudent() {
+  if (upToDate.value) return
+  updatingStudent.value = true
+  await updateStudent(props.student)
+  updatingStudent.value = false
+  upToDate.value = true
 }
 </script>
 
@@ -130,5 +159,16 @@ const reqDeleteStudent = () => {
 .delete-student:hover {
   color: #e74c3c;
   text-decoration: underline;
+}
+
+.student-name-input {
+  font-weight: 900; 
+  font-size: 3em; 
+  line-height: 0.9; 
+  width: 100%;
+}
+
+.student-name-input:focus {
+  outline: none;
 }
 </style>

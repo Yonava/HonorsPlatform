@@ -22,7 +22,7 @@
           ({{ displayStudents.length }})
         </p>
       </div>
-      <input 
+      <input
         v-model="filterQuery"
         placeholder="filter by name, id, email or note"
         class="search-input"
@@ -89,7 +89,6 @@
           <div v-if="selected">
             <StudentDetail 
               :student="selected"
-              @update="reqUpdateStudent"
               @delete="reqDeleteStudent"
             />
           </div>
@@ -128,7 +127,6 @@ import SortPanel from '../components/SortPanel.vue'
 const students = ref([])
 const studentAttrs = ref([])
 const loadingStudents = ref(false)
-const updatingStudent = ref(false)
 const showAddModal = ref(false)
 const filterQuery = ref('')
 
@@ -147,7 +145,6 @@ async function reqDeleteStudent() {
 }
 
 async function fetchStudents() {
-  console.log('fetching students')
   loadingStudents.value = true
   students.value = []
   const data = await getStudents()
@@ -183,12 +180,6 @@ const displayStudents = computed(() => {
     return values.includes(query)
   })
 })
-
-async function reqUpdateStudent() {
-  updatingStudent.value = true
-  await updateStudent(selected.value)
-  updatingStudent.value = false
-}
 
 async function refreshBtn() {
   selected.value = undefined;
