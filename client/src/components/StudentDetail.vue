@@ -109,13 +109,25 @@
 </template>
 
 <script setup lang="ts">
-import { ref, defineProps, defineEmits, watch, toRefs } from 'vue'
+import { 
+  ref, 
+  defineProps, 
+  defineEmits, 
+  watch, 
+  toRefs, 
+  onMounted,
+  onUnmounted
+} from 'vue'
 import ModuleFetch from './ModuleFetch.vue'
 import { updateStudent } from '../SheetsAPI'
 
 const props = defineProps({
   student: {
     type: Object,
+    required: true
+  },
+  autoSync: {
+    type: Boolean,
     required: true
   }
 })
@@ -127,7 +139,7 @@ const editingName = ref(false)
 const updatingStudent = ref(false)
 const upToDate = ref(false)
 
-const { student } = toRefs(props)
+const { student, autoSync } = toRefs(props)
 let studentWatcher = () => {}
 
 watch(student, () => {
@@ -136,20 +148,32 @@ watch(student, () => {
 
 watch(upToDate, (val) => {
   if (val) {
-    console.log('watching')
     studentWatcher = watch(student, () => {
       upToDate.value = false
     }, { deep: true })
   } else {
-    console.log('unwatching')
     studentWatcher()
   }
+})
+
+const interval = ref(undefined)
+
+onMounted(() => {
+  interval.value = setInterval(() => {
+    if (autoSync.value) {
+      reqUpdateStudent()
+    }
+  }, 3000)
+})
+
+onUnmounted(() => {
+  clearInterval(interval.value)
 })
 
 async function reqUpdateStudent() {
   if (upToDate.value) return
   updatingStudent.value = true
-  await updateStudent(props.student)
+  await updateStudent(student.value)
   updatingStudent.value = false
   upToDate.value = true
 }

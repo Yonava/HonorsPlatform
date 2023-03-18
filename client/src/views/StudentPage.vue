@@ -29,9 +29,20 @@
         type="text"
       >
       <v-spacer></v-spacer>
+      <span 
+        v-if="autoSync"
+        class="d-flex align-center ml-5 px-2"
+        style="background: red; border-radius: 5px; font-weight: 700;"
+      >
+        <div 
+          class="fade-animate mr-2"
+          style="background: white; width: 10px; height: 10px; border-radius: 50px;"
+        ></div>
+        LIVE
+      </span>
       <v-btn 
         @click="showAddModal = true"
-        class="ml-5"
+        class="ml-3"
         style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240);"
       >
         <v-icon 
@@ -69,6 +80,26 @@
             :students="students"
             @update="students = $event"
           />
+          <v-spacer></v-spacer>
+          <div 
+            class="d-flex flex-column align-center"
+            style="text-align: center;"
+          >
+            <div
+              v-show="autoSync"
+              class="mb-1"
+              style="width: 25px; height: 25px; border-radius: 50px; background: #ff0500;"
+            ></div>
+            <span 
+              style="width: 100%; line-height: 1.1em; font-weight: 400; font-size: 0.8em;"
+            >Auto Sync</span>
+            <v-switch
+              v-model="autoSync"
+              color="blue-lighten-4"
+              style="transform: translateY(-10px);"
+              hide-details
+            ></v-switch>
+          </div>
         </v-sheet>
         <v-sheet 
           color="blue-lighten-4" 
@@ -89,6 +120,7 @@
           <div v-if="selected">
             <StudentDetail 
               :student="selected"
+              :autoSync="autoSync"
               @delete="reqDeleteStudent"
             />
           </div>
@@ -129,6 +161,7 @@ const studentAttrs = ref([])
 const loadingStudents = ref(false)
 const showAddModal = ref(false)
 const filterQuery = ref('')
+const autoSync = ref(false)
 
 const selected = ref(undefined)
 
@@ -195,7 +228,7 @@ async function refreshBtn() {
   padding: 3px; 
   padding-left: 15px;
   border: none; 
-  width: 500px; 
+  width: 400px; 
   font-size: 1.4em; 
   font-weight: 200; 
   box-shadow: 2px 1px 4px rgba(0, 0, 0, 0.5);
@@ -204,7 +237,7 @@ async function refreshBtn() {
 }
 
 .search-input:focus {
-  width: 750px;
+  width: 600px;
   box-shadow: 3px 2px 9px rgba(0, 0, 0, 0.5);
   outline: none;
 }
@@ -219,5 +252,21 @@ async function refreshBtn() {
 
 .search-input::placeholder {
   color: rgba(255, 255, 255, 0.569);
+}
+
+.fade-animate {
+  animation: fade-in-out 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes fade-in-out {
+  0% {
+    opacity: 0;
+  }
+  75% {
+    opacity: 0.95;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 </style>
