@@ -54,6 +54,7 @@
       </v-btn>
       <v-btn 
         @click="refreshBtn"
+        :loading="loadingStudents"
         class="ml-3"
         style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240);"
       >

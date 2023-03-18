@@ -24,7 +24,7 @@
           }"
           rounded
           class="ml-7"
-        >{{ upToDate ? 'All Synced Up!' : 'update profile' }}</v-btn>
+        >{{ upToDate ? 'All Synced Up!' : 'Update Profile' }}</v-btn>
       </div>
       <v-divider class="my-2"></v-divider>
       <v-text-field
