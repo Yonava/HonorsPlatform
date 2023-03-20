@@ -29,12 +29,20 @@ const props = defineProps({
   studentId: {
     type: String,
     required: true
+  },
+  refetch: {
+    type: Boolean,
+    required: true
   }
 })
 
 watch(() => props.studentId, async () => {
   await fetchModules()
 }, { immediate: true })
+
+watch(() => props.refetch, async () => {
+  await fetchModules()
+})
 
 async function fetchModules() {
   loadingModules.value = true

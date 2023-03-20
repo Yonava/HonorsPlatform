@@ -141,10 +141,10 @@
       >
     </v-main>
     <StudentAddModal 
-      :show="showAddModal"
-      :studentAttrs="studentAttrs"
       @close="showAddModal = false"
       @reFetchStudents="fetchStudents"
+      :show="showAddModal"
+      :studentAttrs="studentAttrs"
     />
   </div>
 </template>

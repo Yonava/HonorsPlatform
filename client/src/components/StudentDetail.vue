@@ -59,7 +59,10 @@
         <h2>
           Modules In Progress:
         </h2>
-        <ModuleFetch :studentId="student.id" />
+        <ModuleFetch 
+          :studentId="student.id"
+          :refetch="refetchModules"
+        />
       </div>
       <v-divider class="my-2"></v-divider>
       <h2>
@@ -105,6 +108,12 @@
         no-resize
       ></v-textarea>
     </div>
+    <ModuleAddModal 
+      @close="showModuleAddModal = false"
+      @reFetchModules="refetchModules = !refetchModules"
+      :show="showModuleAddModal"
+      :studentId="student.id"
+    />
   </div>
 </template>
 
@@ -138,6 +147,8 @@ const reqDeleteStudent = () => emits('delete')
 const editingName = ref(false)
 const updatingStudent = ref(false)
 const upToDate = ref(false)
+const showModuleAddModal = ref(false)
+const refetchModules = ref(false)
 
 const { student, autoSync } = toRefs(props)
 let studentWatcher = () => {}
