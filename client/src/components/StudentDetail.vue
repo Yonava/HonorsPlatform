@@ -116,7 +116,6 @@
         <v-icon>mdi-delete</v-icon>
         delete {{ student.name }} permanently
       </span>
-      {{ canBeDeleted }}
       <v-textarea
         v-model="student.note"
         clearable

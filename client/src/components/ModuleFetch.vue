@@ -58,9 +58,12 @@ async function fetchModules() {
   loadingModules.value = false
 }
 
-const canBeDeleted = computed({
-  get: () => modules.value.length === 0 && !loadingModules.value,
-  set: (val) => emits('toggleCanDelete', val)
+const canBeDeleted = computed(() => {
+  return modules.value.length === 0 && !loadingModules.value
+})
+
+watch(canBeDeleted, (val) => {
+  emits('toggleCanDelete', val)
 })
 
 async function reqDeleteModule(courseCode) {
