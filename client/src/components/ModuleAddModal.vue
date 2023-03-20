@@ -34,6 +34,12 @@
         :loading="loading"
         color="blue-darken-1"
       >add module</v-btn>
+      <span 
+        class="mt-2"
+        style="color: red"
+      >
+        {{ errorMessage }}
+      </span>
       <v-icon 
         @click="showDialog = false"
         class="ma-4"
@@ -50,7 +56,8 @@ import {
   defineProps, 
   defineEmits, 
   onMounted,
-  computed
+  computed,
+  watch
 } from 'vue'
 
 const props = defineProps({
@@ -64,6 +71,12 @@ const props = defineProps({
   }
 })
 
+watch(() => props.show, (val) => {
+  if (val) {
+    initModuleData()
+  }
+})
+
 const showDialog = computed({
   get: () => props.show,
   set: (val) => emits('close')
@@ -72,6 +85,7 @@ const showDialog = computed({
 const loading = ref(false)
 const moduleAttrs = ref(['Student ID', 'Course Code', 'Description', 'Term'])
 const moduleData = ref([])
+const errorMessage = ref('')
 
 onMounted(() => initModuleData())
 
@@ -83,8 +97,9 @@ function initModuleData() {
 }
 
 async function reqAddModule() {
-  if (!moduleData.value.some(attr => attr)) {
-    emits('close')
+  const courseCode = moduleData.value[1]
+  if (!courseCode) {
+    errorMessage.value = 'Course code is required'
     return
   }
   loading.value = true
@@ -92,7 +107,6 @@ async function reqAddModule() {
   await new Promise(resolve => setTimeout(resolve, 1000))
   emits('close')
   emits('reFetchModules')
-  initModuleData()
   loading.value = false
 }
 

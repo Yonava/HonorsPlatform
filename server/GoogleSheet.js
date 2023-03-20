@@ -87,7 +87,6 @@ export default class GoogleSheet {
 
   async getModules(studentId) {
     const modules = (await this.getAllModules()).filter(row => row[0] === studentId);
-    console.log(modules)
     return modules.map(row => {
       return {
         studentId: row[0] ?? '',
@@ -128,7 +127,6 @@ export default class GoogleSheet {
       range: 'Modules',
     });
 
-    console.log(response.data.values)
     return response.data.values.slice(1);
   }
 }

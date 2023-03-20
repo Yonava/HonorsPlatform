@@ -56,13 +56,20 @@
       </v-text-field>
       <v-divider class="my-2"></v-divider>
       <div>
-        <!-- <v-btn
-          @click="showModuleAddModal = true"
-          color="blue-darken-1"
-        >Add Module</v-btn> -->
-        <h2>
-          Modules In Progress:
-        </h2>
+        <div class="d-flex flex-row align-center">
+          <h2>
+            Modules In Progress:
+          </h2>
+          <v-spacer></v-spacer>
+          <v-btn
+            @click="showModuleAddModal = true"
+            size="small"
+            color="green"
+          >
+            <v-icon class="mr-1">mdi-plus</v-icon>
+            Add Module
+          </v-btn>
+        </div>
         <ModuleFetch 
           @toggleCanDelete="canBeDeleted = !canBeDeleted"
           :studentId="student.id"
