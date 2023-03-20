@@ -1,6 +1,5 @@
 import * as path from 'path';
 import { google } from 'googleapis';
-
 export default class GoogleSheet {
   spreadsheetId = '1bW-aQRn-GAbTsNkV2VB9xtBFT3n-LPrSJXua_NA2G6Y';
   sheets;
@@ -103,6 +102,20 @@ export default class GoogleSheet {
         description: row[2] ?? '',
         term: row[3] ?? '',
       };
+    });
+  }
+
+  async addModule(module) {
+    let modules = (await this.getModules(module.studentId)).map(row => row.join(''));
+    let insertRow = modules.indexOf('');
+    insertRow = insertRow === -1 ? modules.length : insertRow + 1;
+    await this.sheets.spreadsheets.values.update({
+      spreadsheetId: this.spreadsheetId,
+      range: `Modules!A${insertRow}:Z${insertRow}`,
+      valueInputOption: 'USER_ENTERED',
+      resource: {
+        values: [Object.values(module)]
+      }
     });
   }
 }

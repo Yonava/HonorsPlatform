@@ -28,8 +28,9 @@
         </div>
       </div>
       <v-btn
-        color="blue-darken-1"
         @click="reqAddStudent"
+        :loading="loading"
+        color="blue-darken-1"
       >add student</v-btn>
       <v-icon 
         @click="showDialog = false"
@@ -67,6 +68,7 @@ const showDialog = computed({
 })
 
 const student = ref([])
+const loading = ref(false)
 
 onMounted(() => initStudent())
 
@@ -75,11 +77,13 @@ async function reqAddStudent() {
     emits('close')
     return
   }
+  loading.value = true
   await addStudent(student.value)
   initStudent()
-  emits('close')
   await new Promise(resolve => setTimeout(resolve, 1000))
+  emits('close')
   emits('reFetchStudents')
+  loading.value = false
 }
 
 function initStudent() {
