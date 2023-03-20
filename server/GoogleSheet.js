@@ -1,6 +1,5 @@
 import * as path from 'path';
 import { google } from 'googleapis';
-// import { mapStudentToArray } from './utils';
 
 export default class GoogleSheet {
   spreadsheetId = '1bW-aQRn-GAbTsNkV2VB9xtBFT3n-LPrSJXua_NA2G6Y';
@@ -47,9 +46,12 @@ export default class GoogleSheet {
   }
 
   async addStudent(student) {
-    await this.sheets.spreadsheets.values.append({
+    let students = (await this.getStudents()).map(row => row.join(''));
+    let insertRow = students.indexOf('');
+    insertRow = insertRow === -1 ? students.length : insertRow + 1;
+    await this.sheets.spreadsheets.values.update({
       spreadsheetId: this.spreadsheetId,
-      range: 'Students',
+      range: `Students!A${insertRow}:Z${insertRow}`,
       valueInputOption: 'USER_ENTERED',
       resource: {
         values: [student]
