@@ -20,8 +20,8 @@ export async function getModules(studentId: string) {
   return (await axios.get(`/api/modules/${studentId}`)).data;
 }
 
-export async function deleteModule(row: number) {
-  await axios.delete(`/api/modules/${row}`);
+export async function deleteModule(studentId: string, courseCode: string) {
+  await axios.delete(`/api/modules/${studentId}/${courseCode}`);
 }
 
 export async function addModule(module: any) {

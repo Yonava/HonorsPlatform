@@ -1,5 +1,5 @@
 <template>
-  <div style="overflow: auto; max-height: 200px;">
+  <div style="overflow: auto; max-height: 150px;">
     <div 
       v-for="mod in modules"
       :key="mod.courseCode"
@@ -47,8 +47,8 @@ const props = defineProps({
 
 const emits = defineEmits(['delete'])
 
-const reqDeleteModule = (moduleCourseCode) => {
-  emits('delete', moduleCourseCode)
+const reqDeleteModule = courseCode => {
+  emits('delete', courseCode)
 }
 </script>
 

@@ -56,10 +56,10 @@
       </v-text-field>
       <v-divider class="my-2"></v-divider>
       <div>
-        <v-btn
+        <!-- <v-btn
           @click="showModuleAddModal = true"
           color="blue-darken-1"
-        >Add Module</v-btn>
+        >Add Module</v-btn> -->
         <h2>
           Modules In Progress:
         </h2>

@@ -14,13 +14,16 @@
         >mdi-file-document-plus</v-icon>
         <span>Add Module</span>
       </h1>
-      <div class="d-flex flex-wrap justify-center align-center">
+      <div 
+        @keyup.enter="reqAddModule"
+        class="d-flex flex-wrap justify-center align-center"
+      >
         <div
-          v-for="(attr, index) in moduleAttrs"
+          v-for="(attr, index) in moduleAttrs.slice(1)"
           :key="index"
         >
           <v-text-field
-            v-model="moduleData[index]"
+            v-model="moduleData[index + 1]"
             :label="attr"
             style="width: 250px; margin-left: 10px; margin-right: 10px;"
           ></v-text-field>
@@ -67,13 +70,14 @@ const showDialog = computed({
 })
 
 const loading = ref(false)
-const moduleAttrs = ref(['Course Code', 'Description', 'Term'])
+const moduleAttrs = ref(['Student ID', 'Course Code', 'Description', 'Term'])
 const moduleData = ref([])
 
 onMounted(() => initModuleData())
 
 function initModuleData() {
   moduleData.value = [
+    props.studentId,
     ...moduleAttrs.value.map(() => '')
   ]
 }
@@ -84,7 +88,6 @@ async function reqAddModule() {
     return
   }
   loading.value = true
-  moduleData.value.unshift(props.studentId)
   await addModule(moduleData.value)
   await new Promise(resolve => setTimeout(resolve, 1000))
   emits('close')

@@ -1,10 +1,9 @@
 <template>
   <div>
-    {{ canBeDeleted }}
     <ModuleList
       v-if="!loadingModules"
-      :modules="modules"
       @delete="reqDeleteModule($event)"
+      :modules="modules"
     />
     <div 
       v-else
@@ -26,7 +25,7 @@ import {
   defineProps, 
   defineEmits,
 } from 'vue'
-import { getModules } from '../SheetsAPI'
+import { getModules, deleteModule } from '../SheetsAPI'
 import ModuleList from '../components/ModuleList.vue'
 
 const modules = ref([])
@@ -64,8 +63,10 @@ const canBeDeleted = computed({
   set: (val) => emits('toggleCanDelete', val)
 })
 
-function reqDeleteModule(moduleCourseCode) {
-  // make a request to delete the module
-  modules.value.splice(modules.value.findIndex(module => module.courseCode === moduleCourseCode), 1)
+async function reqDeleteModule(courseCode) {
+  loadingModules.value = true
+  await deleteModule(props.studentId, courseCode)
+  await new Promise(resolve => setTimeout(resolve, 1000))
+  fetchModules()
 }
 </script>

@@ -14,7 +14,10 @@
         >mdi-account</v-icon>
         <span>Add Student</span>
       </h1>
-      <div class="d-flex flex-wrap justify-center align-center">
+      <div 
+        @keyup.enter="reqAddStudent"
+        class="d-flex flex-wrap justify-center align-center"
+      >
         <div
           v-for="(attr, index) in studentAttrs"
           :key="index"

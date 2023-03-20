@@ -86,15 +86,8 @@ export default class GoogleSheet {
   }
 
   async getModules(studentId) {
-    const response = await this.sheets.spreadsheets.values.get({
-      spreadsheetId: this.spreadsheetId,
-      range: 'Modules',
-    });
-
-    const modules = response.data.values
-      .slice(1)
-      .filter(row => row[0] === studentId);
-
+    const modules = (await this.getAllModules()).filter(row => row[0] === studentId);
+    console.log(modules)
     return modules.map(row => {
       return {
         studentId: row[0] ?? '',
@@ -106,13 +99,9 @@ export default class GoogleSheet {
   }
 
   async addModule(module) {
-    const response = await this.sheets.spreadsheets.values.get({
-      spreadsheetId: this.spreadsheetId,
-      range: 'Modules',
-    });
-    const modules = response.data.values.map(row => row.join(''));
+    const modules = (await this.getAllModules()).map(row => row.join(''));
     let insertRow = modules.indexOf('');
-    insertRow = insertRow === -1 ? modules.length + 1 : insertRow + 1;
+    insertRow = insertRow === -1 ? modules.length + 2 : insertRow + 2;
     await this.sheets.spreadsheets.values.update({
       spreadsheetId: this.spreadsheetId,
       range: `Modules!A${insertRow}:Z${insertRow}`,
@@ -121,5 +110,25 @@ export default class GoogleSheet {
         values: [module]
       }
     });
+  }
+
+  async deleteModule(studentId, courseCode) {
+    const modules = await this.getAllModules();
+    const row = modules.findIndex(row => row[0] === studentId && row[1] === courseCode);
+    if (row === -1) return;
+    await this.sheets.spreadsheets.values.clear({
+      spreadsheetId: this.spreadsheetId,
+      range: `Modules!A${row + 2}:Z${row + 2}`,
+    });
+  }
+
+  async getAllModules() {
+    const response = await this.sheets.spreadsheets.values.get({
+      spreadsheetId: this.spreadsheetId,
+      range: 'Modules',
+    });
+
+    console.log(response.data.values)
+    return response.data.values.slice(1);
   }
 }
