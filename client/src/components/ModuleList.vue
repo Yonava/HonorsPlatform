@@ -3,7 +3,7 @@
     <div 
       v-for="mod in modules"
       :key="mod.courseCode"
-      class="module-card pa-2 d-flex flex-row align-center"
+      class="module-card pa-2 mt-2 d-flex flex-row align-center"
     >
       <div style="d-flex flex-column align-center">
         <div style="color: white; opacity: 0.75; font-size: 0.75em;">

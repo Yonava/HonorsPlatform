@@ -56,10 +56,15 @@
       </v-text-field>
       <v-divider class="my-2"></v-divider>
       <div>
+        <v-btn
+          @click="showModuleAddModal = true"
+          color="blue-darken-1"
+        >Add Module</v-btn>
         <h2>
           Modules In Progress:
         </h2>
         <ModuleFetch 
+          @toggleCanDelete="canBeDeleted = !canBeDeleted"
           :studentId="student.id"
           :refetch="refetchModules"
         />
@@ -95,12 +100,16 @@
     >
       <span 
         @click="reqDeleteStudent"
-        style="color: red; cursor: pointer" 
+        :style="{
+          color: canBeDeleted ? '#e74c3c' : '#bdc3c7',
+          cursor: canBeDeleted ? 'pointer' : 'default',
+        }" 
         class="d-flex align-center mb-2 delete-student"
       >
         <v-icon>mdi-delete</v-icon>
         delete {{ student.name }} permanently
       </span>
+      {{ canBeDeleted }}
       <v-textarea
         v-model="student.note"
         clearable
@@ -128,6 +137,7 @@ import {
   onUnmounted
 } from 'vue'
 import ModuleFetch from './ModuleFetch.vue'
+import ModuleAddModal from './ModuleAddModal.vue'
 import { updateStudent } from '../SheetsAPI'
 
 const props = defineProps({
@@ -142,13 +152,17 @@ const props = defineProps({
 })
 
 const emits = defineEmits(['delete'])
-const reqDeleteStudent = () => emits('delete')
+const reqDeleteStudent = () => {
+  if (!canBeDeleted.value) return
+  emits('delete')
+}
 
 const editingName = ref(false)
 const updatingStudent = ref(false)
 const upToDate = ref(false)
 const showModuleAddModal = ref(false)
 const refetchModules = ref(false)
+const canBeDeleted = ref(false)
 
 const { student, autoSync } = toRefs(props)
 let studentWatcher = () => {}

@@ -1,5 +1,6 @@
 <template>
   <div>
+    {{ canBeDeleted }}
     <ModuleList
       v-if="!loadingModules"
       :modules="modules"
@@ -18,7 +19,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, defineProps, watch } from 'vue'
+import { 
+  ref, 
+  watch,
+  computed,
+  defineProps, 
+  defineEmits,
+} from 'vue'
 import { getModules } from '../SheetsAPI'
 import ModuleList from '../components/ModuleList.vue'
 
@@ -36,6 +43,8 @@ const props = defineProps({
   }
 })
 
+const emits = defineEmits(['toggleCanDelete'])
+
 watch(() => props.studentId, async () => {
   await fetchModules()
 }, { immediate: true })
@@ -49,6 +58,11 @@ async function fetchModules() {
   modules.value = await getModules(props.studentId)
   loadingModules.value = false
 }
+
+const canBeDeleted = computed({
+  get: () => modules.value.length === 0 && !loadingModules.value,
+  set: (val) => emits('toggleCanDelete', val)
+})
 
 function reqDeleteModule(moduleCourseCode) {
   // make a request to delete the module

@@ -47,7 +47,7 @@ export default class GoogleSheet {
   async addStudent(student) {
     let students = (await this.getStudents()).map(row => row.join(''));
     let insertRow = students.indexOf('');
-    insertRow = insertRow === -1 ? students.length : insertRow + 1;
+    insertRow = insertRow === -1 ? students.length + 1: insertRow + 1;
     await this.sheets.spreadsheets.values.update({
       spreadsheetId: this.spreadsheetId,
       range: `Students!A${insertRow}:Z${insertRow}`,
@@ -106,15 +106,19 @@ export default class GoogleSheet {
   }
 
   async addModule(module) {
-    let modules = (await this.getModules(module.studentId)).map(row => row.join(''));
+    const response = await this.sheets.spreadsheets.values.get({
+      spreadsheetId: this.spreadsheetId,
+      range: 'Modules',
+    });
+    const modules = response.data.values.map(row => row.join(''));
     let insertRow = modules.indexOf('');
-    insertRow = insertRow === -1 ? modules.length : insertRow + 1;
+    insertRow = insertRow === -1 ? modules.length + 1 : insertRow + 1;
     await this.sheets.spreadsheets.values.update({
       spreadsheetId: this.spreadsheetId,
       range: `Modules!A${insertRow}:Z${insertRow}`,
       valueInputOption: 'USER_ENTERED',
       resource: {
-        values: [Object.values(module)]
+        values: [module]
       }
     });
   }

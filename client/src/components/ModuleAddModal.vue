@@ -20,7 +20,6 @@
           :key="index"
         >
           <v-text-field
-            v-if="attr"
             v-model="moduleData[index]"
             :label="attr"
             style="width: 250px; margin-left: 10px; margin-right: 10px;"
@@ -68,14 +67,13 @@ const showDialog = computed({
 })
 
 const loading = ref(false)
-const moduleAttrs = ref(['courseCode', 'description', 'term'])
+const moduleAttrs = ref(['Course Code', 'Description', 'Term'])
 const moduleData = ref([])
 
 onMounted(() => initModuleData())
 
 function initModuleData() {
   moduleData.value = [
-    props.studentId, 
     ...moduleAttrs.value.map(() => '')
   ]
 }
@@ -86,11 +84,12 @@ async function reqAddModule() {
     return
   }
   loading.value = true
+  moduleData.value.unshift(props.studentId)
   await addModule(moduleData.value)
-  initModuleData()
   await new Promise(resolve => setTimeout(resolve, 1000))
   emits('close')
   emits('reFetchModules')
+  initModuleData()
   loading.value = false
 }
 

@@ -34,6 +34,12 @@ app.get("/modules/:studentId", async (req, res) => {
   res.json(modules);
 });
 
+app.post("/modules", async (req, res) => {
+  const module = req.body;
+  await sheetInstance.addModule(module);
+  res.json({ success: true });
+});
+
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(__dirname + '/public/'));
   app.get(/.*/, (req, res) => res.sendFile(__dirname + '/public/index.html'));
