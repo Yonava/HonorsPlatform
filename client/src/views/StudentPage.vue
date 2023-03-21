@@ -154,13 +154,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed, onUnmounted } from 'vue' 
+import { ref, onMounted, computed } from 'vue' 
 import { getStudents, deleteStudent, updateStudent } from '../SheetsAPI'
 import StudentAddModal from '../components/StudentAddModal.vue'
 import StudentList from '../components/StudentList.vue'
 import StudentDetail from '../components/StudentDetail.vue'
 import SortPanel from '../components/SortPanel.vue'
-import keyBindings from '../KeyBindings'
+import { useKeyBindings } from '../KeyBindings'
 
 const students = ref([])
 const studentAttrs = ref([])
@@ -170,12 +170,15 @@ const filterQuery = ref('')
 const autoSync = ref(false)
 const selectedStudent = ref(undefined)
 
-onMounted(async () => {
-  await fetchStudents()
+useKeyBindings({
+  'a': () => autoSync.value = !autoSync.value,
+  's': () => showAddModal.value = !showAddModal.value,
+  'r': () => refreshStudents(),
+  '/': () => document.querySelector('input').focus(),
 })
 
-document.addEventListener('keydown', async (e: any) => {
-  keyBindings(e, { autoSync, showAddModal, filterQuery, refreshStudents })
+onMounted(async () => {
+  await fetchStudents()
 })
 
 async function reqDeleteStudent() {
