@@ -107,11 +107,12 @@
     >
       <span 
         @click="reqDeleteStudent"
-        :style="{
-          color: canBeDeleted ? '#e74c3c' : '#bdc3c7',
-          cursor: canBeDeleted ? 'pointer' : 'default',
-        }" 
-        class="d-flex align-center mb-2 delete-student"
+        :class="[
+          'd-flex', 
+          'align-center', 
+          'mb-2', 
+          `${canBeDeleted ? 'delete-student' : 'delete-student-disabled'}`
+        ]"
       >
         <v-icon>mdi-delete</v-icon>
         delete {{ student.name }} permanently
@@ -211,8 +212,17 @@ async function reqUpdateStudent() {
 </script>
 
 <style scoped>
+.delete-student-disabled {
+  opacity: 0.25;
+  cursor: default;
+}
+
+.delete-student {
+  color: red;
+  cursor: pointer;
+}
+
 .delete-student:hover {
-  color: #e74c3c;
   text-decoration: underline;
 }
 
