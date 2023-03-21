@@ -95,8 +95,7 @@ async function reqAddStudent() {
   loading.value = true
   await addStudent(student.value)
   await new Promise(resolve => setTimeout(resolve, 1000))
-  emits('close')
-  emits('reFetchStudents')
+  emits('success', id)
   initStudent()
   loading.value = false
 }
@@ -107,7 +106,7 @@ function initStudent() {
 
 const emits = defineEmits([
   'close',
-  'reFetchStudents'
+  'success'
 ])
 </script>
 

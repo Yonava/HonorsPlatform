@@ -8,11 +8,11 @@
       <div
         v-for="student in students"
         :key="student"
-        @click="selectStudent(student)"
+        @click="selectedStudent = student"
         :class="[
           'mb-2',
           'student-card',
-          selected === student ? 'selected-student-card' : ''
+          selectedStudent === student ? 'selected-student-card' : ''
         ]"
       >
         <div style="font-weight: 900; font-size: 1.25em;">
@@ -44,11 +44,20 @@
 </template>
 
 <script setup>
-import { ref, defineProps, defineEmits } from 'vue'
+import { 
+  ref, 
+  defineProps,
+  defineEmits,
+  computed
+} from 'vue'
 
 const props = defineProps({
   students: {
     type: Array,
+    required: true
+  },
+  selected: {
+    type: Object,
     required: true
   },
   loading: {
@@ -57,14 +66,12 @@ const props = defineProps({
   }
 })
 
-const selected = ref(null)
+const selectedStudent = computed({
+  get: () => props.selected,
+  set: student => emit('select', student)
+})
 
 const emit = defineEmits(['select'])
-
-const selectStudent = (student) => {
-  selected.value = student
-  emit('select', student)
-}
 </script>
 
 <style scoped>

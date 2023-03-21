@@ -112,9 +112,10 @@
           class="d-flex flex-column align-center"
         >  
           <StudentList
-            :students="displayStudents"
-            :loading="loadingStudents"
             @select="selected = $event"
+            :students="displayStudents"
+            :selected="selected"
+            :loading="loadingStudents"
           />
         </v-sheet>
         <v-sheet 
@@ -145,7 +146,7 @@
     </v-main>
     <StudentAddModal 
       @close="showAddModal = false"
-      @reFetchStudents="fetchStudents"
+      @success="studentAdded($event)"
       :show="showAddModal"
       :studentAttrs="studentAttrs"
     />
@@ -179,6 +180,15 @@ async function reqDeleteStudent() {
   loadingStudents.value = true;
   await new Promise(resolve => setTimeout(resolve, 1000));
   await fetchStudents();
+}
+
+async function studentAdded(studentId: string) {
+  showAddModal.value = false
+  await fetchStudents()
+  selected.value = students.value.find((student: any) => student.id === studentId)
+  const index = students.value.indexOf(selected.value)
+  students.value.splice(index, 1)
+  students.value.unshift(selected.value)
 }
 
 async function fetchStudents() {
