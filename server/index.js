@@ -28,6 +28,16 @@ app.post("/students", async (req, res) => {
   res.json({ success: true });
 });
 
+app.get("/students/:studentId", async (req, res) => {
+  const { studentId } = req.params;
+  const student = await sheetInstance.getStudent(studentId);
+  if (!student) {
+    res.status(404).json({ error: `Student with ID ${studentId} not found` });
+    return;
+  }
+  res.json(student);
+});
+
 app.get("/modules/:studentId", async (req, res) => {
   const { studentId } = req.params;
   const modules = await sheetInstance.getModules(studentId);

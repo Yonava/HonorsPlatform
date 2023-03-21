@@ -1,5 +1,6 @@
 import * as path from 'path';
 import { google } from 'googleapis';
+
 export default class GoogleSheet {
   spreadsheetId = '1bW-aQRn-GAbTsNkV2VB9xtBFT3n-LPrSJXua_NA2G6Y';
   sheets;
@@ -35,6 +36,17 @@ export default class GoogleSheet {
     });
 
     return response.data.values;
+  }
+
+  async getStudent(studentId) {
+    const students = await this.getStudents();
+    const row = students.find(row => row[1] === studentId);
+    const columns = ['name', 'id', 'email', 'points', 'activeStatus', 'note']
+    if (!row) return;
+    return columns.reduce((acc, val, i) => {
+      acc[val] = row[i];
+      return acc;
+    }, {});
   }
 
   async deleteStudent(row) {

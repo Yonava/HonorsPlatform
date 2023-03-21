@@ -56,7 +56,7 @@
         Add Student
       </v-btn>
       <v-btn 
-        @click="refreshStudents"
+        @click="fetchStudents"
         :loading="loadingStudents"
         class="ml-3"
         style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240);"
@@ -173,7 +173,7 @@ const selectedStudent = ref(undefined)
 useKeyBindings({
   'a': () => autoSync.value = !autoSync.value,
   's': () => showAddModal.value = !showAddModal.value,
-  'r': () => refreshStudents(),
+  'r': () => fetchStudents(),
   '/': () => document.querySelector('input').focus(),
 })
 
@@ -200,6 +200,7 @@ async function studentAdded(studentId: string) {
 }
 
 async function fetchStudents() {
+  selectedStudent.value = undefined;
   loadingStudents.value = true
   students.value = []
   const data = await getStudents()
@@ -235,11 +236,6 @@ const displayStudents = computed(() => {
     return values.includes(query)
   })
 })
-
-async function refreshStudents() {
-  selectedStudent.value = undefined;
-  await fetchStudents();
-}
 </script>
 
 <style scoped>
