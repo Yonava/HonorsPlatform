@@ -70,6 +70,6 @@ async function reqDeleteModule(courseCode) {
   loadingModules.value = true
   await deleteModule(props.studentId, courseCode)
   await new Promise(resolve => setTimeout(resolve, 1000))
-  fetchModules()
+  await fetchModules()
 }
 </script>

@@ -66,12 +66,13 @@ const props = defineProps({
   }
 })
 
+const emits = defineEmits(['select'])
+
 const selectedStudent = computed({
   get: () => props.selected,
-  set: student => emit('select', student)
+  set: student => emits('select', student)
 })
 
-const emit = defineEmits(['select'])
 </script>
 
 <style scoped>
