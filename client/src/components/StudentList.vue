@@ -57,7 +57,6 @@ const props = defineProps({
     required: true
   },
   selected: {
-    type: Object,
     required: true
   },
   loading: {

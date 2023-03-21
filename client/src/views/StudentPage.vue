@@ -56,7 +56,7 @@
         Add Student
       </v-btn>
       <v-btn 
-        @click="refreshBtn"
+        @click="refreshStudents"
         :loading="loadingStudents"
         class="ml-3"
         style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240);"
@@ -112,9 +112,9 @@
           class="d-flex flex-column align-center"
         >  
           <StudentList
-            @select="selected = $event"
+            @select="selectedStudent = $event"
             :students="displayStudents"
-            :selected="selected"
+            :selected="selectedStudent"
             :loading="loadingStudents"
           />
         </v-sheet>
@@ -122,9 +122,9 @@
           color="blue-lighten-5" 
           style="width: 70%; height: 100%;"
         >
-          <div v-if="selected">
+          <div v-if="selectedStudent">
             <StudentDetail 
-              :student="selected"
+              :student="selectedStudent"
               :autoSync="autoSync"
               @delete="reqDeleteStudent"
             />
@@ -141,7 +141,7 @@
       </div>
       <img 
         src="../assets/honorsLogo.png"
-        style="position: absolute; bottom: 0; right: 0; mix-blend-mode: multiply; margin: 20px;" 
+        class="honors-logo"
       >
     </v-main>
     <StudentAddModal 
@@ -154,12 +154,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue' 
+import { ref, onMounted, computed, onUnmounted } from 'vue' 
 import { getStudents, deleteStudent, updateStudent } from '../SheetsAPI'
 import StudentAddModal from '../components/StudentAddModal.vue'
 import StudentList from '../components/StudentList.vue'
 import StudentDetail from '../components/StudentDetail.vue'
 import SortPanel from '../components/SortPanel.vue'
+import keyBindings from '../KeyBindings'
 
 const students = ref([])
 const studentAttrs = ref([])
@@ -167,28 +168,32 @@ const loadingStudents = ref(false)
 const showAddModal = ref(false)
 const filterQuery = ref('')
 const autoSync = ref(false)
-
-const selected = ref(undefined)
+const selectedStudent = ref(undefined)
 
 onMounted(async () => {
   await fetchStudents()
 })
 
+document.addEventListener('keydown', async (e: any) => {
+  keyBindings(e, { autoSync, showAddModal, filterQuery, refreshStudents })
+})
+
 async function reqDeleteStudent() {
-  await deleteStudent(selected.value.rowNum);
-  selected.value = undefined
-  loadingStudents.value = true;
-  await new Promise(resolve => setTimeout(resolve, 1000));
-  await fetchStudents();
+  await deleteStudent(selectedStudent.value.rowNum);
+  selectedStudent.value = undefined
+  loadingStudents.value = true
+  await new Promise(resolve => setTimeout(resolve, 1000))
+  await fetchStudents()
 }
 
 async function studentAdded(studentId: string) {
   showAddModal.value = false
   await fetchStudents()
-  selected.value = students.value.find((student: any) => student.id === studentId)
-  const index = students.value.indexOf(selected.value)
+  selectedStudent.value = students.value.find((student: any) => student.id === studentId)
+  const index = students.value.indexOf(selectedStudent.value)
+  if (index === -1) return
   students.value.splice(index, 1)
-  students.value.unshift(selected.value)
+  students.value.unshift(selectedStudent.value)
 }
 
 async function fetchStudents() {
@@ -228,8 +233,8 @@ const displayStudents = computed(() => {
   })
 })
 
-async function refreshBtn() {
-  selected.value = undefined;
+async function refreshStudents() {
+  selectedStudent.value = undefined;
   await fetchStudents();
 }
 </script>
@@ -270,6 +275,14 @@ async function refreshBtn() {
 
 .fade-animate {
   animation: fade-in-out 1.5s ease-in-out infinite alternate;
+}
+
+img.honors-logo {
+  position: absolute; 
+  bottom: 0; 
+  right: 0; 
+  mix-blend-mode: multiply; 
+  margin: 20px;
 }
 
 @keyframes fade-in-out {
