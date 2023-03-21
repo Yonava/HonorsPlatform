@@ -1,5 +1,8 @@
 <template>
-  <div>
+  <v-sheet 
+    color="blue-darken-2"
+    style="overscroll-y-behavior: none;"
+  >
     <v-app-bar
       color="blue-darken-2"
       class="px-5"
@@ -146,7 +149,7 @@
       :show="showAddModal"
       :studentAttrs="studentAttrs"
     />
-  </div>
+  </v-sheet>
 </template>
 
 <script setup lang="ts">

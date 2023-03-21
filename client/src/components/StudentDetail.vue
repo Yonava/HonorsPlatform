@@ -10,7 +10,7 @@
       <div class="d-flex flex-row align-center">
         <input 
           v-model="student.name"
-          placeholder="Name"
+          placeholder="Enter Name"
           type="text" 
           class="student-name-input"
         >
