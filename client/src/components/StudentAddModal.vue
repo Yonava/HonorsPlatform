@@ -35,6 +35,12 @@
         :loading="loading"
         color="blue-darken-1"
       >add student</v-btn>
+      <span 
+        class="mt-2"
+        style="color: red"
+      >
+        {{ errorMessage }}
+      </span>
       <v-icon 
         @click="showDialog = false"
         class="ma-4"
@@ -72,6 +78,7 @@ const showDialog = computed({
 
 const student = ref([])
 const loading = ref(false)
+const errorMessage = ref('')
 
 onMounted(() => initStudent())
 
@@ -80,12 +87,17 @@ async function reqAddStudent() {
     emits('close')
     return
   }
+  const id = student.value[1]
+  if (!id) {
+    errorMessage.value = 'ID is required'
+    return
+  }
   loading.value = true
   await addStudent(student.value)
-  initStudent()
   await new Promise(resolve => setTimeout(resolve, 1000))
   emits('close')
   emits('reFetchStudents')
+  initStudent()
   loading.value = false
 }
 
