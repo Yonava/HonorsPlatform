@@ -1,13 +1,15 @@
 import { onUnmounted } from "vue"
 
-export function useKeyBindings(bindings: any) {
+type KeyBindings = { [key: string]: () => void }
+
+export function useKeyBindings(bindings: KeyBindings) {
   document.addEventListener("keydown", (e) => keyBindings(e, bindings))
   onUnmounted(() => {
     document.removeEventListener("keydown", (e) => keyBindings(e, bindings))
   })
 }
 
-function keyBindings(e: KeyboardEvent, bindings: any) {
+function keyBindings(e: KeyboardEvent, bindings: KeyBindings) {
   if (document.activeElement !== document.body) return
   if (!bindings[e.key]) return
   e.preventDefault()

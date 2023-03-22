@@ -71,7 +71,6 @@ const selectedStudent = computed({
   get: () => props.selected,
   set: student => emits('select', student)
 })
-
 </script>
 
 <style scoped>

@@ -1,25 +1,64 @@
 import express from "express";
 import GoogleSheet from "./GoogleSheet.js";
+import { google } from 'googleapis';
+
+const { OAuth2 } = google.auth;
+
+const clientId = '190006346508-fsioaathe0vo6ou4c46dssgq3vnr0kk9.apps.googleusercontent.com';
+const clientSecret = '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';
+const redirectUri = 'http://localhost:5177/auth';
+const scope = 'https://www.googleapis.com/auth/spreadsheets';
 
 const app = express();
 app.use(express.json());
-const sheetInstance = await GoogleSheet.getInstance();
+let sheetInstance;
+
+app.get('/auth/:oauthtoken', async (req, res) => {
+  const { oauthtoken } = req.params;
+  const auth = new OAuth2(clientId, clientSecret, redirectUri);
+  try {
+    sheetInstance = await GoogleSheet.getInstance(auth, oauthtoken);
+  } catch (e) {
+    const url = auth.generateAuthUrl({
+      access_type: 'offline',
+      scope,
+    });
+    res.json({ 
+      error: 'Invalid token',
+      url
+    });
+    return;
+  }
+  res.json({ token_received: true });
+})
 
 app.get("/students", async (req, res) => {
-  const students = await sheetInstance.getStudents();
-  res.json(students);
+  try {
+    const students = await sheetInstance.getStudents();
+    res.json(students);
+  } catch {
+    res.status(401).json({ error: 'Forbidden' });
+  }
 });
 
 app.delete("/students/:row", async (req, res) => {
-  const { row } = req.params;
-  await sheetInstance.deleteStudent(row);
-  res.json({ success: true });
+  try {
+    const { row } = req.params;
+    await sheetInstance.deleteStudent(row);
+    res.json({ success: true });
+  } catch {
+    res.status(401).json({ error: 'Forbidden' });
+  }
 });
 
 app.put("/students", async (req, res) => {
-  const student = req.body;
-  await sheetInstance.updateStudent(student);
-  res.json({ success: true });
+  try {
+    const student = req.body;
+    await sheetInstance.updateStudent(student);
+    res.json({ success: true });
+  } catch {
+    res.status(401).json({ error: 'Forbidden' });
+  }
 });
 
 app.post("/students", async (req, res) => {
@@ -29,13 +68,17 @@ app.post("/students", async (req, res) => {
 });
 
 app.get("/students/:studentId", async (req, res) => {
-  const { studentId } = req.params;
-  const student = await sheetInstance.getStudent(studentId);
-  if (!student) {
-    res.status(404).json({ error: `Student with ID ${studentId} not found` });
-    return;
+  try {
+    const { studentId } = req.params;
+    const student = await sheetInstance.getStudent(studentId);
+    if (!student) {
+      res.status(404).json({ error: `Student with ID ${studentId} not found` });
+      return;
+    }
+    res.json(student);
+  } catch {
+    res.status(401).json({ error: 'Forbidden' });
   }
-  res.json(student);
 });
 
 app.get("/modules/:studentId", async (req, res) => {

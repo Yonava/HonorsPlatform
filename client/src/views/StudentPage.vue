@@ -204,6 +204,7 @@ async function fetchStudents() {
   loadingStudents.value = true
   students.value = []
   const data = await getStudents()
+  console.log(data)
   studentAttrs.value = data[0]
 
   data.slice(1).forEach((row: any, index: number) => {

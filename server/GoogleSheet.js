@@ -1,4 +1,3 @@
-import * as path from 'path';
 import { google } from 'googleapis';
 
 export default class GoogleSheet {
@@ -6,30 +5,37 @@ export default class GoogleSheet {
   sheets;
   static instance;
 
-  static async getInstance() {
+  static async getInstance(auth, authCode) {
     if (!GoogleSheet.instance) {
-      GoogleSheet.instance = await new GoogleSheet().init();
+      try {
+        GoogleSheet.instance = await new GoogleSheet().init(auth, authCode);
+      } catch (e) {
+        throw e
+      }
     }
 
     return GoogleSheet.instance;
   }
 
-  async init() {
-    const config = {
-      keyFilename: path.join(process.cwd(), 'credentials.json'),
-      scopes: ['https://www.googleapis.com/auth/spreadsheets']
-    };
+  async init(auth, authCode) {
+    try {
+      const { tokens } = await auth.getToken(authCode);
+      auth.setCredentials(tokens);
+    } catch (e) {
+      throw e
+    }
 
-    const auth = await google.auth.getClient(config);
     this.sheets = google.sheets({ 
       version: 'v4', 
-      auth 
+      auth
     });
 
+    await new Promise(resolve => setTimeout(resolve, 1000));
     return this;
   }
 
   async getStudents() {
+    console.log('getting students')
     const response = await this.sheets.spreadsheets.values.get({
       spreadsheetId: this.spreadsheetId,
       range: 'Students',
