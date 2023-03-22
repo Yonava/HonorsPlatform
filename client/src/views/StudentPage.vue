@@ -1,21 +1,41 @@
 <template>
   <v-sheet 
-    color="blue-darken-2"
+    :color="`${panel.color}-darken-2`"
     style="overscroll-y-behavior: none;"
   >
     <v-app-bar
-      color="blue-darken-2"
+      :color="`${panel.color}-darken-2`"
       class="px-5"
     >
       <div class="d-flex align-center">
         <v-icon 
-          icon="mdi-account-group" 
+          :icon="panel.icon" 
           size="x-large" 
           class="mr-2"
         ></v-icon>
-        <h1 style="font-weight: 700;">
-          Students
-        </h1>
+        <v-menu>
+          <template v-slot:activator="{ props }">
+            <h1 
+              v-bind="props"
+              style="font-weight: 700; user-select: none; cursor: pointer;"
+            >
+              {{ panel.title }}
+            </h1>
+          </template>
+
+          <v-list>
+            <v-list-item
+              v-for="type in PanelType"
+              :key="type"
+              @click="changePanel(type)"
+              class="type-list-item"
+            >
+              <v-list-item-title
+                style="text-transform: capitalize;"
+              >{{ type }}</v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
         <p 
           :style="{
             opacity: loadingStudents ? 0 : 1,
@@ -53,7 +73,7 @@
           size="large" 
           class="mr-2"
         ></v-icon>
-        Add Student
+        Add {{ panel.title.slice(0, -1) }}
       </v-btn>
       <v-btn 
         @click="fetchStudents"
@@ -76,7 +96,7 @@
       >
         <v-sheet 
           class="d-flex align-center flex-column flex-start pt-3"
-          color="blue-darken-2" 
+          :color="`${panel.color}-darken-2`"
           border 
           style="width: 5%; height: 100%; background: green"
         >
@@ -99,14 +119,14 @@
             >Auto Sync</span>
             <v-switch
               v-model="autoSync"
-              color="blue-lighten-4"
+              :color="`${panel.color}-lighten-4`"
               style="transform: translateY(-10px);"
               hide-details
             ></v-switch>
           </div>
         </v-sheet>
         <v-sheet 
-          color="blue-lighten-4" 
+          :color="`${panel.color}-lighten-4`"
           border 
           style="width: 25%; height: 100%; overflow: auto;"
           class="d-flex flex-column align-center"
@@ -119,11 +139,12 @@
           />
         </v-sheet>
         <v-sheet 
-          color="blue-lighten-5" 
+          :color="`${panel.color}-lighten-5`"
           style="width: 70%; height: 100%;"
         >
           <div v-if="selectedStudent">
-            <StudentDetail 
+            <component
+              :is="panel.detailComponent" 
               :student="selectedStudent"
               :autoSync="autoSync"
               @delete="reqDeleteStudent"
@@ -161,6 +182,7 @@ import StudentList from '../components/StudentList.vue'
 import StudentDetail from '../components/StudentDetail.vue'
 import SortPanel from '../components/SortPanel.vue'
 import { useKeyBindings } from '../KeyBindings'
+import { PanelType, Panel, switchPanel } from '../SwitchPanel'
 
 const students = ref([])
 const studentAttrs = ref([])
@@ -169,6 +191,12 @@ const showAddModal = ref(false)
 const filterQuery = ref('')
 const autoSync = ref(false)
 const selectedStudent = ref(undefined)
+
+const panel = ref<Panel>(switchPanel(PanelType.GRADUATES))
+
+const changePanel = (panelType: PanelType) => {
+  panel.value = switchPanel(panelType)
+}
 
 useKeyBindings({
   'a': () => autoSync.value = !autoSync.value,
@@ -239,6 +267,15 @@ const displayStudents = computed(() => {
 </script>
 
 <style scoped>
+.type-list-item {
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.type-list-item:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
 .search-input {
   background: rgba(0, 0, 0, 0.3); 
   color: rgb(240, 240, 240); 
