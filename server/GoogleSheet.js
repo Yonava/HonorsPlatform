@@ -30,12 +30,10 @@ export default class GoogleSheet {
       auth
     });
 
-    await new Promise(resolve => setTimeout(resolve, 1000));
     return this;
   }
 
   async getStudents() {
-    console.log('getting students')
     const response = await this.sheets.spreadsheets.values.get({
       spreadsheetId: this.spreadsheetId,
       range: 'Students',

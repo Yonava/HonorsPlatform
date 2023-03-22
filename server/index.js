@@ -82,21 +82,33 @@ app.get("/students/:studentId", async (req, res) => {
 });
 
 app.get("/modules/:studentId", async (req, res) => {
-  const { studentId } = req.params;
-  const modules = await sheetInstance.getModules(studentId);
-  res.json(modules);
+  try {
+    const { studentId } = req.params;
+    const modules = await sheetInstance.getModules(studentId);
+    res.json(modules);
+  } catch {
+    res.status(401).json({ error: 'Forbidden' });
+  }
 });
 
 app.post("/modules", async (req, res) => {
-  const module = req.body;
-  await sheetInstance.addModule(module);
-  res.json({ success: true });
+  try {
+    const module = req.body;
+    await sheetInstance.addModule(module);
+    res.json({ success: true });
+  } catch {
+    res.status(401).json({ error: 'Forbidden' });
+  }
 });
 
 app.delete("/modules/:studentId/:courseCode", async (req, res) => {
-  const { studentId, courseCode } = req.params;
-  await sheetInstance.deleteModule(studentId, courseCode);
-  res.json({ success: true });
+  try {
+    const { studentId, courseCode } = req.params;
+    await sheetInstance.deleteModule(studentId, courseCode);
+    res.json({ success: true });
+  } catch {
+    res.status(401).json({ error: 'Forbidden' });
+  }
 });
 
 if (process.env.NODE_ENV === 'production') {
