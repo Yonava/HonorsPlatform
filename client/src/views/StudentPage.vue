@@ -31,12 +31,14 @@
               class="type-list-item"
             >
               <v-list-item-title
-                :style="{
-                  textTransform: 'capitalize',
-                  color: type === panel.title.toLowerCase() ? panel.color : 'black',
-                  fontWeight: type === panel.title.toLowerCase() ? 700 : 400,
-                }"
-              >{{ type }}</v-list-item-title>
+                :style="typeListStyle(type)"
+                class="type-list-text"
+              >
+                <v-icon>
+                  {{ switchPanel(type).icon }}
+                </v-icon>
+                {{ type }}
+              </v-list-item-title>
             </v-list-item>
           </v-list>
         </v-menu>
@@ -179,8 +181,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue' 
-import { getStudents, deleteStudent, updateStudent } from '../SheetsAPI'
+import { ref, onMounted, computed, watch } from 'vue' 
+import { getEvery, deleteStudent } from '../SheetsAPI'
 import StudentAddModal from '../components/StudentAddModal.vue'
 import StudentList from '../components/StudentList.vue'
 import StudentDetail from '../components/StudentDetail.vue'
@@ -196,21 +198,25 @@ const filterQuery = ref('')
 const autoSync = ref(false)
 const selectedStudent = ref(undefined)
 
-const panel = ref<Panel>(switchPanel(PanelType.GRADUATES))
+const panel = ref<Panel>(switchPanel(PanelType.STUDENTS))
 
 const changePanel = (panelType: PanelType) => {
   panel.value = switchPanel(panelType)
 }
 
+watch(panel, async () => {
+  await fetchData()
+})
+
 useKeyBindings({
   'a': () => autoSync.value = !autoSync.value,
   's': () => showAddModal.value = !showAddModal.value,
-  'r': () => fetchStudents(),
+  'r': () => fetchData(),
   '/': () => document.querySelector('input').focus(),
 })
 
 onMounted(async () => {
-  await fetchStudents()
+  await fetchData()
 })
 
 async function reqDeleteStudent() {
@@ -218,12 +224,12 @@ async function reqDeleteStudent() {
   selectedStudent.value = undefined
   loadingStudents.value = true
   await new Promise(resolve => setTimeout(resolve, 1000))
-  await fetchStudents()
+  await fetchData()
 }
 
 async function studentAdded(studentId: string) {
   showAddModal.value = false
-  await fetchStudents()
+  await fetchData()
   selectedStudent.value = students.value.find((student: any) => student.id === studentId)
   const index = students.value.indexOf(selectedStudent.value)
   if (index === -1) return
@@ -231,33 +237,19 @@ async function studentAdded(studentId: string) {
   students.value.unshift(selectedStudent.value)
 }
 
-async function fetchStudents() {
+async function fetchData() {
   selectedStudent.value = undefined;
   loadingStudents.value = true
   students.value = []
-  const data = await getStudents()
-  studentAttrs.value = data[0]
-
-  data.slice(1).forEach((row: any, index: number) => {
-    if (row.length === 0) return
-    const misc = data[0].slice(6).reduce((acc: any, category: string, index: number) => {
-      if (category === '') return acc
-      acc[category] = row[index + 6] ?? ''
-      return acc
-    }, {})
-    students.value.push({
-      // + 1 for header row, + 1 for 0-indexing
-      rowNum: index + 2,
-      name: row[0] ?? '',
-      id: row[1] ?? '',
-      email: row[2] ?? '',
-      points: row[3] ?? 0,
-      activeStatus: row[4] ?? '',
-      note: row[5] ?? '',
-      misc
-    })
-  })
+  const data = await getEvery(panel.value.sheetRange)
+  students.value = panel.value.mapData(data)
   loadingStudents.value = false
+}
+
+function typeListStyle(type: PanelType) {
+  return {
+    color: switchPanel(type).title === panel.value.title ? panel.value.color : 'black',
+  }
 }
 
 const displayStudents = computed(() => {
@@ -278,6 +270,12 @@ const displayStudents = computed(() => {
 
 .type-list-item:hover {
   background: rgba(0, 0, 0, 0.1);
+}
+
+.type-list-text {
+  font-size: 1.2em;
+  font-weight: 700;
+  text-transform: capitalize;
 }
 
 .search-input {

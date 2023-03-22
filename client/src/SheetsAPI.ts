@@ -5,9 +5,9 @@ function catchAction() {
   router.push("/auth");
 }
 
-export async function getStudents() {
+export async function getEvery(range: string) {
   try {
-    return (await axios.get("/api/students")).data;
+    return (await axios.get(`/api/range/${range}`)).data;
   } catch {
     router.push({
       name: "auth",

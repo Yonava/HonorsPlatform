@@ -1,8 +1,10 @@
 import StudentDetail from '../src/components/StudentDetail.vue';
+import { mapStudents, mapGraduates, mapModules } from './DataMappers';
 
 export enum PanelType {
-  GRADUATES = 'graduates',
   STUDENTS = 'students',
+  GRADUATES = 'graduates',
+  MODULES = 'modules',
 }
 
 export type Panel = {
@@ -10,6 +12,8 @@ export type Panel = {
   title: string,
   color: string,
   icon: string,
+  sheetRange: string,
+  mapData: (sheetData: any[][]) => Object[]
 };
 
 export function switchPanel(panel: PanelType): Panel {
@@ -19,21 +23,29 @@ export function switchPanel(panel: PanelType): Panel {
         detailComponent: StudentDetail,
         title: 'Graduates',
         color: 'purple',
-        icon: 'mdi-account-multiple-check',
+        icon: 'mdi-account-school',
+        sheetRange: 'Graduates',
+        mapData: mapGraduates
       };
     case PanelType.STUDENTS:
       return {
         detailComponent: StudentDetail,
         title: 'Students',
         color: 'blue',
-        icon: 'mdi-account-multiple',
+        icon: 'mdi-account-group',
+        sheetRange: 'Students',
+        mapData: mapStudents
       };
-    default:
+    case PanelType.MODULES:
       return {
         detailComponent: StudentDetail,
-        title: 'Students',
-        color: 'blue',
-        icon: 'mdi-account-multiple',
+        title: 'Modules',
+        color: 'orange',
+        icon: 'mdi-book-open-variant',
+        sheetRange: 'Modules',
+        mapData: mapModules
       };
+    default:
+      throw new Error('switchPanel: Invalid panel type');
   }
 }
