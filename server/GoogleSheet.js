@@ -145,4 +145,13 @@ export default class GoogleSheet {
 
     return response.data.values.slice(1);
   }
+
+  async getRange(range) {
+    const response = await this.sheets.spreadsheets.values.get({
+      spreadsheetId: this.spreadsheetId,
+      range,
+    });
+
+    return response.data.values;
+  }
 }

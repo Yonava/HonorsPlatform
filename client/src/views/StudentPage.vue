@@ -82,7 +82,7 @@
         Add {{ panel.title.slice(0, -1) }}
       </v-btn>
       <v-btn 
-        @click="fetchStudents"
+        @click="fetchData"
         :loading="loadingStudents"
         class="ml-3"
         style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240);"
@@ -220,7 +220,7 @@ onMounted(async () => {
 })
 
 async function reqDeleteStudent() {
-  await deleteStudent(selectedStudent.value.rowNum);
+  await deleteStudent(selectedStudent.value.row);
   selectedStudent.value = undefined
   loadingStudents.value = true
   await new Promise(resolve => setTimeout(resolve, 1000))

@@ -41,6 +41,17 @@ app.get('/auth/:oauthtoken', async (req, res) => {
   res.json({ token_received: true });
 })
 
+app.get("/range/:range", async (req, res) => {
+  try {
+    const { range } = req.params;
+    const data = await sheetInstance.getRange(range);
+    res.json(data);
+  } catch {
+    GoogleSheet.instance = null;
+    res.status(401).json({ error: 'Forbidden' });
+  }
+});
+
 app.get("/students", async (req, res) => {
   try {
     const students = await sheetInstance.getStudents();
