@@ -13,19 +13,28 @@ const app = express();
 app.use(express.json());
 let sheetInstance;
 
+function getAuthUrl() {
+  const auth = new OAuth2(clientId, clientSecret, redirectUri);
+  const url = auth.generateAuthUrl({
+    access_type: 'offline',
+    scope,
+  });
+  return url;
+}
+
+app.get('/auth/url', (req, res) => {
+  res.json({ url: getAuthUrl() });
+});
+
 app.get('/auth/:oauthtoken', async (req, res) => {
   const { oauthtoken } = req.params;
   const auth = new OAuth2(clientId, clientSecret, redirectUri);
   try {
     sheetInstance = await GoogleSheet.getInstance(auth, oauthtoken);
   } catch (e) {
-    const url = auth.generateAuthUrl({
-      access_type: 'offline',
-      scope,
-    });
     res.json({ 
       error: 'Invalid token',
-      url
+      url: getAuthUrl()
     });
     return;
   }
@@ -37,6 +46,7 @@ app.get("/students", async (req, res) => {
     const students = await sheetInstance.getStudents();
     res.json(students);
   } catch {
+    GoogleSheet.instance = null;
     res.status(401).json({ error: 'Forbidden' });
   }
 });
@@ -47,6 +57,7 @@ app.delete("/students/:row", async (req, res) => {
     await sheetInstance.deleteStudent(row);
     res.json({ success: true });
   } catch {
+    GoogleSheet.instance = null;
     res.status(401).json({ error: 'Forbidden' });
   }
 });
@@ -57,14 +68,20 @@ app.put("/students", async (req, res) => {
     await sheetInstance.updateStudent(student);
     res.json({ success: true });
   } catch {
+    GoogleSheet.instance = null;
     res.status(401).json({ error: 'Forbidden' });
   }
 });
 
 app.post("/students", async (req, res) => {
-  const student = req.body;
-  await sheetInstance.addStudent(student);
-  res.json({ success: true });
+  try {
+    const student = req.body;
+    await sheetInstance.addStudent(student);
+    res.json({ success: true });
+  } catch {
+    GoogleSheet.instance = null;
+    res.status(401).json({ error: 'Forbidden' });
+  }
 });
 
 app.get("/students/:studentId", async (req, res) => {
@@ -77,6 +94,7 @@ app.get("/students/:studentId", async (req, res) => {
     }
     res.json(student);
   } catch {
+    GoogleSheet.instance = null;
     res.status(401).json({ error: 'Forbidden' });
   }
 });
@@ -87,6 +105,7 @@ app.get("/modules/:studentId", async (req, res) => {
     const modules = await sheetInstance.getModules(studentId);
     res.json(modules);
   } catch {
+    GoogleSheet.instance = null;
     res.status(401).json({ error: 'Forbidden' });
   }
 });
@@ -97,6 +116,7 @@ app.post("/modules", async (req, res) => {
     await sheetInstance.addModule(module);
     res.json({ success: true });
   } catch {
+    GoogleSheet.instance = null;
     res.status(401).json({ error: 'Forbidden' });
   }
 });
@@ -107,6 +127,7 @@ app.delete("/modules/:studentId/:courseCode", async (req, res) => {
     await sheetInstance.deleteModule(studentId, courseCode);
     res.json({ success: true });
   } catch {
+    GoogleSheet.instance = null;
     res.status(401).json({ error: 'Forbidden' });
   }
 });

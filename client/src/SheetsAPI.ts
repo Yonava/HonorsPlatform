@@ -9,7 +9,12 @@ export async function getStudents() {
   try {
     return (await axios.get("/api/students")).data;
   } catch {
-    catchAction();
+    router.push({
+      name: "auth",
+      query: {
+        hold: "true",
+      }
+    })
   }
 }
 

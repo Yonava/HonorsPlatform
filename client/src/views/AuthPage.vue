@@ -21,13 +21,33 @@
       color="blue-darken-2"
       class="d-flex align-center justify-center flex-column pa-5"
       style="border-radius: 10px;"
+      elevation="10"
     >
-      <h2 class="mb-3">
-        Click to attempt authorization
+      <h2 class="mb-5">
+        Click below to re-attempt authorization
       </h2>
-      <v-btn @click="$router.push('/panel')">
-        Authorize
+      <v-btn 
+        @click="authorize"
+        rounded
+      >
+        Attempt Authorization
       </v-btn>
+      <div class="mt-7">
+        <p style="font-weight: 900;">
+          Authorization failed, this could be due to one of the following reasons:
+        </p>
+        <ol class="ml-4">
+          <li>
+            Dr. Matthews has not authorized you to use this application
+          </li>
+          <li>
+            Your previous credentials have expired
+          </li>
+          <li>
+            Your internet is garbage
+          </li>
+        </ol>
+      </div>
     </v-sheet>
   </v-sheet>
 </template>
@@ -35,18 +55,26 @@
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router'
 import { onMounted, ref } from 'vue'
+import axios from 'axios'
 
 const route = useRoute()
 const router = useRouter()
 const loading = ref(true)
 
 onMounted(() => {
-  localStorage.setItem('token', route.query.code as string)
-  router.push({ name: 'panel' })
   setTimeout(() => {
     loading.value = false
-  }, 2000)
+  }, 1000)
+  localStorage.setItem('token', route.query.code as string)
+  if (route.query.hold) return
+  router.push({ name: 'panel' })
 })
+
+const authorize = async () => {
+  const response = await axios.get('/api/auth/url')
+  const url = response.data.url
+  location.replace(url)
+}
 </script>
 
 <style scoped>
