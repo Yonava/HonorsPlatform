@@ -1,33 +1,70 @@
 import axios from "axios";
+import router from "./router";
+
+function catchAction() {
+  router.push("/auth");
+}
 
 export async function getStudents() {
-  return (await axios.get("/api/students")).data;
+  try {
+    return (await axios.get("/api/students")).data;
+  } catch {
+    catchAction();
+  }
 }
 
 export async function getStudent(studentId: number) {
-  return (await axios.get(`/api/students/${studentId}`)).data;
+  try {
+    return (await axios.get(`/api/students/${studentId}`)).data;
+  } catch {
+    catchAction();
+  }
 }
 
 export async function deleteStudent(row: number) {
-  await axios.delete(`/api/students/${row}`);
+  try {
+    await axios.delete(`/api/students/${row}`);
+  } catch {
+    catchAction();
+  }
 }
 
 export async function addStudent(student: any) {
-  await axios.post("/api/students", student);
+  try {
+    await axios.post("/api/students", student);
+  } catch {
+    catchAction();
+  }
 }
 
 export async function updateStudent(student: any) {
-  await axios.put("/api/students", student);
+  try {
+    await axios.put("/api/students", student);
+  } catch {
+    catchAction();
+  }
 }
 
 export async function getModules(studentId: string) {
-  return (await axios.get(`/api/modules/${studentId}`)).data;
+  try {
+    return (await axios.get(`/api/modules/${studentId}`)).data;
+  } catch {
+    catchAction();
+  }
 }
 
 export async function deleteModule(studentId: string, courseCode: string) {
-  await axios.delete(`/api/modules/${studentId}/${courseCode}`);
+  try {
+    await axios.delete(`/api/modules/${studentId}/${courseCode}`);
+  } catch {
+    catchAction();
+  }
 }
 
 export async function addModule(module: any) {
-  await axios.post("/api/modules", module);
+  try {
+    await axios.post("/api/modules", module);
+  } catch {
+    catchAction();
+  }
 }
