@@ -31,7 +31,11 @@
               class="type-list-item"
             >
               <v-list-item-title
-                style="text-transform: capitalize;"
+                :style="{
+                  textTransform: 'capitalize',
+                  color: type === panel.title.toLowerCase() ? panel.color : 'black',
+                  fontWeight: type === panel.title.toLowerCase() ? 700 : 400,
+                }"
               >{{ type }}</v-list-item-title>
             </v-list-item>
           </v-list>
