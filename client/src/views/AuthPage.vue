@@ -11,11 +11,11 @@
       color="blue-darken-2"
       size="64"
     ></v-progress-circular>
-    <img
+    <!-- <img
       v-if="!loading"
       src="../assets/honorsLogo.png"
       class="logo mb-7"
-    />
+    /> -->
     <v-sheet 
       v-if="!loading"
       color="blue-darken-2"
@@ -23,22 +23,25 @@
       style="border-radius: 10px;"
       elevation="10"
     >
-      <h2 class="mb-5">
-        Click below to re-attempt authorization
-      </h2>
+      <h1 class="mb-5">
+        <v-icon class="mr-1 mb-1">mdi-alert</v-icon>
+        Authorization Failed!
+      </h1>
       <v-btn 
         @click="authorize"
+        color="white"
         rounded
+        elevation="10"
       >
-        Attempt Authorization
+        Re-Attempt Authorization
       </v-btn>
       <div class="mt-7">
         <p style="font-weight: 900;">
-          Authorization failed, this could be due to one of the following reasons:
+          This could be due to one of the following reasons:
         </p>
         <ol class="ml-4">
           <li>
-            Dr. Matthews has not authorized you to use this application
+            Dr. Matthews doesn't like you
           </li>
           <li>
             Your previous credentials have expired
