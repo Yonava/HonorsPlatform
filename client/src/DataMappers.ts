@@ -8,7 +8,8 @@ function removeEmptyRows(item: Object) {
 
 export async function mapStudents(sheetData: any[][]): Promise<Object[]> {
   // get header row categories
-  const headerRow = await getHeaderRow('Students');
+  const studentRange = 'Students';
+  const headerRow = await getHeaderRow(studentRange);
   const categories = headerRow
     .slice(6)
     .filter((category: any) => category !== '')

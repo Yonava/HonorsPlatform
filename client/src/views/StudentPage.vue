@@ -231,12 +231,7 @@ async function itemAdded<T>(item: T) {
   showAddModal.value = false
   await fetchData()
   const index = items.value.findIndex((i: T) => {
-    const keys = panel.value.keys
-    for (let key of keys) {
-      if (i[key] !== item[key]) return false
-    }
-
-    return true
+    return panel.value.keys.every(key => i[key] === item[key]);
   })
   console.log(index)
   if (index === -1) return

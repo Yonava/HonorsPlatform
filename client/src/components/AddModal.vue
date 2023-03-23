@@ -47,8 +47,7 @@
       >add {{ panel.title.slice(0, -1) }}</v-btn>
       <v-icon 
         @click="showDialog = false"
-        class="ma-4"
-        style="position: absolute; left: 0; top: 0; cursor: pointer;"
+        class="close-dialog ma-4"
       >mdi-close</v-icon>
     </v-sheet>
   </v-dialog>
@@ -132,12 +131,18 @@ const emits = defineEmits([
   align-items: center;
   background-color: white;
   border-radius: 15px;
-  border: 5px solid #467ada;
 }
 
 .field-input {
   width: 250px; 
   margin-left: 10px; 
   margin-right: 10px;
+}
+
+.close-dialog {
+  position: absolute; 
+  left: 0; 
+  top: 0; 
+  cursor: pointer;
 }
 </style>

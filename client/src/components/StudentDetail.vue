@@ -4,9 +4,70 @@
     style="width: 100%; padding: 20px"
   >
     <div style="width: 55%;">
-      <p style="font-weight: 200">
+      <p
+        v-if="item.id"
+        style="font-weight: 200"
+      >
         {{ item.id }}
       </p>
+      <v-dialog 
+        v-else
+        v-model="dialog"
+        width="300"
+      >
+        <template #activator="{ props }">
+          <v-btn 
+            v-bind="props"
+            size="x-small"
+            color="red"
+          >
+            Add Student ID
+          </v-btn>
+        </template>
+        <div 
+          class="pa-4"
+          style="background: rgb(230, 230, 230); border-radius: 5px; box-shadow: 0 0 10px 0 rgba(0,0,0,0.2);"
+        >
+          <div v-if="!updatingStudent">
+            <v-icon color="red">mdi-alert</v-icon>
+            <p 
+              style="color: red"
+              class="mb-2"
+            >
+              Warning: Student IDs are unique and cannot be changed once set!
+            </p>
+            <v-text-field
+              v-model="tempStudentId"
+              :rules="[studentIdRule]"
+              variant="solo"
+              label="Student ID"
+              class="mb-2"
+            ></v-text-field>
+            <div class="d-flex">
+              <v-btn
+                @click="saveId"
+                :disabled="typeof studentIdRule(tempStudentId) === 'string'"
+                color="green"
+              >
+                Save
+              </v-btn>
+              <v-spacer></v-spacer>
+              <v-btn
+                @click="dialog = false"
+                color="red"
+              >
+                Cancel
+              </v-btn>
+            </div>
+          </div>
+          <div v-else>
+            <v-progress-circular
+              indeterminate
+              color="blue"
+            ></v-progress-circular>
+          </div>
+        </div>
+      </v-dialog>
       <div class="d-flex flex-row align-center">
         <input 
           v-model="item.name"
@@ -55,7 +116,7 @@
         </template>
       </v-text-field>
       <v-divider class="my-2"></v-divider>
-      <div>
+      <div v-if="item.id">
         <div class="d-flex flex-row align-center">
           <h2>
             Modules In Progress:
@@ -70,11 +131,20 @@
             Add Module
           </v-btn>
         </div>
-        <ModuleFetch 
+        <ModuleFetch
           @toggleCanDelete="canBeDeleted = !canBeDeleted"
           :studentId="item.id"
           :refetch="refetchModules"
         />
+      </div>
+      <div v-else>
+        <v-icon size="x-large">mdi-lock</v-icon>
+        <h1>
+          Module Tracking Locked
+        </h1>
+        <p>
+          Add a student ID to this profile to unlock module tracking tools.
+        </p>
       </div>
       <v-divider class="my-2"></v-divider>
       <h2>
@@ -170,10 +240,16 @@ const updatingStudent = ref(false)
 const showModuleAddModal = ref(false)
 const refetchModules = ref(false)
 const canBeDeleted = ref(false)
+const tempStudentId = ref('')
+const dialog = ref(false)
 
 const { item, autoSync } = toRefs(props)
 useAutoSync(autoSync, reqUpdateStudent)
 const { upToDate } = useChangeWatcher(item)
+
+function studentIdRule(studentId) {
+  return parseInt(studentId) && studentId.length === 7 || 'Invalid Student ID'          
+}
 
 async function reqUpdateStudent() {
   if (upToDate.value) return
@@ -181,6 +257,12 @@ async function reqUpdateStudent() {
   await updateStudent(item.value)
   updatingStudent.value = false
   upToDate.value = true
+}
+
+async function saveId() {
+  item.value.id = tempStudentId.value
+  await reqUpdateStudent()
+  dialog.value = false
 }
 </script>
 
