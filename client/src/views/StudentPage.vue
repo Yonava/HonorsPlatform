@@ -137,11 +137,12 @@
           style="width: 25%; height: 100%; overflow: auto;"
           class="d-flex flex-column align-center"
         >  
-          <StudentList
+          <PanelList
             @select="selectedStudent = $event"
             :students="displayStudents"
             :selected="selectedStudent"
             :loading="loadingStudents"
+            :panel="panel"
           />
         </v-sheet>
         <v-sheet 
@@ -184,7 +185,7 @@
 import { ref, onMounted, computed, watch } from 'vue' 
 import { getEvery, deleteStudent } from '../SheetsAPI'
 import StudentAddModal from '../components/StudentAddModal.vue'
-import StudentList from '../components/StudentList.vue'
+import PanelList from '../components/PanelList.vue'
 import StudentDetail from '../components/StudentDetail.vue'
 import SortPanel from '../components/SortPanel.vue'
 import { useKeyBindings } from '../KeyBindings'

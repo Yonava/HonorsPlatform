@@ -6,26 +6,30 @@
       class="d-flex flex-column align-center mt-2"
     >
       <div
-        v-for="student in students"
-        :key="student"
-        @click="selectedStudent = student"
+        v-for="item in students"
+        :key="item"
+        @click="selectedStudent = item"
         :class="[
           'mb-2',
           'student-card',
-          selectedStudent === student ? 'selected-student-card' : ''
+          selectedStudent === item ? 'selected-student-card' : ''
         ]"
       >
-        <StudentListItem :item="item" />
+        <component
+          :is="panel.listItemComponent" 
+          :item="item" 
+        />
+      </div>
     </div>
     <div v-if="students.length === 0">
       <div class="d-flex justify-center">
-        no students in system
+        no {{ panel.title.toLowerCase() }} in system
       </div>
     </div>
     <div v-else-if="loading">
       <div class="d-flex justify-center">
         <v-progress-circular 
-          color="blue darken-4"
+          :color="`${panel.color}-darken-4`"
           size="32"
           indeterminate
           class="mt-12" 
@@ -53,6 +57,10 @@ const props = defineProps({
   },
   loading: {
     type: Boolean,
+    required: true
+  },
+  panel: {
+    type: Object,
     required: true
   }
 })
