@@ -61,10 +61,6 @@ import {
 } from 'vue'
 
 const props = defineProps({
-  studentAttrs: {
-    type: Array,
-    required: true
-  },
   show: {
     type: Boolean,
     required: true
@@ -79,6 +75,12 @@ const showDialog = computed({
 const student = ref([])
 const loading = ref(false)
 const errorMessage = ref('')
+const studentAttrs = [
+  'Name',
+  'ID',
+  'Email',
+  'Active Status'
+]
 
 onMounted(() => initStudent())
 
@@ -101,7 +103,7 @@ async function reqAddStudent() {
 }
 
 function initStudent() {
-  student.value = props.studentAttrs.map(() => '')
+  student.value = studentAttrs.map(() => '')
 }
 
 const emits = defineEmits([

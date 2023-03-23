@@ -15,7 +15,7 @@
     <div
       v-for="sort in sortOptions"
       :key="sort"
-      @click="sortStudents(sort)"
+      @click="sortItems(sort)"
       class="sort-box d-flex justify-center align-center flex-column px-2"
       :style="{
         background: activeSort === sort ? 'rgba(255, 255, 255, 0.2)' : ''
@@ -28,18 +28,23 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, defineProps, defineEmits } from 'vue'
-
-type SortOption = {
-  label: string,
-  icon: () => string,
-  ascending: boolean,
-  func: (a: any, b: any) => number
-}
+import { 
+  ref, 
+  computed, 
+  defineProps, 
+  defineEmits,
+  watch
+} from 'vue'
+import { SortOption, switchSortOptions } from '../SortOptions'
+import { PanelType } from '../SwitchPanel'
 
 const props = defineProps({
-  students: {
+  items: {
     type: Array,
+    required: true
+  },
+  panelType: {
+    type: String,
     required: true
   }
 })
@@ -48,70 +53,24 @@ const emit = defineEmits(['update'])
 
 const activeSort = ref(undefined)
 
-const studentList = computed({
-  get: () => props.students,
+const itemList = computed({
+  get: () => props.items,
   set: (val: any) => emit('update', val)
 })
 
-function sortStudents(sort: SortOption) {
+function sortItems(sort: SortOption) {
   if (activeSort.value === sort) {
     sort.ascending = !sort.ascending
   } else {
     activeSort.value = sort
   }
-  studentList.value = studentList.value.sort(sort.func)
+  itemList.value = itemList.value.sort(sort.func)
 }
 
-const sortOptions = ref<SortOption[]>([
-  { 
-    label: 'Name', 
-    icon: () => {
-      if (sortOptions.value[0].ascending) {
-        return 'mdi-sort-alphabetical-ascending'
-      } else {
-        return 'mdi-sort-alphabetical-descending'
-      }
-    },
-    ascending: true,
-    func: (a: any, b: any) => {
-      if (sortOptions.value[0].ascending) {
-        return a.name.localeCompare(b.name)
-      } else {
-        return b.name.localeCompare(a.name)
-      }
-    }
-  },
-  { 
-    label: 'Points',
-    icon: () => {
-      if (sortOptions.value[1].ascending) {
-        return 'mdi-sort-numeric-ascending'
-      } else {
-        return 'mdi-sort-numeric-descending'
-      }
-    },
-    ascending: true,
-    func: (a: any, b: any) => {
-      if (sortOptions.value[1].ascending) {
-        return a.points - b.points
-      } else {
-        return b.points - a.points
-      }
-    }
-  },
-  { 
-    label: 'Active Status', 
-    icon: () => 'mdi-sort-variant',
-    ascending: true,
-    func: (a: any, b: any) => {
-      if (sortOptions.value[2].ascending) {
-        return a.activeStatus.localeCompare(b.activeStatus)
-      } else {
-        return b.activeStatus.localeCompare(a.activeStatus)
-      }
-    }
-  },
-])
+const sortOptions = ref<SortOption[]>([])
+watch(() => props.panelType, (newPanelType: PanelType) => {
+  sortOptions.value = switchSortOptions(newPanelType)
+}, { immediate: true })
 </script>
 
 <style scoped>

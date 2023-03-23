@@ -44,11 +44,11 @@
         </v-menu>
         <p 
           :style="{
-            opacity: loadingStudents ? 0 : 1,
+            opacity: loadingItems ? 0 : 1,
           }"
           class="ml-2"
         >
-          ({{ displayStudents.length }})
+          ({{ displayItems.length }})
         </p>
       </div>
       <input
@@ -63,10 +63,7 @@
         class="d-flex align-center ml-5 px-2"
         style="background: red; border-radius: 5px; font-weight: 700;"
       >
-        <div 
-          class="fade-animate mr-2"
-          style="background: white; width: 10px; height: 10px; border-radius: 50px;"
-        ></div>
+        <div class="live-emblem fade-animate mr-2"></div>
         LIVE
       </span>
       <v-btn 
@@ -83,7 +80,7 @@
       </v-btn>
       <v-btn 
         @click="fetchData"
-        :loading="loadingStudents"
+        :loading="loadingItems"
         class="ml-3"
         style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240);"
       >
@@ -107,8 +104,9 @@
           style="width: 5%; height: 100%; background: green"
         >
           <SortPanel 
-            :students="students"
-            @update="students = $event"
+            @update="items = $event"
+            :items="items"
+            :panelType="panel.title.toLowerCase()"
           />
           <v-spacer></v-spacer>
           <div 
@@ -138,10 +136,10 @@
           class="d-flex flex-column align-center"
         >  
           <PanelList
-            @select="selectedStudent = $event"
-            :students="displayStudents"
-            :selected="selectedStudent"
-            :loading="loadingStudents"
+            @select="selectedItem = $event"
+            :items="displayItems"
+            :selected="selectedItem"
+            :loading="loadingItems"
             :panel="panel"
           />
         </v-sheet>
@@ -149,10 +147,10 @@
           :color="`${panel.color}-lighten-5`"
           style="width: 70%; height: 100%;"
         >
-          <div v-if="selectedStudent">
+          <div v-if="selectedItem">
             <component
               :is="panel.detailComponent" 
-              :student="selectedStudent"
+              :student="selectedItem"
               :autoSync="autoSync"
               @delete="reqDeleteStudent"
             />
@@ -176,7 +174,6 @@
       @close="showAddModal = false"
       @success="studentAdded($event)"
       :show="showAddModal"
-      :studentAttrs="studentAttrs"
     />
   </v-sheet>
 </template>
@@ -191,13 +188,12 @@ import SortPanel from '../components/SortPanel.vue'
 import { useKeyBindings } from '../KeyBindings'
 import { PanelType, Panel, switchPanel } from '../SwitchPanel'
 
-const students = ref([])
-const studentAttrs = ref([])
-const loadingStudents = ref(false)
+const items = ref([])
+const loadingItems = ref(false)
 const showAddModal = ref(false)
 const filterQuery = ref('')
 const autoSync = ref(false)
-const selectedStudent = ref(undefined)
+const selectedItem = ref(undefined)
 
 const panel = ref<Panel>(switchPanel(PanelType.STUDENTS))
 
@@ -221,9 +217,9 @@ onMounted(async () => {
 })
 
 async function reqDeleteStudent() {
-  await deleteStudent(selectedStudent.value.row);
-  selectedStudent.value = undefined
-  loadingStudents.value = true
+  await deleteStudent(selectedItem.value.row);
+  selectedItem.value = undefined
+  loadingItems.value = true
   await new Promise(resolve => setTimeout(resolve, 1000))
   await fetchData()
 }
@@ -231,20 +227,20 @@ async function reqDeleteStudent() {
 async function studentAdded(studentId: string) {
   showAddModal.value = false
   await fetchData()
-  selectedStudent.value = students.value.find((student: any) => student.id === studentId)
-  const index = students.value.indexOf(selectedStudent.value)
+  selectedItem.value = items.value.find((student: any) => student.id === studentId)
+  const index = items.value.indexOf(selectedItem.value)
   if (index === -1) return
-  students.value.splice(index, 1)
-  students.value.unshift(selectedStudent.value)
+  items.value.splice(index, 1)
+  items.value.unshift(selectedItem.value)
 }
 
 async function fetchData() {
-  selectedStudent.value = undefined;
-  loadingStudents.value = true
-  students.value = []
+  selectedItem.value = undefined;
+  loadingItems.value = true
+  items.value = []
   const data = await getEvery(panel.value.sheetRange)
-  students.value = panel.value.mapData(data)
-  loadingStudents.value = false
+  items.value = panel.value.mapData(data)
+  loadingItems.value = false
 }
 
 function typeListStyle(type: PanelType) {
@@ -253,9 +249,9 @@ function typeListStyle(type: PanelType) {
   }
 }
 
-const displayStudents = computed(() => {
-  if (filterQuery.value === '') return students.value
-  return students.value.filter((student: any) => {
+const displayItems = computed(() => {
+  if (filterQuery.value === '') return items.value
+  return items.value.filter((student: any) => {
     const query = filterQuery.value.toLowerCase();
     const values = Object.values(student).join(' ').toLowerCase();
     return values.includes(query)
@@ -264,6 +260,13 @@ const displayStudents = computed(() => {
 </script>
 
 <style scoped>
+.live-emblem {
+  background: white; 
+  width: 10px; 
+  height: 10px; 
+  border-radius: 50px;
+}
+
 .type-list-item {
   cursor: pointer;
   transition: 0.2s ease;
