@@ -1,32 +1,32 @@
 
-export function mapStudents(sheetData: any[][]) {
+export function mapStudents(sheetData: any[][]): Object[] {
   // get header row categories
   const categories = sheetData[0].slice(6).filter(category => category !== '')
   return sheetData
     .slice(1) // remove header row
-    .map((row, index) => ({
+    .map((student, index) => ({
       row: index + 2, // + 1 for header row, + 1 for 0-indexing
-      name: row[0] ?? '',
-      id: row[1] ?? '',
-      email: row[2] ?? '',
-      points: row[3] ?? 0,
-      activeStatus: row[4] ?? '',
-      note: row[5] ?? '',
+      name: student[0] ?? '',
+      id: student[1] ?? '',
+      email: student[2] ?? '',
+      points: student[3] ?? 0,
+      activeStatus: student[4] ?? '',
+      note: student[5] ?? '',
       misc: categories.reduce((acc, category, index) => {
-        acc[category] = row[index + 6] ?? ''
+        acc[category] = student[index + 6] ?? ''
         return acc
       }, {})
   }))
 }
 
 export function mapModules(sheetData: any[][]): Object[] {
-  return sheetData.map((module: any) => {
+  return sheetData.slice(1).map((module, index) => {
     return {
-      id: module[0],
-      name: module[1],
-      code: module[2],
-      points: module[3],
-      row: module[4],
+      row: index + 2,
+      studentId: module[0],
+      courseCode: module[1],
+      description: module[2],
+      term: module[3],
     };
   });
 }

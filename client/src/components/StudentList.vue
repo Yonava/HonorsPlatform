@@ -15,19 +15,11 @@
           selectedStudent === student ? 'selected-student-card' : ''
         ]"
       >
-        <div style="font-weight: 900; font-size: 1.25em;">
-          {{ student.name || '(No Name)' }}
-        </div>
-        <div style="font-size: 0.9em;">
-          {{ student.id || '(No ID)' }} - 
-          {{ student.email || '(No Email)' }} - 
-          {{ student.activeStatus || '(No Active Status)' }}
-        </div>
-      </div>
-      <div v-if="students.length === 0">
-        <div class="d-flex justify-center">
-          no students in system
-        </div>
+        <StudentListItem :item="item" />
+    </div>
+    <div v-if="students.length === 0">
+      <div class="d-flex justify-center">
+        no students in system
       </div>
     </div>
     <div v-else-if="loading">

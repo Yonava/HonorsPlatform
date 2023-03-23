@@ -1,4 +1,8 @@
 import StudentDetail from '../src/components/StudentDetail.vue';
+import StudentListItem from '../src/components/StudentListItem.vue';
+import ModuleListItem from '../src/components/ModuleListItem.vue';
+// import ModuleDetail from '../src/components/ModuleDetail.vue';
+// import 
 import { mapStudents, mapGraduates, mapModules } from './DataMappers';
 
 export enum PanelType {
@@ -9,6 +13,7 @@ export enum PanelType {
 
 export type Panel = {
   detailComponent: any,
+  listItemComponent: any,
   title: string,
   color: string,
   icon: string,
@@ -21,6 +26,7 @@ export function switchPanel(panel: PanelType): Panel {
     case PanelType.GRADUATES:
       return {
         detailComponent: StudentDetail,
+        listItemComponent: StudentListItem,
         title: 'Graduates',
         color: 'purple',
         icon: 'mdi-account-school',
@@ -30,6 +36,7 @@ export function switchPanel(panel: PanelType): Panel {
     case PanelType.STUDENTS:
       return {
         detailComponent: StudentDetail,
+        listItemComponent: StudentListItem,
         title: 'Students',
         color: 'blue',
         icon: 'mdi-account-group',
@@ -39,6 +46,7 @@ export function switchPanel(panel: PanelType): Panel {
     case PanelType.MODULES:
       return {
         detailComponent: StudentDetail,
+        listItemComponent: ModuleListItem,
         title: 'Modules',
         color: 'orange',
         icon: 'mdi-book-open-variant',
