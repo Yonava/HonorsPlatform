@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="width: 100%">
     <div class="d-flex flex-column align-center">
       <v-icon 
         icon="mdi-sort"  

@@ -51,9 +51,55 @@ export function switchSortOptions(panel: PanelType): SortOption[] {
         },
       ];
     case PanelType.GRADUATES:
-      return []
+      return [
+        {
+          label: 'Name',
+          icon: {
+            asc: 'mdi-sort-alphabetical-ascending',
+            desc: 'mdi-sort-alphabetical-descending'
+          },
+          func: {
+            asc: (a: any, b: any) => a.name.localeCompare(b.name),
+            desc: (a: any, b: any) => b.name.localeCompare(a.name)
+          }
+        },
+        {
+          label: 'Phone Number',
+          icon: {
+            asc: 'mdi-sort-numeric-ascending',
+            desc: 'mdi-sort-numeric-descending'
+          },
+          func: {
+            asc: (a: any, b: any) => a.phone.localeCompare(b.phone),
+            desc: (a: any, b: any) => b.phone.localeCompare(a.phone)
+          }
+        }
+      ]
     case PanelType.MODULES:
-      return []
+      return [
+        {
+          label: 'Course Code',
+          icon: {
+            asc: 'mdi-sort-numeric-ascending',
+            desc: 'mdi-sort-numeric-descending'
+          },
+          func: {
+            asc: (a: any, b: any) => a.courseCode.localeCompare(b.courseCode),
+            desc: (a: any, b: any) => b.courseCode.localeCompare(a.courseCode)
+          }
+        },
+        {
+          label: 'Term',
+          icon: {
+            asc: 'mdi-sort-numeric-ascending',
+            desc: 'mdi-sort-numeric-descending'
+          },
+          func: {
+            asc: (a: any, b: any) => a.term.localeCompare(b.term),
+            desc: (a: any, b: any) => b.term.localeCompare(a.term)
+          }
+        }
+      ]
     default:
       throw new Error('switchSortOptions: Invalid panel type');
   }

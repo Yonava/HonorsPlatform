@@ -1,10 +1,16 @@
-export function mapStudents(sheetData: any[][], removeHeaderRow = true): Object[] {
+function removeEmptyRows(item: Object) {
+  return Object
+    .values(item)
+    .some(value => typeof value === 'string' && value.length > 0);
+}
+
+export function mapStudents(sheetData: any[][]): Object[] {
   // get header row categories
   const categories = sheetData[0].slice(6).filter(category => category !== '')
-  if (removeHeaderRow) sheetData.shift()
+  sheetData.shift()
   return sheetData
     .map((student, index) => ({
-      row: index + (removeHeaderRow ? 2 : 1), // + 1 for header row, + 1 for 0-indexing
+      row: index + 2, // + 1 for header row, + 1 for 0-indexing
       name: student[0] ?? '',
       id: student[1] ?? '',
       email: student[2] ?? '',
@@ -45,10 +51,4 @@ export function mapGraduates(sheetData: any[][], removeHeaderRow = true): Object
       };
     })
     .filter(removeEmptyRows);
-}
-
-function removeEmptyRows(item: Object) {
-  return Object
-    .values(item)
-    .some(value => typeof value === 'string' && value.length > 0);
 }

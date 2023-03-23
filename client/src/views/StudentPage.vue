@@ -53,7 +53,7 @@
       </div>
       <input
         v-model="filterQuery"
-        placeholder="filter by name, id, email or note"
+        :placeholder="filterPlaceholder"
         class="search-input"
         type="text"
       >
@@ -138,6 +138,7 @@
           <PanelList
             @select="selectedItem = $event"
             :items="displayItems"
+            :filterQuery="filterQuery"
             :selected="selectedItem"
             :loading="loadingItems"
             :panel="panel"
@@ -149,10 +150,10 @@
         >
           <div v-if="selectedItem">
             <component
+              @delete="reqDeleteStudent"
               :is="panel.detailComponent" 
               :item="selectedItem"
               :autoSync="autoSync"
-              @delete="reqDeleteStudent"
             />
           </div>
           <div 
@@ -199,6 +200,7 @@ const panel = ref<Panel>(switchPanel(PanelType.STUDENTS))
 
 const changePanel = (panelType: PanelType) => {
   panel.value = switchPanel(panelType)
+  filterQuery.value = ''
 }
 
 watch(panel, async () => {
@@ -248,6 +250,10 @@ function typeListStyle(type: PanelType) {
     color: switchPanel(type).title === panel.value.title ? panel.value.color : 'black',
   }
 }
+
+const filterPlaceholder = computed(() => {
+  return `Search ${panel.value.title.toLowerCase()}...`
+})
 
 const displayItems = computed(() => {
   if (filterQuery.value === '') return items.value

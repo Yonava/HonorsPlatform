@@ -21,11 +21,28 @@
           />
         </div>
       </div>
-      <div v-if="items.length === 0">
-        <div class="d-flex justify-center">
-          no {{ panel.title.toLowerCase() }} in system
+      <v-sheet 
+        v-if="items.length === 0"
+        class="mt-2"
+        style="width: 90%; border-radius: 10px; margin: 0 auto;"
+        :color="`${panel.color}-darken-1`"
+        elevation="3"
+      >
+        <div 
+          style="text-align: center;"
+          class="d-flex justify-center flex-column pa-4"
+        >
+          <h3>
+            <v-icon class="mr-1 mb-1">
+              {{ panel.icon }}
+            </v-icon>
+            no {{ panel.title.toLowerCase() }} in system
+          </h3>
+          <span v-if="filterQuery">
+            try clearing "{{ filterQuery }}" from the search filter to view all {{ panel.title.toLowerCase() }}
+          </span>
         </div>
-      </div>
+      </v-sheet>
     </div>
     <div v-else>
       <div class="d-flex justify-center">
@@ -62,6 +79,10 @@ const props = defineProps({
   },
   panel: {
     type: Object,
+    required: true
+  },
+  filterQuery: {
+    type: String,
     required: true
   }
 })

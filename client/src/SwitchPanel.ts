@@ -1,10 +1,13 @@
-import StudentDetail from '../src/components/StudentDetail.vue';
 import StudentListItem from '../src/components/StudentListItem.vue';
+import StudentDetail from '../src/components/StudentDetail.vue';
+
 import ModuleListItem from '../src/components/ModuleListItem.vue';
-import GraduateListItem from '../src/components/GraduateListItem.vue';
-import { markRaw } from 'vue';
 import ModuleDetail from '../src/components/ModuleDetail.vue';
-// import 
+
+import GraduateListItem from '../src/components/GraduateListItem.vue';
+import GraduateDetail from '../src/components/GraduateDetail.vue';
+
+import { markRaw } from 'vue';
 import { mapStudents, mapGraduates, mapModules } from './DataMappers';
 
 export enum PanelType {
@@ -27,7 +30,7 @@ export function switchPanel(panel: PanelType): Panel {
   switch (panel) {
     case PanelType.GRADUATES:
       return {
-        detailComponent: markRaw(StudentDetail),
+        detailComponent: markRaw(GraduateDetail),
         listItemComponent: markRaw(GraduateListItem),
         title: 'Graduates',
         color: 'purple',
