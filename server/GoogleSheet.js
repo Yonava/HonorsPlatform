@@ -75,7 +75,7 @@ export default class GoogleSheet {
   }
 
   async updateStudent(student) {
-    const { misc, rowNum, ...rest } = student
+    const { misc, row, ...rest } = student
     const studentData = [...Object.values(rest)]
 
     if (Object.values(misc).length > 0) {
@@ -84,7 +84,7 @@ export default class GoogleSheet {
 
     await this.sheets.spreadsheets.values.update({
       spreadsheetId: this.spreadsheetId,
-      range: `Students!A${rowNum}:Z${rowNum}`,
+      range: `Students!A${row}:Z${row}`,
       valueInputOption: 'USER_ENTERED',
       resource: {
         values: [studentData]
@@ -103,14 +103,7 @@ export default class GoogleSheet {
 
   async getModules(studentId) {
     const modules = (await this.getAllModules()).filter(row => row[0] === studentId);
-    return modules.map(row => {
-      return {
-        studentId: row[0] ?? '',
-        courseCode: row[1] ?? '',
-        description: row[2] ?? '',
-        term: row[3] ?? '',
-      };
-    });
+    return modules;
   }
 
   async addModule(module) {
