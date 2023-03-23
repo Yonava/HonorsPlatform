@@ -12,7 +12,7 @@
           v-model="item.name"
           placeholder="Enter Name"
           type="text" 
-          class="item-name-input"
+          class="student-name-input"
         >
         <v-spacer></v-spacer>
         <v-btn 
@@ -199,14 +199,14 @@ async function reqUpdateStudent() {
   text-decoration: underline;
 }
 
-.student-name-input {
+input.student-name-input {
   font-weight: 900; 
   font-size: 3em; 
   line-height: 0.9; 
   width: 100%;
 }
 
-.student-name-input:focus {
+input.student-name-input:focus {
   outline: none;
 }
 </style>
