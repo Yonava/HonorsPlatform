@@ -1,12 +1,17 @@
+import { getHeaderRow } from "./SheetsAPI";
+
 function removeEmptyRows(item: Object) {
   return Object
     .values(item)
     .some(value => typeof value === 'string' && value.length > 0);
 }
 
-export function mapStudents(sheetData: any[][]): Object[] {
+export async function mapStudents(sheetData: any[][]): Promise<Object[]> {
   // get header row categories
-  const categories = sheetData[0].slice(6).filter(category => category !== '')
+  const headerRow = await getHeaderRow('Students');
+  const categories = headerRow
+    .slice(6)
+    .filter((category: any) => category !== '')
   sheetData.shift()
   return sheetData
     .map((student, index) => ({
@@ -17,7 +22,7 @@ export function mapStudents(sheetData: any[][]): Object[] {
       points: student[3] ?? 0,
       activeStatus: student[4] ?? '',
       note: student[5] ?? '',
-      misc: categories.reduce((acc, category, index) => {
+      misc: categories.reduce((acc: any, category: any, index: number) => {
         acc[category] = student[index + 6] ?? ''
         return acc
       }, {})

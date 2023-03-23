@@ -26,6 +26,14 @@ export async function clearByRow(range: string, row: number) {
   }
 }
 
+export async function getHeaderRow(range: string) {
+  try {
+    return (await axios.get(`/api/range/${range}!A1:Z1`)).data;
+  } catch {
+    catchAction();
+  }
+}
+
 export async function getStudent(studentId: number) {
   try {
     return (await axios.get(`/api/students/${studentId}`)).data;

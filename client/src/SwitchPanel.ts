@@ -18,13 +18,15 @@ export enum PanelType {
 }
 
 export type Panel = {
-  detailComponent: any,
-  listItemComponent: any,
+  components: {
+    detail: any,
+    list: any
+  },
   title: string,
   color: string,
   icon: string,
   sheetRange: string,
-  mapData: (sheetData: any[][]) => Object[],
+  mapData: (sheetData: any[][]) => Object[] | Promise<Object[]>,
   type: PanelType
 };
 
@@ -32,8 +34,10 @@ export function switchPanel(panel: PanelType): Panel {
   switch (panel) {
     case PanelType.GRADUATES:
       return {
-        detailComponent: markRaw(GraduateDetail),
-        listItemComponent: markRaw(GraduateListItem),
+        components: {
+          detail: markRaw(GraduateDetail),
+          list: markRaw(GraduateListItem)
+        },
         title: 'Graduates',
         color: 'purple',
         icon: 'mdi-account-school',
@@ -43,8 +47,10 @@ export function switchPanel(panel: PanelType): Panel {
       };
     case PanelType.STUDENTS:
       return {
-        detailComponent: markRaw(StudentDetail),
-        listItemComponent: markRaw(StudentListItem),
+        components: {
+          detail: markRaw(StudentDetail),
+          list: markRaw(StudentListItem)
+        },
         title: 'Students',
         color: 'blue',
         icon: 'mdi-account-group',
@@ -54,8 +60,10 @@ export function switchPanel(panel: PanelType): Panel {
       };
     case PanelType.MODULES:
       return {
-        detailComponent: markRaw(ModuleDetail),
-        listItemComponent: markRaw(ModuleListItem),
+        components: {
+          detail: markRaw(ModuleDetail),
+          list: markRaw(ModuleListItem)
+        },
         title: 'Modules',
         color: 'orange',
         icon: 'mdi-book-open-variant',
@@ -65,8 +73,10 @@ export function switchPanel(panel: PanelType): Panel {
       };
     case PanelType.COMPLETED_MODULES:
       return {
-        detailComponent: markRaw(ModuleDetail),
-        listItemComponent: markRaw(ModuleListItem),
+        components: {
+          detail: markRaw(ModuleDetail),
+          list: markRaw(ModuleListItem)
+        },
         title: 'Completed Modules',
         color: 'red',
         icon: 'mdi-book',

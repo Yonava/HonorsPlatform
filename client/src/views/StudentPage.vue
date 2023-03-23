@@ -151,7 +151,7 @@
           <div v-if="selectedItem">
             <component
               @delete="reqDelete"
-              :is="panel.detailComponent" 
+              :is="panel.components.detail" 
               :item="selectedItem"
               :autoSync="autoSync"
             />

@@ -16,7 +16,7 @@
           ]"
         >
           <component
-            :is="panel.listItemComponent" 
+            :is="panel.components.list" 
             :item="item" 
           />
         </div>
