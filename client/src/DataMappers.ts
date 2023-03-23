@@ -1,4 +1,3 @@
-
 export function mapStudents(sheetData: any[][], removeHeaderRow = true): Object[] {
   // get header row categories
   const categories = sheetData[0].slice(6).filter(category => category !== '')
@@ -17,11 +16,7 @@ export function mapStudents(sheetData: any[][], removeHeaderRow = true): Object[
         return acc
       }, {})
     }))
-    .filter(student => {
-      return Object
-        .values(student)
-        .some(value => typeof value === 'string' && value.length > 0);
-    });
+    .filter(removeEmptyRows);
 }
 
 export function mapModules(sheetData: any[][], removeHeaderRow = true): Object[] {
@@ -36,20 +31,24 @@ export function mapModules(sheetData: any[][], removeHeaderRow = true): Object[]
         term: module[3] ?? '',
       };
     })
-    .filter(module => {
-      return Object
-        .values(module)
-        .some(value => typeof value === 'string' && value.length > 0);
-    });
+    .filter(removeEmptyRows);
 }
 
 export function mapGraduates(sheetData: any[][], removeHeaderRow = true): Object[] {
   if (removeHeaderRow) sheetData.shift()
-  return sheetData.map((graduate: any, index: number) => {
-    return {
-      row: index + (removeHeaderRow ? 2 : 1),
-      name: graduate[0],
-      phone: graduate[1],
-    };
-  });
+  return sheetData
+    .map((graduate: any, index: number) => {
+      return {
+        row: index + (removeHeaderRow ? 2 : 1),
+        name: graduate[0],
+        phone: graduate[1],
+      };
+    })
+    .filter(removeEmptyRows);
+}
+
+function removeEmptyRows(item: Object) {
+  return Object
+    .values(item)
+    .some(value => typeof value === 'string' && value.length > 0);
 }
