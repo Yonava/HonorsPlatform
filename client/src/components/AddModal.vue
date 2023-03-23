@@ -12,29 +12,29 @@
           class="mr-2"
           style="font-size: 2.5rem;"
         >mdi-account</v-icon>
-        <span>Add Student</span>
+        <span>Add {{ panel.title.slice(0, -1) }}</span>
       </h1>
       <div 
-        @keyup.enter="reqAddStudent"
+        @keyup.enter="reqAdd"
         class="d-flex flex-wrap justify-center align-center"
       >
         <div
-          v-for="(attr, index) in studentAttrs"
+          v-for="(attr, index) in attrs"
           :key="index"
         >
           <v-text-field
             v-if="attr"
-            v-model="student[index]"
+            v-model="item[index]"
             :label="attr"
             style="width: 250px; margin-left: 10px; margin-right: 10px;"
           ></v-text-field>
         </div>
       </div>
       <v-btn
-        @click="reqAddStudent"
+        @click="reqAdd"
         :loading="loading"
         color="blue-darken-1"
-      >add student</v-btn>
+      >add {{ panel.title.slice(0, -1) }}</v-btn>
       <span 
         class="mt-2"
         style="color: red"
@@ -50,21 +50,32 @@
   </v-dialog>
 </template>
 
-<script setup>
-import { addStudent } from '../SheetsAPI'
+<script setup lang="ts">
+import { Panel } from '../SwitchPanel'
+import { addStudent, getHeaderRow } from '../SheetsAPI'
 import { 
   ref, 
+  toRef,
   defineProps, 
   defineEmits, 
   onMounted,
-  computed
+  computed,
+  watch
 } from 'vue'
 
 const props = defineProps({
   show: {
     type: Boolean,
     required: true
+  },
+  panel: {
+    type: Object,
+    required: true
   }
+})
+
+watch(() => props.panel, async () => {
+  await initItem()
 })
 
 const showDialog = computed({
@@ -72,38 +83,33 @@ const showDialog = computed({
   set: (val) => emits('close')
 })
 
-const student = ref([])
+const item = ref([])
 const loading = ref(false)
 const errorMessage = ref('')
-const studentAttrs = [
-  'Name',
-  'ID',
-  'Email',
-  'Active Status'
-]
+const attrs = ref([])
 
-onMounted(() => initStudent())
+onMounted(async () => {
+  await initItem()
+})
 
-async function reqAddStudent() {
-  if (!student.value.some(attr => attr)) {
+async function reqAdd() {
+  if (!item.value.some(attr => attr)) {
     emits('close')
     return
   }
-  const id = student.value[1]
-  if (!id) {
-    errorMessage.value = 'ID is required'
-    return
-  }
   loading.value = true
-  await addStudent(student.value)
+  await addStudent(item.value)
   await new Promise(resolve => setTimeout(resolve, 1000))
-  emits('success', id)
-  initStudent()
+  emits('success', (await props.panel.mapData([item.value]))[0])
   loading.value = false
 }
 
-function initStudent() {
-  student.value = studentAttrs.map(() => '')
+async function initItem() {
+  const panel = props.panel as Panel
+  loading.value = true
+  attrs.value = await getHeaderRow(panel.sheetRange)
+  loading.value = false
+  item.value = attrs.value.map(() => '')
 }
 
 const emits = defineEmits([

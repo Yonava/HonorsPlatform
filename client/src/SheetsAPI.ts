@@ -7,7 +7,10 @@ function catchAction() {
 
 export async function getEvery(range: string) {
   try {
-    return (await axios.get(`/api/range/${range}`)).data;
+    const data = (await axios.get(`/api/range/${range}`)).data;
+    // remove header row
+    data.shift();
+    return data;
   } catch {
     router.push({
       name: "auth",
@@ -28,7 +31,8 @@ export async function clearByRow(range: string, row: number) {
 
 export async function getHeaderRow(range: string) {
   try {
-    return (await axios.get(`/api/range/${range}!A1:Z1`)).data;
+    const headerRow = (await axios.get(`/api/range/${range}!A1:Z1`)).data;
+    return headerRow[0];
   } catch {
     catchAction();
   }

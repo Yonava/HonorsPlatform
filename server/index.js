@@ -45,8 +45,6 @@ app.get("/range/:range", async (req, res) => {
   try {
     const { range } = req.params;
     const data = await sheetInstance.getRange(range);
-    // remove header row
-    data.shift();
     res.json(data);
   } catch {
     GoogleSheet.instance = null;

@@ -174,6 +174,7 @@
     <AddModal 
       @close="showAddModal = false"
       @success="itemAdded($event)"
+      :panel="panel"
       :show="showAddModal"
     />
   </v-sheet>
@@ -227,6 +228,7 @@ async function reqDelete() {
 }
 
 async function itemAdded<T>(item: T) {
+  console.log('item added', item)
   showAddModal.value = false
   await fetchData()
   selectedItem.value = item
