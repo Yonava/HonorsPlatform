@@ -18,6 +18,14 @@ export async function getEvery(range: string) {
   }
 }
 
+export async function clearByRow(range: string, row: number) {
+  try {
+    await axios.delete(`/api/range/${range}/${row}`);
+  } catch {
+    catchAction();
+  }
+}
+
 export async function getStudent(studentId: number) {
   try {
     return (await axios.get(`/api/students/${studentId}`)).data;

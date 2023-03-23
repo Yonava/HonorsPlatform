@@ -14,6 +14,7 @@ export enum PanelType {
   STUDENTS = 'students',
   GRADUATES = 'graduates',
   MODULES = 'modules',
+  COMPLETED_MODULES = 'completedModules'
 }
 
 export type Panel = {
@@ -23,7 +24,8 @@ export type Panel = {
   color: string,
   icon: string,
   sheetRange: string,
-  mapData: (sheetData: any[][]) => Object[]
+  mapData: (sheetData: any[][]) => Object[],
+  type: PanelType
 };
 
 export function switchPanel(panel: PanelType): Panel {
@@ -36,7 +38,8 @@ export function switchPanel(panel: PanelType): Panel {
         color: 'purple',
         icon: 'mdi-account-school',
         sheetRange: 'Graduates',
-        mapData: mapGraduates
+        mapData: mapGraduates,
+        type: PanelType.GRADUATES
       };
     case PanelType.STUDENTS:
       return {
@@ -46,7 +49,8 @@ export function switchPanel(panel: PanelType): Panel {
         color: 'blue',
         icon: 'mdi-account-group',
         sheetRange: 'Students',
-        mapData: mapStudents
+        mapData: mapStudents,
+        type: PanelType.STUDENTS
       };
     case PanelType.MODULES:
       return {
@@ -56,7 +60,19 @@ export function switchPanel(panel: PanelType): Panel {
         color: 'orange',
         icon: 'mdi-book-open-variant',
         sheetRange: 'Modules',
-        mapData: mapModules
+        mapData: mapModules,
+        type: PanelType.MODULES
+      };
+    case PanelType.COMPLETED_MODULES:
+      return {
+        detailComponent: markRaw(ModuleDetail),
+        listItemComponent: markRaw(ModuleListItem),
+        title: 'Completed Modules',
+        color: 'red',
+        icon: 'mdi-book',
+        sheetRange: 'Modules',
+        mapData: mapModules,
+        type: PanelType.COMPLETED_MODULES
       };
     default:
       throw new Error('switchPanel: Invalid panel type');

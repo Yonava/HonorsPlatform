@@ -37,7 +37,7 @@
                 <v-icon>
                   {{ switchPanel(type).icon }}
                 </v-icon>
-                {{ type }}
+                {{ switchPanel(type).title }}
               </v-list-item-title>
             </v-list-item>
           </v-list>
@@ -106,7 +106,7 @@
           <SortPanel 
             @update="items = $event"
             :items="items"
-            :panelType="panel.title.toLowerCase()"
+            :panelType="panel.type"
           />
           <v-spacer></v-spacer>
           <div 
@@ -150,7 +150,7 @@
         >
           <div v-if="selectedItem">
             <component
-              @delete="reqDeleteStudent"
+              @delete="reqDelete"
               :is="panel.detailComponent" 
               :item="selectedItem"
               :autoSync="autoSync"
@@ -181,7 +181,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, computed, watch } from 'vue' 
-import { getEvery, deleteStudent } from '../SheetsAPI'
+import { getEvery, clearByRow } from '../SheetsAPI'
 import StudentAddModal from '../components/StudentAddModal.vue'
 import PanelList from '../components/PanelList.vue'
 import StudentDetail from '../components/StudentDetail.vue'
@@ -218,8 +218,8 @@ onMounted(async () => {
   await fetchData()
 })
 
-async function reqDeleteStudent() {
-  await deleteStudent(selectedItem.value.row);
+async function reqDelete() {
+  await clearByRow(panel.value.sheetRange, selectedItem.value.row)
   selectedItem.value = undefined
   loadingItems.value = true
   await new Promise(resolve => setTimeout(resolve, 1000))

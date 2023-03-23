@@ -147,4 +147,11 @@ export default class GoogleSheet {
 
     return response.data.values;
   }
+
+  async clearByRow(range, row) {
+    await this.sheets.spreadsheets.values.clear({
+      spreadsheetId: this.spreadsheetId,
+      range: `${range}!A${row}:Z${row}`,
+    });
+  }
 }

@@ -52,6 +52,17 @@ app.get("/range/:range", async (req, res) => {
   }
 });
 
+app.delete("/range/:range/:row", async (req, res) => {
+  try {
+    const { range, row } = req.params;
+    await sheetInstance.clearByRow(range, row);
+    res.json({ success: true });
+  } catch {
+    GoogleSheet.instance = null;
+    res.status(401).json({ error: 'Forbidden' });
+  }
+});
+
 app.get("/students", async (req, res) => {
   try {
     const students = await sheetInstance.getStudents();

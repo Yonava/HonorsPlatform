@@ -100,6 +100,8 @@ export function switchSortOptions(panel: PanelType): SortOption[] {
           }
         }
       ]
+    case PanelType.COMPLETED_MODULES:
+      return [];
     default:
       throw new Error('switchSortOptions: Invalid panel type');
   }

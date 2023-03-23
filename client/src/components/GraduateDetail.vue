@@ -2,11 +2,12 @@
   <div>
     <h1>Auto Sync: {{ autoSync }}</h1>
     {{ item }}
+    <v-btn @click="$emit('delete')">delete {{ item.name }}</v-btn>
   </div>
 </template>
 
 <script setup>
-import { defineProps } from 'vue'
+import { defineProps, defineEmits } from 'vue'
 
 const props = defineProps({
   item: {
@@ -18,4 +19,6 @@ const props = defineProps({
     required: true
   }
 })
+
+const emits = defineEmits(['delete'])
 </script>
