@@ -2,7 +2,7 @@ import StudentDetail from '../src/components/StudentDetail.vue';
 import StudentListItem from '../src/components/StudentListItem.vue';
 import ModuleListItem from '../src/components/ModuleListItem.vue';
 import { markRaw } from 'vue';
-// import ModuleDetail from '../src/components/ModuleDetail.vue';
+import ModuleDetail from '../src/components/ModuleDetail.vue';
 // import 
 import { mapStudents, mapGraduates, mapModules } from './DataMappers';
 
@@ -46,7 +46,7 @@ export function switchPanel(panel: PanelType): Panel {
       };
     case PanelType.MODULES:
       return {
-        detailComponent: markRaw(StudentDetail),
+        detailComponent: markRaw(ModuleDetail),
         listItemComponent: markRaw(ModuleListItem),
         title: 'Modules',
         color: 'orange',

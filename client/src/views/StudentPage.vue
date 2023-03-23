@@ -150,7 +150,7 @@
           <div v-if="selectedItem">
             <component
               :is="panel.detailComponent" 
-              :student="selectedItem"
+              :item="selectedItem"
               :autoSync="autoSync"
               @delete="reqDeleteStudent"
             />
@@ -160,7 +160,7 @@
             class="d-flex flex-column align-center justify-center mt-10"
           >
             <span style="font-weight: 200; font-size: 2em;">
-              select a student to view their profile
+              select a {{ panel.title.slice(0, -1).toLowerCase() }} to view details
             </span>
           </div>
         </v-sheet>

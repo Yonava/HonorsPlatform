@@ -1,18 +1,18 @@
 <template>
   <div>
     <div style="font-weight: 900; font-size: 1.25em;">
-      {{ rawItem.name || '(No Name)' }}
+      {{ item.name || '(No Name)' }}
     </div>
     <div style="font-size: 0.9em;">
-      {{ rawItem.id || '(No ID)' }} - 
-      {{ rawItem.email || '(No Email)' }} - 
-      {{ rawItem.activeStatus || '(No Active Status)' }}
+      {{ item.id || '(No ID)' }} - 
+      {{ item.email || '(No Email)' }} - 
+      {{ item.activeStatus || '(No Active Status)' }}
     </div>
   </div>
 </template>
 
 <script setup>
-import { defineProps, toRaw } from 'vue'
+import { defineProps } from 'vue'
 
 const props = defineProps({
   item: {
@@ -20,6 +20,4 @@ const props = defineProps({
     required: true
   }
 })
-
-const rawItem = toRaw(props.item)
 </script>

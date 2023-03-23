@@ -15,7 +15,7 @@
     <div
       v-for="(sort, index) in sortOptions"
       :key="sort"
-      @click="sortItems(sort)"
+      @click="sortItems(sort, index)"
       class="sort-box d-flex justify-center align-center flex-column px-2"
       :style="{
         background: activeSort === sort ? 'rgba(255, 255, 255, 0.2)' : ''
@@ -63,13 +63,14 @@ const itemList = computed({
   set: (val: any) => emit('update', val)
 })
 
-function sortItems(sort: SortOption) {
+function sortItems(sort: SortOption, index: number) {
   if (activeSort.value === sort) {
     ascending.value = !ascending.value
   } else {
     activeSort.value = sort
   }
   itemList.value.sort(sort.func[ascending.value ? 'asc' : 'desc'])
+  activeIcons.value[index] = sort.icon[ascending.value ? 'asc' : 'desc']
 }
 
 const sortOptions = ref<SortOption[]>([])

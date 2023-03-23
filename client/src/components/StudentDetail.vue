@@ -5,14 +5,14 @@
   >
     <div style="width: 55%;">
       <p style="font-weight: 200">
-        {{ student.id }}
+        {{ item.id }}
       </p>
       <div class="d-flex flex-row align-center">
         <input 
-          v-model="student.name"
+          v-model="item.name"
           placeholder="Enter Name"
           type="text" 
-          class="student-name-input"
+          class="item-name-input"
         >
         <v-spacer></v-spacer>
         <v-btn 
@@ -28,7 +28,7 @@
       </div>
       <v-divider class="my-2"></v-divider>
       <v-text-field
-        v-model="student.email"
+        v-model="item.email"
         label="Email"
         outlined
       >
@@ -37,7 +37,7 @@
         </template>
       </v-text-field>
       <v-text-field
-        v-model="student.points"
+        v-model="item.points"
         label="Points"
         outlined
       >
@@ -46,7 +46,7 @@
         </template>
       </v-text-field>
       <v-text-field
-        v-model="student.activeStatus"
+        v-model="item.activeStatus"
         label="Active Status"
         outlined
       >
@@ -72,7 +72,7 @@
         </div>
         <ModuleFetch 
           @toggleCanDelete="canBeDeleted = !canBeDeleted"
-          :studentId="student.id"
+          :studentId="item.id"
           :refetch="refetchModules"
         />
       </div>
@@ -85,7 +85,7 @@
         class="d-flex flex-row flex-wrap"
       >
         <div
-          v-for="(value, key) in student.misc"
+          v-for="(value, key) in item.misc"
           :key="key"
           style="width: 30%;"
           class="mx-1"
@@ -93,10 +93,10 @@
           <v-text-field
             :label="key"
             outlined
-            v-model="student.misc[key]"
+            v-model="item.misc[key]"
           ></v-text-field>
         </div>
-        <div v-if="Object.keys(student.misc).length === 0">
+        <div v-if="Object.keys(item.misc).length === 0">
           No additional information. Allocate custom data tracking on google sheets.
         </div>
       </div>
@@ -115,12 +115,12 @@
         ]"
       >
         <v-icon>mdi-delete</v-icon>
-        delete {{ student.name }} permanently
+        delete {{ item.name }} permanently
       </span>
       <v-textarea
-        v-model="student.note"
+        v-model="item.note"
         clearable
-        :label="`leave a note on ${student.name}`"
+        :label="`leave a note on ${item.name}`"
         no-resize
       ></v-textarea>
     </div>
@@ -128,7 +128,7 @@
       @close="showModuleAddModal = false"
       @reFetchModules="refetchModules = !refetchModules"
       :show="showModuleAddModal"
-      :studentId="student.id"
+      :studentId="item.id"
     />
   </div>
 </template>
@@ -146,9 +146,10 @@ import {
 import ModuleFetch from './ModuleFetch.vue'
 import ModuleAddModal from './ModuleAddModal.vue'
 import { updateStudent } from '../SheetsAPI'
+import { useAutoSync } from '../AutoSync'
 
 const props = defineProps({
-  student: {
+  item: {
     type: Object,
     required: true
   },
@@ -171,16 +172,17 @@ const showModuleAddModal = ref(false)
 const refetchModules = ref(false)
 const canBeDeleted = ref(false)
 
-const { student, autoSync } = toRefs(props)
+const { item, autoSync } = toRefs(props)
+useAutoSync(autoSync, reqUpdateStudent)
 let studentWatcher = () => {}
 
-watch(student, () => {
+watch(item, () => {
   upToDate.value = false
 })
 
 watch(upToDate, (val) => {
   if (val) {
-    studentWatcher = watch(student, () => {
+    studentWatcher = watch(item, () => {
       upToDate.value = false
     }, { deep: true })
   } else {
@@ -188,24 +190,10 @@ watch(upToDate, (val) => {
   }
 })
 
-const interval = ref(undefined)
-
-onMounted(() => {
-  interval.value = setInterval(() => {
-    if (autoSync.value) {
-      reqUpdateStudent()
-    }
-  }, 3000)
-})
-
-onUnmounted(() => {
-  clearInterval(interval.value)
-})
-
 async function reqUpdateStudent() {
   if (upToDate.value) return
   updatingStudent.value = true
-  await updateStudent(student.value)
+  // await updateStudent(item.value)
   updatingStudent.value = false
   upToDate.value = true
 }
