@@ -48,13 +48,8 @@ export function mapGraduates(sheetData: any[][], removeHeaderRow = true): Object
   return sheetData.map((graduate: any, index: number) => {
     return {
       row: index + (removeHeaderRow ? 2 : 1),
-      id: graduate[0],
-      name: graduate[1],
-      email: graduate[2],
-      phone: graduate[3],
-      course: graduate[4],
-      year: graduate[5],
-      points: graduate[6],
+      name: graduate[0],
+      phone: graduate[1],
     };
   });
 }

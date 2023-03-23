@@ -1,6 +1,7 @@
 import StudentDetail from '../src/components/StudentDetail.vue';
 import StudentListItem from '../src/components/StudentListItem.vue';
 import ModuleListItem from '../src/components/ModuleListItem.vue';
+import GraduateListItem from '../src/components/GraduateListItem.vue';
 import { markRaw } from 'vue';
 import ModuleDetail from '../src/components/ModuleDetail.vue';
 // import 
@@ -27,7 +28,7 @@ export function switchPanel(panel: PanelType): Panel {
     case PanelType.GRADUATES:
       return {
         detailComponent: markRaw(StudentDetail),
-        listItemComponent: markRaw(StudentListItem),
+        listItemComponent: markRaw(GraduateListItem),
         title: 'Graduates',
         color: 'purple',
         icon: 'mdi-account-school',
