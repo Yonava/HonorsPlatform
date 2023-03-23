@@ -1,32 +1,33 @@
 <template>
   <div style="width: 100%">
-    <div
-      v-if="!loading"
-      style="position: relative; width: 100%"
-      class="d-flex flex-column align-center mt-2"
-    >
+    <div v-if="!loading">
       <div
-        v-for="item in students"
-        :key="item"
-        @click="selectedStudent = item"
-        :class="[
-          'mb-2',
-          'student-card',
-          selectedStudent === item ? 'selected-student-card' : ''
-        ]"
+        style="position: relative; width: 100%"
+        class="d-flex flex-column align-center mt-2"
       >
-        <component
-          :is="panel.listItemComponent" 
-          :item="item" 
-        />
+        <div
+          v-for="item in items"
+          :key="item"
+          @click="selectedItem = item"
+          :class="[
+            'mb-2',
+            'item-card',
+            selectedItem === item ? 'selected-item-card' : ''
+          ]"
+        >
+          <component
+            :is="panel.listItemComponent" 
+            :item="item" 
+          />
+        </div>
+      </div>
+      <div v-if="items.length === 0">
+        <div class="d-flex justify-center">
+          no {{ panel.title.toLowerCase() }} in system
+        </div>
       </div>
     </div>
-    <div v-if="students.length === 0">
-      <div class="d-flex justify-center">
-        no {{ panel.title.toLowerCase() }} in system
-      </div>
-    </div>
-    <div v-else-if="loading">
+    <div v-else>
       <div class="d-flex justify-center">
         <v-progress-circular 
           :color="`${panel.color}-darken-4`"
@@ -48,7 +49,7 @@ import {
 } from 'vue'
 
 const props = defineProps({
-  students: {
+  items: {
     type: Array,
     required: true
   },
@@ -67,14 +68,14 @@ const props = defineProps({
 
 const emits = defineEmits(['select'])
 
-const selectedStudent = computed({
+const selectedItem = computed({
   get: () => props.selected,
-  set: student => emits('select', student)
+  set: item => emits('select', item)
 })
 </script>
 
 <style scoped>
-.student-card {
+.item-card {
   width: 92%;
   background: rgba(255,255,255, 0.5);
   border-radius: 5px;
@@ -83,12 +84,12 @@ const selectedStudent = computed({
   transition: 350ms;
 }
 
-.selected-student-card {
+.selected-item-card {
   background: rgba(255,255,255, 0.7);
   box-shadow: 0 0 10px rgba(0,0,0,0.2);
 }
 
-.student-card:hover {
+.item-card:hover {
   background: rgba(255,255,255, 0.7);
   box-shadow: 0 0 10px rgba(0,0,0,0.2);
   transform: scale(0.98)

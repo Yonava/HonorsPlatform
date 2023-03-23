@@ -26,7 +26,7 @@ export function switchPanel(panel: PanelType): Panel {
   switch (panel) {
     case PanelType.GRADUATES:
       return {
-        detailComponent: StudentDetail,
+        detailComponent: markRaw(StudentDetail),
         listItemComponent: markRaw(StudentListItem),
         title: 'Graduates',
         color: 'purple',
@@ -46,7 +46,7 @@ export function switchPanel(panel: PanelType): Panel {
       };
     case PanelType.MODULES:
       return {
-        detailComponent: StudentDetail,
+        detailComponent: markRaw(StudentDetail),
         listItemComponent: markRaw(ModuleListItem),
         title: 'Modules',
         color: 'orange',
