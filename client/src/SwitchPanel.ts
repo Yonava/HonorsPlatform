@@ -25,6 +25,7 @@ export type Panel = {
   title: string,
   color: string,
   icon: string,
+  keys: string[],
   sheetRange: string,
   mapData: (sheetData: any[][]) => Object[] | Promise<Object[]>,
   type: PanelType
@@ -43,6 +44,7 @@ export function switchPanel(panel: PanelType): Panel {
         icon: 'mdi-account-school',
         sheetRange: 'Graduates',
         mapData: mapGraduates,
+        keys: ['name', 'phone'],
         type: PanelType.GRADUATES
       };
     case PanelType.STUDENTS:
@@ -54,6 +56,7 @@ export function switchPanel(panel: PanelType): Panel {
         title: 'Students',
         color: 'blue',
         icon: 'mdi-account-group',
+        keys: ['id'],
         sheetRange: 'Students',
         mapData: mapStudents,
         type: PanelType.STUDENTS
@@ -67,6 +70,7 @@ export function switchPanel(panel: PanelType): Panel {
         title: 'Modules',
         color: 'orange',
         icon: 'mdi-book-open-variant',
+        keys: ['studentId', 'courseCode'],
         sheetRange: 'Modules',
         mapData: mapModules,
         type: PanelType.MODULES
@@ -81,6 +85,7 @@ export function switchPanel(panel: PanelType): Panel {
         color: 'red',
         icon: 'mdi-book',
         sheetRange: 'Modules',
+        keys: ['studentId', 'courseCode'],
         mapData: mapModules,
         type: PanelType.COMPLETED_MODULES
       };

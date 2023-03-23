@@ -228,14 +228,19 @@ async function reqDelete() {
 }
 
 async function itemAdded<T>(item: T) {
-  console.log('item added', item)
   showAddModal.value = false
   await fetchData()
-  selectedItem.value = item
   const index = items.value.findIndex((i: T) => {
-    return Object.values(i).join('') === Object.values(item).join('')
+    const keys = panel.value.keys
+    for (let key of keys) {
+      if (i[key] !== item[key]) return false
+    }
+
+    return true
   })
+  console.log(index)
   if (index === -1) return
+  selectedItem.value = items.value[index]
   items.value.splice(index, 1)
   items.value.unshift(selectedItem.value)
 }
