@@ -241,7 +241,7 @@ async function fetchData() {
   loadingItems.value = true
   items.value = []
   const data = await getEvery(panel.value.sheetRange)
-  items.value = panel.value.mapData(data)
+  items.value = await panel.value.mapData(data)
   loadingItems.value = false
 }
 

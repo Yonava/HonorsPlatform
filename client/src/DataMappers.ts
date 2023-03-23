@@ -12,7 +12,6 @@ export async function mapStudents(sheetData: any[][]): Promise<Object[]> {
   const categories = headerRow
     .slice(6)
     .filter((category: any) => category !== '')
-  sheetData.shift()
   return sheetData
     .map((student, index) => ({
       row: index + 2, // + 1 for header row, + 1 for 0-indexing
@@ -30,12 +29,11 @@ export async function mapStudents(sheetData: any[][]): Promise<Object[]> {
     .filter(removeEmptyRows);
 }
 
-export function mapModules(sheetData: any[][], removeHeaderRow = true): Object[] {
-  if (removeHeaderRow) sheetData.shift()
+export function mapModules(sheetData: any[][]): Object[] {
   return sheetData
     .map((module, index) => {
       return {
-        row: index + (removeHeaderRow ? 2 : 1),
+        row: index + 2,
         studentId: module[0] ?? '',
         courseCode: module[1] ?? '',
         description: module[2] ?? '',
@@ -45,12 +43,11 @@ export function mapModules(sheetData: any[][], removeHeaderRow = true): Object[]
     .filter(removeEmptyRows);
 }
 
-export function mapGraduates(sheetData: any[][], removeHeaderRow = true): Object[] {
-  if (removeHeaderRow) sheetData.shift()
+export function mapGraduates(sheetData: any[][]): Object[] {
   return sheetData
     .map((graduate: any, index: number) => {
       return {
-        row: index + (removeHeaderRow ? 2 : 1),
+        row: index + 2,
         name: graduate[0],
         phone: graduate[1],
       };
