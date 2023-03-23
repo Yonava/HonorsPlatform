@@ -171,9 +171,9 @@
         class="honors-logo"
       >
     </v-main>
-    <StudentAddModal 
+    <AddModal 
       @close="showAddModal = false"
-      @success="studentAdded($event)"
+      @success="itemAdded($event)"
       :show="showAddModal"
     />
   </v-sheet>
@@ -182,7 +182,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed, watch } from 'vue' 
 import { getEvery, clearByRow } from '../SheetsAPI'
-import StudentAddModal from '../components/StudentAddModal.vue'
+import AddModal from '../components/AddModal.vue'
 import PanelList from '../components/PanelList.vue'
 import StudentDetail from '../components/StudentDetail.vue'
 import SortPanel from '../components/SortPanel.vue'
@@ -226,11 +226,13 @@ async function reqDelete() {
   await fetchData()
 }
 
-async function studentAdded(studentId: string) {
+async function itemAdded<T>(item: T) {
   showAddModal.value = false
   await fetchData()
-  selectedItem.value = items.value.find((student: any) => student.id === studentId)
-  const index = items.value.indexOf(selectedItem.value)
+  selectedItem.value = item
+  const index = items.value.findIndex((i: T) => {
+    return Object.values(i).join('') === Object.values(item).join('')
+  })
   if (index === -1) return
   items.value.splice(index, 1)
   items.value.unshift(selectedItem.value)
