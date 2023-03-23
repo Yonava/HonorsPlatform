@@ -146,7 +146,7 @@ import {
 import ModuleFetch from './ModuleFetch.vue'
 import ModuleAddModal from './ModuleAddModal.vue'
 import { updateStudent } from '../SheetsAPI'
-import { useAutoSync } from '../AutoSync'
+import { useAutoSync, useChangeWatcher } from '../AutoSync'
 
 const props = defineProps({
   item: {
@@ -167,33 +167,18 @@ const reqDeleteStudent = () => {
 
 const editingName = ref(false)
 const updatingStudent = ref(false)
-const upToDate = ref(false)
 const showModuleAddModal = ref(false)
 const refetchModules = ref(false)
 const canBeDeleted = ref(false)
 
 const { item, autoSync } = toRefs(props)
 useAutoSync(autoSync, reqUpdateStudent)
-let studentWatcher = () => {}
-
-watch(item, () => {
-  upToDate.value = false
-})
-
-watch(upToDate, (val) => {
-  if (val) {
-    studentWatcher = watch(item, () => {
-      upToDate.value = false
-    }, { deep: true })
-  } else {
-    studentWatcher()
-  }
-})
+const { upToDate } = useChangeWatcher(item)
 
 async function reqUpdateStudent() {
   if (upToDate.value) return
   updatingStudent.value = true
-  // await updateStudent(item.value)
+  await updateStudent(item.value)
   updatingStudent.value = false
   upToDate.value = true
 }

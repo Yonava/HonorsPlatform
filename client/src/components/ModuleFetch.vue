@@ -27,6 +27,7 @@ import {
 } from 'vue'
 import { getModules, deleteModule } from '../SheetsAPI'
 import ModuleList from '../components/ModuleList.vue'
+import { mapModules } from '../DataMappers'
 
 const modules = ref([])
 const loadingModules = ref(false)
@@ -54,7 +55,7 @@ watch(() => props.refetch, async () => {
 
 async function fetchModules() {
   loadingModules.value = true
-  modules.value = await getModules(props.studentId)
+  modules.value = mapModules(await getModules(props.studentId), false)
   loadingModules.value = false
 }
 

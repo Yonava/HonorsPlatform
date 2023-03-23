@@ -16,20 +16,31 @@ export function mapStudents(sheetData: any[][], removeHeaderRow = true): Object[
         acc[category] = student[index + 6] ?? ''
         return acc
       }, {})
-  }))
+    }))
+    .filter(student => {
+      return Object
+        .values(student)
+        .some(value => typeof value === 'string' && value.length > 0);
+    });
 }
 
 export function mapModules(sheetData: any[][], removeHeaderRow = true): Object[] {
   if (removeHeaderRow) sheetData.shift()
-  return sheetData.map((module, index) => {
-    return {
-      row: index + (removeHeaderRow ? 2 : 1),
-      studentId: module[0] ?? '',
-      courseCode: module[1] ?? '',
-      description: module[2] ?? '',
-      term: module[3] ?? '',
-    };
-  });
+  return sheetData
+    .map((module, index) => {
+      return {
+        row: index + (removeHeaderRow ? 2 : 1),
+        studentId: module[0] ?? '',
+        courseCode: module[1] ?? '',
+        description: module[2] ?? '',
+        term: module[3] ?? '',
+      };
+    })
+    .filter(module => {
+      return Object
+        .values(module)
+        .some(value => typeof value === 'string' && value.length > 0);
+    });
 }
 
 export function mapGraduates(sheetData: any[][], removeHeaderRow = true): Object[] {
