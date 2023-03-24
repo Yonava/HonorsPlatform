@@ -10,9 +10,7 @@ export async function mapStudents(sheetData: any[][]): Promise<Object[]> {
   // get header row categories
   const studentRange = 'Students';
   const headerRow = await getHeaderRow(studentRange);
-  const categories = headerRow.slice(6)
-
-  console.log(categories)
+  const categories = headerRow.slice(6);
   return sheetData
     .map((student, index) => ({
       row: index + 2, // + 1 for header row, + 1 for 0-indexing

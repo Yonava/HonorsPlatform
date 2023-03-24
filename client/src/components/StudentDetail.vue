@@ -91,7 +91,6 @@
       <v-text-field
         v-model="item.email"
         label="Email"
-        outlined
       >
         <template #prepend>
           <v-icon>mdi-email</v-icon>
@@ -161,9 +160,9 @@
           class="mx-1"
         >
           <v-text-field
+            v-model="item.misc[key]"
             :label="key"
             outlined
-            v-model="item.misc[key]"
           ></v-text-field>
         </div>
         <div v-if="Object.keys(item.misc).length === 0">
@@ -260,6 +259,7 @@ async function reqUpdateStudent() {
 }
 
 async function saveId() {
+  if (!studentIdRule(tempStudentId.value)) return
   item.value.id = tempStudentId.value
   await reqUpdateStudent()
   dialog.value = false

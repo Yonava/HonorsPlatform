@@ -5,6 +5,9 @@
   >
     <v-sheet 
       :color="`${panel.color}-lighten-5`"
+      :style="{
+        border: `5px solid ${panel.color}`,
+      }"
       class="pa-5 parent"
     >
       <h1 class="mb-3 d-flex align-center">
