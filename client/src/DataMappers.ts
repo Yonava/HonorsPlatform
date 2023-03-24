@@ -10,9 +10,9 @@ export async function mapStudents(sheetData: any[][]): Promise<Object[]> {
   // get header row categories
   const studentRange = 'Students';
   const headerRow = await getHeaderRow(studentRange);
-  const categories = headerRow
-    .slice(6)
-    .filter((category: any) => category !== '')
+  const categories = headerRow.slice(6)
+
+  console.log(categories)
   return sheetData
     .map((student, index) => ({
       row: index + 2, // + 1 for header row, + 1 for 0-indexing
@@ -23,6 +23,7 @@ export async function mapStudents(sheetData: any[][]): Promise<Object[]> {
       activeStatus: student[4] ?? '',
       note: student[5] ?? '',
       misc: categories.reduce((acc: any, category: any, index: number) => {
+        if (category === '') return acc
         acc[category] = student[index + 6] ?? ''
         return acc
       }, {})

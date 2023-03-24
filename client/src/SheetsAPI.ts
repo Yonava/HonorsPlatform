@@ -12,12 +12,7 @@ export async function getEvery(range: string) {
     data.shift();
     return data;
   } catch {
-    router.push({
-      name: "auth",
-      query: {
-        hold: "true",
-      }
-    })
+    catchAction();
   }
 }
 
@@ -34,7 +29,12 @@ export async function getHeaderRow(range: string) {
     const headerRow = (await axios.get(`/api/range/${range}!A1:Z1`)).data;
     return headerRow[0];
   } catch {
-    catchAction();
+    router.push({
+      name: "auth",
+      query: {
+        hold: "true",
+      }
+    })
   }
 }
 
