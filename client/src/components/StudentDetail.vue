@@ -24,10 +24,7 @@
             Add Student ID
           </v-btn>
         </template>
-        <div 
-          class="pa-4"
-          style="student-id-dialog"
-        >
+        <div class="student-id-dialog pa-4">
           <div v-if="!updatingStudent">
             <v-icon color="red">mdi-alert</v-icon>
             <p 
