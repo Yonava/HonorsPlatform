@@ -91,6 +91,7 @@
         ></v-icon>
         Refresh Data
       </v-btn>
+      <Announcements />
     </v-app-bar>
     <v-main>
       <div 
@@ -184,6 +185,7 @@
 import { ref, onMounted, computed, watch } from 'vue' 
 import { getEvery, clearByRow } from '../SheetsAPI'
 import AddModal from '../components/AddModal.vue'
+import Announcements from '../components/AnnouncementMenu.vue'
 import PanelList from '../components/PanelList.vue'
 import StudentDetail from '../components/StudentDetail.vue'
 import SortPanel from '../components/SortPanel.vue'
@@ -208,11 +210,20 @@ watch(panel, async () => {
   await fetchData()
 })
 
+const keyBindToggle = (panelType: PanelType) => {
+  if (panel.value.type === panelType) return
+  changePanel(panelType)
+}
+
 useKeyBindings({
   'a': () => autoSync.value = !autoSync.value,
   's': () => showAddModal.value = !showAddModal.value,
   'r': () => fetchData(),
   '/': () => document.querySelector('input').focus(),
+  '1': () => keyBindToggle(PanelType.STUDENTS),
+  '2': () => keyBindToggle(PanelType.GRADUATES),
+  '3': () => keyBindToggle(PanelType.MODULES),
+  '4': () => keyBindToggle(PanelType.COMPLETED_MODULES),
 })
 
 onMounted(async () => {
@@ -250,7 +261,7 @@ async function fetchData() {
 
 function typeListStyle(type: PanelType) {
   return {
-    color: switchPanel(type).title === panel.value.title ? panel.value.color : 'black',
+    color: type === panel.value.type ? panel.value.color : 'black',
   }
 }
 
