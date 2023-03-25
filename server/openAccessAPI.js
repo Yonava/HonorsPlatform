@@ -10,9 +10,24 @@ router.get("/", async (req, res) => {
 
 router.get("/points", async (req, res) => {
   try {
-    const students = await (await sheetInstance()).getRange("Students");
-    const pointsIndex = 3;
-    const points = students.map(student => student[pointsIndex]);
+    const studentData = {
+      'points': 3,
+      'name': 0,
+    };
+    const students = (await (await sheetInstance()).getRange("Students"))
+      .slice(1)
+      .filter(student => student[0]);
+    const points = students
+      .map(student => {
+        const studentObj = {};
+        for (const key in studentData) {
+          studentObj[key] = student[studentData[key]];
+          if (key === 'points') {
+            studentObj[key] = parseInt(studentObj[key]) || 0;
+          }
+        }
+        return studentObj;
+      });
     res.json(points);
   } catch {
     res.status(401).json({ error: "Forbidden" });
