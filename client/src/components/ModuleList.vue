@@ -3,6 +3,7 @@
     <div 
       v-for="mod in modules"
       :key="mod.courseCode"
+      @click="showModuleDetailModal(mod)"
       class="module-card pa-2 mt-2 d-flex flex-row align-center"
     >
       <div style="d-flex flex-column align-center">
@@ -20,9 +21,10 @@
         </div>
       </div>
       <v-icon 
-        @click="reqDeleteModule(mod.row)"
+        @click.stop="reqDeleteModule(mod.row)"
         color="white"
         style="cursor: pointer; margin-left: auto;"
+        class="delete-module"
       >
         mdi-close
       </v-icon>
@@ -32,11 +34,18 @@
         No modules in progress
       </span>
     </div>
+    <ModuleDetailModal 
+      @close="showDetail = false"
+      @update="emits('update', $event)"
+      :show="showDetail"
+      :module="selectedModule"
+    />
   </div>
 </template>
 
-<script setup>
-import { defineProps, defineEmits } from 'vue'
+<script setup lang="ts">
+import { defineProps, defineEmits, ref } from 'vue'
+import ModuleDetailModal from './ModuleDetailModal.vue'
 
 const props = defineProps({
   modules: {
@@ -45,7 +54,15 @@ const props = defineProps({
   }
 })
 
-const emits = defineEmits(['delete'])
+const showDetail = ref(false)
+const selectedModule = ref({})
+
+const showModuleDetailModal = mod => {
+  selectedModule.value = mod
+  showDetail.value = true
+}
+
+const emits = defineEmits(['delete', 'update'])
 const reqDeleteModule = row => emits('delete', row)
 </script>
 
@@ -55,9 +72,18 @@ const reqDeleteModule = row => emits('delete', row)
   border-radius: 10px;
   transition: 300ms;
   box-shadow: 0 0 10px rgba(0,0,0,0.2);
+  cursor: pointer;
 }
 
 .module-card:hover {
-  background: #143875;
+  background: #2559b9;  
+}
+
+.delete-module {
+  transition: 300ms;
+}
+
+.delete-module:hover {
+  transform: scale(1.15);
 }
 </style>

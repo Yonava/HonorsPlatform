@@ -1,0 +1,130 @@
+<template>
+  <v-dialog v-model="showDialog">
+    <div 
+      v-if="selectedModule"
+      class="d-flex justify-center align-center"
+    >
+      <v-card
+        class="module-card pa-5"
+        width="500"
+      >
+        <div 
+          class="py-2 px-4 d-flex align-center"
+          style="font-weight: bold; background: rgba(0,0,0,0.75); color: white; border-radius: 20px; width: 120%"
+        >
+          <v-icon class="mr-1">mdi-file-document-edit-outline</v-icon>
+          <span>Edit Module</span>
+        </div>
+        <input 
+          type="text"
+          v-model="selectedModule.courseCode"
+          placeholder="Course Code"
+          class="course-code mt-2"
+        >
+        <div>
+          <v-text-field
+            v-model="selectedModule.term"
+            label="Term"
+            variant="outlined"
+          ></v-text-field>
+          <v-text-field
+            v-model="selectedModule.instructor"
+            label="Instructor"
+            variant="outlined"
+          ></v-text-field>
+          <div class="d-flex flex-row">
+            <v-text-field
+              v-model="selectedModule.docuSignCreated"
+              label="DocuSign Created"
+              variant="outlined"
+              class="mr-5"
+            ></v-text-field>
+            <v-text-field
+              v-model="selectedModule.docuSignCompleted"
+              label="DocuSign Completed"
+              variant="outlined"
+            ></v-text-field>
+          </div>
+          <v-textarea
+            v-model="selectedModule.description"
+            label="Description"
+            variant="outlined"
+          ></v-textarea>
+        </div>
+        <v-card-actions>
+          <v-btn
+            @click="update"
+            color="green"
+            filled
+          >update</v-btn>
+          <v-spacer></v-spacer>
+          <v-btn
+            @click="emits('close')"
+            color="red"
+          >discard changes</v-btn>
+        </v-card-actions>
+      </v-card>
+    </div>
+  </v-dialog>
+</template>
+
+<script setup>
+import { 
+  defineProps, 
+  defineEmits, 
+  computed, 
+  watch, 
+  ref 
+} from 'vue'
+
+const props = defineProps({
+  module: {
+    type: Object,
+    required: true
+  },
+  show: {
+    type: Boolean,
+    required: true
+  }
+})
+
+const selectedModule = ref(null)
+const startingState = ref(null)
+const clone = (obj) => JSON.parse(JSON.stringify(obj))
+
+watch(() => props.show, (val) => {
+  if (val) {
+    startingState.value = clone(props.module)
+    selectedModule.value = clone(props.module)
+  }
+})
+
+function update() {
+  if (JSON.stringify(selectedModule.value) === JSON.stringify(startingState.value)) {
+    emits('close')
+    return
+  }
+  emits('update', selectedModule.value)
+}
+
+const showDialog = computed({
+  get: () => props.show,
+  set: (val) => emits('close')
+})
+
+const emits = defineEmits([
+  'close', 
+  'update'
+])
+</script>
+
+<style scoped>
+input.course-code {
+  font-size: 3rem;
+  font-weight: 900;
+  border: none;
+  outline: none;
+  width: 100%;
+  margin-bottom: 1rem;
+}
+</style>

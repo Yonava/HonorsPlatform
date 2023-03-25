@@ -189,8 +189,7 @@
       <v-textarea
         v-model="item.note"
         clearable
-        :label="`leave a note on ${item.name}`"
-        no-resize
+        :label="`${item.name.split(' ')[0]}'s meeting notes`"
       ></v-textarea>
     </div>
     <ModuleAddModal 

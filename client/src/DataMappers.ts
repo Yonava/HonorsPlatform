@@ -56,6 +56,9 @@ export function mapModules(sheetData: any[][]): any[] {
         courseCode: module[1] ?? '',
         description: module[2] ?? '',
         term: module[3] ?? '',
+        instructor: module[4] ?? '',
+        docuSignCreated: module[5] ?? '',
+        docuSignCompleted: module[6] ?? '',
       };
     })
     .filter(removeEmptyRows);
@@ -67,6 +70,9 @@ export function unmapModules(modules: Object[]): any[][] {
     module.courseCode,
     module.description,
     module.term,
+    module.instructor,
+    module.docuSignCreated,
+    module.docuSignCompleted,
   ]);
 }
 
