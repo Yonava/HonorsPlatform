@@ -9,17 +9,18 @@
       </div>
       <v-spacer></v-spacer>
       <v-sheet 
-        v-if="item.activeStatus"
-        class="ml-1 px-2"
-        :color="item.activeStatus === 'Active' ? 'green' : 'red'"
+        class="px-2"
+        :color="color"
         elevation="1"
         :style="{
           height: '25px',
           color: 'white',
           borderRadius: '25px',
+          whiteSpace: 'nowrap',
+          textTransform: 'capitalize',
         }"
       >
-        {{ item.activeStatus }}
+        {{ item.activeStatus || 'No Status' }}
       </v-sheet>
     </div>
     <div 
@@ -52,12 +53,18 @@
 </template>
 
 <script setup>
-import { defineProps } from 'vue'
+import { defineProps, computed } from 'vue'
 
 const props = defineProps({
   item: {
     type: Object,
     required: true
   }
+})
+
+const color = computed(() => {
+  if (props.item.activeStatus.toLowerCase() === 'active') return 'green'
+  if (props.item.activeStatus.toLowerCase() === 'inactive') return 'red'
+  return 'grey'
 })
 </script>
