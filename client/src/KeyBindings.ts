@@ -2,16 +2,17 @@ import { onUnmounted } from "vue"
 
 type KeyBindings = { [key: string]: () => void }
 
-export function useKeyBindings(bindings: KeyBindings) {
-  document.addEventListener("keydown", (e) => keyBindings(e, bindings))
+export function useKeyBindings(bindings: KeyBindings, caseSensitive = false) {
+  document.addEventListener("keydown", (e) => keyBindings(e, bindings, caseSensitive))
   onUnmounted(() => {
-    document.removeEventListener("keydown", (e) => keyBindings(e, bindings))
+    document.removeEventListener("keydown", (e) => keyBindings(e, bindings, caseSensitive))
   })
 }
 
-function keyBindings(e: KeyboardEvent, bindings: KeyBindings) {
+function keyBindings(e: KeyboardEvent, bindings: KeyBindings, caseSensitive: boolean) {
   if (document.activeElement !== document.body) return
-  if (!bindings[e.key]) return
+  const key = caseSensitive ? e.key : e.key.toLowerCase()
+  if (!bindings[key]) return
   e.preventDefault()
-  bindings[e.key]()
+  bindings[key]()
 }

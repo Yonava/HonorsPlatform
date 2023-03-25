@@ -26,7 +26,7 @@
         </template>
         <div 
           class="pa-4"
-          style="background: rgb(230, 230, 230); border-radius: 5px; box-shadow: 0 0 10px 0 rgba(0,0,0,0.2);"
+          style="student-id-dialog"
         >
           <div v-if="!updatingStudent">
             <v-icon color="red">mdi-alert</v-icon>
@@ -131,7 +131,7 @@
           </v-btn>
         </div>
         <ModuleFetch
-          @toggleCanDelete="canBeDeleted = !canBeDeleted"
+          @toggleCanDelete="moduleListEmpty = !moduleListEmpty"
           :studentId="item.id"
           :refetch="refetchModules"
         />
@@ -180,7 +180,7 @@
           'd-flex', 
           'align-center', 
           'mb-2', 
-          `${canBeDeleted ? 'delete-student' : 'delete-student-disabled'}`
+          `${canDelete ? 'delete-student' : 'delete-student-disabled'}`
         ]"
       >
         <v-icon>mdi-delete</v-icon>
@@ -208,13 +208,14 @@ import {
   defineProps, 
   defineEmits, 
   watch, 
+  computed,
   toRefs, 
   onMounted,
   onUnmounted
 } from 'vue'
 import ModuleFetch from './ModuleFetch.vue'
 import ModuleAddModal from './ModuleAddModal.vue'
-import { updateByRow, updateStudent } from '../SheetsAPI'
+import { updateByRow } from '../SheetsAPI'
 import { useAutoSync, useChangeWatcher } from '../AutoSync'
 import { unmapStudents } from '../DataMappers'
 
@@ -231,7 +232,7 @@ const props = defineProps({
 
 const emits = defineEmits(['delete'])
 const reqDeleteStudent = () => {
-  if (!canBeDeleted.value) return
+  if (!canDelete.value) return
   emits('delete')
 }
 
@@ -239,9 +240,15 @@ const editingName = ref(false)
 const updatingStudent = ref(false)
 const showModuleAddModal = ref(false)
 const refetchModules = ref(false)
-const canBeDeleted = ref(false)
 const tempStudentId = ref('')
 const dialog = ref(false)
+
+// emitted from ModuleFetch
+const moduleListEmpty = ref(false)
+
+const canDelete = computed(() => {
+  return moduleListEmpty.value || !item.value.id
+})
 
 const { item, autoSync } = toRefs(props)
 useAutoSync(autoSync, reqUpdateStudent)
@@ -293,5 +300,11 @@ input.student-name-input {
 
 input.student-name-input:focus {
   outline: none;
+}
+
+.student-id-dialog {
+  background: rgb(230, 230, 230); 
+  border-radius: 5px; 
+  box-shadow: 0 0 10px 0 rgba(0,0,0,0.2);
 }
 </style>
