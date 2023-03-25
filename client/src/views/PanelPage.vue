@@ -159,11 +159,13 @@
           </div>
           <div 
             v-else
-            class="d-flex flex-column align-center justify-center mt-10"
+            class="d-flex flex-column align-center justify-center"
           >
-            <span style="font-weight: 200; font-size: 2em;">
-              select a {{ panel.title.slice(0, -1).toLowerCase() }} to view details
-            </span>
+            <v-icon
+              style="font-size: 30rem; opacity: 0.1;"
+            >
+              {{ panel.icon }}
+            </v-icon>
           </div>
         </v-sheet>
       </div>
@@ -231,9 +233,9 @@ onMounted(async () => {
 })
 
 async function reqDelete() {
-  await clearByRow(panel.value.sheetRange, selectedItem.value.row)
   selectedItem.value = undefined
   loadingItems.value = true
+  await clearByRow(panel.value.sheetRange, selectedItem.value.row)
   await new Promise(resolve => setTimeout(resolve, 500))
   await fetchData()
 }
