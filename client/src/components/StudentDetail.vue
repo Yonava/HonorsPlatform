@@ -96,7 +96,6 @@
       <v-text-field
         v-model="item.points"
         label="Points"
-        outlined
       >
         <template #prepend>
           <v-icon>mdi-ticket</v-icon>
@@ -105,7 +104,6 @@
       <v-text-field
         v-model="item.activeStatus"
         label="Active Status"
-        outlined
       >
         <template #prepend>
           <v-icon>mdi-card-account-details</v-icon>

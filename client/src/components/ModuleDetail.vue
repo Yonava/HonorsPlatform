@@ -38,12 +38,33 @@
       <v-text-field
         v-model="item.instructor"
         label="Instructor"
-        outlined
       >
         <template #prepend>
           <v-icon>mdi-human-male-board</v-icon>
         </template>
       </v-text-field>
+      <h1 class="mb-2">
+        Documentation
+      </h1>
+      <div class="d-flex flex-row">
+        <v-text-field
+          v-model="item.docuSignCreated"
+          class="mr-6"
+          label="DocuSign Created"
+        >
+          <template #prepend>
+            <v-icon>mdi-alert</v-icon>
+          </template>
+        </v-text-field>
+        <v-text-field
+          v-model="item.docuSignCompleted"
+          label="DocuSign Completed"
+        >
+          <template #prepend>
+            <v-icon>mdi-calendar-check</v-icon>
+          </template>
+        </v-text-field>
+      </div>
     </div>
     <div 
       style="width: 45%;" 
