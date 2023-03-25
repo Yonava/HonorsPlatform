@@ -1,5 +1,5 @@
 import { createWebHistory, createRouter } from 'vue-router'
-import StudentPage from '../views/StudentPage.vue'
+import Panel from '../views/PanelPage.vue'
 import Points from '../views/PointsPage.vue'
 import Auth from '../views/AuthPage.vue'
 
@@ -12,7 +12,7 @@ const routes = [
   {
     path: '/panel',
     name: 'panel',
-    component: StudentPage
+    component: Panel
   },
   {
     path: '/auth',

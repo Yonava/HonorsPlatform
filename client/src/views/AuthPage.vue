@@ -70,7 +70,9 @@ onMounted(() => {
   }, 1000)
   localStorage.setItem('token', route.query.code as string)
   if (route.query.hold) return
-  router.push({ name: 'panel' })
+  router.push({ 
+    name: 'panel' 
+  })
 })
 
 const authorize = async () => {

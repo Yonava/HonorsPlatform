@@ -12,7 +12,12 @@ export async function getEvery(range: string) {
     data.shift();
     return data;
   } catch {
-    catchAction();
+    router.push({
+      name: "auth",
+      query: {
+        hold: "true",
+      }
+    })
   }
 }
 
