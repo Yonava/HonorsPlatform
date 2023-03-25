@@ -32,7 +32,7 @@
           class="mr-3"
         >mdi-bullhorn-variant</v-icon>
         <h1 style="line-height: 0.8">
-          Announcements
+          Dr. Matthews Says...
         </h1>
       </div>
       <div 
@@ -54,7 +54,7 @@
           style="color: green"
         >
           <v-icon class="mr-1 mb-1">mdi-check</v-icon>
-          No current announcements
+          Nothing at the moment!
         </h2>
       </div>
       <v-list-item
