@@ -65,15 +65,12 @@ export function mapModules(sheetData: any[][]): any[] {
 }
 
 export function unmapModules(modules: Object[]): any[][] {
-  return modules.map((module: any) => [
-    module.studentId,
-    module.courseCode,
-    module.description,
-    module.term,
-    module.instructor,
-    module.docuSignCreated,
-    module.docuSignCompleted,
-  ]);
+  return modules.map((module: any) => {
+    const { row, ...rest } = module;
+    return [
+      ...Object.values(rest),
+    ];
+  });
 }
 
 export function mapGraduates(sheetData: any[][]): any[] {
@@ -89,8 +86,10 @@ export function mapGraduates(sheetData: any[][]): any[] {
 }
 
 export function unmapGraduates(graduates: Object[]): any[][] {
-  return graduates.map((graduate: any) => [
-    graduate.name,
-    graduate.phone,
-  ]);
+  return graduates.map((graduate: any) => {
+    const { row, ...rest } = graduate;
+    return [
+      ...Object.values(rest),
+    ];
+  });
 }
