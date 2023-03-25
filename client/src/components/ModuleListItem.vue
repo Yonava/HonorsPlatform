@@ -76,11 +76,17 @@ const docuSignStatus = computed(() => {
       text: 'In Progress',
       color: 'blue'
     }
-  } else {
+  } else if (!(props.item.docuSignCompleted || props.item.docuSignCreated)) {
     return {
       icon: 'mdi-file-document-alert-outline',
       text: 'Not Started',
       color: 'red'
+    }
+  } else {
+    return {
+      icon: 'mdi-file-document-remove-outline',
+      text: 'Missing Start Date',
+      color: 'purple'
     }
   }
 })
