@@ -5,11 +5,11 @@
   >
     <div style="width: 55%;">
       <p style="font-weight: 200">
-        {{ item.studentId }}
+        {{ module.studentId }}
       </p>
       <div class="d-flex flex-row align-center">
         <input 
-          v-model="item.courseCode"
+          v-model="module.courseCode"
           placeholder="Course Code"
           type="text" 
           class="header-input"
@@ -28,7 +28,7 @@
       </div>
       <v-divider class="my-2"></v-divider>
       <v-text-field
-        v-model="item.term"
+        v-model="module.term"
         label="Term"
       >
         <template #prepend>
@@ -36,7 +36,7 @@
         </template>
       </v-text-field>
       <v-text-field
-        v-model="item.instructor"
+        v-model="module.instructor"
         label="Instructor"
       >
         <template #prepend>
@@ -48,7 +48,7 @@
       </h1>
       <div class="d-flex flex-row">
         <v-text-field
-          v-model="item.docuSignCreated"
+          v-model="module.docuSignCreated"
           class="mr-6"
           label="DocuSign Created"
         >
@@ -57,7 +57,7 @@
           </template>
         </v-text-field>
         <v-text-field
-          v-model="item.docuSignCompleted"
+          v-model="module.docuSignCompleted"
           label="DocuSign Completed"
         >
           <template #prepend>
@@ -78,7 +78,7 @@
         delete module permanently
       </span>
       <v-textarea
-        v-model="item.description"
+        v-model="module.description"
         clearable
         label="Description"
       ></v-textarea>
@@ -112,18 +112,25 @@ const props = defineProps({
   }
 })
 
-const emits = defineEmits(['delete'])
+const emits = defineEmits(['delete', 'update'])
+const clone = (obj: any) => JSON.parse(JSON.stringify(obj))
 
 const updating = ref(false)
+const module = ref(null)
 
-const { item, autoSync } = toRefs(props)
+watch(() => props.item, (newVal) => {
+  module.value = clone(newVal)
+}, { immediate: true })
+
+const { autoSync } = toRefs(props)
 useAutoSync(autoSync, reqUpdateModule)
-const { upToDate } = useChangeWatcher(item)
+const { upToDate } = useChangeWatcher(module)
 
 async function reqUpdateModule() {
   if (upToDate.value) return
   updating.value = true
-  await updateByRow('Modules', item.value.row, unmapModules([item.value]))
+  await updateByRow('Modules', module.value.row, unmapModules([module.value]))
+  emits('update', clone(module.value))
   upToDate.value = true
   updating.value = false
 }

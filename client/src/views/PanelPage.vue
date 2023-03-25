@@ -152,6 +152,7 @@
           <div v-if="selectedItem">
             <component
               @delete="reqDelete"
+              @update="updateList($event)"
               :is="panel.components.detail" 
               :item="selectedItem"
               :autoSync="autoSync"
@@ -239,6 +240,14 @@ async function reqDelete() {
   await clearByRow(panel.value.sheetRange, row)
   await new Promise(resolve => setTimeout(resolve, 500))
   await fetchData()
+}
+
+function updateList<T>(item: T) {
+  const index = items.value.findIndex((i: T) => {
+    return panel.value.keys.every(key => i[key] === item[key]);
+  })
+  if (index === -1) return
+  items.value[index] = item
 }
 
 async function itemAdded<T>(item: T) {

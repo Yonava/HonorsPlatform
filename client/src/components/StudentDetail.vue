@@ -224,7 +224,11 @@ const props = defineProps({
   }
 })
 
-const emits = defineEmits(['delete'])
+const emits = defineEmits([
+  'delete', 
+  'update'
+])
+
 const reqDeleteStudent = () => {
   if (!canDelete.value) return
   emits('delete')
@@ -257,6 +261,7 @@ async function reqUpdateStudent() {
   const row = item.value.row
   const range = `Students`
   await updateByRow(range, row, await unmapStudents([item.value]))
+  emits('update', item.value)
   updatingStudent.value = false
   upToDate.value = true
 }
