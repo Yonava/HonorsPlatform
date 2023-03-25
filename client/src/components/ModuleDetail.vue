@@ -53,7 +53,7 @@
           label="DocuSign Created"
         >
           <template #prepend>
-            <v-icon>mdi-alert</v-icon>
+            <v-icon>mdi-calendar-alert</v-icon>
           </template>
         </v-text-field>
         <v-text-field
