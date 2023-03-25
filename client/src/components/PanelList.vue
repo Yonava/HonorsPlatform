@@ -3,14 +3,13 @@
     <div v-if="!loading">
       <div
         style="position: relative; width: 100%"
-        class="d-flex flex-column align-center mt-2"
+        class="d-flex flex-column align-center"
       >
         <div
           v-for="item in items"
           :key="item"
           @click="selectedItem = item"
           :class="[
-            'mb-2',
             'item-card',
             selectedItem === item ? 'selected-item-card' : ''
           ]"
@@ -97,22 +96,19 @@ const selectedItem = computed({
 
 <style scoped>
 .item-card {
-  width: 92%;
+  width: 100%;
   background: rgba(255,255,255, 0.5);
-  border-radius: 5px;
   padding: 10px;
   cursor: pointer;
   transition: 350ms;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
 }
 
 .selected-item-card {
-  background: rgba(255,255,255, 0.7);
-  box-shadow: 0 0 10px rgba(0,0,0,0.2);
+  background: rgba(255,255,255, 1);
 }
 
 .item-card:hover {
-  background: rgba(255,255,255, 0.7);
-  box-shadow: 0 0 10px rgba(0,0,0,0.2);
-  transform: scale(0.98)
+  background: rgba(255,255,255, 1);
 }
 </style>
