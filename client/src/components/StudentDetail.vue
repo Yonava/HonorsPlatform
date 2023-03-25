@@ -235,7 +235,6 @@ const reqDeleteStudent = () => {
   emits('delete')
 }
 
-const editingName = ref(false)
 const updatingStudent = ref(false)
 const showModuleAddModal = ref(false)
 const refetchModules = ref(false)

@@ -1,25 +1,25 @@
 <template>
   <v-menu v-model="active">
     <template v-slot:activator="{ props }">
-        <v-btn 
-          v-bind="props"
-          icon
-          class="ml-3"
+      <v-btn 
+        v-bind="props"
+        icon
+        class="ml-3"
+      >
+        <v-badge 
+          v-if="!read && announcements.length > 0"
+          size="small"
+          color="red"
+          :content="announcements.length"
         >
-          <v-badge 
-            v-if="!read && announcements.length > 0"
-            size="small"
-            color="red"
-            :content="announcements.length"
-          >
-            <v-icon>
-              mdi-message-alert{{ active ? '' : '-outline' }}
-            </v-icon>
-          </v-badge>
-          <v-icon v-else>
+          <v-icon>
             mdi-message-alert{{ active ? '' : '-outline' }}
           </v-icon>
-        </v-btn>
+        </v-badge>
+        <v-icon v-else>
+          mdi-message-alert{{ active ? '' : '-outline' }}
+        </v-icon>
+      </v-btn>
     </template>
 
     <v-list 
