@@ -12,7 +12,7 @@
           :class="[
             'item-card',
             'pa-3',
-            selectedItem === item ? 'selected-item-card' : ''
+            isSelected(item) ? 'selected-item-card' : ''
           ]"
         >
           <component
@@ -93,6 +93,11 @@ const selectedItem = computed({
   get: () => props.selected,
   set: item => emits('select', item)
 })
+
+const isSelected = item => {
+  if (!selectedItem.value) return false
+  return selectedItem.value.row === item.row
+}
 </script>
 
 <style scoped>

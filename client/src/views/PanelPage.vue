@@ -242,10 +242,8 @@ async function reqDelete() {
   await fetchData()
 }
 
-function updateList<T>(item: T) {
-  const index = items.value.findIndex((i: T) => {
-    return panel.value.keys.every(key => i[key] === item[key]);
-  })
+function updateList(item: any) {
+  const index = items.value.findIndex((i) => i.row === item.row)
   if (index === -1) return
   items.value[index] = item
 }

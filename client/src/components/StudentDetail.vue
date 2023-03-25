@@ -5,10 +5,10 @@
   >
     <div style="width: 55%;">
       <p
-        v-if="item.id"
+        v-if="student.id"
         style="font-weight: 200"
       >
-        {{ item.id }}
+        {{ student.id }}
       </p>
       <v-dialog 
         v-else
@@ -67,7 +67,7 @@
       </v-dialog>
       <div class="d-flex flex-row align-center">
         <input 
-          v-model="item.name"
+          v-model="student.name"
           placeholder="Enter Name"
           type="text" 
           class="student-name-input"
@@ -86,7 +86,7 @@
       </div>
       <v-divider class="my-2"></v-divider>
       <v-text-field
-        v-model="item.email"
+        v-model="student.email"
         label="Email"
       >
         <template #prepend>
@@ -94,7 +94,7 @@
         </template>
       </v-text-field>
       <v-text-field
-        v-model="item.points"
+        v-model="student.points"
         label="Points"
       >
         <template #prepend>
@@ -102,7 +102,7 @@
         </template>
       </v-text-field>
       <v-text-field
-        v-model="item.activeStatus"
+        v-model="student.activeStatus"
         label="Active Status"
       >
         <template #prepend>
@@ -110,7 +110,7 @@
         </template>
       </v-text-field>
       <v-divider class="my-2"></v-divider>
-      <div v-if="item.id">
+      <div v-if="student.id">
         <div class="d-flex flex-row align-center">
           <h2>
             Modules In Progress:
@@ -127,7 +127,7 @@
         </div>
         <ModuleFetch
           @toggleCanDelete="moduleListEmpty = !moduleListEmpty"
-          :studentId="item.id"
+          :studentId="student.id"
           :refetch="refetchModules"
         />
       </div>
@@ -149,18 +149,18 @@
         class="d-flex flex-row flex-wrap"
       >
         <div
-          v-for="(value, key) in item.misc"
+          v-for="(value, key) in student.misc"
           :key="key"
           style="width: 30%;"
           class="mx-1"
         >
           <v-text-field
-            v-model="item.misc[key]"
+            v-model="student.misc[key]"
             :label="key"
             outlined
           ></v-text-field>
         </div>
-        <div v-if="Object.keys(item.misc).length === 0">
+        <div v-if="Object.keys(student.misc).length === 0">
           No additional information. Allocate custom data tracking on google sheets.
         </div>
       </div>
@@ -179,19 +179,19 @@
         ]"
       >
         <v-icon>mdi-delete</v-icon>
-        delete {{ item.name }} permanently
+        delete {{ student.name }} permanently
       </span>
       <v-textarea
-        v-model="item.note"
+        v-model="student.note"
         clearable
-        :label="`${item.name.split(' ')[0]}'s meeting notes`"
+        :label="`${student.name.split(' ')[0]}'s meeting notes`"
       ></v-textarea>
     </div>
     <ModuleAddModal 
       @close="showModuleAddModal = false"
       @reFetchModules="refetchModules = !refetchModules"
       :show="showModuleAddModal"
-      :studentId="item.id"
+      :studentId="student.id"
     />
   </div>
 </template>
@@ -224,6 +224,7 @@ const props = defineProps({
   }
 })
 
+const clone = (obj) => JSON.parse(JSON.stringify(obj))
 const emits = defineEmits([
   'delete', 
   'update'
@@ -239,17 +240,22 @@ const showModuleAddModal = ref(false)
 const refetchModules = ref(false)
 const tempStudentId = ref('')
 const dialog = ref(false)
+const student = ref(null)
+
+watch(() => props.item, (newVal) => {
+  student.value = clone(newVal)
+}, { immediate: true })
 
 // emitted from ModuleFetch
 const moduleListEmpty = ref(false)
 
 const canDelete = computed(() => {
-  return moduleListEmpty.value || !item.value.id
+  return moduleListEmpty.value || !student.value.id
 })
 
-const { item, autoSync } = toRefs(props)
+const { autoSync } = toRefs(props)
 useAutoSync(autoSync, reqUpdateStudent)
-const { upToDate } = useChangeWatcher(item)
+const { upToDate } = useChangeWatcher(student)
 
 function studentIdRule(studentId) {
   return parseInt(studentId) && studentId.length === 7 || 'Invalid Student ID'          
@@ -258,17 +264,17 @@ function studentIdRule(studentId) {
 async function reqUpdateStudent() {
   if (upToDate.value) return
   updatingStudent.value = true
-  const row = item.value.row
+  const row = student.value.row
   const range = `Students`
-  await updateByRow(range, row, await unmapStudents([item.value]))
-  emits('update', item.value)
+  await updateByRow(range, row, await unmapStudents([student.value]))
+  emits('update', clone(student.value))
   updatingStudent.value = false
   upToDate.value = true
 }
 
 async function saveId() {
   if (!studentIdRule(tempStudentId.value)) return
-  item.value.id = tempStudentId.value
+  student.value.id = tempStudentId.value
   await reqUpdateStudent()
   dialog.value = false
 }
