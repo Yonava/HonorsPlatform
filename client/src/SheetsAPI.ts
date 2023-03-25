@@ -1,6 +1,9 @@
 import axios from "axios";
 import router from "./router";
 
+export interface HeaderRows { [key: string]: string[] }
+export const headerRows: HeaderRows = {}
+
 function catchAction() {
   router.push("/auth");
 }
@@ -48,6 +51,8 @@ export async function postInRange(range: string, data: any[][]) {
 export async function getHeaderRow(range: string) {
   try {
     const headerRow = (await axios.get(`/api/range/${range}!A1:Z1`)).data;
+    console.log('updating header row')
+    headerRows[range] = headerRow[0];
     return headerRow[0];
   } catch {
     router.push({

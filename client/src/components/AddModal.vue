@@ -64,7 +64,6 @@ import {
   toRef,
   defineProps, 
   defineEmits, 
-  onMounted,
   computed,
   watch
 } from 'vue'
@@ -94,10 +93,6 @@ watch(showDialog, async (val) => {
 const item = ref([])
 const loading = ref(false)
 const attrs = ref([])
-
-onMounted(async () => {
-  await initItem()
-})
 
 async function reqAdd() {
   if (!item.value.some(attr => attr)) {

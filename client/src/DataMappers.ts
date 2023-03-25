@@ -1,4 +1,4 @@
-import { getHeaderRow } from "./SheetsAPI";
+import { getHeaderRow, headerRows } from "./SheetsAPI";
 
 function removeEmptyRows(item: Object) {
   return Object
@@ -31,7 +31,7 @@ export async function mapStudents(sheetData: any[][]): Promise<Object[]> {
 
 export async function unmapStudents(students: Object[]): Promise<any[][]> {
   const studentRange = 'Students';
-  const headerRow = await getHeaderRow(studentRange);
+  const headerRow = headerRows[studentRange] ?? await getHeaderRow(studentRange);
   const categories = headerRow.slice(6);
   return students.map((student: any) => {
     const misc = categories.map((category: string) => student.misc[category] ?? '');
