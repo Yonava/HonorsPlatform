@@ -1,6 +1,7 @@
 import express from "express";
 import GoogleSheet from "./GoogleSheet.js";
 import { google } from 'googleapis';
+import openAccessAPI from "./openAccessAPI.js";
 
 const { OAuth2 } = google.auth;
 
@@ -12,6 +13,8 @@ const scope = 'https://www.googleapis.com/auth/spreadsheets';
 const app = express();
 app.use(express.json());
 let sheetInstance;
+
+app.use("/open", openAccessAPI);
 
 function getAuthUrl() {
   const auth = new OAuth2(clientId, clientSecret, redirectUri);
