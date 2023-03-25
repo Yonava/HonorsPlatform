@@ -11,6 +11,7 @@
           @click="selectedItem = item"
           :class="[
             'item-card',
+            'pa-3',
             selectedItem === item ? 'selected-item-card' : ''
           ]"
         >
@@ -101,7 +102,7 @@ const selectedItem = computed({
   padding: 10px;
   cursor: pointer;
   transition: 350ms;
-  border-bottom: 1px solid rgba(0,0,0,0.05);
+  border-bottom: 1px solid rgba(111, 111, 111, 0.21);
 }
 
 .selected-item-card {
