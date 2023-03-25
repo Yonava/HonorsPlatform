@@ -29,6 +29,24 @@ export async function mapStudents(sheetData: any[][]): Promise<Object[]> {
     .filter(removeEmptyRows);
 }
 
+export async function unmapStudents(students: Object[]): Promise<any[][]> {
+  const studentRange = 'Students';
+  const headerRow = await getHeaderRow(studentRange);
+  const categories = headerRow.slice(6);
+  return students.map((student: any) => {
+    const misc = categories.map((category: string) => student.misc[category] ?? '');
+    return [
+      student.name,
+      student.id,
+      student.email,
+      student.points,
+      student.activeStatus,
+      student.note,
+      ...misc,
+    ];
+  });
+}
+
 export function mapModules(sheetData: any[][]): Object[] {
   return sheetData
     .map((module, index) => {

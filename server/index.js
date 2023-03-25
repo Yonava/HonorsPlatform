@@ -52,69 +52,23 @@ app.get("/range/:range", async (req, res) => {
   }
 });
 
+app.put("/range/:range/:row", async (req, res) => {
+  try {
+    const { range, row } = req.params;
+    const data = req.body;
+    await sheetInstance.updateByRow(range, row, data);
+    res.json({ success: true });
+  } catch {
+    GoogleSheet.instance = null;
+    res.status(401).json({ error: 'Forbidden' });
+  }
+});
+
 app.delete("/range/:range/:row", async (req, res) => {
   try {
     const { range, row } = req.params;
     await sheetInstance.clearByRow(range, row);
     res.json({ success: true });
-  } catch {
-    GoogleSheet.instance = null;
-    res.status(401).json({ error: 'Forbidden' });
-  }
-});
-
-app.get("/students", async (req, res) => {
-  try {
-    const students = await sheetInstance.getStudents();
-    res.json(students);
-  } catch {
-    GoogleSheet.instance = null;
-    res.status(401).json({ error: 'Forbidden' });
-  }
-});
-
-app.delete("/students/:row", async (req, res) => {
-  try {
-    const { row } = req.params;
-    await sheetInstance.deleteStudent(row);
-    res.json({ success: true });
-  } catch {
-    GoogleSheet.instance = null;
-    res.status(401).json({ error: 'Forbidden' });
-  }
-});
-
-app.put("/students", async (req, res) => {
-  try {
-    const student = req.body;
-    await sheetInstance.updateStudent(student);
-    res.json({ success: true });
-  } catch {
-    GoogleSheet.instance = null;
-    res.status(401).json({ error: 'Forbidden' });
-  }
-});
-
-app.post("/students", async (req, res) => {
-  try {
-    const student = req.body;
-    await sheetInstance.addStudent(student);
-    res.json({ success: true });
-  } catch {
-    GoogleSheet.instance = null;
-    res.status(401).json({ error: 'Forbidden' });
-  }
-});
-
-app.get("/students/:studentId", async (req, res) => {
-  try {
-    const { studentId } = req.params;
-    const student = await sheetInstance.getStudent(studentId);
-    if (!student) {
-      res.status(404).json({ error: `Student with ID ${studentId} not found` });
-      return;
-    }
-    res.json(student);
   } catch {
     GoogleSheet.instance = null;
     res.status(401).json({ error: 'Forbidden' });

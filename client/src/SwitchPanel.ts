@@ -28,6 +28,7 @@ export type Panel = {
   keys: string[],
   sheetRange: string,
   mapData: (sheetData: any[][]) => Object[] | Promise<Object[]>,
+  unmapData?: (data: Object[]) => any[][] | Promise<any[][]>,
   type: PanelType
 };
 

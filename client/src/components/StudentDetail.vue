@@ -214,8 +214,9 @@ import {
 } from 'vue'
 import ModuleFetch from './ModuleFetch.vue'
 import ModuleAddModal from './ModuleAddModal.vue'
-import { updateStudent } from '../SheetsAPI'
+import { updateByRow, updateStudent } from '../SheetsAPI'
 import { useAutoSync, useChangeWatcher } from '../AutoSync'
+import { unmapStudents } from '../DataMappers'
 
 const props = defineProps({
   item: {
@@ -253,7 +254,9 @@ function studentIdRule(studentId) {
 async function reqUpdateStudent() {
   if (upToDate.value) return
   updatingStudent.value = true
-  await updateStudent(item.value)
+  const row = item.value.row
+  const range = `Students`
+  await updateByRow(range, row, await unmapStudents([item.value]))
   updatingStudent.value = false
   upToDate.value = true
 }

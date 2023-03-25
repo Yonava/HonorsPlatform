@@ -33,33 +33,6 @@ export default class GoogleSheet {
     return this;
   }
 
-  async getStudents() {
-    const response = await this.sheets.spreadsheets.values.get({
-      spreadsheetId: this.spreadsheetId,
-      range: 'Students',
-    });
-
-    return response.data.values;
-  }
-
-  async getStudent(studentId) {
-    const students = await this.getStudents();
-    const row = students.find(row => row[1] === studentId);
-    const columns = ['name', 'id', 'email', 'points', 'activeStatus', 'note']
-    if (!row) return;
-    return columns.reduce((acc, val, i) => {
-      acc[val] = row[i];
-      return acc;
-    }, {});
-  }
-
-  async deleteStudent(row) {
-    await this.sheets.spreadsheets.values.clear({
-      spreadsheetId: this.spreadsheetId,
-      range: `Students!A${row}:Z${row}`,
-    });
-  }
-
   async addStudent(student) {
     let students = (await this.getStudents()).map(row => row.join(''));
     let insertRow = students.indexOf('');
@@ -72,33 +45,6 @@ export default class GoogleSheet {
         values: [student]
       }
     });
-  }
-
-  async updateStudent(student) {
-    const { misc, row, ...rest } = student
-    const studentData = [...Object.values(rest)]
-
-    if (Object.values(misc).length > 0) {
-      studentData.push(...(await this.getMiscCategories()).map(cat => misc[cat] ?? ''))
-    }
-
-    await this.sheets.spreadsheets.values.update({
-      spreadsheetId: this.spreadsheetId,
-      range: `Students!A${row}:Z${row}`,
-      valueInputOption: 'USER_ENTERED',
-      resource: {
-        values: [studentData]
-      }
-    });
-  }
-
-  async getMiscCategories() {
-    const { data } = await this.sheets.spreadsheets.values.get({
-      spreadsheetId: this.spreadsheetId,
-      range: 'Students!G1:Z1',
-    });
-
-    return data.values[0];
   }
 
   async getModules(studentId) {
@@ -152,6 +98,17 @@ export default class GoogleSheet {
     await this.sheets.spreadsheets.values.clear({
       spreadsheetId: this.spreadsheetId,
       range: `${range}!A${row}:Z${row}`,
+    });
+  }
+
+  async updateByRow(range, row, data) {
+    await this.sheets.spreadsheets.values.update({
+      spreadsheetId: this.spreadsheetId,
+      range: `${range}!A${row}:Z${row}`,
+      valueInputOption: 'USER_ENTERED',
+      resource: {
+        values: data
+      }
     });
   }
 }

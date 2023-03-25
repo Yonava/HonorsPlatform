@@ -233,7 +233,6 @@ async function itemAdded<T>(item: T) {
   const index = items.value.findIndex((i: T) => {
     return panel.value.keys.every(key => i[key] === item[key]);
   })
-  console.log(index)
   if (index === -1) return
   selectedItem.value = items.value[index]
   items.value.splice(index, 1)

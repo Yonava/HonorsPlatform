@@ -29,6 +29,14 @@ export async function clearByRow(range: string, row: number) {
   }
 }
 
+export async function updateByRow(range: string, row: number, data: any) {
+  try {
+    await axios.put(`/api/range/${range}/${row}`, data);
+  } catch {
+    catchAction();
+  }
+}
+
 export async function getHeaderRow(range: string) {
   try {
     const headerRow = (await axios.get(`/api/range/${range}!A1:Z1`)).data;
