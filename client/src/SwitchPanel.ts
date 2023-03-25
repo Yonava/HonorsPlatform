@@ -8,7 +8,14 @@ import GraduateListItem from '../src/components/GraduateListItem.vue';
 import GraduateDetail from '../src/components/GraduateDetail.vue';
 
 import { markRaw } from 'vue';
-import { mapStudents, mapGraduates, mapModules } from './DataMappers';
+import { 
+  mapStudents,
+  unmapStudents,
+  mapGraduates, 
+  unmapGraduates,
+  mapModules,
+  unmapModules
+} from './DataMappers';
 
 export enum PanelType {
   STUDENTS = 'students',
@@ -27,8 +34,10 @@ export type Panel = {
   icon: string,
   keys: string[],
   sheetRange: string,
-  mapData: (sheetData: any[][]) => Object[] | Promise<Object[]>,
-  unmapData?: (data: Object[]) => any[][] | Promise<any[][]>,
+  mappers: {
+    map: (data: any[][]) => Object[] | Promise<Object[]>,
+    unmap: (data: Object[]) => any[][] | Promise<any[][]>
+  },
   type: PanelType
 };
 
@@ -44,7 +53,10 @@ export function switchPanel(panel: PanelType): Panel {
         color: 'purple',
         icon: 'mdi-account-school',
         sheetRange: 'Graduates',
-        mapData: mapGraduates,
+        mappers: {
+          map: mapGraduates,
+          unmap: unmapGraduates
+        },
         keys: ['name', 'phone'],
         type: PanelType.GRADUATES
       };
@@ -59,7 +71,10 @@ export function switchPanel(panel: PanelType): Panel {
         icon: 'mdi-account-group',
         keys: ['id'],
         sheetRange: 'Students',
-        mapData: mapStudents,
+        mappers: {
+          map: mapStudents,
+          unmap: unmapStudents
+        },
         type: PanelType.STUDENTS
       };
     case PanelType.MODULES:
@@ -73,7 +88,10 @@ export function switchPanel(panel: PanelType): Panel {
         icon: 'mdi-book-open-variant',
         keys: ['studentId', 'courseCode'],
         sheetRange: 'Modules',
-        mapData: mapModules,
+        mappers: {
+          map: mapModules,
+          unmap: unmapModules
+        },
         type: PanelType.MODULES
       };
     case PanelType.COMPLETED_MODULES:
@@ -87,7 +105,10 @@ export function switchPanel(panel: PanelType): Panel {
         icon: 'mdi-book',
         sheetRange: 'Modules',
         keys: ['studentId', 'courseCode'],
-        mapData: mapModules,
+        mappers: {
+          map: mapModules,
+          unmap: unmapModules
+        },
         type: PanelType.COMPLETED_MODULES
       };
     default:

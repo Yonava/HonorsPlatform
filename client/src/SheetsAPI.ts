@@ -1,8 +1,9 @@
 import axios from "axios";
 import router from "./router";
 
+// memoized to avoid API calls on every update
 export interface HeaderRows { [key: string]: string[] }
-export const headerRows: HeaderRows = {}
+export const headerRowMemo: HeaderRows = {}
 
 function catchAction() {
   router.push("/auth");
@@ -52,7 +53,7 @@ export async function getHeaderRow(range: string) {
   try {
     const headerRow = (await axios.get(`/api/range/${range}!A1:Z1`)).data;
     console.log('updating header row')
-    headerRows[range] = headerRow[0];
+    headerRowMemo[range] = headerRow[0];
     return headerRow[0];
   } catch {
     router.push({
