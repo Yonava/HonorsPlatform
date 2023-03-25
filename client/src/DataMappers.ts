@@ -6,7 +6,7 @@ function removeEmptyRows(item: Object) {
     .some(value => typeof value === 'string' && value.length > 0);
 }
 
-export async function mapStudents(sheetData: any[][]): Promise<Object[]> {
+export async function mapStudents(sheetData: any[][]): Promise<any[]> {
   // get header row categories
   const studentRange = 'Students';
   const headerRow = await getHeaderRow(studentRange);
@@ -47,7 +47,7 @@ export async function unmapStudents(students: Object[]): Promise<any[][]> {
   });
 }
 
-export function mapModules(sheetData: any[][]): Object[] {
+export function mapModules(sheetData: any[][]): any[] {
   return sheetData
     .map((module, index) => {
       return {
@@ -70,7 +70,7 @@ export function unmapModules(modules: Object[]): any[][] {
   ]);
 }
 
-export function mapGraduates(sheetData: any[][]): Object[] {
+export function mapGraduates(sheetData: any[][]): any[] {
   return sheetData
     .map((graduate: any, index: number) => {
       return {

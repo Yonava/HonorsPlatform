@@ -12,8 +12,8 @@ function catchAction() {
 export async function getEvery(range: string) {
   try {
     const data = (await axios.get(`/api/range/${range}`)).data;
-    // remove header row
-    data.shift();
+    // remove header row and store it in memo
+    headerRowMemo[range] = data.shift();
     return data;
   } catch {
     router.push({

@@ -25,7 +25,7 @@ import {
   defineProps, 
   defineEmits,
 } from 'vue'
-import { getModules, clearByRow } from '../SheetsAPI'
+import { getEvery, clearByRow } from '../SheetsAPI'
 import ModuleList from '../components/ModuleList.vue'
 import { mapModules } from '../DataMappers'
 
@@ -55,7 +55,9 @@ watch(() => props.refetch, async () => {
 
 async function fetchModules() {
   loadingModules.value = true
-  modules.value = mapModules(await getModules(props.studentId))
+  const unmappedModules = await getEvery('Modules')
+  modules.value = mapModules(unmappedModules)
+    .filter(module => module.studentId === props.studentId)
   loadingModules.value = false
 }
 
@@ -70,7 +72,7 @@ watch(canBeDeleted, (val) => {
 async function reqDeleteModule(row) {
   loadingModules.value = true
   await clearByRow('Modules', row)
-  await new Promise(resolve => setTimeout(resolve, 1000))
+  await new Promise(resolve => setTimeout(resolve, 500))
   await fetchModules()
 }
 </script>

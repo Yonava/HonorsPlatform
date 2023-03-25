@@ -223,7 +223,7 @@ async function reqDelete() {
   await clearByRow(panel.value.sheetRange, selectedItem.value.row)
   selectedItem.value = undefined
   loadingItems.value = true
-  await new Promise(resolve => setTimeout(resolve, 1000))
+  await new Promise(resolve => setTimeout(resolve, 500))
   await fetchData()
 }
 

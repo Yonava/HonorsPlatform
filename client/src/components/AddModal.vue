@@ -101,7 +101,7 @@ async function reqAdd() {
   }
   loading.value = true
   await postInRange(props.panel.sheetRange, [item.value])
-  await new Promise(resolve => setTimeout(resolve, 1000))
+  await new Promise(resolve => setTimeout(resolve, 500))
   const newItem = (await props.panel.mappers.map([item.value]))[0]
   emits('success', newItem)
   loading.value = false

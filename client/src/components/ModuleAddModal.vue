@@ -49,8 +49,9 @@
   </v-dialog>
 </template>
 
-<script setup>
-import { addModule } from '../SheetsAPI'
+<script setup lang="ts">
+import { postInRange, headerRowMemo } from '../SheetsAPI'
+import { unmapModules } from '../DataMappers'
 import { 
   ref, 
   defineProps, 
@@ -83,7 +84,9 @@ const showDialog = computed({
 })
 
 const loading = ref(false)
-const moduleAttrs = ref(['Student ID', 'Course Code', 'Description', 'Term'])
+const moduleAttrs = ref(
+  headerRowMemo['Modules'] ?? ['Student ID', 'Course Code', 'Description', 'Term']
+)
 const moduleData = ref([])
 const errorMessage = ref('')
 
@@ -103,8 +106,8 @@ async function reqAddModule() {
     return
   }
   loading.value = true
-  await addModule(moduleData.value)
-  await new Promise(resolve => setTimeout(resolve, 1000))
+  await postInRange('Modules', [moduleData.value])
+  await new Promise(resolve => setTimeout(resolve, 500))
   emits('close')
   emits('reFetchModules')
   loading.value = false
