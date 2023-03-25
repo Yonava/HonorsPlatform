@@ -87,39 +87,6 @@ app.post("/range/:range", async (req, res) => {
   }
 });
 
-app.get("/modules/:studentId", async (req, res) => {
-  try {
-    const { studentId } = req.params;
-    const modules = await sheetInstance.getModules(studentId);
-    res.json(modules);
-  } catch {
-    GoogleSheet.instance = null;
-    res.status(401).json({ error: 'Forbidden' });
-  }
-});
-
-app.post("/modules", async (req, res) => {
-  try {
-    const module = req.body;
-    await sheetInstance.addModule(module);
-    res.json({ success: true });
-  } catch {
-    GoogleSheet.instance = null;
-    res.status(401).json({ error: 'Forbidden' });
-  }
-});
-
-app.delete("/modules/:studentId/:courseCode", async (req, res) => {
-  try {
-    const { studentId, courseCode } = req.params;
-    await sheetInstance.deleteModule(studentId, courseCode);
-    res.json({ success: true });
-  } catch {
-    GoogleSheet.instance = null;
-    res.status(401).json({ error: 'Forbidden' });
-  }
-});
-
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(__dirname + '/public/'));
   app.get(/.*/, (req, res) => res.sendFile(__dirname + '/public/index.html'));

@@ -52,7 +52,6 @@ export async function postInRange(range: string, data: any[][]) {
 export async function getHeaderRow(range: string) {
   try {
     const headerRow = (await axios.get(`/api/range/${range}!A1:Z1`)).data;
-    console.log('updating header row')
     headerRowMemo[range] = headerRow[0];
     return headerRow[0];
   } catch {
@@ -62,29 +61,5 @@ export async function getHeaderRow(range: string) {
         hold: "true",
       }
     })
-  }
-}
-
-export async function getModules(studentId: string) {
-  try {
-    return (await axios.get(`/api/modules/${studentId}`)).data;
-  } catch {
-    catchAction();
-  }
-}
-
-export async function deleteModule(studentId: string, courseCode: string) {
-  try {
-    await axios.delete(`/api/modules/${studentId}/${courseCode}`);
-  } catch {
-    catchAction();
-  }
-}
-
-export async function addModule(module: any) {
-  try {
-    await axios.post("/api/modules", module);
-  } catch {
-    catchAction();
   }
 }

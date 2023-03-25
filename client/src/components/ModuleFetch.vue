@@ -25,7 +25,7 @@ import {
   defineProps, 
   defineEmits,
 } from 'vue'
-import { getModules, deleteModule } from '../SheetsAPI'
+import { getModules, clearByRow } from '../SheetsAPI'
 import ModuleList from '../components/ModuleList.vue'
 import { mapModules } from '../DataMappers'
 
@@ -55,7 +55,7 @@ watch(() => props.refetch, async () => {
 
 async function fetchModules() {
   loadingModules.value = true
-  modules.value = mapModules(await getModules(props.studentId), false)
+  modules.value = mapModules(await getModules(props.studentId))
   loadingModules.value = false
 }
 
@@ -67,9 +67,9 @@ watch(canBeDeleted, (val) => {
   emits('toggleCanDelete', val)
 })
 
-async function reqDeleteModule(courseCode) {
+async function reqDeleteModule(row) {
   loadingModules.value = true
-  await deleteModule(props.studentId, courseCode)
+  await clearByRow('Modules', row)
   await new Promise(resolve => setTimeout(resolve, 1000))
   await fetchModules()
 }

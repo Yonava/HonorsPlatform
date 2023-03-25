@@ -20,7 +20,7 @@
         </div>
       </div>
       <v-icon 
-        @click="reqDeleteModule(mod.courseCode)"
+        @click="reqDeleteModule(mod.row)"
         color="white"
         style="cursor: pointer; margin-left: auto;"
       >
@@ -46,10 +46,7 @@ const props = defineProps({
 })
 
 const emits = defineEmits(['delete'])
-
-const reqDeleteModule = courseCode => {
-  emits('delete', courseCode)
-}
+const reqDeleteModule = row => emits('delete', row)
 </script>
 
 <style scoped>

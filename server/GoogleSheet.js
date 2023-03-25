@@ -33,44 +33,6 @@ export default class GoogleSheet {
     return this;
   }
 
-  async getModules(studentId) {
-    const modules = (await this.getAllModules()).filter(row => row[0] === studentId);
-    return modules;
-  }
-
-  async addModule(module) {
-    const modules = (await this.getAllModules()).map(row => row.join(''));
-    let insertRow = modules.indexOf('');
-    insertRow = insertRow === -1 ? modules.length + 2 : insertRow + 2;
-    await this.sheets.spreadsheets.values.update({
-      spreadsheetId: this.spreadsheetId,
-      range: `Modules!A${insertRow}:Z${insertRow}`,
-      valueInputOption: 'USER_ENTERED',
-      resource: {
-        values: [module]
-      }
-    });
-  }
-
-  async deleteModule(studentId, courseCode) {
-    const modules = await this.getAllModules();
-    const row = modules.findIndex(row => row[0] === studentId && row[1] === courseCode);
-    if (row === -1) return;
-    await this.sheets.spreadsheets.values.clear({
-      spreadsheetId: this.spreadsheetId,
-      range: `Modules!A${row + 2}:Z${row + 2}`,
-    });
-  }
-
-  async getAllModules() {
-    const response = await this.sheets.spreadsheets.values.get({
-      spreadsheetId: this.spreadsheetId,
-      range: 'Modules',
-    });
-
-    return response.data.values.slice(1);
-  }
-
   async getRange(range) {
     const response = await this.sheets.spreadsheets.values.get({
       spreadsheetId: this.spreadsheetId,
