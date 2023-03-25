@@ -33,20 +33,6 @@ export default class GoogleSheet {
     return this;
   }
 
-  async addStudent(student) {
-    let students = (await this.getStudents()).map(row => row.join(''));
-    let insertRow = students.indexOf('');
-    insertRow = insertRow === -1 ? students.length + 1: insertRow + 1;
-    await this.sheets.spreadsheets.values.update({
-      spreadsheetId: this.spreadsheetId,
-      range: `Students!A${insertRow}:Z${insertRow}`,
-      valueInputOption: 'USER_ENTERED',
-      resource: {
-        values: [student]
-      }
-    });
-  }
-
   async getModules(studentId) {
     const modules = (await this.getAllModules()).filter(row => row[0] === studentId);
     return modules;
@@ -105,6 +91,20 @@ export default class GoogleSheet {
     await this.sheets.spreadsheets.values.update({
       spreadsheetId: this.spreadsheetId,
       range: `${range}!A${row}:Z${row}`,
+      valueInputOption: 'USER_ENTERED',
+      resource: {
+        values: data
+      }
+    });
+  }
+
+  async postInRange(range, data) {
+    const rangeData = await this.getRange(range);
+    let insertRow = rangeData.findIndex(row => row.join('') === '');
+    insertRow = insertRow === -1 ? rangeData.length + 1 : insertRow + 1;
+    await this.sheets.spreadsheets.values.update({
+      spreadsheetId: this.spreadsheetId,
+      range: `${range}!A${insertRow}:Z${insertRow}`,
       valueInputOption: 'USER_ENTERED',
       resource: {
         values: data

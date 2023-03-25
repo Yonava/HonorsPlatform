@@ -29,9 +29,17 @@ export async function clearByRow(range: string, row: number) {
   }
 }
 
-export async function updateByRow(range: string, row: number, data: any) {
+export async function updateByRow(range: string, row: number, data: any[][]) {
   try {
     await axios.put(`/api/range/${range}/${row}`, data);
+  } catch {
+    catchAction();
+  }
+}
+
+export async function postInRange(range: string, data: any[][]) {
+  try {
+    await axios.post(`/api/range/${range}`, data);
   } catch {
     catchAction();
   }
@@ -48,38 +56,6 @@ export async function getHeaderRow(range: string) {
         hold: "true",
       }
     })
-  }
-}
-
-export async function getStudent(studentId: number) {
-  try {
-    return (await axios.get(`/api/students/${studentId}`)).data;
-  } catch {
-    catchAction();
-  }
-}
-
-export async function deleteStudent(row: number) {
-  try {
-    await axios.delete(`/api/students/${row}`);
-  } catch {
-    catchAction();
-  }
-}
-
-export async function addStudent(student: any) {
-  try {
-    await axios.post("/api/students", student);
-  } catch {
-    catchAction();
-  }
-}
-
-export async function updateStudent(student: any) {
-  try {
-    await axios.put("/api/students", student);
-  } catch {
-    catchAction();
   }
 }
 

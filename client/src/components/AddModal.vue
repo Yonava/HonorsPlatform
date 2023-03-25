@@ -58,7 +58,7 @@
 
 <script setup lang="ts">
 import { Panel } from '../SwitchPanel'
-import { addStudent, getHeaderRow } from '../SheetsAPI'
+import { postInRange, getHeaderRow } from '../SheetsAPI'
 import { 
   ref, 
   toRef,
@@ -105,7 +105,7 @@ async function reqAdd() {
     return
   }
   loading.value = true
-  await addStudent(item.value)
+  await postInRange(props.panel.sheetRange, [item.value])
   await new Promise(resolve => setTimeout(resolve, 1000))
   const newItem = (await props.panel.mapData([item.value]))[0]
   emits('success', newItem)
