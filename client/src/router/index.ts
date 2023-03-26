@@ -1,6 +1,6 @@
 import { createWebHistory, createRouter } from 'vue-router'
 import Panel from '../views/PanelPage.vue'
-import Points from '../views/PointsPage.vue'
+import Leaderboard from '../views/LeaderboardPage.vue'
 import Auth from '../views/AuthPage.vue'
 
 const routes = [
@@ -20,9 +20,9 @@ const routes = [
     component: Auth
   },
   {
-    path: '/points',
-    name: 'points',
-    component: Points
+    path: '/leaderboard',
+    name: 'leaderboard',
+    component: Leaderboard
   }
 ]
 

@@ -4,17 +4,17 @@
       class="d-flex align-center justify-center flex-column"
       style="width: 90%; height: 90%; overflow: hidden;"
       elevation="10"
+      color="grey-lighten-4"
     >
       <h1 
-        style="font-size: 4rem; font-weight: 700;"
+        style="font-size: 4rem; font-weight: 700; position: absolute; top: 10%;"
       >
         Honors Leaderboard
       </h1>
       <div 
         v-if="!error && !loading"
-        class="d-flex flex-column align-center"
+        class="d-flex flex-column align-center mt-10"
       >
-        <h2 class="my-3">Rankings</h2>
         <div class="d-flex flex-row justify-space-between mb-3">
           <v-sheet
             v-for="(rank, index) in ['yellow-darken-1', 'grey-darken-1', 'brown-darken-2']"
@@ -24,8 +24,8 @@
             style="border-radius: 10px; border: 1px solid black;"
             elevation="4"
           > 
-            <h2>{{ students[index].name }}</h2>
             <h4>#{{ index + 1 }} with {{ students[index].points }} points</h4>
+            <h2>{{ students[index].name }}</h2>
           </v-sheet>
         </div>
         <div style="border-bottom: 1px solid black; width: 100%;"></div>
@@ -67,10 +67,13 @@
       <div v-else-if="error">
         Our apologies, we are unable to retrieve the leaderboard at this time.
       </div>
-      <div v-else>
+      <div 
+        v-else-if="loading"
+        style="position: absolute; top: 24%;"
+      >
         <v-progress-circular
           indeterminate
-          color="primary"
+          size="64" 
         ></v-progress-circular>
       </div>
     </v-sheet>
