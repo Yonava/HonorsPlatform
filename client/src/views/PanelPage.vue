@@ -92,6 +92,13 @@
         Refresh Data
       </v-btn>
       <Announcements />
+      <v-btn icon>
+        <v-icon 
+          @click="$router.push({ name: 'leaderboard' })"
+          icon="mdi-podium" 
+          size="large"
+        ></v-icon>
+      </v-btn>
     </v-app-bar>
     <v-main>
       <div 
@@ -186,6 +193,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, computed, watch } from 'vue' 
+import { useRoute, useRouter } from 'vue-router'
 import { getEvery, clearByRow } from '../SheetsAPI'
 import AddModal from '../components/AddModal.vue'
 import Announcements from '../components/AnnouncementMenu.vue'
@@ -194,6 +202,9 @@ import StudentDetail from '../components/StudentDetail.vue'
 import SortPanel from '../components/SortPanel.vue'
 import { useKeyBindings } from '../KeyBindings'
 import { PanelType, Panel, switchPanel } from '../SwitchPanel'
+
+const route = useRoute()
+const router = useRouter()
 
 const items = ref([])
 const loadingItems = ref(false)
@@ -207,6 +218,11 @@ const panel = ref<Panel>(switchPanel(PanelType.STUDENTS))
 const changePanel = (panelType: PanelType) => {
   panel.value = switchPanel(panelType)
   filterQuery.value = ''
+  router.push({ 
+    query: { 
+      type: panelType 
+    } 
+  })
 }
 
 watch(panel, async () => {
@@ -230,6 +246,9 @@ useKeyBindings({
 })
 
 onMounted(async () => {
+  if (route.query.type) {
+    changePanel(route.query.type as PanelType)
+  }
   await fetchData()
 })
 
