@@ -2,11 +2,11 @@
   <div class="outer-matte">
     <v-sheet 
       class="d-flex align-center justify-center flex-column"
-      style="width: 90%; height: 90%;"
+      style="width: 90%; height: 90%; overflow: hidden;"
       elevation="10"
     >
       <h1 
-        style="font-size: 3rem; font-weight: 700;"
+        style="font-size: 4rem; font-weight: 700;"
       >
         Honors Leaderboard
       </h1>
@@ -14,9 +14,7 @@
         v-if="!error && !loading"
         class="d-flex flex-column align-center"
       >
-        <div style="width: 95%" class="d-flex justify-start">
-          <h2>Rankings</h2>
-        </div>
+        <h2 class="my-3">Rankings</h2>
         <div class="d-flex flex-row justify-space-between mb-3">
           <v-sheet
             v-for="(rank, index) in ['yellow-darken-1', 'grey-darken-1', 'brown-darken-2']"
@@ -33,7 +31,7 @@
         <div style="border-bottom: 1px solid black; width: 100%;"></div>
         <div 
           class="d-flex flex-column align-center justify-space-between"
-          style="height: 500px; width: 100%; overflow: auto"
+          style="height: 50vh; width: 100%; overflow: auto"
         >
           <div 
             v-for="student in students.slice(3)"
