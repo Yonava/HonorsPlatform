@@ -33,7 +33,7 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to, from) => {
-  if (to.name === 'auth') return
+  if (to.name !== 'panel') return
   const token = localStorage.getItem('token') ?? ''
   const res = await fetch(`/api/auth/${encodeURIComponent(token)}`)
   const data = await res.json()

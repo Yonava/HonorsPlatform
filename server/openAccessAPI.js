@@ -11,12 +11,12 @@ router.get("/", async (req, res) => {
 router.get("/points", async (req, res) => {
   try {
     const studentData = {
-      'points': 3,
       'name': 0,
+      'points': 3,
     };
     const students = (await (await sheetInstance()).getRange("Students"))
       .slice(1)
-      .filter(student => student[0]);
+      .filter(student => student[studentData['name']]);
     const points = students
       .map(student => {
         const studentObj = {};

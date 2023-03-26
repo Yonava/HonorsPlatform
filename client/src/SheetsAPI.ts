@@ -63,3 +63,11 @@ export async function getHeaderRow(range: string) {
     })
   }
 }
+
+export async function getNonSensitiveData(endpointExtension: string) {
+  try {
+    return (await axios.get(`/api/open/${endpointExtension}`)).data;
+  } catch {
+    throw new Error("Access denied");
+  }
+}
