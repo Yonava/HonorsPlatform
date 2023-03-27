@@ -73,6 +73,34 @@ export function unmapModules(modules: Object[]): any[][] {
   });
 }
 
+export function mapCompletedModules(sheetData: any[][]): any[] {
+  return sheetData
+    .map((module, index) => {
+      return {
+        row: index + 2,
+        studentId: module[0] ?? '',
+        courseCode: module[1] ?? '',
+        description: module[2] ?? '',
+        term: module[3] ?? '',
+        instructor: module[4] ?? '',
+        docuSignCreated: module[5] ?? '',
+        docuSignCompleted: module[6] ?? '',
+        completedDate: module[7] ?? '',
+        grade: module[8] ?? '',
+      };
+    })
+    .filter(removeEmptyRows);
+}
+
+export function unmapCompletedModules(modules: Object[]): any[][] {
+  return modules.map((module: any) => {
+    const { row, ...rest } = module;
+    return [
+      ...Object.values(rest),
+    ];
+  });
+}
+
 export function mapGraduates(sheetData: any[][]): any[] {
   return sheetData
     .map((graduate: any, index: number) => {

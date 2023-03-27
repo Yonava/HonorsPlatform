@@ -4,17 +4,23 @@ import StudentDetail from '../src/components/StudentDetail.vue';
 import ModuleListItem from '../src/components/ModuleListItem.vue';
 import ModuleDetail from '../src/components/ModuleDetail.vue';
 
+import CompletedModuleDetail from '../src/components/CompletedModuleDetail.vue';
+import CompletedModuleListItem from '../src/components/CompletedModuleListItem.vue';
+
 import GraduateListItem from '../src/components/GraduateListItem.vue';
 import GraduateDetail from '../src/components/GraduateDetail.vue';
 
 import { markRaw } from 'vue';
+import { Range } from './SheetsAPI';
 import { 
   mapStudents,
   unmapStudents,
   mapGraduates, 
   unmapGraduates,
   mapModules,
-  unmapModules
+  unmapModules,
+  mapCompletedModules,
+  unmapCompletedModules
 } from './DataMappers';
 
 export enum PanelType {
@@ -33,7 +39,7 @@ export type Panel = {
   color: string,
   icon: string,
   keys: string[],
-  sheetRange: string,
+  sheetRange: Range,
   mappers: {
     map: (data: any[][]) => Object[] | Promise<Object[]>,
     unmap: (data: Object[]) => any[][] | Promise<any[][]>
@@ -52,7 +58,7 @@ export function switchPanel(panel: PanelType): Panel {
         title: 'Graduates',
         color: 'purple',
         icon: 'mdi-account-school',
-        sheetRange: 'Graduates',
+        sheetRange: Range.Graduates,
         mappers: {
           map: mapGraduates,
           unmap: unmapGraduates
@@ -70,7 +76,7 @@ export function switchPanel(panel: PanelType): Panel {
         color: 'blue',
         icon: 'mdi-account-group',
         keys: ['id'],
-        sheetRange: 'Students',
+        sheetRange: Range.Students,
         mappers: {
           map: mapStudents,
           unmap: unmapStudents
@@ -87,7 +93,7 @@ export function switchPanel(panel: PanelType): Panel {
         color: 'orange',
         icon: 'mdi-book-open-variant',
         keys: ['studentId', 'courseCode'],
-        sheetRange: 'Modules',
+        sheetRange: Range.Modules,
         mappers: {
           map: mapModules,
           unmap: unmapModules
@@ -97,17 +103,17 @@ export function switchPanel(panel: PanelType): Panel {
     case PanelType.COMPLETED_MODULES:
       return {
         components: {
-          detail: markRaw(ModuleDetail),
-          list: markRaw(ModuleListItem)
+          detail: markRaw(CompletedModuleDetail),
+          list: markRaw(CompletedModuleListItem)
         },
         title: 'Completed Modules',
         color: 'red',
         icon: 'mdi-book',
-        sheetRange: 'Modules',
+        sheetRange: Range.CompletedModules,
         keys: ['studentId', 'courseCode'],
         mappers: {
-          map: mapModules,
-          unmap: unmapModules
+          map: mapCompletedModules,
+          unmap: unmapCompletedModules
         },
         type: PanelType.COMPLETED_MODULES
       };

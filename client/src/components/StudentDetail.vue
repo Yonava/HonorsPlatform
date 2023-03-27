@@ -209,7 +209,7 @@ import {
 } from 'vue'
 import ModuleFetch from './ModuleFetch.vue'
 import ModuleAddModal from './ModuleAddModal.vue'
-import { updateByRow } from '../SheetsAPI'
+import { updateByRow, Range } from '../SheetsAPI'
 import { useAutoSync, useChangeWatcher } from '../AutoSync'
 import { unmapStudents } from '../DataMappers'
 
@@ -265,8 +265,7 @@ async function reqUpdateStudent() {
   if (upToDate.value) return
   updatingStudent.value = true
   const row = student.value.row
-  const range = `Students`
-  await updateByRow(range, row, await unmapStudents([student.value]))
+  await updateByRow(Range.Students, row, await unmapStudents([student.value]))
   emits('update', clone(student.value))
   updatingStudent.value = false
   upToDate.value = true
