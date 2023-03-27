@@ -297,7 +297,7 @@ async function reqUpdateStudent() {
   if (upToDate.value) return
   updatingStudent.value = true
   const row = student.value.row
-  await updateByRow(Range.Students, row, await unmapStudents([student.value]))
+  await updateByRow(Range.STUDENTS, row, await unmapStudents([student.value]))
   emits('update', clone(student.value))
   updatingStudent.value = false
   upToDate.value = true
@@ -313,8 +313,8 @@ async function saveId() {
 async function moveToGraduates() {
   movingStudent.value = true
   await moveRowToRange(
-    Range.Students, 
-    Range.Graduates,
+    Range.STUDENTS, 
+    Range.GRADUATES,
     student.value.row, 
     unmapGraduates([{
       id: student.value.id,

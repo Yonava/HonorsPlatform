@@ -4,6 +4,7 @@ import {
   Graduate,
   Module,
   CompletedModule,
+  SheetEntry,
 } from "./SheetTypes";
 
 function removeEmptyObjects(item: Object) {
@@ -13,7 +14,7 @@ function removeEmptyObjects(item: Object) {
 }
 
 export async function mapStudents(sheetData: string[][]): Promise<Student[]> {
-  const headerRow = headerRowMemo[Range.Students] ?? await getHeaderRow(Range.Students);
+  const headerRow = headerRowMemo[Range.STUDENTS] ?? await getHeaderRow(Range.STUDENTS);
   const categories = headerRow.slice(7);
   return sheetData
     .map((student, index) => ({
@@ -25,7 +26,7 @@ export async function mapStudents(sheetData: string[][]): Promise<Student[]> {
       activeStatus: student[4] ?? '',
       year: student[5] ?? '',
       note: student[6] ?? '',
-      misc: categories.reduce((acc: any, category: any, index: number) => {
+      misc: categories.reduce((acc: { [key in string]: string }, category: string, index: number) => {
         if (category === '') return acc
         acc[category] = student[index + 7] ?? ''
         return acc
@@ -34,10 +35,10 @@ export async function mapStudents(sheetData: string[][]): Promise<Student[]> {
     .filter(removeEmptyObjects);
 }
 
-export async function unmapStudents(students: Student[]): Promise<string[][]> {
-  const headerRow = headerRowMemo[Range.Students] ?? await getHeaderRow(Range.Students);
+export async function unmapStudents(students: Omit<Student, 'row'>[]): Promise<string[][]> {
+  const headerRow = headerRowMemo[Range.STUDENTS] ?? await getHeaderRow(Range.STUDENTS);
   const categories = headerRow.slice(7);
-  return students.map((student: Student) => {
+  return students.map((student) => {
     const misc = categories.map((category: string) => student.misc[category] ?? '');
     return [
       student.id,
@@ -69,11 +70,10 @@ export function mapModules(sheetData: string[][]): Module[] {
     .filter(removeEmptyObjects);
 }
 
-export function unmapModules(modules: Module[]): string[][] {
-  return modules.map((module: Module) => {
-    const { row, ...rest } = module;
+export function unmapModules(modules: Omit<Module, 'row'>[]): string[][] {
+  return modules.map((module) => {
     return [
-      ...Object.values(rest),
+      ...Object.values(module),
     ];
   });
 }
@@ -97,11 +97,10 @@ export function mapCompletedModules(sheetData: string[][]): CompletedModule[] {
     .filter(removeEmptyObjects);
 }
 
-export function unmapCompletedModules(modules: CompletedModule[]): string[][] {
-  return modules.map((module: CompletedModule) => {
-    const { row, ...rest } = module;
+export function unmapCompletedModules(modules: Omit<CompletedModule, 'row'>[]): string[][] {
+  return modules.map((module) => {
     return [
-      ...Object.values(rest),
+      ...Object.values(module),
     ];
   });
 }
@@ -122,11 +121,10 @@ export function mapGraduates(sheetData: string[][]): Graduate[] {
     .filter(removeEmptyObjects);
 }
 
-export function unmapGraduates(graduates: Graduate[]): string[][] {
-  return graduates.map((graduate: Graduate) => {
-    const { row, ...rest } = graduate;
+export function unmapGraduates(graduates: Omit<Graduate, 'row'>[]): string[][] {
+  return graduates.map((graduate) => {
     return [
-      ...Object.values(rest),
+      ...Object.values(graduate),
     ];
   });
 }

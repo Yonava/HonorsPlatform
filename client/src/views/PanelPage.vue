@@ -209,12 +209,12 @@ import StudentDetail from '../components/StudentDetail.vue'
 import SortPanel from '../components/SortPanel.vue'
 import { useKeyBindings } from '../KeyBindings'
 import { PanelType, Panel, switchPanel } from '../SwitchPanel'
-import { SheetEntry, Graduate, Student } from '../SheetTypes'
+import { SheetEntry, SheetItem } from '../SheetTypes'
 
 const route = useRoute()
 const router = useRouter()
 
-const items = ref<SheetEntry[]>([])
+const items = ref<SheetItem[]>([])
 const loadingItems = ref(false)
 const showAddModal = ref(false)
 const filterQuery = ref('')
@@ -222,7 +222,7 @@ const autoSync = ref(false)
 const selectedItem = ref(undefined)
 const pageVisible = ref(true)
 
-const panel = ref<Panel>(switchPanel(PanelType.STUDENTS))
+const panel = ref(switchPanel(PanelType.STUDENTS))
 
 const changePanel = (panelType: PanelType) => {
   panel.value = switchPanel(panelType)
@@ -280,15 +280,15 @@ async function reqDelete() {
   await fetchData()
 }
 
-function updateList<T extends SheetEntry>(item: T) {
-  const index = items.value.findIndex((i) => i.row === item.row)
+function updateList<T extends SheetItem>(item: T) {
+  const index = items.value.findIndex(<T extends SheetEntry>(i: T) => i.row === item.row)
   if (index === -1) return
   items.value[index] = item
 }
 
 async function itemAdded<T extends SheetEntry>(item: T) {
   await fetchData()
-  const index = items.value.findIndex((i: T) => {
+  const index = items.value.findIndex(<T>(i: T) => {
     return panel.value.keys.every(key => i[key] === item[key]);
   })
   if (index === -1) return

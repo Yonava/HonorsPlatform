@@ -22,12 +22,7 @@ import {
   mapCompletedModules,
   unmapCompletedModules
 } from './DataMappers';
-import {
-  Student,
-  Graduate,
-  Module,
-  CompletedModule
-} from './SheetTypes';
+import { SheetEntry } from './SheetTypes';
 
 export enum PanelType {
   STUDENTS = 'students',
@@ -39,7 +34,7 @@ export enum PanelType {
 // i don't think this does anything
 type Component = typeof StudentDetail
 
-export type Panel<T> = {
+export type Panel<T extends SheetEntry> = {
   components: {
     detail: Component,
     list: Component
@@ -67,7 +62,7 @@ export function switchPanel(panel: PanelType) {
         title: 'Graduates',
         color: 'purple',
         icon: 'mdi-account-school',
-        sheetRange: Range.Graduates,
+        sheetRange: Range.GRADUATES,
         mappers: {
           map: mapGraduates,
           unmap: unmapGraduates
@@ -85,7 +80,7 @@ export function switchPanel(panel: PanelType) {
         color: 'blue',
         icon: 'mdi-account-group',
         keys: ['id'],
-        sheetRange: Range.Students,
+        sheetRange: Range.STUDENTS,
         mappers: {
           map: mapStudents,
           unmap: unmapStudents
@@ -102,7 +97,7 @@ export function switchPanel(panel: PanelType) {
         color: 'orange',
         icon: 'mdi-book-open-variant',
         keys: ['studentId', 'courseCode'],
-        sheetRange: Range.Modules,
+        sheetRange: Range.MODULES,
         mappers: {
           map: mapModules,
           unmap: unmapModules
@@ -118,7 +113,7 @@ export function switchPanel(panel: PanelType) {
         title: 'Completed Modules',
         color: 'red',
         icon: 'mdi-book',
-        sheetRange: Range.CompletedModules,
+        sheetRange: Range.COMPLETED_MODULES,
         keys: ['studentId', 'courseCode'],
         mappers: {
           map: mapCompletedModules,

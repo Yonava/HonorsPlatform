@@ -1,3 +1,5 @@
+export type SheetItem = Module | Graduate | Student | CompletedModule;
+
 export interface SheetEntry {
   row: number;
 }

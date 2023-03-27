@@ -2,11 +2,11 @@ import axios from "axios";
 import router from "./router";
 
 export enum Range {
-  Students = "Students",
-  Modules = "Modules",
-  Graduates = "Graduates",
-  CompletedModules = "Completed Modules",
-  Announcements = "Announcements",
+  STUDENTS = "Students",
+  MODULES = "Modules",
+  GRADUATES = "Graduates",
+  COMPLETED_MODULES = "Completed Modules",
+  ANNOUNCEMENTS = "Announcements",
 }
 
 // memoized to avoid API calls on every update
