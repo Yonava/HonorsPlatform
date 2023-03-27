@@ -195,17 +195,12 @@ import {
 import { updateByRow, moveRowToRange, Range } from '../SheetsAPI'
 import { useAutoSync, useChangeWatcher } from '../AutoSync'
 import { unmapModules, unmapCompletedModules } from '../DataMappers'
+import { Module } from '../SheetTypes'
 
-const props = defineProps({
-  item: {
-    type: Object,
-    required: true
-  },
-  autoSync: {
-    type: Boolean,
-    required: true
-  }
-})
+const props = defineProps<{
+  item: Module,
+  autoSync: boolean
+}>()
 
 const emits = defineEmits([
   'delete', 
@@ -213,10 +208,10 @@ const emits = defineEmits([
   'unselect'
 ])
 
-const clone = (obj: any) => JSON.parse(JSON.stringify(obj))
+const clone = <T>(obj: T) => JSON.parse(JSON.stringify(obj))
 
 const updating = ref(false)
-const module = ref(null)
+const module = ref<Module>(null)
 const dialog = ref(false)
 const movingModuleToCompleted = ref(false)
 const completedModuleData = ref({
@@ -235,7 +230,7 @@ const { upToDate } = useChangeWatcher(module)
 async function reqUpdateModule() {
   if (upToDate.value) return
   updating.value = true
-  await updateByRow(Range.Modules, module.value.row, unmapModules([module.value]))
+  await updateByRow(Range.MODULES, module.value.row, unmapModules([module.value]))
   emits('update', clone(module.value))
   upToDate.value = true
   updating.value = false
@@ -244,8 +239,8 @@ async function reqUpdateModule() {
 async function moveToCompleted() {
   movingModuleToCompleted.value = true
   await moveRowToRange(
-    Range.Modules, 
-    Range.CompletedModules, 
+    Range.MODULES, 
+    Range.COMPLETED_MODULES, 
     module.value.row, 
     unmapCompletedModules([{
       ...module.value,

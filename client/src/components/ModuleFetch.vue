@@ -34,20 +34,15 @@ import {
 } from '../SheetsAPI'
 import ModuleList from '../components/ModuleList.vue'
 import { mapModules, unmapModules } from '../DataMappers'
+import { Module } from '../SheetTypes'
 
-const modules = ref([])
+const modules = ref<Module[]>([])
 const loadingModules = ref(false)
 
-const props = defineProps({
-  studentId: {
-    type: String,
-    required: true
-  },
-  refetch: {
-    type: Boolean,
-    required: true
-  }
-})
+const props = defineProps<{
+  studentId: string
+  refetch: boolean
+}>()
 
 const emits = defineEmits(['toggleCanDelete'])
 
@@ -61,7 +56,7 @@ watch(() => props.refetch, async () => {
 
 async function fetchModules() {
   loadingModules.value = true
-  const unmappedModules = await getEvery(Range.Modules)
+  const unmappedModules = await getEvery(Range.MODULES)
   modules.value = mapModules(unmappedModules)
     .filter(module => module.studentId === props.studentId)
   loadingModules.value = false
@@ -77,14 +72,14 @@ watch(canBeDeleted, (val) => {
 
 async function reqDeleteModule(row) {
   loadingModules.value = true
-  await clearByRow(Range.Modules, row)
+  await clearByRow(Range.MODULES, row)
   await new Promise(resolve => setTimeout(resolve, 500))
   await fetchModules()
 }
 
 async function reqUpdateModule(module) {
   loadingModules.value = true
-  await updateByRow(Range.Modules, module.row, unmapModules([module]))
+  await updateByRow(Range.MODULES, module.row, unmapModules([module]))
   await new Promise(resolve => setTimeout(resolve, 500))
   await fetchModules()
 }

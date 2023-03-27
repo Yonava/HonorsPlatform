@@ -84,7 +84,7 @@
   </v-dialog>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { 
   defineProps, 
   defineEmits, 
@@ -92,21 +92,16 @@ import {
   watch, 
   ref 
 } from 'vue'
+import { Module } from '../SheetTypes'
 
-const props = defineProps({
-  module: {
-    type: Object,
-    required: true
-  },
-  show: {
-    type: Boolean,
-    required: true
-  }
-})
+const props = defineProps<{
+  module: Module
+  show: boolean
+}>()
 
-const selectedModule = ref(null)
-const startingState = ref(null)
-const clone = (obj) => JSON.parse(JSON.stringify(obj))
+const selectedModule = ref<Module>(null)
+const startingState = ref<Module>(null)
+const clone = <T>(obj: T) => JSON.parse(JSON.stringify(obj))
 
 watch(() => props.show, (val) => {
   if (val) {
