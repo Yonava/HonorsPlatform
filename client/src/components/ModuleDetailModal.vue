@@ -8,13 +8,14 @@
         class="module-card pa-5"
         width="500"
       >
-        <div 
+        <v-sheet 
           class="py-2 px-4 d-flex align-center"
-          style="font-weight: bold; background: rgba(0,0,0,0.75); color: white; border-radius: 20px; width: 120%"
+          color="blue-darken-2"
+          style="font-weight: bold; color: white; border-radius: 20px; width: 120%"
         >
           <v-icon class="mr-1">mdi-file-document-edit-outline</v-icon>
           <span>Edit Module</span>
-        </div>
+        </v-sheet>
         <input 
           type="text"
           v-model="selectedModule.courseCode"
@@ -32,6 +33,21 @@
             label="Instructor"
             variant="outlined"
           ></v-text-field>
+          <div class="d-flex flex-row mb-3">
+            <v-btn 
+              v-if="!selectedModule.docuSignCreated"
+              @click="selectedModule.docuSignCreated = new Date().toLocaleDateString()"
+              color="blue"
+              size="x-small"
+            >Create Now</v-btn>
+            <v-spacer></v-spacer>
+            <v-btn 
+              v-if="!selectedModule.docuSignCompleted"
+              @click="selectedModule.docuSignCompleted = new Date().toLocaleDateString()"
+              color="blue"
+              size="x-small"
+            >Complete Now</v-btn>
+          </div>
           <div class="d-flex flex-row">
             <v-text-field
               v-model="selectedModule.docuSignCreated"
