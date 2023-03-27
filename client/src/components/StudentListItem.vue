@@ -55,15 +55,13 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { defineProps, computed } from 'vue'
+import { Student } from '../SheetTypes'
 
-const props = defineProps({
-  item: {
-    type: Object,
-    required: true
-  }
-})
+const props = defineProps<{
+  item: Student
+}>()
 
 const color = computed(() => {
   if (props.item.activeStatus.toLowerCase() === 'active') return 'green'
@@ -73,6 +71,6 @@ const color = computed(() => {
 
 const points = computed(() => {
   if (!props.item.points) return 0
-  return parseInt(props.item.points).toLocaleString()
+  return props.item.points.toLocaleString()
 })
 </script>

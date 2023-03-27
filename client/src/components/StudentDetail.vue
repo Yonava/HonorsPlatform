@@ -242,26 +242,22 @@ import { updateByRow, moveRowToRange, Range } from '../SheetsAPI'
 import { useAutoSync, useChangeWatcher } from '../AutoSync'
 import { switchPanel, PanelType } from '../SwitchPanel'
 import { unmapStudents, unmapGraduates } from '../DataMappers'
+import { Student } from '../SheetTypes'
 
-const props = defineProps({
-  item: {
-    type: Object,
-    required: true
-  },
-  autoSync: {
-    type: Boolean,
-    required: true
-  }
-})
+const props = defineProps<{
+  item: Student,
+  autoSync: boolean,
+}>()
 
-const clone = (obj) => JSON.parse(JSON.stringify(obj))
+const clone = <T>(obj: T) => JSON.parse(JSON.stringify(obj))
+
 const emits = defineEmits([
   'delete', 
   'update',
   'unselect'
 ])
 
-const reqDeleteStudent = () => {
+function reqDeleteStudent() {
   if (!canDelete.value) return
   emits('delete')
 }
@@ -271,12 +267,12 @@ const showModuleAddModal = ref(false)
 const refetchModules = ref(false)
 const tempStudentId = ref('')
 const dialog = ref(false)
-const student = ref(null)
+const student = ref<Student>(null)
 const movingStudent = ref(false)
 
-watch(() => props.item, (newVal) => {
+watch(() => props.item, newVal => {
   student.value = clone(newVal)
-}, { immediate: true, deep: true })
+}, { immediate: true })
 
 // emitted from ModuleFetch
 const moduleListEmpty = ref(false)
@@ -289,7 +285,7 @@ const { autoSync } = toRefs(props)
 useAutoSync(autoSync, reqUpdateStudent)
 const { upToDate } = useChangeWatcher(student)
 
-function studentIdRule(studentId) {
+function studentIdRule(studentId: string) {
   return parseInt(studentId) && studentId.length === 7 || 'Invalid Student ID'          
 }
 
@@ -317,6 +313,7 @@ async function moveToGraduates() {
     Range.GRADUATES,
     student.value.row, 
     unmapGraduates([{
+      row: student.value.row,
       id: student.value.id,
       name: student.value.name,
       phone: '',

@@ -41,17 +41,12 @@ import {
 } from 'vue'
 import { SortOption, switchSortOptions } from '../SortOptions'
 import { PanelType } from '../SwitchPanel'
+import { SheetItem } from '../SheetTypes'
 
-const props = defineProps({
-  items: {
-    type: Array,
-    required: true
-  },
-  panelType: {
-    type: String,
-    required: true
-  }
-})
+const props = defineProps<{
+  items: SheetItem[],
+  panelType: PanelType
+}>()
 
 const emit = defineEmits(['update'])
 
@@ -60,10 +55,10 @@ const ascending = ref(true)
 
 const itemList = computed({
   get: () => props.items,
-  set: (val: any) => emit('update', val)
+  set: val => emit('update', val)
 })
 
-function sortItems(sort: SortOption, index: number) {
+function sortItems(sort: SortOption<SheetItem>, index: number) {
   if (activeSort.value === sort) {
     ascending.value = !ascending.value
   } else {
@@ -73,10 +68,11 @@ function sortItems(sort: SortOption, index: number) {
   activeIcons.value[index] = sort.icon[ascending.value ? 'asc' : 'desc']
 }
 
-const sortOptions = ref<SortOption[]>([])
+const sortOptions = ref<SortOption<SheetItem>[]>([])
 const activeIcons = ref<string[]>([])
-watch(() => props.panelType, (newPanelType: PanelType) => {
-  sortOptions.value = switchSortOptions(newPanelType)
+
+watch(() => props.panelType, newVal => {
+  sortOptions.value = switchSortOptions(newVal)
   activeIcons.value = sortOptions.value.map(sort => sort.icon.asc)
 }, { immediate: true })
 </script>
