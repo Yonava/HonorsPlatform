@@ -82,6 +82,19 @@
         clearable
         :label="`Notes on ${grad.name.split(' ')[0]}`"
       ></v-textarea>
+      <v-btn
+        @click="moveToStudents"
+        :loading="movingGrad"
+        size="x-large"
+        color="purple-darken-2"
+        style="transform: translateY(-60px);"
+      >
+        <v-icon
+          class="mr-4"
+          size="x-large"
+        >mdi-account-arrow-right</v-icon>
+        Move Back to Students
+      </v-btn>
     </div>
   </div>
 </template>
@@ -97,9 +110,9 @@ import {
   onMounted,
   onUnmounted
 } from 'vue'
-import { updateByRow, Range } from '../SheetsAPI'
+import { updateByRow, moveRowToRange, Range } from '../SheetsAPI'
 import { useAutoSync, useChangeWatcher } from '../AutoSync'
-import { unmapGraduates } from '../DataMappers'
+import { unmapGraduates, unmapStudents } from '../DataMappers'
 
 const props = defineProps({
   item: {
@@ -112,11 +125,17 @@ const props = defineProps({
   }
 })
 
-const emits = defineEmits(['delete', 'update'])
+const emits = defineEmits([
+  'delete', 
+  'update',
+  'unselect'
+])
+
 const clone = (obj: any) => JSON.parse(JSON.stringify(obj))
 
 const updating = ref(false)
 const grad = ref(null)
+const movingGrad = ref(false)
 
 watch(() => props.item, (newVal) => {
   grad.value = clone(newVal)
@@ -139,6 +158,25 @@ async function reqGenerateGradId() {
   const newId = 'G' + Math.random().toString().substring(2, 9);
   grad.value.id = newId
   await reqUpdateGrad()
+}
+
+async function moveToStudents() {
+  movingGrad.value = true
+  await moveRowToRange(
+    Range.Graduates,
+    Range.Students,
+    grad.value.row,
+    await unmapStudents([{
+      id: grad.value.id.startsWith('G') ? '' : grad.value.id,
+      name: grad.value.name,
+      email: grad.value.email,
+      points: 0,
+      activeStatus: 'Active',
+      year: '',
+      note: grad.value.note
+    }])
+  )
+  emits('unselect')
 }
 </script>
 

@@ -13,8 +13,8 @@ export async function mapStudents(sheetData: any[][]): Promise<any[]> {
   return sheetData
     .map((student, index) => ({
       row: index + 2, // + 1 for header row, + 1 for 0-indexing
-      name: student[0] ?? '',
-      id: student[1] ?? '',
+      id: student[0] ?? '',
+      name: student[1] ?? '',
       email: student[2] ?? '',
       points: student[3] ?? 0,
       activeStatus: student[4] ?? '',
@@ -35,8 +35,8 @@ export async function unmapStudents(students: Object[]): Promise<any[][]> {
   return students.map((student: any) => {
     const misc = categories.map((category: string) => student.misc[category] ?? '');
     return [
-      student.name,
       student.id,
+      student.name,
       student.email,
       student.points,
       student.activeStatus,
