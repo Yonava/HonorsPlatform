@@ -4,6 +4,7 @@ import {
   Graduate,
   Module,
   CompletedModule,
+  GradEngagement,
 } from "./SheetTypes";
 
 function removeEmptyObjects(item: Object) {
@@ -125,6 +126,29 @@ export function mapGraduates(sheetData: string[][]): Graduate[] {
 export function unmapGraduates(graduates: Graduate[]): string[][] {
   return graduates.map((graduate) => {
     const { row, ...rest } = graduate;
+    return [
+      ...Object.values(rest),
+    ];
+  });
+}
+
+export function mapGradEngagement(sheetData: string[][]): GradEngagement[] {
+  return sheetData
+    .map((engagement, index) => {
+      return {
+        row: index + 2,
+        gradId: engagement[0] ?? '',
+        event: engagement[1] ?? '',
+        dateTime: engagement[2] ?? '',
+        note: engagement[3] ?? '',
+      };
+    })
+    .filter(removeEmptyObjects);
+}
+
+export function unmapGradEngagement(engagements: GradEngagement[]): string[][] {
+  return engagements.map((engagement) => {
+    const { row, ...rest } = engagement;
     return [
       ...Object.values(rest),
     ];
