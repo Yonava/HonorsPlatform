@@ -329,9 +329,10 @@ async function silentFetch() {
   items.value = await panel.value.mappers.map(data)
 }
 
+// 1s just to impress, 5s is probably better
 const autoSyncInterval = setInterval(() => {
   if (autoSync.value && pageVisible.value) silentFetch()
-}, 5000)
+}, 1000)
 
 onUnmounted(() => {
   clearInterval(autoSyncInterval)
