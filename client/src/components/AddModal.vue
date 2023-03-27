@@ -121,7 +121,9 @@ async function initItem() {
   loading.value = true
   attrs.value = headerRowMemo[panel.sheetRange] ?? await getHeaderRow(panel.sheetRange)
   loading.value = false
-  item.value = attrs.value.map(() => '')
+  item.value = attrs.value.map((attr, index) => {
+    return props?.override?.predefineColumnData[index] ?? ''
+  })
 }
 
 const color = computed(() => {
