@@ -62,12 +62,24 @@
           <v-icon>mdi-calendar</v-icon>
         </template>
       </v-text-field>
-      <h1 class="mb-2">
-        Engagement Tracking
-      </h1>
-      <p>
-        coming soon...
-      </p>
+      <div class="d-flex flex-row justify-space-between align-center">
+        <h1 class="mb-2">
+          Engagement Tracking
+        </h1>
+        <v-btn
+          @click="showEngagementModal = true"
+          color="green"
+          size="small"
+        >
+          <v-icon
+            class="mr-2"
+            size="x-large"
+          >mdi-plus</v-icon>
+          Add Event
+        </v-btn>
+      </div>
+      <div>
+      </div>
     </div>
     <div 
       style="width: 45%;" 
@@ -99,6 +111,11 @@
         Move Back to Students
       </v-btn>
     </div>
+    <GradEngagementModal 
+      @close="showEngagementModal = false"
+      :item="grad.engagement"
+      :show="showEngagementModal"
+    />
   </div>
 </template>
 
@@ -115,6 +132,7 @@ import { updateByRow, moveRowToRange, Range } from '../SheetsAPI'
 import { useAutoSync, useChangeWatcher } from '../AutoSync'
 import { unmapGraduates, unmapStudents } from '../DataMappers'
 import { Graduate } from '../SheetTypes'
+import GradEngagementModal from './GradEngagementModal.vue'
 
 const props = defineProps<{
   item: Graduate,
@@ -132,6 +150,7 @@ const clone = <T>(obj: T) => JSON.parse(JSON.stringify(obj))
 const updating = ref(false)
 const grad = ref<Graduate>(clone(props.item))
 const movingGrad = ref(false)
+const showEngagementModal = ref(false)
 
 watch(() => props.item, (newVal) => {
   grad.value = clone(newVal)

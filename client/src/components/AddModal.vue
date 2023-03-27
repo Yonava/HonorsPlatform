@@ -85,7 +85,7 @@ const emits = defineEmits([
 
 const showDialog = computed({
   get: () => props.show,
-  set: (val) => emits('close')
+  set: () => emits('close')
 })
 
 watch(showDialog, async (val) => {

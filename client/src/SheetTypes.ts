@@ -40,3 +40,10 @@ export interface Student extends SheetEntry {
     [key: string]: string 
   };
 }
+
+export interface GradEngagement extends SheetEntry {
+  gradId: string;
+  event: string;
+  dateTime: string;
+  note: string;
+}
