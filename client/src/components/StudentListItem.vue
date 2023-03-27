@@ -3,7 +3,10 @@
     <div class="d-flex flex-row">
       <div style="font-weight: 900; font-size: 1.5em; line-height: 1">
         {{ item.name || '(No Name)' }}
-        <span style="font-weight: 300; font-size: 0.6em">
+        <span 
+          class="mr-1"
+          style="font-weight: 300; font-size: 0.6em"
+        >
           {{ item.id || '(No ID)' }}
         </span>
       </div>
@@ -39,7 +42,7 @@
         </p>
         <v-spacer></v-spacer>
         <p>
-          {{ item.points || 0 }}
+          {{ points }}
         </p>
         <v-icon 
           class="ml-1"
@@ -66,5 +69,10 @@ const color = computed(() => {
   if (props.item.activeStatus.toLowerCase() === 'active') return 'green'
   if (props.item.activeStatus.toLowerCase() === 'inactive') return 'red'
   return 'grey'
+})
+
+const points = computed(() => {
+  if (!props.item.points) return 0
+  return parseInt(props.item.points).toLocaleString()
 })
 </script>

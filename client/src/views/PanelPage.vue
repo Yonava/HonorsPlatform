@@ -17,7 +17,7 @@
           <template v-slot:activator="{ props }">
             <h1 
               v-bind="props"
-              style="font-weight: 700; user-select: none; cursor: pointer;"
+              class="title"
             >
               {{ panel.title }}
             </h1>
@@ -309,6 +309,13 @@ const displayItems = computed(() => {
 </script>
 
 <style scoped>
+h1.title {
+  font-weight: 700; 
+  user-select: none; 
+  cursor: pointer; 
+  white-space: nowrap;
+}
+
 .live-emblem {
   background: white; 
   width: 10px; 

@@ -65,6 +65,24 @@
           </template>
         </v-text-field>
       </div>
+      <div 
+        style="transform: translateY(-15px);"
+        class="d-flex flex-row"
+      >
+        <v-btn
+          v-if="!module.docuSignCreated"
+          @click="module.docuSignCreated = new Date().toLocaleDateString()"
+          color="orange-darken-2"
+          size="small"
+        >Created Now</v-btn>
+        <v-spacer></v-spacer>
+        <v-btn
+          v-if="!module.docuSignCompleted"
+          @click="module.docuSignCompleted = new Date().toLocaleDateString()"
+          color="orange-darken-2"
+          size="small"
+        >Completed Now</v-btn>
+      </div>
     </div>
     <div 
       style="width: 45%;" 

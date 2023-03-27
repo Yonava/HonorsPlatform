@@ -39,14 +39,14 @@
               @click="selectedModule.docuSignCreated = new Date().toLocaleDateString()"
               color="blue"
               size="x-small"
-            >Create Now</v-btn>
+            >Created Now</v-btn>
             <v-spacer></v-spacer>
             <v-btn 
               v-if="!selectedModule.docuSignCompleted"
               @click="selectedModule.docuSignCompleted = new Date().toLocaleDateString()"
               color="blue"
               size="x-small"
-            >Complete Now</v-btn>
+            >Completed Now</v-btn>
           </div>
           <div class="d-flex flex-row">
             <v-text-field
