@@ -223,6 +223,17 @@ export function switchSortOptions(panel: PanelType) {
             asc: (a: CompletedModule, b: CompletedModule) => a.instructor.localeCompare(b.instructor),
             desc: (a: CompletedModule, b: CompletedModule) => b.instructor.localeCompare(a.instructor)
           }
+        },
+        {
+          label: 'Course Code',
+          icon: {
+            asc: 'mdi-sort-numeric-ascending',
+            desc: 'mdi-sort-numeric-descending'
+          },
+          func: {
+            asc: (a: CompletedModule, b: CompletedModule) => a.courseCode.localeCompare(b.courseCode),
+            desc: (a: CompletedModule, b: CompletedModule) => b.courseCode.localeCompare(a.courseCode)
+          }
         }
       ]
     default:
