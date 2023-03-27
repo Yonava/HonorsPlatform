@@ -54,8 +54,16 @@
           <v-icon>mdi-phone</v-icon>
         </template>
       </v-text-field>
+      <v-text-field
+        v-model="grad.graduationDate"
+        label="Graduation Date"
+      >
+        <template #prepend>
+          <v-icon>mdi-calendar</v-icon>
+        </template>
+      </v-text-field>
       <h1 class="mb-2">
-        Engagement
+        Engagement Tracking
       </h1>
     </div>
     <div 

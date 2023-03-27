@@ -82,7 +82,8 @@ export function mapGraduates(sheetData: any[][]): any[] {
         name: graduate[1] ?? '',
         phone: graduate[2] ?? '',
         email: graduate[3] ?? '',
-        note: graduate[4] ?? '',
+        graduationDate: graduate[4] ?? '',
+        note: graduate[5] ?? '',
       };
     })
     .filter(removeEmptyRows);
