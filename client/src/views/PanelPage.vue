@@ -209,11 +209,12 @@ import StudentDetail from '../components/StudentDetail.vue'
 import SortPanel from '../components/SortPanel.vue'
 import { useKeyBindings } from '../KeyBindings'
 import { PanelType, Panel, switchPanel } from '../SwitchPanel'
+import { SheetEntry, Graduate, Student } from '../SheetTypes'
 
 const route = useRoute()
 const router = useRouter()
 
-const items = ref([])
+const items = ref<SheetEntry[]>([])
 const loadingItems = ref(false)
 const showAddModal = ref(false)
 const filterQuery = ref('')
@@ -279,13 +280,13 @@ async function reqDelete() {
   await fetchData()
 }
 
-function updateList(item: any) {
+function updateList<T extends SheetEntry>(item: T) {
   const index = items.value.findIndex((i) => i.row === item.row)
   if (index === -1) return
   items.value[index] = item
 }
 
-async function itemAdded<T>(item: T) {
+async function itemAdded<T extends SheetEntry>(item: T) {
   await fetchData()
   const index = items.value.findIndex((i: T) => {
     return panel.value.keys.every(key => i[key] === item[key]);
@@ -317,9 +318,9 @@ const filterPlaceholder = computed(() => {
 
 const displayItems = computed(() => {
   if (filterQuery.value === '') return items.value
-  return items.value.filter((student: any) => {
+  return items.value.filter(<T extends SheetEntry>(item: T) => {
     const query = filterQuery.value.toLowerCase();
-    const values = Object.values(student).join(' ').toLowerCase();
+    const values = Object.values(item).join(' ').toLowerCase();
     return values.includes(query)
   })
 })

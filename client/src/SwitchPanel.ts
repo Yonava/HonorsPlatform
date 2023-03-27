@@ -22,6 +22,12 @@ import {
   mapCompletedModules,
   unmapCompletedModules
 } from './DataMappers';
+import {
+  Student,
+  Graduate,
+  Module,
+  CompletedModule
+} from './SheetTypes';
 
 export enum PanelType {
   STUDENTS = 'students',
@@ -30,10 +36,13 @@ export enum PanelType {
   COMPLETED_MODULES = 'completedModules'
 }
 
-export type Panel = {
+// i don't think this does anything
+type Component = typeof StudentDetail
+
+export type Panel<T> = {
   components: {
-    detail: any,
-    list: any
+    detail: Component,
+    list: Component
   },
   title: string,
   color: string,
@@ -41,13 +50,13 @@ export type Panel = {
   keys: string[],
   sheetRange: Range,
   mappers: {
-    map: (data: any[][]) => Object[] | Promise<Object[]>,
-    unmap: (data: Object[]) => any[][] | Promise<any[][]>
+    map: (data: string[][]) => T[] | Promise<T[]>,
+    unmap: (data: T[]) => string[][] | Promise<string[][]>
   },
   type: PanelType
 };
 
-export function switchPanel(panel: PanelType): Panel {
+export function switchPanel(panel: PanelType) {
   switch (panel) {
     case PanelType.GRADUATES:
       return {
