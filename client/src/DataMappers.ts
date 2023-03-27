@@ -9,7 +9,7 @@ function removeEmptyRows(item: Object) {
 export async function mapStudents(sheetData: any[][]): Promise<any[]> {
   // get header row categories
   const headerRow = await getHeaderRow(Range.Students);
-  const categories = headerRow.slice(6);
+  const categories = headerRow.slice(7);
   return sheetData
     .map((student, index) => ({
       row: index + 2, // + 1 for header row, + 1 for 0-indexing
@@ -18,10 +18,11 @@ export async function mapStudents(sheetData: any[][]): Promise<any[]> {
       email: student[2] ?? '',
       points: student[3] ?? 0,
       activeStatus: student[4] ?? '',
-      note: student[5] ?? '',
+      year: student[5] ?? '',
+      note: student[6] ?? '',
       misc: categories.reduce((acc: any, category: any, index: number) => {
         if (category === '') return acc
-        acc[category] = student[index + 6] ?? ''
+        acc[category] = student[index + 7] ?? ''
         return acc
       }, {})
     }))
@@ -30,7 +31,7 @@ export async function mapStudents(sheetData: any[][]): Promise<any[]> {
 
 export async function unmapStudents(students: Object[]): Promise<any[][]> {
   const headerRow = headerRowMemo[Range.Students] ?? await getHeaderRow(Range.Students);
-  const categories = headerRow.slice(6);
+  const categories = headerRow.slice(7);
   return students.map((student: any) => {
     const misc = categories.map((category: string) => student.misc[category] ?? '');
     return [
@@ -39,6 +40,7 @@ export async function unmapStudents(students: Object[]): Promise<any[][]> {
       student.email,
       student.points,
       student.activeStatus,
+      student.year,
       student.note,
       ...misc,
     ];

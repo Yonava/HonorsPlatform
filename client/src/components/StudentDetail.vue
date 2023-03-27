@@ -101,14 +101,25 @@
           <v-icon>mdi-ticket</v-icon>
         </template>
       </v-text-field>
-      <v-text-field
-        v-model="student.activeStatus"
-        label="Active Status"
-      >
-        <template #prepend>
-          <v-icon>mdi-card-account-details</v-icon>
-        </template>
-      </v-text-field>
+      <div class="d-flex flex-row">
+        <v-text-field
+          v-model="student.activeStatus"
+          label="Active Status"
+          class="mr-2"
+        >
+          <template #prepend>
+            <v-icon>mdi-card-account-details</v-icon>
+          </template>
+        </v-text-field>
+        <v-text-field
+          v-model="student.year"
+          label="Year"
+        >
+          <template #prepend>
+            <v-icon>mdi-calendar</v-icon>
+          </template>
+        </v-text-field>
+      </div>
       <v-divider class="my-2"></v-divider>
       <div v-if="student.id">
         <div class="d-flex flex-row align-center">

@@ -28,6 +28,14 @@
       </div>
       <v-divider class="my-2"></v-divider>
       <v-text-field
+        v-model="module.completedDate"
+        label="Completed Date"
+      >
+        <template #prepend>
+          <v-icon>mdi-calendar</v-icon>
+        </template>
+      </v-text-field>
+      <v-text-field
         v-model="module.term"
         label="Term"
       >
@@ -106,9 +114,9 @@ import {
   onMounted,
   onUnmounted
 } from 'vue'
-import { updateByRow } from '../SheetsAPI'
+import { updateByRow, Range } from '../SheetsAPI'
 import { useAutoSync, useChangeWatcher } from '../AutoSync'
-import { unmapModules } from '../DataMappers'
+import { unmapCompletedModules } from '../DataMappers'
 
 const props = defineProps({
   item: {
@@ -121,7 +129,12 @@ const props = defineProps({
   }
 })
 
-const emits = defineEmits(['delete', 'update'])
+const emits = defineEmits([
+  'delete', 
+  'update', 
+  'unselect'
+])
+
 const clone = (obj: any) => JSON.parse(JSON.stringify(obj))
 
 const updating = ref(false)
@@ -138,7 +151,11 @@ const { upToDate } = useChangeWatcher(module)
 async function reqUpdateModule() {
   if (upToDate.value) return
   updating.value = true
-  await updateByRow('Modules', module.value.row, unmapModules([module.value]))
+  await updateByRow(
+    Range.CompletedModules, 
+    module.value.row, 
+    unmapCompletedModules([module.value])
+  )
   emits('update', clone(module.value))
   upToDate.value = true
   updating.value = false
