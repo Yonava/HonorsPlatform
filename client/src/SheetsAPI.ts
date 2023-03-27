@@ -1,6 +1,14 @@
 import axios from "axios";
 import router from "./router";
 
+export enum Range {
+  Students = "Students",
+  Modules = "Modules",
+  Graduates = "Graduates",
+  CompletedModules = "Completed Modules",
+  Announcements = "Announcements",
+}
+
 // memoized to avoid API calls on every update
 export interface HeaderRows { [key: string]: string[] }
 export const headerRowMemo: HeaderRows = {}
