@@ -1,12 +1,18 @@
 import { getHeaderRow, headerRowMemo, Range } from "./SheetsAPI";
+import {
+  Student,
+  Graduate,
+  Module,
+  CompletedModule,
+} from "./SheetTypes";
 
-function removeEmptyRows(item: Object) {
+function removeEmptyObjects(item: Object) {
   return Object
     .values(item)
     .some(value => typeof value === 'string' && value.length > 0);
 }
 
-export async function mapStudents(sheetData: any[][]): Promise<any[]> {
+export async function mapStudents(sheetData: string[][]): Promise<Student[]> {
   const headerRow = headerRowMemo[Range.Students] ?? await getHeaderRow(Range.Students);
   const categories = headerRow.slice(7);
   return sheetData
@@ -15,7 +21,7 @@ export async function mapStudents(sheetData: any[][]): Promise<any[]> {
       id: student[0] ?? '',
       name: student[1] ?? '',
       email: student[2] ?? '',
-      points: student[3] ?? 0,
+      points: parseInt(student[3]) ?? 0,
       activeStatus: student[4] ?? '',
       year: student[5] ?? '',
       note: student[6] ?? '',
@@ -25,19 +31,19 @@ export async function mapStudents(sheetData: any[][]): Promise<any[]> {
         return acc
       }, {})
     }))
-    .filter(removeEmptyRows);
+    .filter(removeEmptyObjects);
 }
 
-export async function unmapStudents(students: Object[]): Promise<any[][]> {
+export async function unmapStudents(students: Student[]): Promise<string[][]> {
   const headerRow = headerRowMemo[Range.Students] ?? await getHeaderRow(Range.Students);
   const categories = headerRow.slice(7);
-  return students.map((student: any) => {
+  return students.map((student: Student) => {
     const misc = categories.map((category: string) => student.misc[category] ?? '');
     return [
       student.id,
       student.name,
       student.email,
-      student.points,
+      student.points.toString(),
       student.activeStatus,
       student.year,
       student.note,
@@ -46,7 +52,7 @@ export async function unmapStudents(students: Object[]): Promise<any[][]> {
   });
 }
 
-export function mapModules(sheetData: any[][]): any[] {
+export function mapModules(sheetData: string[][]): Module[] {
   return sheetData
     .map((module, index) => {
       return {
@@ -60,11 +66,11 @@ export function mapModules(sheetData: any[][]): any[] {
         docuSignCompleted: module[6] ?? '',
       };
     })
-    .filter(removeEmptyRows);
+    .filter(removeEmptyObjects);
 }
 
-export function unmapModules(modules: Object[]): any[][] {
-  return modules.map((module: any) => {
+export function unmapModules(modules: Module[]): string[][] {
+  return modules.map((module: Module) => {
     const { row, ...rest } = module;
     return [
       ...Object.values(rest),
@@ -72,9 +78,9 @@ export function unmapModules(modules: Object[]): any[][] {
   });
 }
 
-export function mapCompletedModules(sheetData: any[][]): any[] {
+export function mapCompletedModules(sheetData: string[][]): CompletedModule[] {
   return sheetData
-    .map((module, index) => {
+    .map((module: string[], index: number) => {
       return {
         row: index + 2,
         studentId: module[0] ?? '',
@@ -88,11 +94,11 @@ export function mapCompletedModules(sheetData: any[][]): any[] {
         grade: module[8] ?? '',
       };
     })
-    .filter(removeEmptyRows);
+    .filter(removeEmptyObjects);
 }
 
-export function unmapCompletedModules(modules: Object[]): any[][] {
-  return modules.map((module: any) => {
+export function unmapCompletedModules(modules: CompletedModule[]): string[][] {
+  return modules.map((module: CompletedModule) => {
     const { row, ...rest } = module;
     return [
       ...Object.values(rest),
@@ -100,9 +106,9 @@ export function unmapCompletedModules(modules: Object[]): any[][] {
   });
 }
 
-export function mapGraduates(sheetData: any[][]): any[] {
+export function mapGraduates(sheetData: string[][]): Graduate[] {
   return sheetData
-    .map((graduate: any, index: number) => {
+    .map((graduate: string[], index: number) => {
       return {
         row: index + 2,
         id: graduate[0] ?? '',
@@ -113,11 +119,11 @@ export function mapGraduates(sheetData: any[][]): any[] {
         note: graduate[5] ?? '',
       };
     })
-    .filter(removeEmptyRows);
+    .filter(removeEmptyObjects);
 }
 
-export function unmapGraduates(graduates: Object[]): any[][] {
-  return graduates.map((graduate: any) => {
+export function unmapGraduates(graduates: Graduate[]): string[][] {
+  return graduates.map((graduate: Graduate) => {
     const { row, ...rest } = graduate;
     return [
       ...Object.values(rest),

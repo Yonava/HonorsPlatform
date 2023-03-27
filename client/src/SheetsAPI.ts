@@ -41,7 +41,7 @@ export async function clearByRow(range: Range, row: number) {
   }
 }
 
-export async function updateByRow(range: Range, row: number, data: any[][]) {
+export async function updateByRow(range: Range, row: number, data: string[][]) {
   try {
     await axios.put(`/api/range/${range}/${row}`, data);
   } catch {
@@ -49,7 +49,7 @@ export async function updateByRow(range: Range, row: number, data: any[][]) {
   }
 }
 
-export async function postInRange(range: Range, data: any[][]) {
+export async function postInRange(range: Range, data: string[][]) {
   try {
     await axios.post(`/api/range/${range}`, data);
   } catch {
@@ -80,7 +80,7 @@ export async function getNonSensitiveData(endpointExtension: string) {
   }
 }
 
-export async function moveRowToRange(fromRange: Range, toRange: Range, row: number, data: any[][]) {
+export async function moveRowToRange(fromRange: Range, toRange: Range, row: number, data: string[][]) {
   try {
     await postInRange(toRange, data);
     await clearByRow(fromRange, row);
