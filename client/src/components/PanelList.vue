@@ -57,35 +57,23 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { 
   ref, 
   defineProps,
   defineEmits,
   computed
 } from 'vue'
+import { SheetItem } from '../SheetTypes'
+import { Panel } from '../SwitchPanel'
 
-const props = defineProps({
-  items: {
-    type: Array,
-    required: true
-  },
-  selected: {
-    required: true
-  },
-  loading: {
-    type: Boolean,
-    required: true
-  },
-  panel: {
-    type: Object,
-    required: true
-  },
-  filterQuery: {
-    type: String,
-    required: true
-  }
-})
+const props = defineProps<{
+  items: SheetItem[],
+  selected: SheetItem,
+  loading: boolean,
+  panel: Panel<SheetItem>,
+  filterQuery: string
+}>()
 
 const emits = defineEmits(['select'])
 

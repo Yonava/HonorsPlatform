@@ -53,17 +53,22 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { defineProps, computed } from 'vue'
+import { Module } from '../SheetTypes'
+import type { ComputedRef } from 'vue'
 
-const props = defineProps({
-  item: {
-    type: Object,
-    required: true
-  }
-})
+const props = defineProps<{
+  item: Module
+}>()
 
-const docuSignStatus = computed(() => {
+type DocuSignStatus = {
+  icon: string,
+  text: string,
+  color: string
+}
+
+const docuSignStatus: ComputedRef<DocuSignStatus> = computed(() => {
   if (props.item.docuSignCreated && props.item.docuSignCompleted) {
     return {
       icon: 'mdi-file-document-check-outline',

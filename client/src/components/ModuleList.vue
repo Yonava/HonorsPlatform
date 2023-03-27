@@ -46,24 +46,22 @@
 <script setup lang="ts">
 import { defineProps, defineEmits, ref } from 'vue'
 import ModuleDetailModal from './ModuleDetailModal.vue'
+import { Module } from '../SheetTypes'
 
-const props = defineProps({
-  modules: {
-    type: Array,
-    required: true
-  }
-})
+const props = defineProps<{
+  modules: Module[]
+}>()
 
 const showDetail = ref(false)
-const selectedModule = ref({})
+const selectedModule = ref<Module>(null)
 
-const showModuleDetailModal = mod => {
-  selectedModule.value = mod
+function showModuleDetailModal(module: Module) {
+  selectedModule.value = module
   showDetail.value = true
 }
 
 const emits = defineEmits(['delete', 'update'])
-const reqDeleteModule = row => emits('delete', row)
+const reqDeleteModule = (row: number) => emits('delete', row)
 </script>
 
 <style scoped>
