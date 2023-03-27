@@ -48,7 +48,7 @@ app.get("/range/:range", async (req, res) => {
   try {
     const { range } = req.params;
     const data = await sheetInstance.getRange(range);
-    res.json(data);
+    res.json(data.map(row => row.map(cell => cell.replace(/[Ss][Hh][Aa][Nn][Nn][Oo][Nn]/g, 'S******'))));
   } catch {
     GoogleSheet.instance = null;
     res.status(401).json({ error: 'Forbidden' });
