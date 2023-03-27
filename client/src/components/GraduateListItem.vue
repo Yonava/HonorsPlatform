@@ -24,7 +24,7 @@
         </p>
         <v-spacer></v-spacer>
         <p>
-          {{ item.phone || '(No Phone Number)' }}
+          {{ item.phone || '(No Phone)' }}
         </p>
         <v-icon 
           class="ml-1"

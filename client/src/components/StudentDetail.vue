@@ -197,6 +197,20 @@
         clearable
         :label="`${student.name.split(' ')[0]}'s meeting notes`"
       ></v-textarea>
+      <v-btn
+        @click="moveToGraduates"
+        :disabled="!canDelete"
+        :loading="movingStudent"
+        size="x-large"
+        color="blue-darken-2"
+        style="transform: translateY(-130px);"
+      >
+        <v-icon 
+          class="mr-4"
+          size="x-large"
+        >mdi-school-outline</v-icon>
+        Graduate {{ student.name.split(' ')[0] }}
+      </v-btn>
     </div>
     <AddModal 
       @close="showModuleAddModal = false"
@@ -224,10 +238,10 @@ import {
 } from 'vue'
 import ModuleFetch from './ModuleFetch.vue'
 import AddModal from './AddModal.vue'
-import { updateByRow, Range } from '../SheetsAPI'
+import { updateByRow, moveRowToRange, Range } from '../SheetsAPI'
 import { useAutoSync, useChangeWatcher } from '../AutoSync'
 import { switchPanel, PanelType } from '../SwitchPanel'
-import { unmapStudents } from '../DataMappers'
+import { unmapStudents, unmapGraduates } from '../DataMappers'
 
 const props = defineProps({
   item: {
@@ -243,7 +257,8 @@ const props = defineProps({
 const clone = (obj) => JSON.parse(JSON.stringify(obj))
 const emits = defineEmits([
   'delete', 
-  'update'
+  'update',
+  'unselect'
 ])
 
 const reqDeleteStudent = () => {
@@ -257,6 +272,7 @@ const refetchModules = ref(false)
 const tempStudentId = ref('')
 const dialog = ref(false)
 const student = ref(null)
+const movingStudent = ref(false)
 
 watch(() => props.item, (newVal) => {
   student.value = clone(newVal)
@@ -292,6 +308,24 @@ async function saveId() {
   student.value.id = tempStudentId.value
   await reqUpdateStudent()
   dialog.value = false
+}
+
+async function moveToGraduates() {
+  movingStudent.value = true
+  await moveRowToRange(
+    Range.Students, 
+    Range.Graduates,
+    student.value.row, 
+    unmapGraduates([{
+      id: student.value.id,
+      name: student.value.name,
+      phone: '',
+      email: student.value.email,
+      graduationDate: new Date().toLocaleDateString(),
+      note: student.value.note,
+    }])
+  )
+  emits('unselect')
 }
 </script>
 
