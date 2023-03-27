@@ -13,7 +13,7 @@
           color="purple-darken-2"
           style="font-weight: bold; color: white; border-radius: 20px; width: 120%"
         >
-          <v-icon class="mr-1">mdi-file-document-edit-outline</v-icon>
+          <v-icon class="mr-1">mdi-calendar</v-icon>
           <span>{{ item.gradId ? 'Update' : 'Create' }} Event</span>
         </v-sheet>
         <div class="my-5">
@@ -27,7 +27,8 @@
                 day: '2-digit'
               }) + ' ' + new Date().toLocaleTimeString({
                 hour: '2-digit',
-                minute: '2-digit'
+                minute: '2-digit',
+                second: 'none'
               })"
               color="purple"
               size="x-small"

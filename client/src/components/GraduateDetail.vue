@@ -3,7 +3,7 @@
     class="d-flex flex-row"
     style="width: 100%; padding: 20px"
   >
-    <div style="width: 55%;">
+    <div style="width: 55%; height: 100%; overflow: auto">
       <p 
         v-if="grad.id"
         style="font-weight: 200"
@@ -78,25 +78,52 @@
           Add Event
         </v-btn>
       </div>
-      <div>
-        <div 
+      <div style="height: 350px; overflow: auto">
+        <div
           v-for="event in engagements"
           :key="event.id"
           @click="openModal(event)"
+        > 
+          <v-sheet
+            color="purple-darken-2"
+            class="pa-2 mb-2"
+            style="cursor: pointer; border-radius: 5px"
+            elevation="5"
+          >
+            <strong v-if="event.event">Event: </strong>{{ event.event }}
+            <v-spacer></v-spacer>
+            <strong v-if="event.dateTime">Date/Time: </strong>{{ event.dateTime }}
+          </v-sheet>
+        </div>
+        <div
+          v-if="loadingEngagements"
+          class="d-flex flex-row justify-center align-center"
         >
-          {{ event.event }}
-          {{ event.note }}
-          {{ event.dateTime }}
+          <v-progress-circular
+            indeterminate
+            color="purple-darken-2"
+          ></v-progress-circular>
+        </div>
+        <div 
+          v-else-if="engagements.length === 0"
+          style="font-weight: 200; color: red; font-size: 25px"
+        >
+          No events yet.
         </div>
       </div>
     </div>
     <div 
-      style="width: 45%;" 
+      style="width: 45%; height: 100%; overflow: auto" 
       class="ml-5 d-flex flex-column"
     >
       <span 
-        @click="emits('delete')"
-        class="delete d-flex align-center mb-2"
+        @click="canDelete ? emits('delete') : null"
+        :class="[
+          'd-flex', 
+          'align-center', 
+          'mb-2',
+          canDelete ? 'delete' : 'delete-disabled'
+        ]"
       >
         <v-icon>mdi-delete</v-icon>
         delete {{ grad.name.split(' ')[0] }} permanently
@@ -109,9 +136,7 @@
       <v-btn
         @click="moveToStudents"
         :loading="movingGrad"
-        size="x-large"
         color="purple-darken-2"
-        style="transform: translateY(-60px);"
       >
         <v-icon
           class="mr-4"
@@ -175,8 +200,12 @@ const grad = ref<Graduate>(clone(props.item))
 const movingGrad = ref(false)
 const showEngagementModal = ref(false)
 const engagements = ref<GradEngagement[]>([])
-const loadingEngagements = ref(false)
+const loadingEngagements = ref(true)
 const selectedEngagement = ref<GradEngagement>(null)
+
+const canDelete = computed(() => {
+  return engagements.value.length === 0 && !loadingEngagements
+})
 
 watch(() => props.item, (newVal) => {
   grad.value = clone(newVal)
@@ -230,6 +259,7 @@ async function moveToStudents() {
 
 async function fetchEngagement() {
   loadingEngagements.value = true
+  engagements.value = []
   const events = await getEvery(Range.GRAD_ENGAGEMENT)
   engagements.value = mapGradEngagement(events).filter(e => e.gradId === grad.value.id)
   loadingEngagements.value = false
@@ -271,6 +301,11 @@ function addEventButton() {
 .delete {
   color: red;
   cursor: pointer;
+}
+
+.delete-disabled {
+  color: grey;
+  cursor: not-allowed;
 }
 
 .delete:hover {
