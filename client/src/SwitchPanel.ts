@@ -118,6 +118,6 @@ export function switchPanel(panel: PanelType): Panel {
         type: PanelType.COMPLETED_MODULES
       };
     default:
-      throw new Error('switchPanel: Invalid panel type');
+      throw new Error(`switchPanel: Invalid panel type ${panel}`);
   }
 }

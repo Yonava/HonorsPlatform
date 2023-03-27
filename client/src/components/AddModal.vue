@@ -4,9 +4,9 @@
     max-width="600px"
   >
     <v-sheet 
-      :color="`${panel.color}-lighten-5`"
+      :color="`${color}-lighten-5`"
       :style="{
-        border: `5px solid ${panel.color}`,
+        border: `5px solid ${color}`,
       }"
       class="pa-5 parent"
     >
@@ -39,14 +39,14 @@
         class="d-flex justify-center align-center mb-12"
       >
         <v-progress-circular
-          :color="`${panel.color}-darken-1`"
+          :color="`${color}-darken-1`"
           indeterminate
         ></v-progress-circular>
       </div>
       <v-btn
         @click="reqAdd"
         :loading="loading"
-        :color="`${panel.color}-darken-1`"
+        :color="`${color}-darken-1`"
       >add {{ panel.title.slice(0, -1) }}</v-btn>
       <v-icon 
         @click="showDialog = false"
@@ -58,7 +58,7 @@
 
 <script setup lang="ts">
 import { Panel } from '../SwitchPanel'
-import { postInRange, getHeaderRow } from '../SheetsAPI'
+import { postInRange, getHeaderRow, headerRowMemo } from '../SheetsAPI'
 import { 
   ref, 
   toRef,
@@ -76,8 +76,17 @@ const props = defineProps({
   panel: {
     type: Object,
     required: true
+  },
+  override: {
+    type: Object,
+    required: false
   }
 })
+
+const emits = defineEmits([
+  'close',
+  'success'
+])
 
 const showDialog = computed({
   get: () => props.show,
@@ -110,15 +119,14 @@ async function reqAdd() {
 async function initItem() {
   const panel = props.panel as Panel
   loading.value = true
-  attrs.value = await getHeaderRow(panel.sheetRange)
+  attrs.value = headerRowMemo[panel.sheetRange] ?? await getHeaderRow(panel.sheetRange)
   loading.value = false
   item.value = attrs.value.map(() => '')
 }
 
-const emits = defineEmits([
-  'close',
-  'success'
-])
+const color = computed(() => {
+  return props?.override?.color ?? props.panel.color
+})
 </script>
 
 <style scoped>

@@ -198,11 +198,15 @@
         :label="`${student.name.split(' ')[0]}'s meeting notes`"
       ></v-textarea>
     </div>
-    <ModuleAddModal 
+    <AddModal 
       @close="showModuleAddModal = false"
-      @reFetchModules="refetchModules = !refetchModules"
+      @success="refetchModules = !refetchModules"
       :show="showModuleAddModal"
-      :studentId="student.id"
+      :panel="switchPanel(PanelType.MODULES)"
+      :override="{
+        color: 'blue',
+        predefineColumnData: [student.id],
+      }"
     />
   </div>
 </template>
@@ -219,9 +223,10 @@ import {
   onUnmounted
 } from 'vue'
 import ModuleFetch from './ModuleFetch.vue'
-import ModuleAddModal from './ModuleAddModal.vue'
+import AddModal from './AddModal.vue'
 import { updateByRow, Range } from '../SheetsAPI'
 import { useAutoSync, useChangeWatcher } from '../AutoSync'
+import { switchPanel, PanelType } from '../SwitchPanel'
 import { unmapStudents } from '../DataMappers'
 
 const props = defineProps({

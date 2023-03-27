@@ -32,7 +32,7 @@
         label="Completed Date"
       >
         <template #prepend>
-          <v-icon>mdi-calendar</v-icon>
+          <v-icon>mdi-check</v-icon>
         </template>
       </v-text-field>
       <v-text-field

@@ -254,7 +254,6 @@ onMounted(async () => {
 })
 
 async function unselect() {
-  console.log('unselect')
   selectedItem.value = undefined
   await fetchData()
 }

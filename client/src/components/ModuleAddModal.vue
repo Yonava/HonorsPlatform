@@ -50,7 +50,12 @@
 </template>
 
 <script setup lang="ts">
-import { postInRange, headerRowMemo } from '../SheetsAPI'
+import { 
+  postInRange, 
+  headerRowMemo, 
+  Range, 
+  getHeaderRow 
+} from '../SheetsAPI'
 import { unmapModules } from '../DataMappers'
 import { 
   ref, 
@@ -85,7 +90,7 @@ const showDialog = computed({
 
 const loading = ref(false)
 const moduleAttrs = ref(
-  headerRowMemo['Modules'] ?? ['Student ID', 'Course Code', 'Description', 'Term']
+  headerRowMemo['Modules'] ?? await 
 )
 const moduleData = ref([])
 const errorMessage = ref('')
@@ -106,7 +111,7 @@ async function reqAddModule() {
     return
   }
   loading.value = true
-  await postInRange('Modules', [moduleData.value])
+  await postInRange(Range.Modules, [moduleData.value])
   await new Promise(resolve => setTimeout(resolve, 500))
   emits('close')
   emits('reFetchModules')
