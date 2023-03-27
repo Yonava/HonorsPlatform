@@ -17,7 +17,7 @@ function catchAction() {
   router.push("/auth");
 }
 
-export async function getEvery(range: string) {
+export async function getEvery(range: Range) {
   try {
     const data = (await axios.get(`/api/range/${range}`)).data;
     // remove header row and store it in memo
@@ -33,7 +33,7 @@ export async function getEvery(range: string) {
   }
 }
 
-export async function clearByRow(range: string, row: number) {
+export async function clearByRow(range: Range, row: number) {
   try {
     await axios.delete(`/api/range/${range}/${row}`);
   } catch {
@@ -41,7 +41,7 @@ export async function clearByRow(range: string, row: number) {
   }
 }
 
-export async function updateByRow(range: string, row: number, data: any[][]) {
+export async function updateByRow(range: Range, row: number, data: any[][]) {
   try {
     await axios.put(`/api/range/${range}/${row}`, data);
   } catch {
@@ -49,7 +49,7 @@ export async function updateByRow(range: string, row: number, data: any[][]) {
   }
 }
 
-export async function postInRange(range: string, data: any[][]) {
+export async function postInRange(range: Range, data: any[][]) {
   try {
     await axios.post(`/api/range/${range}`, data);
   } catch {
@@ -57,7 +57,7 @@ export async function postInRange(range: string, data: any[][]) {
   }
 }
 
-export async function getHeaderRow(range: string) {
+export async function getHeaderRow(range: Range) {
   try {
     const headerRow = (await axios.get(`/api/range/${range}!A1:Z1`)).data;
     headerRowMemo[range] = headerRow[0];
@@ -77,5 +77,14 @@ export async function getNonSensitiveData(endpointExtension: string) {
     return (await axios.get(`/api/open/${endpointExtension}`)).data;
   } catch {
     throw new Error("Access denied");
+  }
+}
+
+export async function moveRowToRange(fromRange: Range, toRange: Range, row: number, data: any[][]) {
+  try {
+    await postInRange(toRange, data);
+    await clearByRow(fromRange, row);
+  } catch {
+    catchAction();
   }
 }

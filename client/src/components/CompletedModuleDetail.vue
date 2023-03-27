@@ -43,9 +43,6 @@
           <v-icon>mdi-human-male-board</v-icon>
         </template>
       </v-text-field>
-      <h1 class="mb-2">
-        Documentation
-      </h1>
       <div class="d-flex flex-row">
         <v-text-field
           v-model="module.docuSignCreated"
@@ -64,6 +61,18 @@
             <v-icon>mdi-calendar-check</v-icon>
           </template>
         </v-text-field>
+      </div>
+      <div class="d-flex flex-column align-center justify-center">
+        <h2>
+          Final Grade
+        </h2>
+        <input 
+          v-model="module.grade"
+          type="text" 
+          class="header-input" 
+          placeholder="Grade"
+          style="font-size: 5em; text-align: center;"
+        >
       </div>
     </div>
     <div 

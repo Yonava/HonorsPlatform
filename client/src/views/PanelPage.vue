@@ -160,6 +160,7 @@
             <component
               @delete="reqDelete"
               @update="updateList($event)"
+              @unselect="unselect"
               :is="panel.components.detail" 
               :item="selectedItem"
               :autoSync="autoSync"
@@ -251,6 +252,12 @@ onMounted(async () => {
   }
   await fetchData()
 })
+
+async function unselect() {
+  console.log('unselect')
+  selectedItem.value = undefined
+  await fetchData()
+}
 
 async function reqDelete() {
   loadingItems.value = true

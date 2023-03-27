@@ -83,6 +83,83 @@
           size="small"
         >Completed Now</v-btn>
       </div>
+      <v-divider class="my-2"></v-divider>
+      <v-dialog
+        v-model="dialog"
+        max-width="500"
+      >
+        <template #activator="{ props }">
+          <v-btn
+            v-bind="props"
+            class="mt-5"
+            color="orange-darken-2"
+            size="x-large"
+            block
+          >
+            <v-icon 
+              class="mr-2"
+              size="x-large"
+            >mdi-check</v-icon>
+            Mark This Module As Completed
+          </v-btn>
+        </template>
+        <v-card
+          class="d-flex flex-column align-center pa-3"
+        >
+          <h1>
+            Let's Finish It Up!
+          </h1>
+          <div 
+            v-if="!movingModuleToCompleted"
+            style="width: 90%;"
+          >
+            <div
+              class="d-flex flex-row mt-5"
+              style="width: 100%;"
+            >
+              <v-text-field
+                v-model="completedModuleData.completedDate"
+                label="Date Completed"
+                variant="outlined"
+                prepend-inner-icon="mdi-calendar"
+                class="mx-2"
+              ></v-text-field>
+              <v-text-field
+                v-model="completedModuleData.grade"
+                label="Final Grade"
+                variant="outlined"
+                prepend-inner-icon="mdi-alphabetical"
+                class="mx-2"  
+              ></v-text-field>
+            </div>
+            <div style="transform: translateY(-15px)">
+              <v-btn
+                v-if="!completedModuleData.completedDate"
+                @click="completedModuleData.completedDate = new Date().toLocaleDateString()"
+                color="orange-darken-2"
+                size="small"
+                class="ml-2"
+              >Completed Today</v-btn>
+            </div>
+          </div>
+          <div 
+            v-else
+            class="mt-7"
+          >
+            <v-progress-circular
+              indeterminate
+              color="orange-darken-2"
+            ></v-progress-circular>
+          </div>
+          <v-card-actions>
+            <v-btn
+              v-if="!movingModuleToCompleted"
+              @click="moveToCompleted"
+              color="orange-darken-2"
+            >Complete</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
     </div>
     <div 
       style="width: 45%;" 
@@ -115,9 +192,9 @@ import {
   onMounted,
   onUnmounted
 } from 'vue'
-import { updateByRow } from '../SheetsAPI'
+import { updateByRow, moveRowToRange, Range } from '../SheetsAPI'
 import { useAutoSync, useChangeWatcher } from '../AutoSync'
-import { unmapModules } from '../DataMappers'
+import { unmapModules, unmapCompletedModules } from '../DataMappers'
 
 const props = defineProps({
   item: {
@@ -130,11 +207,22 @@ const props = defineProps({
   }
 })
 
-const emits = defineEmits(['delete', 'update'])
+const emits = defineEmits([
+  'delete', 
+  'update',
+  'unselect'
+])
+
 const clone = (obj: any) => JSON.parse(JSON.stringify(obj))
 
 const updating = ref(false)
 const module = ref(null)
+const dialog = ref(false)
+const movingModuleToCompleted = ref(false)
+const completedModuleData = ref({
+  completedDate: '',
+  grade: '',
+})
 
 watch(() => props.item, (newVal) => {
   module.value = clone(newVal)
@@ -147,10 +235,25 @@ const { upToDate } = useChangeWatcher(module)
 async function reqUpdateModule() {
   if (upToDate.value) return
   updating.value = true
-  await updateByRow('Modules', module.value.row, unmapModules([module.value]))
+  await updateByRow(Range.Modules, module.value.row, unmapModules([module.value]))
   emits('update', clone(module.value))
   upToDate.value = true
   updating.value = false
+}
+
+async function moveToCompleted() {
+  movingModuleToCompleted.value = true
+  await moveRowToRange(
+    Range.Modules, 
+    Range.CompletedModules, 
+    module.value.row, 
+    unmapCompletedModules([{
+      ...module.value,
+      ...completedModuleData.value
+    }])
+  )
+  emits('unselect')
+  dialog.value = false
 }
 </script>
 
