@@ -58,6 +58,7 @@
 
 <script setup lang="ts">
 import { Panel } from '../SwitchPanel'
+import { SheetItem } from '../SheetTypes'
 import { postInRange, getHeaderRow, headerRowMemo } from '../SheetsAPI'
 import { 
   ref, 
@@ -101,7 +102,7 @@ watch(showDialog, async (val) => {
 
 const item = ref([])
 const loading = ref(false)
-const attrs = ref([])
+const attrs = ref<string[]>([])
 
 async function reqAdd() {
   if (!item.value.some(attr => attr)) {
@@ -119,7 +120,7 @@ async function reqAdd() {
 }
 
 async function initItem() {
-  const panel = props.panel as Panel
+  const panel = props.panel as Panel<SheetItem>
   loading.value = true
   attrs.value = headerRowMemo[panel.sheetRange] ?? await getHeaderRow(panel.sheetRange)
   loading.value = false

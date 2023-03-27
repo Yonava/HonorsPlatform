@@ -17,7 +17,7 @@ function catchAction() {
   router.push("/auth");
 }
 
-export async function getEvery(range: Range) {
+export async function getEvery(range: Range): Promise<string[][]> {
   try {
     const data = (await axios.get(`/api/range/${range}`)).data;
     // remove header row and store it in memo
@@ -30,6 +30,7 @@ export async function getEvery(range: Range) {
         hold: "true",
       }
     })
+    throw new Error("Access denied");
   }
 }
 
@@ -57,7 +58,7 @@ export async function postInRange(range: Range, data: string[][]) {
   }
 }
 
-export async function getHeaderRow(range: Range) {
+export async function getHeaderRow(range: Range): Promise<string[]> {
   try {
     const headerRow = (await axios.get(`/api/range/${range}!A1:Z1`)).data;
     headerRowMemo[range] = headerRow[0];
@@ -69,10 +70,11 @@ export async function getHeaderRow(range: Range) {
         hold: "true",
       }
     })
+    throw new Error("Access denied");
   }
 }
 
-export async function getNonSensitiveData(endpointExtension: string) {
+export async function getNonSensitiveData(endpointExtension: string): Promise<string[][]> {
   try {
     return (await axios.get(`/api/open/${endpointExtension}`)).data;
   } catch {
