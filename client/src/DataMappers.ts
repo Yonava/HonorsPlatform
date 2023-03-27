@@ -7,8 +7,7 @@ function removeEmptyRows(item: Object) {
 }
 
 export async function mapStudents(sheetData: any[][]): Promise<any[]> {
-  // get header row categories
-  const headerRow = await getHeaderRow(Range.Students);
+  const headerRow = headerRowMemo[Range.Students] ?? await getHeaderRow(Range.Students);
   const categories = headerRow.slice(7);
   return sheetData
     .map((student, index) => ({
