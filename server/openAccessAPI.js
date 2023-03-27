@@ -11,7 +11,7 @@ router.get("/", async (req, res) => {
 router.get("/points", async (req, res) => {
   try {
     const studentData = {
-      'name': 0,
+      'name': 1,
       'points': 3,
     };
     const students = (await (await sheetInstance()).getRange("Students"))
