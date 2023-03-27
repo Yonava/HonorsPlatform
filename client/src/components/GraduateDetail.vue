@@ -116,17 +116,12 @@ import {
 import { updateByRow, moveRowToRange, Range } from '../SheetsAPI'
 import { useAutoSync, useChangeWatcher } from '../AutoSync'
 import { unmapGraduates, unmapStudents } from '../DataMappers'
+import { Graduate } from '../SheetTypes'
 
-const props = defineProps({
-  item: {
-    type: Object,
-    required: true
-  },
-  autoSync: {
-    type: Boolean,
-    required: true
-  }
-})
+const props = defineProps<{
+  item: Graduate,
+  autoSync: boolean
+}>()
 
 const emits = defineEmits([
   'delete', 
@@ -134,15 +129,15 @@ const emits = defineEmits([
   'unselect'
 ])
 
-const clone = (obj: any) => JSON.parse(JSON.stringify(obj))
+const clone = <T>(obj: T) => JSON.parse(JSON.stringify(obj))
 
 const updating = ref(false)
-const grad = ref(null)
+const grad = ref<Graduate>(clone(props.item))
 const movingGrad = ref(false)
 
 watch(() => props.item, (newVal) => {
   grad.value = clone(newVal)
-}, { immediate: true })
+})
 
 const { autoSync } = toRefs(props)
 useAutoSync(autoSync, reqUpdateGrad)
@@ -151,7 +146,7 @@ const { upToDate } = useChangeWatcher(grad)
 async function reqUpdateGrad() {
   if (upToDate.value) return
   updating.value = true
-  await updateByRow(Range.Graduates, grad.value.row, unmapGraduates([grad.value]))
+  await updateByRow(Range.GRADUATES, grad.value.row, unmapGraduates([grad.value]))
   emits('update', clone(grad.value))
   upToDate.value = true
   updating.value = false
@@ -166,17 +161,19 @@ async function reqGenerateGradId() {
 async function moveToStudents() {
   movingGrad.value = true
   await moveRowToRange(
-    Range.Graduates,
-    Range.Students,
+    Range.GRADUATES,
+    Range.STUDENTS,
     grad.value.row,
     await unmapStudents([{
+      row: grad.value.row,
       id: grad.value.id.startsWith('G') ? '' : grad.value.id,
       name: grad.value.name,
       email: grad.value.email,
       points: 0,
       activeStatus: 'Active',
       year: '',
-      note: grad.value.note
+      note: grad.value.note,
+      misc: {}
     }])
   )
   emits('unselect')

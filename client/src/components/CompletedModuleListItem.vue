@@ -50,13 +50,11 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { defineProps, computed } from 'vue'
+import { CompletedModule } from '../SheetTypes'
 
-const props = defineProps({
-  item: {
-    type: Object,
-    required: true
-  }
-})
+const props = defineProps<{
+  item: CompletedModule
+}>()
 </script>
