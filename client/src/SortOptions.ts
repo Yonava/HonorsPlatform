@@ -55,6 +55,33 @@ export function switchSortOptions(panel: PanelType) {
             desc: (a: Student, b: Student) => b.activeStatus.localeCompare(a.activeStatus)
           }
         },
+        {
+          label: 'Year',
+          icon: {
+            asc: 'mdi-calendar-star',
+            desc: 'mdi-calendar-remove'
+          },
+          func: {
+            asc: (a: Student, b: Student) => {
+              const yearMap: { [key: string]: number } = {
+                'Freshman': 1,
+                'Sophomore': 2,
+                'Junior': 3,
+                'Senior': 4,
+              };
+              return yearMap[a.year] - yearMap[b.year];
+            },
+            desc: (a: Student, b: Student) => {
+              const yearMap: { [key: string]: number } = {
+                'Freshman': 1,
+                'Sophomore': 2,
+                'Junior': 3,
+                'Senior': 4,
+              };
+              return yearMap[b.year] - yearMap[a.year];
+            }
+          },
+        }
       ];
     case PanelType.GRADUATES:
       return [
@@ -78,6 +105,25 @@ export function switchSortOptions(panel: PanelType) {
           func: {
             asc: (a: Graduate, b: Graduate) => a.phone.localeCompare(b.phone),
             desc: (a: Graduate, b: Graduate) => b.phone.localeCompare(a.phone)
+          }
+        },
+        {
+          label: 'Grad Date',
+          icon: {
+            asc: 'mdi-calendar-star',
+            desc: 'mdi-calendar-remove'
+          },
+          func: {
+            asc: (a: Graduate, b: Graduate) => {
+              const dateA = new Date(a.graduationDate);
+              const dateB = new Date(b.graduationDate);
+              return dateA.getTime() - dateB.getTime();
+            },
+            desc: (a: Graduate, b: Graduate) => {
+              const dateA = new Date(a.graduationDate);
+              const dateB = new Date(b.graduationDate);
+              return dateB.getTime() - dateA.getTime();
+            }
           }
         }
       ]
@@ -104,10 +150,81 @@ export function switchSortOptions(panel: PanelType) {
             asc: (a: Module, b: Module) => a.term.localeCompare(b.term),
             desc: (a: Module, b: Module) => b.term.localeCompare(a.term)
           }
+        },
+        {
+          label: 'Instructor',
+          icon: {
+            asc: 'mdi-human-male-board',
+            desc: 'mdi-human-male-board',
+          },
+          func: {
+            asc: (a: Module, b: Module) => a.instructor.localeCompare(b.instructor),
+            desc: (a: Module, b: Module) => b.instructor.localeCompare(a.instructor)
+          }
+        },
+        {
+          label: 'DocuSign',
+          icon: {
+            asc: 'mdi-file-document-outline',
+            desc: 'mdi-file-document',
+          },
+          func: {
+            asc: (a: Module, b: Module) => {
+              if (!a.docuSignCreated && !a.docuSignCompleted) return 1;
+              if (!b.docuSignCreated && !b.docuSignCompleted) return -1;
+              if (a.docuSignCompleted === '') return 1;
+              if (b.docuSignCompleted === '') return -1;
+              return b.docuSignCompleted.localeCompare(a.docuSignCompleted);
+            },
+            desc: (a: Module, b: Module) => {
+              if (!a.docuSignCreated && !a.docuSignCompleted) return -1;
+              if (!b.docuSignCreated && !b.docuSignCompleted) return 1;
+              if (a.docuSignCompleted === '') return -1;
+              if (b.docuSignCompleted === '') return 1;
+              return b.docuSignCompleted.localeCompare(a.docuSignCompleted);
+            }
+          }
         }
       ]
     case PanelType.COMPLETED_MODULES:
-      return []
+      return [
+        {
+          label: 'Completed Date',
+          icon: {
+            asc: 'mdi-calendar-check',
+            desc: 'mdi-calendar-remove'
+          },
+          func: {
+            asc: (a: CompletedModule, b: CompletedModule) => {
+              // put empty strings last
+              if (a.completedDate === '') return 1;
+              if (b.completedDate === '') return -1;
+              const aDate = new Date(a.completedDate);
+              const bDate = new Date(b.completedDate);
+              return aDate.getTime() - bDate.getTime();
+            },
+            desc: (a: CompletedModule, b: CompletedModule) => {
+              // put empty strings first
+              if (a.completedDate === '') return -1;
+              if (b.completedDate === '') return 1;
+              const aDate = new Date(a.completedDate);
+              const bDate = new Date(b.completedDate);
+              return bDate.getTime() - aDate.getTime();
+            }
+          }
+        },
+        {
+          label: 'Instructor',
+          icon: {
+            asc: 'mdi-human-male-board',
+            desc: 'mdi-human-male-board',
+          },
+          func: {
+            asc: (a: CompletedModule, b: CompletedModule) => a.instructor.localeCompare(b.instructor),
+            desc: (a: CompletedModule, b: CompletedModule) => b.instructor.localeCompare(a.instructor)
+          }
+        }
+      ]
     default:
       console.warn('No sort options for panel type: ' + panel);
       return [];
