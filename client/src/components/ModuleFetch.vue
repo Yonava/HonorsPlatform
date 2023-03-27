@@ -23,8 +23,6 @@ import {
   ref, 
   watch,
   computed,
-  defineProps, 
-  defineEmits,
 } from 'vue'
 import { 
   getEvery, 

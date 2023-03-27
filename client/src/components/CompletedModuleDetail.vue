@@ -105,9 +105,7 @@
 
 <script setup lang="ts">
 import { 
-  ref, 
-  defineProps, 
-  defineEmits, 
+  ref,
   watch, 
   computed,
   toRefs, 

@@ -63,8 +63,6 @@ import { postInRange, getHeaderRow, headerRowMemo } from '../SheetsAPI'
 import { 
   ref, 
   toRef,
-  defineProps, 
-  defineEmits, 
   computed,
   watch
 } from 'vue'
@@ -77,7 +75,7 @@ export type OverrideOptions = {
 const props = defineProps<{
   show: boolean,
   panel: Panel<SheetItem>,
-  override: OverrideOptions
+  override?: OverrideOptions
 }>()
 
 const emits = defineEmits([
@@ -121,12 +119,12 @@ async function initItem() {
   attrs.value = headerRowMemo[range] ?? await getHeaderRow(range)
   loading.value = false
   item.value = attrs.value.map((attr, index) => {
-    return props.override.predefineColumnData[index] ?? ''
+    return props?.override?.predefineColumnData[index] ?? ''
   })
 }
 
 const color = computed(() => {
-  return props.override.color ?? props.panel.color
+  return props?.override?.color ?? props.panel.color
 })
 </script>
 

@@ -24,7 +24,7 @@
             style="border-radius: 10px; border: 1px solid black;"
             elevation="4"
           > 
-            <h4>#{{ index + 1 }} with {{ students[index].points }} points</h4>
+            <h4>#{{ index + 1 }} with {{ students[index].points.toLocaleString() }} points</h4>
             <h2>{{ students[index].name }}</h2>
           </v-sheet>
         </div>
@@ -58,7 +58,7 @@
                 style="width: 25%"
                 class="d-flex flex-row justify-end"
               >
-                <div>{{ student.points }}</div>
+                <div>{{ student.points.toLocaleString() }}</div>
               </div>
             </div>
           </div>
@@ -84,18 +84,24 @@
 import { getNonSensitiveData } from "../SheetsAPI";
 import { ref } from "vue";
 
-const students = ref([]);
+const students = ref<LeaderboardItem[]>([]);
 const error = ref(false);
 const loading = ref(true);
 
+type LeaderboardItem = {
+  name: string;
+  points: number;
+  rank: number;
+}
+
 async function getStudents() {
   try {
-    const data = await getNonSensitiveData('points');
+    const data: LeaderboardItem[] = await getNonSensitiveData('points');
     students.value = data
       .sort((a, b) => b.points - a.points)
       .map((student, index) => ({
         name: student.name,
-        points: student.points.toLocaleString(),
+        points: student.points,
         rank: index + 1,
       }))
   } catch {

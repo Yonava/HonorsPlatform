@@ -74,7 +74,7 @@ export async function getHeaderRow(range: Range): Promise<string[]> {
   }
 }
 
-export async function getNonSensitiveData(endpointExtension: string): Promise<string[][]> {
+export async function getNonSensitiveData(endpointExtension: string) {
   try {
     return (await axios.get(`/api/open/${endpointExtension}`)).data;
   } catch {

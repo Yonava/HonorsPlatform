@@ -35,8 +35,6 @@
 import { 
   ref, 
   computed, 
-  defineProps, 
-  defineEmits,
   watch
 } from 'vue'
 import { SortOption, switchSortOptions } from '../SortOptions'

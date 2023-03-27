@@ -85,13 +85,7 @@
 </template>
 
 <script setup lang="ts">
-import { 
-  defineProps, 
-  defineEmits, 
-  computed, 
-  watch, 
-  ref 
-} from 'vue'
+import { computed, watch, ref } from 'vue'
 import { Module } from '../SheetTypes'
 
 const props = defineProps<{

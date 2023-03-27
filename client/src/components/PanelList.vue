@@ -60,8 +60,6 @@
 <script setup lang="ts">
 import { 
   ref, 
-  defineProps,
-  defineEmits,
   computed
 } from 'vue'
 import { SheetItem } from '../SheetTypes'

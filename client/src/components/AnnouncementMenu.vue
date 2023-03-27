@@ -72,7 +72,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, defineProps } from 'vue'
+import { ref, watch } from 'vue'
 import { getEvery, Range } from '../SheetsAPI'
 
 const announcements = ref<string[]>([])

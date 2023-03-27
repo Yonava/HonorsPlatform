@@ -44,7 +44,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, defineEmits, ref } from 'vue'
+import { ref } from 'vue'
 import ModuleDetailModal from './ModuleDetailModal.vue'
 import { Module } from '../SheetTypes'
 

@@ -38,7 +38,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, computed } from 'vue'
+import { computed } from 'vue'
 import { Graduate } from '../SheetTypes'
 
 const props = defineProps<{
