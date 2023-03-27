@@ -3,8 +3,7 @@ import {
   Student,
   Graduate,
   Module,
-  CompletedModule,
-  SheetEntry,
+  CompletedModule
 } from "./SheetTypes";
 
 function removeEmptyObjects(item: Object) {

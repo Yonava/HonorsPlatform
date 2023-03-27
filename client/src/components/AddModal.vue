@@ -69,20 +69,16 @@ import {
   watch
 } from 'vue'
 
-const props = defineProps({
-  show: {
-    type: Boolean,
-    required: true
-  },
-  panel: {
-    type: Object,
-    required: true
-  },
-  override: {
-    type: Object,
-    required: false
-  }
-})
+export type OverrideOptions = {
+  color?: string,
+  predefineColumnData?: string[]
+}
+
+const props = defineProps<{
+  show: boolean,
+  panel: Panel<SheetItem>,
+  override: OverrideOptions
+}>()
 
 const emits = defineEmits([
   'close',
@@ -100,7 +96,7 @@ watch(showDialog, async (val) => {
   }
 })
 
-const item = ref([])
+const item = ref<string[]>([])
 const loading = ref(false)
 const attrs = ref<string[]>([])
 
@@ -120,17 +116,17 @@ async function reqAdd() {
 }
 
 async function initItem() {
-  const panel = props.panel as Panel<SheetItem>
   loading.value = true
-  attrs.value = headerRowMemo[panel.sheetRange] ?? await getHeaderRow(panel.sheetRange)
+  const range = props.panel.sheetRange
+  attrs.value = headerRowMemo[range] ?? await getHeaderRow(range)
   loading.value = false
   item.value = attrs.value.map((attr, index) => {
-    return props?.override?.predefineColumnData[index] ?? ''
+    return props.override.predefineColumnData[index] ?? ''
   })
 }
 
 const color = computed(() => {
-  return props?.override?.color ?? props.panel.color
+  return props.override.color ?? props.panel.color
 })
 </script>
 
