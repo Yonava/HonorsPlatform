@@ -7,6 +7,7 @@ export enum Range {
   GRADUATES = "Graduates",
   COMPLETED_MODULES = "Completed Modules",
   ANNOUNCEMENTS = "Announcements",
+  GRAD_ENGAGEMENT = "Grad Engagement",
 }
 
 // memoized to avoid API calls on every update
