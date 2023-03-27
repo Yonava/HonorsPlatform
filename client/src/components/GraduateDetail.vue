@@ -67,7 +67,7 @@
           Engagement Tracking
         </h1>
         <v-btn
-          @click="showEngagementModal = true"
+          @click="addEventButton"
           color="green"
           size="small"
         >
@@ -79,6 +79,15 @@
         </v-btn>
       </div>
       <div>
+        <div 
+          v-for="event in engagements"
+          :key="event.id"
+          @click="openModal(event)"
+        >
+          {{ event.event }}
+          {{ event.note }}
+          {{ event.dateTime }}
+        </div>
       </div>
     </div>
     <div 
@@ -113,7 +122,9 @@
     </div>
     <GradEngagementModal 
       @close="showEngagementModal = false"
-      :item="grad.engagement"
+      @add="addEngagementEvent($event)"
+      @update="updateEngagementEvent($event)"
+      :item="selectedEngagement"
       :show="showEngagementModal"
     />
   </div>
@@ -128,10 +139,22 @@ import {
   onMounted,
   onUnmounted
 } from 'vue'
-import { updateByRow, moveRowToRange, Range } from '../SheetsAPI'
+import { 
+  updateByRow, 
+  moveRowToRange,
+  postInRange,
+  clearByRow,
+  Range, 
+  getEvery
+} from '../SheetsAPI'
 import { useAutoSync, useChangeWatcher } from '../AutoSync'
-import { unmapGraduates, unmapStudents } from '../DataMappers'
-import { Graduate } from '../SheetTypes'
+import { 
+  unmapGraduates, 
+  unmapStudents, 
+  mapGradEngagement,
+  unmapGradEngagement
+} from '../DataMappers'
+import { Graduate, GradEngagement } from '../SheetTypes'
 import GradEngagementModal from './GradEngagementModal.vue'
 
 const props = defineProps<{
@@ -151,10 +174,19 @@ const updating = ref(false)
 const grad = ref<Graduate>(clone(props.item))
 const movingGrad = ref(false)
 const showEngagementModal = ref(false)
+const engagements = ref<GradEngagement[]>([])
+const loadingEngagements = ref(false)
+const selectedEngagement = ref<GradEngagement>(null)
 
 watch(() => props.item, (newVal) => {
   grad.value = clone(newVal)
-})
+  fetchEngagement()
+}, { immediate: true })
+
+function openModal(event: GradEngagement) {
+  selectedEngagement.value = event
+  showEngagementModal.value = true
+}
 
 const { autoSync } = toRefs(props)
 useAutoSync(autoSync, reqUpdateGrad)
@@ -194,6 +226,44 @@ async function moveToStudents() {
     }])
   )
   emits('unselect')
+}
+
+async function fetchEngagement() {
+  loadingEngagements.value = true
+  const events = await getEvery(Range.GRAD_ENGAGEMENT)
+  engagements.value = mapGradEngagement(events).filter(e => e.gradId === grad.value.id)
+  loadingEngagements.value = false
+}
+
+async function addEngagementEvent(event: GradEngagement) {
+  const newEvent = {
+    ...event,
+    gradId: grad.value.id,
+  }
+  await postInRange(Range.GRAD_ENGAGEMENT, unmapGradEngagement([newEvent]))
+  await fetchEngagement()
+}
+
+async function updateEngagementEvent(event: GradEngagement) {
+  await updateByRow(Range.GRAD_ENGAGEMENT, event.row, unmapGradEngagement([event]))
+  await fetchEngagement()
+}
+
+async function deleteEngagementEvent(event: GradEngagement) {
+  await clearByRow(Range.GRAD_ENGAGEMENT, event.row)
+  await new Promise(resolve => setTimeout(resolve, 500))
+  await fetchEngagement()
+}
+
+function addEventButton() {
+  const event = {
+    row: -1,
+    gradId: '',
+    event: '',
+    note: '',
+    dateTime: '',
+  }
+  openModal(clone(event))
 }
 </script>
 

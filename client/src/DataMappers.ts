@@ -148,9 +148,11 @@ export function mapGradEngagement(sheetData: string[][]): GradEngagement[] {
 
 export function unmapGradEngagement(engagements: GradEngagement[]): string[][] {
   return engagements.map((engagement) => {
-    const { row, ...rest } = engagement;
     return [
-      ...Object.values(rest),
+      engagement.gradId,
+      engagement.event,
+      engagement.dateTime,
+      engagement.note,
     ];
   });
 }
