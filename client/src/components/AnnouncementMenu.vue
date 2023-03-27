@@ -73,7 +73,7 @@
 
 <script setup lang="ts">
 import { ref, watch, defineProps } from 'vue'
-import { getEvery } from '../SheetsAPI'
+import { getEvery, Range } from '../SheetsAPI'
 
 const announcements = ref([])
 const loading = ref(true)
@@ -90,7 +90,7 @@ watch(active, async (val) => {
 const fetchAnnouncements = async () => {
   loading.value = true
   announcements.value = []
-  const res = await getEvery('Announcements')
+  const res = await getEvery(Range.Announcements)
   announcements.value = res.map((row: string[]) => row[0])
     .filter((announcement: string) => announcement)
   loading.value = false
