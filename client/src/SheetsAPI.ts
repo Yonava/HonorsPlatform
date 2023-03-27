@@ -10,7 +10,7 @@ export enum Range {
 }
 
 // memoized to avoid API calls on every update
-export interface HeaderRows { [key: string]: string[] }
+export type HeaderRows = { [key in Range]?: string[] }
 export const headerRowMemo: HeaderRows = {}
 
 function catchAction() {
