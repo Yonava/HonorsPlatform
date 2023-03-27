@@ -276,7 +276,7 @@ const movingStudent = ref(false)
 
 watch(() => props.item, (newVal) => {
   student.value = clone(newVal)
-}, { immediate: true })
+}, { immediate: true, deep: true })
 
 // emitted from ModuleFetch
 const moduleListEmpty = ref(false)

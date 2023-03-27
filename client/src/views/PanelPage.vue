@@ -193,7 +193,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed, watch } from 'vue' 
+import { 
+  ref, 
+  onMounted, 
+  computed, 
+  watch,
+  onUnmounted
+} from 'vue' 
 import { useRoute, useRouter } from 'vue-router'
 import { getEvery, clearByRow } from '../SheetsAPI'
 import AddModal from '../components/AddModal.vue'
@@ -213,6 +219,7 @@ const showAddModal = ref(false)
 const filterQuery = ref('')
 const autoSync = ref(false)
 const selectedItem = ref(undefined)
+const pageVisible = ref(true)
 
 const panel = ref<Panel>(switchPanel(PanelType.STUDENTS))
 
@@ -250,8 +257,13 @@ onMounted(async () => {
   if (route.query.type) {
     changePanel(route.query.type as PanelType)
   }
+  document.addEventListener('visibilitychange', toggleVisibility)
   await fetchData()
 })
+
+function toggleVisibility() {
+  pageVisible.value = !document.hidden
+}
 
 async function unselect() {
   selectedItem.value = undefined
@@ -310,6 +322,20 @@ const displayItems = computed(() => {
     const values = Object.values(student).join(' ').toLowerCase();
     return values.includes(query)
   })
+})
+
+async function silentFetch() {
+  const data = await getEvery(panel.value.sheetRange)
+  items.value = await panel.value.mappers.map(data)
+}
+
+const autoSyncInterval = setInterval(() => {
+  if (autoSync.value && pageVisible.value) silentFetch()
+}, 5000)
+
+onUnmounted(() => {
+  clearInterval(autoSyncInterval)
+  document.removeEventListener('visibilitychange', toggleVisibility)
 })
 </script>
 
