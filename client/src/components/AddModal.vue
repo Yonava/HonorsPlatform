@@ -113,6 +113,8 @@ async function reqAdd() {
   await new Promise(resolve => setTimeout(resolve, 500))
   const newItem = (await props.panel.mappers.map([item.value]))[0]
   emits('success', newItem)
+  emits('close')
+  await new Promise(resolve => setTimeout(resolve, 500))
   loading.value = false
 }
 

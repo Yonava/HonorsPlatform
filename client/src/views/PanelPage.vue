@@ -274,7 +274,6 @@ function updateList(item: any) {
 }
 
 async function itemAdded<T>(item: T) {
-  showAddModal.value = false
   await fetchData()
   const index = items.value.findIndex((i: T) => {
     return panel.value.keys.every(key => i[key] === item[key]);
