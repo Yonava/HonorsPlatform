@@ -92,8 +92,10 @@ const clone = <T>(obj: T) => JSON.parse(JSON.stringify(obj))
 
 watch(() => props.item, () => {
   item.value = clone(props.item)
+  startingItem.value = clone(props.item)
 })
 
+const startingItem = ref(null)
 const item = ref<GradEngagement>(clone(props.item))
 
 const emits = defineEmits([
@@ -108,11 +110,19 @@ const showDialog = computed({
 })
 
 const add = () => {
+  if (JSON.stringify(item.value) === JSON.stringify(startingItem.value)) {
+    emits('close')
+    return
+  }
   emits('add', item.value)
   emits('close')
 }
 
 const update = () => {
+  if (JSON.stringify(item.value) === JSON.stringify(startingItem.value)) {
+    emits('close')
+    return
+  }
   emits('update', item.value)
   emits('close')
 }
