@@ -134,12 +134,15 @@ const update = () => {
 
 function getNewDate() {
   const date = new Date()
-  const year = date.getFullYear()
-  const month = date.getMonth() + 1
-  const day = date.getDate()
-  const hour = date.getHours()
-  const Am_Pm = hour >= 12 ? 'p' : 'a'
-  return `${year}/${month}/${day} ${hour}${Am_Pm}`
+  const time = date.toLocaleTimeString('en-US', {
+    hour: 'numeric'
+  })
+  const day = date.toLocaleDateString('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric'
+  })
+  return `${day} at ${time}`
 }
 
 function getNewEngagement(): GradEngagement {
