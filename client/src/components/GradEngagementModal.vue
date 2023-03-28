@@ -85,24 +85,17 @@ const props = defineProps<{
 const startingItem = ref(null)
 const item = ref<GradEngagement>(null)
 
-const valid = computed(() => {
-  return item.value && typeof item.value === 'object' && startingItem.value 
-  && typeof startingItem.value === 'object'
-})
-
 const changed = computed(() => {
-  if (!valid.value) return false
   return JSON.stringify(item.value) !== JSON.stringify(startingItem.value)
 })
 
 const clone = <T>(obj: T) => JSON.parse(JSON.stringify(obj))
 
 watch(() => props.item, newVal => {
-  item.value = newVal ?? getNewEngagement()
-  if (!valid.value) return
-  item.value = clone(props.item)
-  startingItem.value = clone(props.item)
-}, { immediate: true })
+  if (!newVal) return
+  item.value = clone(newVal)
+  startingItem.value = clone(newVal)
+})
 
 const creating = computed(() => !item.value.gradId)
 const bannerText = computed(() => creating.value ? 'Create Event' : 'Update Event')
@@ -118,18 +111,20 @@ const showDialog = computed({
   set: () => emits('close')
 })
 
-const close = async () => emits('close')
+const close = async () => {
+  emits('close')
+}
 
 const add = () => {
-  emits('close')
-  if (!changed.value) return
+  if (!changed.value) return close()
   emits('add', item.value)
+  close()
 }
 
 const update = () => {
-  emits('close')
-  if (!changed.value) return
+  if (!changed.value) return close()
   emits('update', item.value)
+  close()
 }
 
 function getNewDate() {
@@ -143,15 +138,5 @@ function getNewDate() {
     year: 'numeric'
   })
   return `${day} at ${time}`
-}
-
-function getNewEngagement(): GradEngagement {
-  return clone({
-    row: 0,
-    gradId: '',
-    event: '',
-    dateTime: '',
-    note: ''
-  })
 }
 </script>

@@ -1,9 +1,9 @@
 <template>
   <div>
     <div 
-      v-for="evt in engagements" 
-      :key="evt.id" 
-      @click="select(evt)"
+      v-for="event in engagements" 
+      :key="event.id" 
+      @click="select(event)"
     >
       <v-sheet
         color="purple-darken-2"
@@ -11,9 +11,9 @@
         style="cursor: pointer; border-radius: 5px"
         elevation="5"
       >
-        <strong v-if="evt.event">Event: </strong>{{ evt.event }}
+        <strong v-if="event.event">Event: </strong>{{ event.event }}
         <v-spacer></v-spacer>
-        <strong v-if="evt.dateTime">Date/Time: </strong>{{ evt.dateTime }}
+        <strong v-if="event.dateTime">Date/Time: </strong>{{ event.dateTime }}
       </v-sheet>
     </div>
   </div>

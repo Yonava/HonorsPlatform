@@ -11,7 +11,7 @@
           Engagement Tracking
         </h1>
         <v-btn 
-          @click="openModal(undefined)" 
+          @click="openModal(getNewEngagement())" 
           color="green" 
           size="small"
         >
@@ -76,6 +76,8 @@ const props = defineProps<{
   id: string | undefined
 }>()
 
+const clone = <T>(obj: T): T => JSON.parse(JSON.stringify(obj))
+
 const emits = defineEmits(['update'])
 const loading = ref(true)
 const engagements = ref<GradEngagement[]>([])
@@ -96,16 +98,19 @@ async function fetchEngagements() {
 
 async function addEngagementEvent(event: GradEngagement) {
   event.gradId = props.id
+  loading.value = true
   await postInRange(Range.GRAD_ENGAGEMENT, unmapGradEngagement([event]))
   await fetchEngagements()
 }
 
 async function updateEngagementEvent(event: GradEngagement) {
+  loading.value = true
   await updateByRow(Range.GRAD_ENGAGEMENT, event.row, unmapGradEngagement([event]))
   await fetchEngagements()
 }
 
 async function deleteEngagementEvent(event: GradEngagement) {
+  loading.value = true
   await clearByRow(Range.GRAD_ENGAGEMENT, event.row)
   await fetchEngagements()
 }
@@ -115,9 +120,18 @@ function openModal(selected: GradEngagement) {
   showModal.value = true
 }
 
-async function closeModal() {
+function closeModal() {
   showModal.value = false
-  await new Promise(r => setTimeout(r, 750))
   selectedEngagement.value = undefined
+}
+
+function getNewEngagement(): GradEngagement {
+  return clone({
+    row: 0,
+    gradId: '',
+    event: '',
+    dateTime: '',
+    note: ''
+  })
 }
 </script>
