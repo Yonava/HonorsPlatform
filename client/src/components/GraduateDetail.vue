@@ -100,13 +100,6 @@
         Move Back to Students
       </v-btn>
     </div>
-    <GradEngagementModal 
-      @close="showEngagementModal = false"
-      @add="addEngagementEvent($event)"
-      @update="updateEngagementEvent($event)"
-      :item="selectedEngagement"
-      :show="showEngagementModal"
-    />
   </div>
 </template>
 
