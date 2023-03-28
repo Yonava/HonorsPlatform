@@ -20,24 +20,14 @@
           <strong v-if="event.dateTime">Date/Time: </strong>{{ event.dateTime }}
         </v-sheet>
       </div>
-      <div
-        v-if="loadingEngagements"
-        class="d-flex flex-row justify-center align-center"
-      >
-        <v-progress-circular
-          indeterminate
-          color="purple-darken-2"
-        ></v-progress-circular>
-      </div>
-      <div
-        v-else-if="engagements.length === 0"
-        style="font-weight: 200; color: red; font-size: 25px"
-      >
-        No events yet.
-      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { GradEngagement } from "../SheetTypes"
+
+const props = defineProps<{
+  engagements: GradEngagement[];
+}>();
 </script>

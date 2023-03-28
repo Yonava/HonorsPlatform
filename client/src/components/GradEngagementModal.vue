@@ -51,17 +51,17 @@
         </div>
         <v-card-actions>
           <v-btn
-            v-if="item.gradId"
-            @click="update"
-            color="green"
-            filled
-          >update</v-btn>
-          <v-btn
-            v-else
+            v-if="creating"
             @click="add"
             color="green"
             filled
           >create</v-btn>
+          <v-btn
+            v-else
+            @click="update"
+            color="green"
+            filled
+          >update</v-btn>
           <v-spacer></v-spacer>
           <v-btn
             @click="emits('close')"

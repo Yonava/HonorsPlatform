@@ -6,6 +6,21 @@
       @delete="deleteEngagement"
       :engagements="engagements"
     />
+    <div
+      v-if="loading"
+      class="d-flex flex-row justify-center align-center"
+    >
+      <v-progress-circular
+        indeterminate
+        color="purple-darken-2"
+      ></v-progress-circular>
+    </div>
+    <div
+      v-else-if="engagements.length === 0"
+      style="font-weight: 200; color: red; font-size: 25px"
+    >
+      No events yet.
+    </div>
   </div>
 </template>
 
@@ -29,6 +44,10 @@ const props = defineProps<{
 const emits = defineEmits(['update'])
 const loading = ref(true)
 const engagements = ref<GradEngagement[]>([])
+
+watch(() => props.id , async () => {
+  await fetchEngagements()
+}, { immediate: true })
 
 async function fetchEngagements() {
   loading.value = true
