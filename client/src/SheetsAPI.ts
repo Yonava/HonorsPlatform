@@ -10,6 +10,9 @@ export enum Range {
   GRAD_ENGAGEMENT = "Grad Engagement",
 }
 
+// response delay to allow for Google Sheets API to update
+const responseDelay = 1000;
+
 // memoized to avoid API calls on every update
 export type HeaderRows = { [key in Range]?: string[] }
 export const headerRowMemo: HeaderRows = {}
@@ -20,6 +23,7 @@ function catchAction() {
 
 export async function getEvery(range: Range): Promise<string[][]> {
   try {
+    await new Promise(resolve => setTimeout(resolve, responseDelay));
     const data = (await axios.get(`/api/range/${range}`)).data;
     // remove header row and store it in memo
     headerRowMemo[range] = data.shift();

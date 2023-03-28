@@ -281,7 +281,6 @@ async function updateEngagementEvent(event: GradEngagement) {
 
 async function deleteEngagementEvent(event: GradEngagement) {
   await clearByRow(Range.GRAD_ENGAGEMENT, event.row)
-  await new Promise(resolve => setTimeout(resolve, 500))
   await fetchEngagement()
 }
 

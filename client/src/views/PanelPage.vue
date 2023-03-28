@@ -276,7 +276,6 @@ async function reqDelete() {
   const row = selectedItem.value.row
   selectedItem.value = undefined
   await clearByRow(panel.value.sheetRange, row)
-  await new Promise(resolve => setTimeout(resolve, 500))
   await fetchData()
 }
 

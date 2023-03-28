@@ -71,14 +71,12 @@ watch(canBeDeleted, (val) => {
 async function reqDeleteModule(row) {
   loadingModules.value = true
   await clearByRow(Range.MODULES, row)
-  await new Promise(resolve => setTimeout(resolve, 500))
   await fetchModules()
 }
 
 async function reqUpdateModule(module) {
   loadingModules.value = true
   await updateByRow(Range.MODULES, module.row, unmapModules([module]))
-  await new Promise(resolve => setTimeout(resolve, 500))
   await fetchModules()
 }
 </script>
