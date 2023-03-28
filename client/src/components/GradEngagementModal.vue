@@ -64,7 +64,7 @@
           >update</v-btn>
           <v-spacer></v-spacer>
           <v-btn
-            @click="emits('close')"
+            @click="close"
             color="red"
           >discard changes</v-btn>
         </v-card-actions>
@@ -74,7 +74,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, toRef } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { GradEngagement } from '../SheetTypes'
 
 const props = defineProps<{
@@ -82,25 +82,27 @@ const props = defineProps<{
   show: boolean
 }>()
 
-const clone = <T>(obj: T) => JSON.parse(JSON.stringify(obj))
+const startingItem = ref(null)
+const item = ref<GradEngagement>(null)
 
-watch(() => props.item, () => {
-  const item = ref<GradEngagement | undefined>(props.item)
-  if (!item.value) {
-    item.value = {
-      row: -1,
-      gradId: '',
-      event: '',
-      dateTime: '',
-      note: ''
-    }
-  }
-  item.value = clone(props.item)
-  startingItem.value = clone(props.item)
+const valid = computed(() => {
+  return item.value && typeof item.value === 'object' && startingItem.value 
+  && typeof startingItem.value === 'object'
 })
 
-const startingItem = ref(null)
-const item = ref<GradEngagement>(clone(props.item))
+const changed = computed(() => {
+  if (!valid.value) return false
+  return JSON.stringify(item.value) !== JSON.stringify(startingItem.value)
+})
+
+const clone = <T>(obj: T) => JSON.parse(JSON.stringify(obj))
+
+watch(() => props.item, newVal => {
+  item.value = newVal ?? getNewEngagement()
+  if (!valid.value) return
+  item.value = clone(props.item)
+  startingItem.value = clone(props.item)
+}, { immediate: true })
 
 const creating = computed(() => !item.value.gradId)
 const bannerText = computed(() => creating.value ? 'Create Event' : 'Update Event')
@@ -116,22 +118,18 @@ const showDialog = computed({
   set: () => emits('close')
 })
 
+const close = async () => emits('close')
+
 const add = () => {
-  if (JSON.stringify(item.value) === JSON.stringify(startingItem.value)) {
-    emits('close')
-    return
-  }
-  emits('add', item.value)
   emits('close')
+  if (!changed.value) return
+  emits('add', item.value)
 }
 
 const update = () => {
-  if (JSON.stringify(item.value) === JSON.stringify(startingItem.value)) {
-    emits('close')
-    return
-  }
-  emits('update', item.value)
   emits('close')
+  if (!changed.value) return
+  emits('update', item.value)
 }
 
 function getNewDate() {
@@ -142,5 +140,15 @@ function getNewDate() {
   const hour = date.getHours()
   const Am_Pm = hour >= 12 ? 'p' : 'a'
   return `${year}/${month}/${day} ${hour}${Am_Pm}`
+}
+
+function getNewEngagement(): GradEngagement {
+  return clone({
+    row: 0,
+    gradId: '',
+    event: '',
+    dateTime: '',
+    note: ''
+  })
 }
 </script>

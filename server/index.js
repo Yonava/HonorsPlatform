@@ -49,8 +49,9 @@ app.get("/range/:range", async (req, res) => {
     const { range } = req.params;
     const data = await sheetInstance.getRange(range);
     res.json(data.map(row => row.map(cell => cell.replace(/[Ss][Hh][Aa][Nn][Nn][Oo][Nn]/g, 'S******'))));
-  } catch {
+  } catch(e) {
     GoogleSheet.instance = null;
+    console.log(e);
     res.status(401).json({ error: 'Forbidden' });
   }
 });
@@ -61,8 +62,9 @@ app.put("/range/:range/:row", async (req, res) => {
     const data = req.body;
     await sheetInstance.updateByRow(range, row, data);
     res.json({ success: true });
-  } catch {
+  } catch(e) {
     GoogleSheet.instance = null;
+    console.log(e);
     res.status(401).json({ error: 'Forbidden' });
   }
 });
@@ -72,8 +74,9 @@ app.delete("/range/:range/:row", async (req, res) => {
     const { range, row } = req.params;
     await sheetInstance.clearByRow(range, row);
     res.json({ success: true });
-  } catch {
+  } catch(e) {
     GoogleSheet.instance = null;
+    console.log(e);
     res.status(401).json({ error: 'Forbidden' });
   }
 });
@@ -84,8 +87,9 @@ app.post("/range/:range", async (req, res) => {
     const data = req.body;
     await sheetInstance.postInRange(range, data);
     res.json({ success: true });
-  } catch {
+  } catch(e) {
     GoogleSheet.instance = null;
+    console.log(e);
     res.status(401).json({ error: 'Forbidden' });
   }
 });

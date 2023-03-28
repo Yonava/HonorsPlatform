@@ -11,7 +11,7 @@
           Engagement Tracking
         </h1>
         <v-btn 
-          @click="openModal" 
+          @click="openModal(undefined)" 
           color="green" 
           size="small"
         >
@@ -22,13 +22,6 @@
           Add Event
         </v-btn>
       </div>
-      <EngagementView 
-        v-if="!loading"
-        @selected="selectedEngagement = $event"
-        @update="updateEngagement"
-        @delete="deleteEngagement"
-        :engagements="engagements"
-      />
       <div
         v-if="loading"
         class="d-flex flex-row justify-center"
@@ -43,6 +36,15 @@
         style="font-weight: 200; color: red; font-size: 25px"
       >
         No events yet.
+      </div>
+      <div
+        v-else
+        style="height: 350px; overflow: auto"
+      >
+        <EngagementView 
+          @selected-engagement="i => openModal(i)"
+          :engagements="engagements"
+        />
       </div>
       <GradEngagementModal 
         @close="closeModal"
@@ -71,7 +73,7 @@ import {
 } from '../SheetsAPI'
 
 const props = defineProps<{
-  id: string
+  id: string | undefined
 }>()
 
 const emits = defineEmits(['update'])
@@ -108,13 +110,14 @@ async function deleteEngagementEvent(event: GradEngagement) {
   await fetchEngagements()
 }
 
-function openModal() {
-  selectedEngagement.value = undefined
+function openModal(selected: GradEngagement) {
+  selectedEngagement.value = selected
   showModal.value = true
 }
 
-function closeModal() {
-  selectedEngagement.value = undefined
+async function closeModal() {
   showModal.value = false
+  await new Promise(r => setTimeout(r, 750))
+  selectedEngagement.value = undefined
 }
 </script>
