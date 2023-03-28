@@ -145,7 +145,7 @@
       <LockArea 
         v-else
         title="Module Tracking"
-        condition="Student ID"
+        condition="student ID"
       />
       <v-divider class="my-2"></v-divider>
       <h2>

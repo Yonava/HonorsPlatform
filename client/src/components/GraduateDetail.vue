@@ -62,55 +62,10 @@
           <v-icon>mdi-calendar</v-icon>
         </template>
       </v-text-field>
-      <div class="d-flex flex-row justify-space-between align-center">
-        <h1 class="mb-2">
-          Engagement Tracking
-        </h1>
-        <v-btn
-          @click="addEventButton"
-          color="green"
-          size="small"
-        >
-          <v-icon
-            class="mr-2"
-            size="x-large"
-          >mdi-plus</v-icon>
-          Add Event
-        </v-btn>
-      </div>
-      <div style="height: 350px; overflow: auto">
-        <div
-          v-for="event in engagements"
-          :key="event.id"
-          @click="openModal(event)"
-        > 
-          <v-sheet
-            color="purple-darken-2"
-            class="pa-2 mb-2"
-            style="cursor: pointer; border-radius: 5px"
-            elevation="5"
-          >
-            <strong v-if="event.event">Event: </strong>{{ event.event }}
-            <v-spacer></v-spacer>
-            <strong v-if="event.dateTime">Date/Time: </strong>{{ event.dateTime }}
-          </v-sheet>
-        </div>
-        <div
-          v-if="loadingEngagements"
-          class="d-flex flex-row justify-center align-center"
-        >
-          <v-progress-circular
-            indeterminate
-            color="purple-darken-2"
-          ></v-progress-circular>
-        </div>
-        <div 
-          v-else-if="engagements.length === 0"
-          style="font-weight: 200; color: red; font-size: 25px"
-        >
-          No events yet.
-        </div>
-      </div>
+      <EngagementTracking 
+        @update="engagements = $event"
+        :id="grad.id"
+      />
     </div>
     <div 
       style="width: 45%; height: 100%; overflow: auto" 
@@ -180,7 +135,7 @@ import {
   unmapGradEngagement
 } from '../DataMappers'
 import { Graduate, GradEngagement } from '../SheetTypes'
-import GradEngagementModal from './GradEngagementModal.vue'
+import EngagementTracking from './EngagementTracking.vue'
 
 const props = defineProps<{
   item: Graduate,
@@ -255,33 +210,6 @@ async function moveToStudents() {
     }])
   )
   emits('unselect')
-}
-
-async function fetchEngagement() {
-  loadingEngagements.value = true
-  engagements.value = []
-  const events = await getEvery(Range.GRAD_ENGAGEMENT)
-  engagements.value = mapGradEngagement(events).filter(e => e.gradId === grad.value.id)
-  loadingEngagements.value = false
-}
-
-async function addEngagementEvent(event: GradEngagement) {
-  const newEvent = {
-    ...event,
-    gradId: grad.value.id,
-  }
-  await postInRange(Range.GRAD_ENGAGEMENT, unmapGradEngagement([newEvent]))
-  await fetchEngagement()
-}
-
-async function updateEngagementEvent(event: GradEngagement) {
-  await updateByRow(Range.GRAD_ENGAGEMENT, event.row, unmapGradEngagement([event]))
-  await fetchEngagement()
-}
-
-async function deleteEngagementEvent(event: GradEngagement) {
-  await clearByRow(Range.GRAD_ENGAGEMENT, event.row)
-  await fetchEngagement()
 }
 
 function addEventButton() {
