@@ -142,15 +142,11 @@
           :refetch="refetchModules"
         />
       </div>
-      <div v-else>
-        <v-icon size="x-large">mdi-lock</v-icon>
-        <h1>
-          Module Tracking Locked
-        </h1>
-        <p>
-          Add a student ID to this profile to unlock module tracking tools.
-        </p>
-      </div>
+      <LockArea 
+        v-else
+        title="Module Tracking"
+        condition="Student ID"
+      />
       <v-divider class="my-2"></v-divider>
       <h2>
         Other:
@@ -236,6 +232,7 @@ import {
 } from 'vue'
 import ModuleFetch from './ModuleFetch.vue'
 import AddModal from './AddModal.vue'
+import LockArea from './LockArea.vue'
 import { updateByRow, moveRowToRange, Range } from '../SheetsAPI'
 import { useAutoSync, useChangeWatcher } from '../AutoSync'
 import { switchPanel, PanelType } from '../SwitchPanel'

@@ -11,7 +11,7 @@ export enum Range {
 }
 
 // response delay to allow for Google Sheets API to update
-const responseDelay = 1000;
+const responseDelay = 100;
 
 // memoized to avoid API calls on every update
 export type HeaderRows = { [key in Range]?: string[] }
@@ -21,9 +21,11 @@ function catchAction() {
   router.push("/auth");
 }
 
-export async function getEvery(range: Range): Promise<string[][]> {
+export async function getEvery(range: Range, addResponseDelay = true): Promise<string[][]> {
   try {
-    await new Promise(resolve => setTimeout(resolve, responseDelay));
+    if (addResponseDelay) {
+      await new Promise(resolve => setTimeout(resolve, responseDelay));
+    }
     const data = (await axios.get(`/api/range/${range}`)).data;
     // remove header row and store it in memo
     headerRowMemo[range] = data.shift();
