@@ -14,22 +14,16 @@
           style="font-weight: bold; color: white; border-radius: 20px; width: 120%"
         >
           <v-icon class="mr-1">mdi-calendar</v-icon>
-          <span>{{ item.gradId ? 'Update' : 'Create' }} Event</span>
+          <span>
+            {{ bannerText }}
+          </span>
         </v-sheet>
         <div class="my-5">
           <div class="d-flex flex-row mb-3">
             <v-spacer></v-spacer>
             <v-btn 
               v-if="!item.dateTime"
-              @click="item.dateTime = new Date().toLocaleDateString({
-                year: '2-digit',
-                month: '2-digit',
-                day: '2-digit'
-              }) + ' ' + new Date().toLocaleTimeString({
-                hour: '2-digit',
-                minute: '2-digit',
-                second: 'none'
-              })"
+              @click="item.dateTime = getNewDate()"
               color="purple"
               size="x-small"
             >Now</v-btn>
@@ -80,23 +74,36 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, toRef } from 'vue'
 import { GradEngagement } from '../SheetTypes'
 
 const props = defineProps<{
-  item: GradEngagement,
+  item: GradEngagement | undefined,
   show: boolean
 }>()
 
 const clone = <T>(obj: T) => JSON.parse(JSON.stringify(obj))
 
 watch(() => props.item, () => {
+  const item = ref<GradEngagement | undefined>(props.item)
+  if (!item.value) {
+    item.value = {
+      row: -1,
+      gradId: '',
+      event: '',
+      dateTime: '',
+      note: ''
+    }
+  }
   item.value = clone(props.item)
   startingItem.value = clone(props.item)
 })
 
 const startingItem = ref(null)
 const item = ref<GradEngagement>(clone(props.item))
+
+const creating = computed(() => !item.value.gradId)
+const bannerText = computed(() => creating.value ? 'Create Event' : 'Update Event')
 
 const emits = defineEmits([
   'close', 
@@ -125,5 +132,15 @@ const update = () => {
   }
   emits('update', item.value)
   emits('close')
+}
+
+function getNewDate() {
+  const date = new Date()
+  const year = date.getFullYear()
+  const month = date.getMonth() + 1
+  const day = date.getDate()
+  const hour = date.getHours()
+  const Am_Pm = hour >= 12 ? 'p' : 'a'
+  return `${year}/${month}/${day} ${hour}${Am_Pm}`
 }
 </script>

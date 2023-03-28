@@ -164,7 +164,6 @@ const canDelete = computed(() => {
 
 watch(() => props.item, (newVal) => {
   grad.value = clone(newVal)
-  fetchEngagement()
 }, { immediate: true })
 
 function openModal(event: GradEngagement) {
@@ -210,17 +209,6 @@ async function moveToStudents() {
     }])
   )
   emits('unselect')
-}
-
-function addEventButton() {
-  const event = {
-    row: -1,
-    gradId: '',
-    event: '',
-    note: '',
-    dateTime: '',
-  }
-  openModal(clone(event))
 }
 </script>
 
