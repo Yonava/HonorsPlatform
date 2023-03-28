@@ -41,8 +41,9 @@
         v-else
         style="height: 350px; overflow: auto"
       >
-        <EngagementView 
-          @selected-engagement="i => openModal(i)"
+        <EngagementView
+          @selected="i => openModal(i)"
+          @delete="deleteEngagementEvent($event)"
           :engagements="engagements"
         />
       </div>
