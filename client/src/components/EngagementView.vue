@@ -13,15 +13,16 @@
       >
         <div class="d-flex flex-column">
           <div>
-            <strong v-if="event.event">Event: </strong>{{ event.event }}
+            <strong v-if="event.event">Event: </strong>
+            {{ event.event }}
           </div>
           <div>
-            <strong v-if="event.dateTime">Date/Time: </strong>{{ event.dateTime }}
+            <strong v-if="event.dateTime">Date/Time: </strong>
+            {{ event.dateTime }}
           </div>
         </div>
         <v-icon
           @click="remove(event)"
-          style="cursor: pointer"
           size="large"
           class="delete-icon"
         >mdi-close</v-icon>
