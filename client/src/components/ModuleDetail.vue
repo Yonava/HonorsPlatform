@@ -114,32 +114,37 @@
             style="width: 90%;"
           >
             <div
-              class="d-flex flex-row mt-5"
+              class="d-flex flex-column mt-5"
               style="width: 100%;"
             >
-              <v-text-field
-                v-model="completedModuleData.completedDate"
-                label="Date Completed"
-                variant="outlined"
-                prepend-inner-icon="mdi-calendar"
-                class="mx-2"
-              ></v-text-field>
-              <v-text-field
-                v-model="completedModuleData.grade"
-                label="Final Grade"
-                variant="outlined"
-                prepend-inner-icon="mdi-alphabetical"
-                class="mx-2"  
-              ></v-text-field>
-            </div>
-            <div style="transform: translateY(-15px)">
-              <v-btn
-                v-if="!completedModuleData.completedDate"
-                @click="completedModuleData.completedDate = new Date().toLocaleDateString()"
-                color="orange-darken-2"
-                size="small"
-                class="ml-2"
-              >Completed Today</v-btn>
+              <div>
+                <v-text-field
+                  v-model="completedModuleData.completedDate"
+                  label="Date Completed"
+                  variant="outlined"
+                  prepend-inner-icon="mdi-calendar"
+                  class="mx-2"
+                ></v-text-field>
+                <v-btn
+                  v-if="!completedModuleData.completedDate"
+                  @click="completedModuleData.completedDate = new Date().toLocaleDateString()"
+                  color="orange-darken-2"
+                  size="small"
+                  class="ml-2"
+                  style="transform: translateY(-10px);"
+                >Completed Today</v-btn>
+              </div>
+              <div class="d-flex flex-column mb-7 mt-3">
+                <v-btn
+                  v-for="grade in grades"
+                  :key="grade"
+                  @click="completedModuleData.grade = grade"
+                  :color="completedModuleData.grade === grade ? 'orange-darken-2' : 'grey'"
+                  rounded
+                 
+                  class="mx-10 mt-2"
+                >{{ grade || "Leave Ungraded" }}</v-btn>
+              </div>
             </div>
           </div>
           <div 
@@ -156,7 +161,10 @@
               v-if="!movingModuleToCompleted"
               @click="moveToCompleted"
               color="orange-darken-2"
-            >Complete</v-btn>
+            >
+              <v-icon class="mr-2">mdi-check</v-icon>
+              Mark As Complete
+            </v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -193,7 +201,7 @@ import {
 import { updateByRow, moveRowToRange, Range } from '../SheetsAPI'
 import { useAutoSync, useChangeWatcher } from '../AutoSync'
 import { unmapModules, unmapCompletedModules } from '../DataMappers'
-import { Module } from '../SheetTypes'
+import { Module, Grade } from '../SheetTypes'
 
 const props = defineProps<{
   item: Module,
@@ -206,6 +214,14 @@ const emits = defineEmits([
   'unselect'
 ])
 
+const grades: Grade[] = [
+  null,
+  'High Pass',
+  'Pass',
+  'Low Pass',
+  'Fail'
+]
+
 const clone = <T>(obj: T) => JSON.parse(JSON.stringify(obj))
 
 const updating = ref(false)
@@ -214,7 +230,7 @@ const dialog = ref(false)
 const movingModuleToCompleted = ref(false)
 const completedModuleData = ref({
   completedDate: '',
-  grade: '',
+  grade: null,
 })
 
 watch(() => props.item, (newVal) => {

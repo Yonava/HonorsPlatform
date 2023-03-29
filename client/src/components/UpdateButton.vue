@@ -25,7 +25,9 @@ const props = defineProps<{
   upToDate: boolean;
 }>();
 
-const emits = defineEmits(["updated"]);
+const emits = defineEmits([
+  'updated'
+]);
 const loading = ref(false);
 
 async function update() {

@@ -1,5 +1,7 @@
 export type SheetItem = Module | Graduate | Student | CompletedModule;
 
+export type Grade = "High Pass" | "Pass" | "Low Pass" | "Fail" | null;
+
 export interface SheetEntry {
   row: number;
 }
@@ -16,7 +18,7 @@ export interface Module extends SheetEntry {
 
 export interface CompletedModule extends Module {
   completedDate: string;
-  grade: string;
+  grade: Grade;
 }
 
 export interface Graduate extends SheetEntry {
