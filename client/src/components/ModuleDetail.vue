@@ -104,6 +104,7 @@
           </v-btn>
         </template>
         <v-card
+          v-if="!moduleMoveSuccess"
           class="d-flex flex-column align-center pa-3"
         >
           <h1>
@@ -167,6 +168,33 @@
             </v-btn>
           </v-card-actions>
         </v-card>
+        <v-card
+          v-else
+          class="d-flex flex-column align-center pa-3"
+        >
+          <v-icon
+            size="x-large"
+            color="orange-darken-2"
+          >mdi-check</v-icon>
+          <h1 class="mt-3">
+            Module Completed Successfully!
+          </h1>
+          <p>
+            Moved {{ movedModule.courseCode }} to completed modules 
+            with a grade of {{ movedModule.grade || "ungraded" }}.
+          </p>
+          <p>
+            This module is now accessible through the completed modules tab.
+          </p>
+          <v-btn
+            @click="closeDialog"
+            color="orange-darken-2"
+            class="mt-5"
+          >
+            <v-icon class="mr-2">mdi-check</v-icon>
+            Close
+          </v-btn>
+        </v-card>
       </v-dialog>
     </div>
     <div 
@@ -201,7 +229,7 @@ import {
 import { updateByRow, moveRowToRange, Range } from '../SheetsAPI'
 import { useAutoSync, useChangeWatcher } from '../AutoSync'
 import { unmapModules, unmapCompletedModules } from '../DataMappers'
-import { Module, Grade } from '../SheetTypes'
+import { Module, Grade, CompletedModule } from '../SheetTypes'
 
 const props = defineProps<{
   item: Module,
@@ -228,6 +256,8 @@ const updating = ref(false)
 const module = ref<Module>(null)
 const dialog = ref(false)
 const movingModuleToCompleted = ref(false)
+const moduleMoveSuccess = ref(false)
+const movedModule = ref<CompletedModule>(null)
 const completedModuleData = ref({
   completedDate: '',
   grade: null,
@@ -252,15 +282,20 @@ async function reqUpdateModule() {
 
 async function moveToCompleted() {
   movingModuleToCompleted.value = true
+  movedModule.value = {
+    ...module.value,
+    ...completedModuleData.value
+  }
   await moveRowToRange(
     Range.MODULES, 
     Range.COMPLETED_MODULES, 
     module.value.row, 
-    unmapCompletedModules([{
-      ...module.value,
-      ...completedModuleData.value
-    }])
+    unmapCompletedModules([movedModule.value])
   )
+  moduleMoveSuccess.value = true
+}
+
+function closeDialog() {
   emits('unselect')
   dialog.value = false
 }
