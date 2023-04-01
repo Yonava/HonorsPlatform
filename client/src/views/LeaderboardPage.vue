@@ -7,6 +7,7 @@
       color="grey-lighten-4"
     >
       <h1 
+        @click="lambda"
         style="font-size: 4rem; font-weight: 700; position: absolute; top: 10%;"
       >
         Honors Leaderboard
@@ -92,6 +93,12 @@ type LeaderboardItem = {
   name: string;
   points: number;
   rank: number;
+}
+
+async function lambda() {
+  const data = await fetch('https://lug7wh3znoqb73iudswfqi3nwi0itsit.lambda-url.us-east-2.on.aws/');
+  const dataJSON = await data.json();
+  console.log(dataJSON);
 }
 
 async function getStudents() {

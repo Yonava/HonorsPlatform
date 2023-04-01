@@ -76,9 +76,14 @@ onMounted(() => {
 })
 
 const authorize = async () => {
-  const response = await axios.get('/api/auth/url')
-  const url = response.data.url
-  location.replace(url)
+  try {
+    const response = await axios.get('/api/auth/url')
+    if (!response.data.url) throw new Error('No URL')
+    const url = response.data.url
+    location.replace(url)
+  } catch (error) {
+    console.log(error)
+  }
 }
 </script>
 
