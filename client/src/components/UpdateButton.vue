@@ -9,7 +9,7 @@
     rounded
     class="ml-7"
   >
-    {{ upToDate ? 'All Synced Up!' : `Update ${panel.title.slice(0, -1)}` }}
+    {{ upToDate ? 'All Synced Up!' : `Update ${itemName}` }}
   </v-btn>
 </template>
 
@@ -17,12 +17,20 @@
 import { Panel } from "../SwitchPanel";
 import { SheetItem } from "../SheetTypes";
 import { updateByRow } from "../SheetsAPI";
-import { ref, inject } from "vue";
+import { ref, inject, computed } from "vue";
 import type { Ref } from 'vue'
 import { useAutoSync, useChangeWatcher } from '../AutoSync'
 
 const { upToDate } = useChangeWatcher()
-useAutoSync()
+useAutoSync(reqUpdate)
+
+const props = defineProps<{
+  itemName?: string
+}>()
+
+const itemName = computed(() => {
+  return props?.itemName ?? panel.value.title.slice(0, -1)
+})
 
 const panel = inject("activePanel") as Ref<Panel<SheetItem>>
 const selectedItem = inject("selectedItem") as Ref<SheetItem>
