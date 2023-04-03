@@ -5,10 +5,10 @@
   >
     <div style="width: 55%;">
       <p
-        v-if="student.id"
+        v-if="item.value.id"
         style="font-weight: 200"
       >
-        {{ student.id }}
+        {{ item.value.id }}
       </p>
       <v-dialog 
         v-else
@@ -67,7 +67,7 @@
       </v-dialog>
       <div class="d-flex flex-row align-center">
         <input 
-          v-model="student.name"
+          v-model="item.value.name"
           placeholder="Enter Name"
           type="text" 
           class="student-name-input"
@@ -75,12 +75,12 @@
         <v-spacer></v-spacer>
         <update-button 
           @updated="$emit('update', $event)" 
-          :item="student"
+          :item="item"
         />
       </div>
       <v-divider class="my-2"></v-divider>
       <v-text-field
-        v-model="student.email"
+        v-model="item.value.email"
         label="Email"
       >
         <template #prepend>
@@ -88,7 +88,7 @@
         </template>
       </v-text-field>
       <v-text-field
-        v-model.number="student.points"
+        v-model.number="item.value.points"
         label="Points"
       >
         <template #prepend>
@@ -97,7 +97,7 @@
       </v-text-field>
       <div class="d-flex flex-row">
         <v-text-field
-          v-model="student.activeStatus"
+          v-model="item.value.activeStatus"
           label="Active Status"
           class="mr-2"
         >
@@ -106,7 +106,7 @@
           </template>
         </v-text-field>
         <v-text-field
-          v-model="student.year"
+          v-model="item.value.year"
           label="Year"
         >
           <template #prepend>
@@ -115,7 +115,7 @@
         </v-text-field>
       </div>
       <v-divider class="my-2"></v-divider>
-      <div v-if="student.id">
+      <div v-if="item.value.id">
         <div class="d-flex flex-row align-center">
           <h2>
             Modules In Progress:
@@ -132,7 +132,7 @@
         </div>
         <ModuleFetch
           @toggleCanDelete="moduleListEmpty = !moduleListEmpty"
-          :studentId="student.id"
+          :studentId="item.value.id"
           :refetch="refetchModules"
         />
       </div>
@@ -150,18 +150,18 @@
         class="d-flex flex-row flex-wrap"
       >
         <div
-          v-for="(value, key) in student.misc"
+          v-for="(value, key) in item.value.misc"
           :key="key"
           style="width: 30%;"
           class="mx-1"
         >
           <v-text-field
-            v-model="student.misc[key]"
+            v-model="item.value.misc[key]"
             :label="key"
             outlined
           ></v-text-field>
         </div>
-        <div v-if="Object.keys(student.misc).length === 0">
+        <div v-if="Object.keys(item.value.misc).length === 0">
           No additional information. Allocate custom data tracking on google sheets.
         </div>
       </div>
@@ -180,12 +180,12 @@
         ]"
       >
         <v-icon>mdi-delete</v-icon>
-        delete {{ student.name }} permanently
+        delete {{ item.value.name }} permanently
       </span>
       <v-textarea
-        v-model="student.note"
+        v-model="item.value.note"
         clearable
-        :label="`${student.name.split(' ')[0]}'s meeting notes`"
+        :label="`${item.value.name.split(' ')[0]}'s meeting notes`"
       ></v-textarea>
       <v-btn
         @click="moveToGraduates"
@@ -199,7 +199,7 @@
           class="mr-4"
           size="x-large"
         >mdi-school-outline</v-icon>
-        Graduate {{ student.name.split(' ')[0] }}
+        Graduate {{ item.value.name.split(' ')[0] }}
       </v-btn>
     </div>
     <AddModal 
@@ -209,7 +209,7 @@
       :panel="switchPanel(PanelType.MODULES)"
       :override="{
         color: 'blue',
-        predefineColumnData: [student.id],
+        predefineColumnData: [item.value.id],
       }"
     />
   </div>
@@ -222,23 +222,21 @@ import {
   computed,
   toRefs, 
   onMounted,
-  onUnmounted
+  onUnmounted,
 } from 'vue'
+import type { Ref } from 'vue'
 import ModuleFetch from './ModuleFetch.vue'
 import AddModal from './AddModal.vue'
 import LockArea from './LockArea.vue'
 import { updateByRow, moveRowToRange, Range } from '../SheetsAPI'
-import { useAutoSync, useChangeWatcher } from '../AutoSync'
 import { switchPanel, PanelType } from '../SwitchPanel'
 import { unmapStudents, unmapGraduates } from '../DataMappers'
 import { Student } from '../SheetTypes'
 import UpdateButton from './UpdateButton.vue'
 
 const props = defineProps<{
-  item: Student
+  item: Ref<Student>
 }>()
-
-const clone = <T>(obj: T) => JSON.parse(JSON.stringify(obj))
 
 const emits = defineEmits([
   'delete', 
@@ -256,18 +254,13 @@ const showModuleAddModal = ref(false)
 const refetchModules = ref(false)
 const tempStudentId = ref('')
 const dialog = ref(false)
-const student = ref<Student>(null)
 const movingStudent = ref(false)
-
-watch(() => props.item, newVal => {
-  student.value = clone(newVal)
-}, { immediate: true })
 
 // emitted from ModuleFetch
 const moduleListEmpty = ref(false)
 
 const canDelete = computed(() => {
-  return moduleListEmpty.value || !student.value.id
+  return moduleListEmpty.value || !props.item.value.id
 })
 
 function studentIdRule(studentId: string) {
@@ -276,13 +269,18 @@ function studentIdRule(studentId: string) {
 
 async function saveId() {
   if (!studentIdRule(tempStudentId.value)) return
-  student.value.id = tempStudentId.value
+  const { id, ...rest } = props.item.value
   updatingStudent.value = true
+  const newStudent = {
+    ...rest,
+    id: tempStudentId.value,
+  }
   await updateByRow(
     Range.STUDENTS, 
-    student.value.row, 
-    await unmapStudents([student.value])
+    props.item.value.row, 
+    await unmapStudents([newStudent])
   )
+  emits('update', newStudent)
   updatingStudent.value = false
   dialog.value = false
 }
@@ -292,15 +290,15 @@ async function moveToGraduates() {
   await moveRowToRange(
     Range.STUDENTS, 
     Range.GRADUATES,
-    student.value.row, 
+    props.item.value.row, 
     unmapGraduates([{
-      row: student.value.row,
-      id: student.value.id,
-      name: student.value.name,
+      row: props.item.value.row,
+      id: props.item.value.id,
+      name: props.item.value.name,
       phone: '',
-      email: student.value.email,
+      email: props.item.value.email,
       graduationDate: new Date().toLocaleDateString(),
-      note: student.value.note,
+      note: props.item.value.note,
     }])
   )
   emits('unselect')

@@ -162,7 +162,7 @@
               @update="updateList($event)"
               @unselect="unselect"
               :is="panel.components.detail" 
-              :item="selectedItem"
+              :item="ref(clone(selectedItem))"
               :autoSync="autoSync"
             />
           </div>
@@ -221,8 +221,9 @@ const showAddModal = ref(false)
 const filterQuery = ref('')
 const pageVisible = ref(true)
 
+const clone = <T>(obj: T) => JSON.parse(JSON.stringify(obj))
+
 const selectedItem = ref<SheetItem>(undefined)
-provide('selectedItem', selectedItem)
 
 const autoSync = ref(false)
 provide('autoSync', autoSync)
@@ -289,6 +290,7 @@ function updateList<T extends SheetItem>(item: T) {
   const index = items.value.findIndex(<T extends SheetEntry>(i: T) => i.row === item.row)
   if (index === -1) return
   items.value[index] = item
+  selectedItem.value = item
 }
 
 async function itemAdded<T extends SheetEntry>(item: T) {

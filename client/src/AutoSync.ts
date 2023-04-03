@@ -1,4 +1,4 @@
-import { onUnmounted, watch, ref, inject } from "vue";
+import { onUnmounted, watch, ref, inject, computed } from "vue";
 import type { Ref } from "vue";
 import { SheetItem } from "./SheetTypes";
 
@@ -21,28 +21,30 @@ export function useAutoSync(
   });
 }
 
-export function useChangeWatcher(item: Ref<SheetItem>) {
-  let changeWatcher = () => {};
+export function useChangeWatcher(key: () => Ref<SheetItem>) {
   const upToDate = ref(false)
 
   const changed = (newVal: Object, oldVal: Object) => {
-    return JSON.stringify(newVal) !== JSON.stringify(oldVal)
+    for (const key in newVal) {
+      if (typeof newVal[key] === 'object') {
+        if (changed(newVal[key], oldVal[key] || {})) {
+          return true
+        }
+      }
+      if (newVal[key] !== oldVal[key]) {
+        return true
+      }
+    }
+    return false
   }
 
-  watch(item, (newVal, oldVal) => {
-    if (!changed(newVal, oldVal)) return
-    upToDate.value = false
-  })
-
-  watch(upToDate, (val) => {
-    if (val) {
-      changeWatcher = watch(item, () => {
-        upToDate.value = false
-      }, { deep: true })
-    } else {
-      changeWatcher()
+  watch(key, (newItem, oldItem) => {
+    console.log(changed(newItem.value, oldItem?.value || {}));
+    if (newItem.value.row !== oldItem?.value.row) {
+      return upToDate.value = false
     }
-  })
+    upToDate.value = changed(newItem.value, oldItem.value || {})
+  }, { deep: true })
 
   return {
     upToDate
