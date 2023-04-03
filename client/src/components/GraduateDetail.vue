@@ -26,16 +26,11 @@
           class="header-input"
         >
         <v-spacer></v-spacer>
-        <v-btn 
-          @click="reqUpdateGrad"
-          :loading="updating"
-          :color="upToDate ? 'green' : 'purple-darken-2'"
-          :style="{
-            cursor: upToDate ? 'default' : 'pointer',
-          }"
-          rounded
-          class="ml-7"
-        >{{ upToDate ? 'All Synced Up!' : 'Update Grad' }}</v-btn>
+        <update-button
+          @updated="$emit('update', $event)"
+          :item="grad"
+          itemName="Grad"
+        />
       </div>
       <v-divider class="my-2"></v-divider>
       <v-text-field
@@ -143,7 +138,6 @@ const emits = defineEmits([
 
 const clone = <T>(obj: T) => JSON.parse(JSON.stringify(obj))
 
-const updating = ref(false)
 const grad = ref<Graduate>(clone(props.item))
 const movingGrad = ref(false)
 const showEngagementModal = ref(false)
@@ -164,23 +158,10 @@ function openModal(event: GradEngagement) {
   showEngagementModal.value = true
 }
 
-const { autoSync } = toRefs(props)
-useAutoSync(autoSync, reqUpdateGrad)
-const { upToDate } = useChangeWatcher(grad)
-
-async function reqUpdateGrad() {
-  if (upToDate.value) return
-  updating.value = true
-  await updateByRow(Range.GRADUATES, grad.value.row, unmapGraduates([grad.value]))
-  emits('update', clone(grad.value))
-  upToDate.value = true
-  updating.value = false
-}
-
 async function reqGenerateGradId() {
   const newId = 'G' + Math.random().toString().substring(2, 9);
   grad.value.id = newId
-  await reqUpdateGrad()
+  await updateByRow(Range.GRADUATES, grad.value.row, unmapGraduates([grad.value]))
 }
 
 async function moveToStudents() {

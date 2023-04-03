@@ -227,8 +227,7 @@ import { Module, Grade, CompletedModule } from '../SheetTypes'
 import UpdateButton from './UpdateButton.vue'
 
 const props = defineProps<{
-  item: Module,
-  autoSync: boolean
+  item: Module
 }>()
 
 const emits = defineEmits([

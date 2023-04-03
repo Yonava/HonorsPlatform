@@ -53,7 +53,7 @@ export default class GoogleSheet {
     await this.sheets.spreadsheets.values.update({
       spreadsheetId: this.spreadsheetId,
       range: `${range}!A${row}:Z${row}`,
-      valueInputOption: 'USER_ENTERED',
+      valueInputOption: 'RAW',
       resource: {
         values: data
       }
@@ -67,7 +67,7 @@ export default class GoogleSheet {
     await this.sheets.spreadsheets.values.update({
       spreadsheetId: this.spreadsheetId,
       range: `${range}!A${insertRow}:Z${insertRow}`,
-      valueInputOption: 'USER_ENTERED',
+      valueInputOption: 'RAW',
       resource: {
         values: data
       }
