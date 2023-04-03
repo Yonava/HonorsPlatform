@@ -5,10 +5,10 @@
   >
     <div style="width: 55%; height: 100%; overflow: auto">
       <p 
-        v-if="grad.id"
+        v-if="item.value.id"
         style="font-weight: 200"
       >
-        {{ grad.id }}
+        {{ item.value.id }}
       </p>
       <v-btn 
         v-else
@@ -20,7 +20,7 @@
       </v-btn>
       <div class="d-flex flex-row align-center">
         <input 
-          v-model="grad.name"
+          v-model="item.value.name"
           placeholder="Name"
           type="text" 
           class="header-input"
@@ -28,13 +28,13 @@
         <v-spacer></v-spacer>
         <update-button
           @updated="$emit('update', $event)"
-          :item="grad"
+          :item="item"
           itemName="Grad"
         />
       </div>
       <v-divider class="my-2"></v-divider>
       <v-text-field
-        v-model="grad.email"
+        v-model="item.value.email"
         label="Email"
       >
         <template #prepend>
@@ -42,7 +42,7 @@
         </template>
       </v-text-field>
       <v-text-field
-        v-model="grad.phone"
+        v-model="item.value.phone"
         label="Phone"
       >
         <template #prepend>
@@ -50,7 +50,7 @@
         </template>
       </v-text-field>
       <v-text-field
-        v-model="grad.graduationDate"
+        v-model="item.value.graduationDate"
         label="Graduation Date"
       >
         <template #prepend>
@@ -59,7 +59,7 @@
       </v-text-field>
       <EngagementTracking 
         @update="engagements = $event"
-        :id="grad.id"
+        :id="item.value.id"
       />
     </div>
     <div 
@@ -76,12 +76,12 @@
         ]"
       >
         <v-icon>mdi-delete</v-icon>
-        delete {{ grad.name.split(' ')[0] }} permanently
+        delete {{ item.value.name.split(' ')[0] }} permanently
       </span>
       <v-textarea
-        v-model="grad.note"
+        v-model="item.value.note"
         clearable
-        :label="`Notes on ${grad.name.split(' ')[0]}`"
+        :label="`Notes on ${item.value.name.split(' ')[0]}`"
       ></v-textarea>
       <v-btn
         @click="moveToStudents"
@@ -107,6 +107,7 @@ import {
   onMounted,
   onUnmounted
 } from 'vue'
+import type { Ref } from 'vue'
 import { 
   updateByRow, 
   moveRowToRange,
@@ -115,7 +116,6 @@ import {
   Range, 
   getEvery
 } from '../SheetsAPI'
-import { useAutoSync, useChangeWatcher } from '../AutoSync'
 import { 
   unmapGraduates, 
   unmapStudents, 
@@ -124,21 +124,18 @@ import {
 } from '../DataMappers'
 import { Graduate, GradEngagement } from '../SheetTypes'
 import EngagementTracking from './EngagementTracking.vue'
+import UpdateButton from './UpdateButton.vue'
 
 const props = defineProps<{
-  item: Graduate,
-  autoSync: boolean
+  item: Ref<Graduate>
 }>()
 
 const emits = defineEmits([
   'delete', 
-  'update',
-  'unselect'
+  'unselect',
+  'update'
 ])
 
-const clone = <T>(obj: T) => JSON.parse(JSON.stringify(obj))
-
-const grad = ref<Graduate>(clone(props.item))
 const movingGrad = ref(false)
 const showEngagementModal = ref(false)
 const engagements = ref<GradEngagement[]>([])
@@ -149,10 +146,6 @@ const canDelete = computed(() => {
   return engagements.value.length === 0 && !loadingEngagements
 })
 
-watch(() => props.item, (newVal) => {
-  grad.value = clone(newVal)
-}, { immediate: true })
-
 function openModal(event: GradEngagement) {
   selectedEngagement.value = event
   showEngagementModal.value = true
@@ -160,8 +153,8 @@ function openModal(event: GradEngagement) {
 
 async function reqGenerateGradId() {
   const newId = 'G' + Math.random().toString().substring(2, 9);
-  grad.value.id = newId
-  await updateByRow(Range.GRADUATES, grad.value.row, unmapGraduates([grad.value]))
+  props.item.value.id = newId
+  await updateByRow(Range.GRADUATES, props.item.value.row, unmapGraduates([props.item.value]))
 }
 
 async function moveToStudents() {
@@ -169,16 +162,16 @@ async function moveToStudents() {
   await moveRowToRange(
     Range.GRADUATES,
     Range.STUDENTS,
-    grad.value.row,
+    props.item.value.row,
     await unmapStudents([{
-      row: grad.value.row,
-      id: grad.value.id.startsWith('G') ? '' : grad.value.id,
-      name: grad.value.name,
-      email: grad.value.email,
+      row: props.item.value.row,
+      id: props.item.value.id.startsWith('G') ? '' : props.item.value.id,
+      name: props.item.value.name,
+      email: props.item.value.email,
       points: 0,
       activeStatus: 'Active',
       year: '',
-      note: grad.value.note,
+      note: props.item.value.note,
       misc: {}
     }])
   )

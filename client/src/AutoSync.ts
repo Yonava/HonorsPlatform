@@ -23,27 +23,24 @@ export function useAutoSync(
 
 export function useChangeWatcher(key: () => Ref<SheetItem>) {
   const upToDate = ref(false)
+  const lastItem = ref<SheetItem | null>(null)
 
   const changed = (newVal: Object, oldVal: Object) => {
-    for (const key in newVal) {
-      if (typeof newVal[key] === 'object') {
-        if (changed(newVal[key], oldVal[key] || {})) {
-          return true
-        }
-      }
-      if (newVal[key] !== oldVal[key]) {
-        return true
-      }
-    }
-    return false
+    return JSON.stringify(newVal) !== JSON.stringify(oldVal)
   }
 
-  watch(key, (newItem, oldItem) => {
-    if (newItem.value.row !== oldItem?.value.row) {
-      return upToDate.value = false
+  watch(key, item => {
+    if (item.value.row !== lastItem.value?.row) {
+      if (lastItem.value) upToDate.value = false
+      lastItem.value = JSON.parse(JSON.stringify(item.value))
+      return 
     }
-    upToDate.value = changed(newItem.value, oldItem.value || {})
-  }, { deep: true })
+    upToDate.value = !changed(item.value, lastItem.value as SheetItem)
+    lastItem.value = JSON.parse(JSON.stringify(item.value))
+  }, { 
+    deep: true, 
+    immediate: true 
+  })
 
   return {
     upToDate
