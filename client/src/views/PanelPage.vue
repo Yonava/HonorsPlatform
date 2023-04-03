@@ -219,8 +219,10 @@ const items = ref<SheetItem[]>([])
 const loadingItems = ref(false)
 const showAddModal = ref(false)
 const filterQuery = ref('')
-const selectedItem = ref(undefined)
 const pageVisible = ref(true)
+
+const selectedItem = ref<SheetItem>(undefined)
+provide('selectedItem', selectedItem)
 
 const autoSync = ref(false)
 provide('autoSync', autoSync)

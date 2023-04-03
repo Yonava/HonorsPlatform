@@ -17,28 +17,32 @@
 import { Panel } from "../SwitchPanel";
 import { SheetItem } from "../SheetTypes";
 import { updateByRow } from "../SheetsAPI";
-import { ref } from "vue";
+import { ref, inject } from "vue";
+import type { Ref } from 'vue'
+import { useAutoSync, useChangeWatcher } from '../AutoSync'
 
-const props = defineProps<{
-  panel: Panel<SheetItem>;
-  item: SheetItem;
-  upToDate: boolean;
-}>();
+const { upToDate } = useChangeWatcher()
+useAutoSync()
+
+const panel = inject("activePanel") as Ref<Panel<SheetItem>>
+const selectedItem = inject("selectedItem") as Ref<SheetItem>
 
 const emits = defineEmits([
   'updated'
 ]);
 const loading = ref(false);
 
-async function update() {
-  if (props.upToDate) return
+export async function reqUpdate() {
+  if (upToDate.value) return
   loading.value = true
   await updateByRow(
-    props.panel.sheetRange, 
-    props.item.row, 
-    await props.panel.mappers.unmap([props.item])
+    panel.value.sheetRange, 
+    selectedItem.value.row, 
+    await panel.value.mappers.unmap([
+      selectedItem.value
+    ])
   )
-  emits('updated')
+  upToDate.value = true
   loading.value = false
 }
 </script>

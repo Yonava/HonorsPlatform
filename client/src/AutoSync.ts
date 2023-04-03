@@ -1,9 +1,15 @@
-import { onUnmounted, watch, ref } from "vue";
+import { onUnmounted, watch, ref, inject } from "vue";
+import { reqUpdate } from "./ReqUpdate";
 import type { Ref } from "vue";
+import { SheetItem } from "./SheetTypes";
 
 const syncInterval = 3000;
 
-export function useAutoSync(autoSync: Ref<boolean>, sync: () => void) {
+const selectedItem = inject("selectedItem") as Ref<SheetItem>;
+
+export function useAutoSync(sync: () => Promise<void> = reqUpdate) {
+  const autoSync = inject("autoSync") as Ref<boolean>;
+
   const interval = setInterval(() => {
     if (autoSync.value) {
       sync();
@@ -15,7 +21,7 @@ export function useAutoSync(autoSync: Ref<boolean>, sync: () => void) {
   });
 }
 
-export function useChangeWatcher(item: Ref<Object>) {
+export function useChangeWatcher(item: Ref<SheetItem> = selectedItem) {
   let changeWatcher = () => {};
   const upToDate = ref(false)
 
