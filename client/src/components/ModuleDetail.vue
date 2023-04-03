@@ -5,11 +5,11 @@
   >
     <div style="width: 55%;">
       <p style="font-weight: 200">
-        {{ module.studentId }}
+        {{ item.value.studentId }}
       </p>
       <div class="d-flex flex-row align-center">
         <input 
-          v-model="module.courseCode"
+          v-model="item.value.courseCode"
           placeholder="Course Code"
           type="text" 
           class="header-input"
@@ -17,12 +17,12 @@
         <v-spacer></v-spacer>
         <update-button
           @updated="$emit('update', $event)"
-          :item="module"
+          :item="item"
         />
       </div>
       <v-divider class="my-2"></v-divider>
       <v-text-field
-        v-model="module.term"
+        v-model="item.value.term"
         label="Term"
       >
         <template #prepend>
@@ -30,7 +30,7 @@
         </template>
       </v-text-field>
       <v-text-field
-        v-model="module.instructor"
+        v-model="item.value.instructor"
         label="Instructor"
       >
         <template #prepend>
@@ -42,7 +42,7 @@
       </h1>
       <div class="d-flex flex-row">
         <v-text-field
-          v-model="module.docuSignCreated"
+          v-model="item.value.docuSignCreated"
           class="mr-6"
           label="DocuSign Created"
         >
@@ -51,7 +51,7 @@
           </template>
         </v-text-field>
         <v-text-field
-          v-model="module.docuSignCompleted"
+          v-model="item.value.docuSignCompleted"
           label="DocuSign Completed"
         >
           <template #prepend>
@@ -64,15 +64,15 @@
         class="d-flex flex-row"
       >
         <v-btn
-          v-if="!module.docuSignCreated"
-          @click="module.docuSignCreated = new Date().toLocaleDateString()"
+          v-if="!item.value.docuSignCreated"
+          @click="item.value.docuSignCreated = new Date().toLocaleDateString()"
           color="orange-darken-2"
           size="small"
         >Created Now</v-btn>
         <v-spacer></v-spacer>
         <v-btn
-          v-if="!module.docuSignCompleted"
-          @click="module.docuSignCompleted = new Date().toLocaleDateString()"
+          v-if="!item.value.docuSignCompleted"
+          @click="item.value.docuSignCompleted = new Date().toLocaleDateString()"
           color="orange-darken-2"
           size="small"
         >Completed Now</v-btn>
@@ -136,7 +136,6 @@
                   @click="completedModuleData.grade = grade"
                   :color="completedModuleData.grade === grade ? 'orange-darken-2' : 'grey'"
                   rounded
-                 
                   class="mx-10 mt-2"
                 >{{ grade || "Leave Ungraded" }}</v-btn>
               </div>
@@ -203,7 +202,7 @@
         delete module permanently
       </span>
       <v-textarea
-        v-model="module.description"
+        v-model="item.value.description"
         clearable
         label="Description"
       ></v-textarea>
@@ -220,14 +219,14 @@ import {
   onMounted,
   onUnmounted
 } from 'vue'
+import type { Ref } from 'vue'
 import { updateByRow, moveRowToRange, Range } from '../SheetsAPI'
-import { useAutoSync, useChangeWatcher } from '../AutoSync'
 import { unmapModules, unmapCompletedModules } from '../DataMappers'
 import { Module, Grade, CompletedModule } from '../SheetTypes'
 import UpdateButton from './UpdateButton.vue'
 
 const props = defineProps<{
-  item: Module
+  item: Ref<Module>
 }>()
 
 const emits = defineEmits([
@@ -244,32 +243,26 @@ const grades: Grade[] = [
   'Fail'
 ]
 
-const clone = <T>(obj: T) => JSON.parse(JSON.stringify(obj))
-
-const module = ref<Module>(null)
 const dialog = ref(false)
 const movingModuleToCompleted = ref(false)
 const moduleMoveSuccess = ref(false)
 const movedModule = ref<CompletedModule>(null)
+
 const completedModuleData = ref({
   completedDate: '',
   grade: null,
 })
 
-watch(() => props.item, (newVal) => {
-  module.value = clone(newVal)
-}, { immediate: true })
-
 async function moveToCompleted() {
   movingModuleToCompleted.value = true
   movedModule.value = {
-    ...module.value,
+    ...props.item.value,
     ...completedModuleData.value
   }
   await moveRowToRange(
     Range.MODULES, 
     Range.COMPLETED_MODULES, 
-    module.value.row, 
+    props.item.value.row, 
     unmapCompletedModules([movedModule.value])
   )
   moduleMoveSuccess.value = true
