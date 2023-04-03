@@ -5,11 +5,11 @@
   >
     <div style="width: 55%;">
       <p style="font-weight: 200">
-        {{ module.studentId }}
+        {{ item.value.studentId }}
       </p>
       <div class="d-flex flex-row align-center">
         <input 
-          v-model="module.courseCode"
+          v-model="item.value.courseCode"
           placeholder="Course Code"
           type="text" 
           class="header-input"
@@ -17,13 +17,13 @@
         <v-spacer></v-spacer>
         <update-button
           @updated="$emit('update', $event)"
-          :item="module"
+          :item="item"
           itemName="Module"
         />
       </div>
       <v-divider class="my-2"></v-divider>
       <v-text-field
-        v-model="module.completedDate"
+        v-model="item.value.completedDate"
         label="Completed Date"
       >
         <template #prepend>
@@ -31,7 +31,7 @@
         </template>
       </v-text-field>
       <v-text-field
-        v-model="module.term"
+        v-model="item.value.term"
         label="Term"
       >
         <template #prepend>
@@ -39,7 +39,7 @@
         </template>
       </v-text-field>
       <v-text-field
-        v-model="module.instructor"
+        v-model="item.value.instructor"
         label="Instructor"
       >
         <template #prepend>
@@ -48,7 +48,7 @@
       </v-text-field>
       <div class="d-flex flex-row">
         <v-text-field
-          v-model="module.docuSignCreated"
+          v-model="item.value.docuSignCreated"
           class="mr-6"
           label="DocuSign Created"
         >
@@ -57,7 +57,7 @@
           </template>
         </v-text-field>
         <v-text-field
-          v-model="module.docuSignCompleted"
+          v-model="item.value.docuSignCompleted"
           label="DocuSign Completed"
         >
           <template #prepend>
@@ -70,7 +70,7 @@
           Final Grade
         </h2>
         <input 
-          v-model="module.grade"
+          v-model="item.value.grade"
           type="text" 
           class="header-input" 
           placeholder="Grade"
@@ -90,7 +90,7 @@
         delete module permanently
       </span>
       <v-textarea
-        v-model="module.description"
+        v-model="item.value.description"
         clearable
         label="Description"
       ></v-textarea>
@@ -99,22 +99,12 @@
 </template>
 
 <script setup lang="ts">
-import { 
-  ref,
-  watch, 
-  computed,
-  toRefs, 
-  onMounted,
-  onUnmounted
-} from 'vue'
+import type { Ref } from 'vue'
 import { CompletedModule } from '../SheetTypes'
-import { updateByRow, Range } from '../SheetsAPI'
-import { useAutoSync, useChangeWatcher } from '../AutoSync'
-import { unmapCompletedModules } from '../DataMappers'
 import UpdateButton from './UpdateButton.vue'
 
 const props = defineProps<{
-  item: CompletedModule
+  item: Ref<CompletedModule>
 }>()
 
 const emits = defineEmits([
@@ -122,13 +112,6 @@ const emits = defineEmits([
   'update', 
   'unselect'
 ])
-
-const clone = <T>(obj: T) => JSON.parse(JSON.stringify(obj))
-const module = ref<CompletedModule>(clone(props.item))
-
-watch(() => props.item, (newVal) => {
-  module.value = clone(newVal)
-})
 </script>
 
 <style scoped>
