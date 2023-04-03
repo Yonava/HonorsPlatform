@@ -39,7 +39,6 @@ export function useChangeWatcher(key: () => Ref<SheetItem>) {
   }
 
   watch(key, (newItem, oldItem) => {
-    console.log(changed(newItem.value, oldItem?.value || {}));
     if (newItem.value.row !== oldItem?.value.row) {
       return upToDate.value = false
     }
