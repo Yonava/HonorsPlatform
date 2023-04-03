@@ -198,7 +198,8 @@ import {
   onMounted, 
   computed, 
   watch,
-  onUnmounted
+  onUnmounted,
+  provide
 } from 'vue' 
 import { useRoute, useRouter } from 'vue-router'
 import { getEvery, clearByRow } from '../SheetsAPI'
@@ -218,11 +219,14 @@ const items = ref<SheetItem[]>([])
 const loadingItems = ref(false)
 const showAddModal = ref(false)
 const filterQuery = ref('')
-const autoSync = ref(false)
 const selectedItem = ref(undefined)
 const pageVisible = ref(true)
 
+const autoSync = ref(false)
+provide('autoSync', autoSync)
+
 const panel = ref(switchPanel(PanelType.STUDENTS))
+provide('activePanel', panel)
 
 const changePanel = (panelType: PanelType) => {
   panel.value = switchPanel(panelType)
@@ -325,6 +329,7 @@ const displayItems = computed(() => {
 })
 
 async function silentFetch() {
+  // needs to keep sorted order as defined by SortPanel
   const data = await getEvery(panel.value.sheetRange)
   items.value = await panel.value.mappers.map(data)
 }
@@ -332,7 +337,7 @@ async function silentFetch() {
 // 1s just to impress, 5s is probably better
 const autoSyncInterval = setInterval(() => {
   if (autoSync.value && pageVisible.value) silentFetch()
-}, 1000)
+}, 5000)
 
 onUnmounted(() => {
   clearInterval(autoSyncInterval)
