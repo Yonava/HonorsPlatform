@@ -1,6 +1,6 @@
 <template>
   <v-btn 
-    @click="update"
+    @click="reqUpdate"
     :loading="loading"
     :color="upToDate ? 'green' : `${panel.color}-darken-2`"
     :style="{
@@ -17,40 +17,45 @@
 import { Panel } from "../SwitchPanel";
 import { SheetItem } from "../SheetTypes";
 import { updateByRow } from "../SheetsAPI";
-import { ref, inject, computed } from "vue";
+import { ref, inject, computed, toRefs } from "vue";
 import type { Ref } from 'vue'
 import { useAutoSync, useChangeWatcher } from '../AutoSync'
 
-const { upToDate } = useChangeWatcher()
-useAutoSync(reqUpdate)
+const clone = <T>(obj: T): T => JSON.parse(JSON.stringify(obj))
 
 const props = defineProps<{
   itemName?: string
+  item: SheetItem
 }>()
+
+const { item } = toRefs(props)
+
+const { upToDate } = useChangeWatcher(item)
+useAutoSync(reqUpdate)
+
+const panel = inject("activePanel") as Ref<Panel<SheetItem>>
 
 const itemName = computed(() => {
   return props?.itemName ?? panel.value.title.slice(0, -1)
 })
-
-const panel = inject("activePanel") as Ref<Panel<SheetItem>>
-const selectedItem = inject("selectedItem") as Ref<SheetItem>
 
 const emits = defineEmits([
   'updated'
 ]);
 const loading = ref(false);
 
-export async function reqUpdate() {
+async function reqUpdate() {
   if (upToDate.value) return
+  upToDate.value = true
   loading.value = true
   await updateByRow(
     panel.value.sheetRange, 
-    selectedItem.value.row, 
+    item.value.row, 
     await panel.value.mappers.unmap([
-      selectedItem.value
+      item.value
     ])
   )
-  upToDate.value = true
+  emits('updated', clone(item.value))
   loading.value = false
 }
 </script>

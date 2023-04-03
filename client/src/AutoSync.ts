@@ -3,7 +3,6 @@ import type { Ref } from "vue";
 import { SheetItem } from "./SheetTypes";
 
 const syncIntervalDefault = 3000;
-const selectedItem = inject("selectedItem") as Ref<SheetItem>;
 
 export function useAutoSync(
   sync: () => Promise<void>, 
@@ -22,11 +21,16 @@ export function useAutoSync(
   });
 }
 
-export function useChangeWatcher(item: Ref<SheetItem> = selectedItem) {
+export function useChangeWatcher(item: Ref<SheetItem>) {
   let changeWatcher = () => {};
   const upToDate = ref(false)
 
-  watch(item, () => {
+  const changed = (newVal: Object, oldVal: Object) => {
+    return JSON.stringify(newVal) !== JSON.stringify(oldVal)
+  }
+
+  watch(item, (newVal, oldVal) => {
+    if (!changed(newVal, oldVal)) return
     upToDate.value = false
   })
 

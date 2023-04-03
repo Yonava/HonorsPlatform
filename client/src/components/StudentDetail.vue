@@ -73,16 +73,10 @@
           class="student-name-input"
         >
         <v-spacer></v-spacer>
-        <v-btn 
-          @click="reqUpdateStudent"
-          :loading="updatingStudent"
-          :color="upToDate ? 'green' : 'blue-darken-2'"
-          :style="{
-            cursor: upToDate ? 'default' : 'pointer',
-          }"
-          rounded
-          class="ml-7"
-        >{{ upToDate ? 'All Synced Up!' : 'Update Profile' }}</v-btn>
+        <update-button 
+          @updated="$emit('update', $event)" 
+          :item="student"
+        />
       </div>
       <v-divider class="my-2"></v-divider>
       <v-text-field
@@ -94,7 +88,7 @@
         </template>
       </v-text-field>
       <v-text-field
-        v-model="student.points"
+        v-model.number="student.points"
         label="Points"
       >
         <template #prepend>
@@ -238,10 +232,10 @@ import { useAutoSync, useChangeWatcher } from '../AutoSync'
 import { switchPanel, PanelType } from '../SwitchPanel'
 import { unmapStudents, unmapGraduates } from '../DataMappers'
 import { Student } from '../SheetTypes'
+import UpdateButton from './UpdateButton.vue'
 
 const props = defineProps<{
-  item: Student,
-  autoSync: boolean,
+  item: Student
 }>()
 
 const clone = <T>(obj: T) => JSON.parse(JSON.stringify(obj))
@@ -276,28 +270,20 @@ const canDelete = computed(() => {
   return moduleListEmpty.value || !student.value.id
 })
 
-const { autoSync } = toRefs(props)
-useAutoSync(autoSync, reqUpdateStudent)
-const { upToDate } = useChangeWatcher(student)
-
 function studentIdRule(studentId: string) {
   return parseInt(studentId) && studentId.length === 7 || 'Invalid Student ID'          
-}
-
-async function reqUpdateStudent() {
-  if (upToDate.value) return
-  updatingStudent.value = true
-  const row = student.value.row
-  await updateByRow(Range.STUDENTS, row, await unmapStudents([student.value]))
-  emits('update', clone(student.value))
-  updatingStudent.value = false
-  upToDate.value = true
 }
 
 async function saveId() {
   if (!studentIdRule(tempStudentId.value)) return
   student.value.id = tempStudentId.value
-  await reqUpdateStudent()
+  updatingStudent.value = true
+  await updateByRow(
+    Range.STUDENTS, 
+    student.value.row, 
+    await unmapStudents([student.value])
+  )
+  updatingStudent.value = false
   dialog.value = false
 }
 
