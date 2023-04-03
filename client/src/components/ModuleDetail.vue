@@ -15,16 +15,10 @@
           class="header-input"
         >
         <v-spacer></v-spacer>
-        <v-btn 
-          @click="reqUpdateModule"
-          :loading="updating"
-          :color="upToDate ? 'green' : 'orange-darken-2'"
-          :style="{
-            cursor: upToDate ? 'default' : 'pointer',
-          }"
-          rounded
-          class="ml-7"
-        >{{ upToDate ? 'All Synced Up!' : 'Update Module' }}</v-btn>
+        <update-button
+          @updated="$emit('update', $event)"
+          :item="module"
+        />
       </div>
       <v-divider class="my-2"></v-divider>
       <v-text-field
@@ -230,6 +224,7 @@ import { updateByRow, moveRowToRange, Range } from '../SheetsAPI'
 import { useAutoSync, useChangeWatcher } from '../AutoSync'
 import { unmapModules, unmapCompletedModules } from '../DataMappers'
 import { Module, Grade, CompletedModule } from '../SheetTypes'
+import UpdateButton from './UpdateButton.vue'
 
 const props = defineProps<{
   item: Module,
@@ -252,7 +247,6 @@ const grades: Grade[] = [
 
 const clone = <T>(obj: T) => JSON.parse(JSON.stringify(obj))
 
-const updating = ref(false)
 const module = ref<Module>(null)
 const dialog = ref(false)
 const movingModuleToCompleted = ref(false)
@@ -266,19 +260,6 @@ const completedModuleData = ref({
 watch(() => props.item, (newVal) => {
   module.value = clone(newVal)
 }, { immediate: true })
-
-const { autoSync } = toRefs(props)
-useAutoSync(autoSync, reqUpdateModule)
-const { upToDate } = useChangeWatcher(module)
-
-async function reqUpdateModule() {
-  if (upToDate.value) return
-  updating.value = true
-  await updateByRow(Range.MODULES, module.value.row, unmapModules([module.value]))
-  emits('update', clone(module.value))
-  upToDate.value = true
-  updating.value = false
-}
 
 async function moveToCompleted() {
   movingModuleToCompleted.value = true
