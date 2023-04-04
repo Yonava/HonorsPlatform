@@ -163,7 +163,6 @@
               @unselect="unselect"
               :is="panel.components.detail" 
               :item="ref(clone(selectedItem))"
-              :autoSync="autoSync"
             />
           </div>
           <div 

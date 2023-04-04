@@ -28,6 +28,10 @@ const props = defineProps<{
   item: Ref<SheetItem>
 }>()
 
+watch(() => props.item, () => {
+  console.log('item changed')
+})
+
 const { upToDate } = useChangeWatcher(() => props.item)
 useAutoSync(reqUpdate)
 
