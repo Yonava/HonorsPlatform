@@ -7,16 +7,22 @@
       class="module-card pa-2 mt-2 d-flex flex-row align-center"
     >
       <div style="d-flex flex-column align-center">
-        <div style="color: white; opacity: 0.75; font-size: 0.75em;">
+        <div 
+          class="mb-2"
+          style="color: white; opacity: 0.75; font-size: 0.75em;"
+        >
           {{ mod.term }}
         </div>
-        <div class="d-flex flex-row align-center mb-1">
-          <h4 style="color: rgba(255,255,255,0.9); font-size: 1.25em; line-height: 0;">
+        <div class="d-flex flex-row align-center mb-3">
+          <h4 
+            class=""
+            style="color: rgba(255,255,255,0.9); font-size: 1.25em; line-height: 0.3;"
+          >
             {{ mod.courseCode }}
           </h4>
           <span 
             class="ml-2" 
-            style="color: white; line-height: 1.1; font-weight: 300;"
+            style="color: white; line-height: 0.3; font-weight: 300;"
           >{{ mod.description }}</span>
         </div>
       </div>
