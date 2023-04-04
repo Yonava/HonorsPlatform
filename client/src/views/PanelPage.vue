@@ -334,6 +334,7 @@ const displayItems = computed(() => {
 async function silentFetch() {
   const data = await getEvery(panel.value.sheetRange)
   const incomingItems = await panel.value.mappers.map(data)
+  // TODO: edge case in this prevents newly created or deleted items from being updated
   items.value = items.value.map(item => {
     const incomingItem = incomingItems.find(i => i.row === item.row)
     if (!incomingItem) return item
@@ -344,7 +345,7 @@ async function silentFetch() {
 // 1s just to impress, 5s is probably better
 const autoSyncInterval = setInterval(() => {
   if (autoSync.value && pageVisible.value) silentFetch()
-}, 2000)
+}, 5000)
 
 onUnmounted(() => {
   clearInterval(autoSyncInterval)

@@ -163,29 +163,29 @@
         </v-card>
         <v-card
           v-else
-          class="d-flex flex-column align-center pa-3"
+          class="d-flex flex-column align-center flex-start pa-3"
         >
-          <v-icon
-            size="x-large"
-            color="orange-darken-2"
-          >mdi-check</v-icon>
-          <h1 class="mt-3">
-            Module Completed Successfully!
-          </h1>
-          <p>
-            Moved {{ movedModule.courseCode }} to completed modules 
-            with a grade of {{ movedModule.grade || "ungraded" }}.
-          </p>
-          <p>
-            This module is now accessible through the completed modules tab.
-          </p>
+          <div class="d-flex flex-row align-center">
+            <v-icon
+              size="x-large"
+              color="orange-darken-2"
+              class="mr-4 mb-2"
+            >mdi-check</v-icon>
+            <h2 style="font-size: 1.5em">
+              Module Completed Successfully!
+            </h2>
+            </div>
+            <p>
+              Moved {{ movedModule.courseCode }} to completed modules 
+              with a grade of {{ movedModule.grade || "ungraded" }}. 
+              This module is now accessible through the completed modules tab.
+            </p>
           <v-btn
             @click="closeDialog"
             color="orange-darken-2"
             class="mt-5"
           >
-            <v-icon class="mr-2">mdi-check</v-icon>
-            Close
+            Finish
           </v-btn>
         </v-card>
       </v-dialog>

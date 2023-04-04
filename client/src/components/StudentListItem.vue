@@ -2,16 +2,16 @@
   <div>
     <div class="d-flex flex-row">
       <div>
-      <v-icon
-        v-if="item.athletics"
-        class="mr-2"
-      >
-        {{ 'mdi-' + athleticOptions[item.athletics] }}
-      </v-icon>
-      <v-tooltip
-        activator="parent"
-        location="bottom"
-      >{{ item.name + ' Is Registered For ' + item.athletics }}</v-tooltip>
+        <v-icon
+          v-if="item.athletics"
+          class="mr-2"
+        >
+          {{ 'mdi-' + athleticOptions[item.athletics] }}
+        </v-icon>
+        <v-tooltip
+          activator="parent"
+          location="bottom"
+        >{{ item.name + ' Is Registered For ' + item.athletics }}</v-tooltip>
       </div>
       <div style="font-weight: 900; font-size: 1.5em; line-height: 1">
         {{ item.name || '(No Name)' }}
