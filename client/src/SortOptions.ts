@@ -143,8 +143,8 @@ export function switchSortOptions(panel: PanelType) {
         {
           label: 'Term',
           icon: {
-            asc: 'mdi-sort-numeric-ascending',
-            desc: 'mdi-sort-numeric-descending'
+            asc: 'mdi-sort-alphabetical-ascending',
+            desc: 'mdi-sort-alphabetical-descending'
           },
           func: {
             asc: (a: Module, b: Module) => a.term.localeCompare(b.term),
