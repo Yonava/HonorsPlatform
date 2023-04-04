@@ -1,6 +1,18 @@
 <template>
   <div>
     <div class="d-flex flex-row">
+      <div v-if="overOneYearInProgress && !item.docuSignCompleted">
+        <v-icon 
+          class="mr-2"
+          color="red"
+        >
+          mdi-alert
+        </v-icon>
+        <v-tooltip
+          activator="parent"
+          location="bottom"
+        >{{ item.courseCode + ' In Progress For Over 1 Year' }}</v-tooltip>
+      </div>
       <div style="font-weight: 900; font-size: 1.5em; line-height: 1">
         {{ item.courseCode || '(No Course Code)' }}
         <span style="font-weight: 300; font-size: 0.6em">
@@ -22,6 +34,10 @@
       >
         <v-icon class="mr-1">{{ docuSignStatus.icon }}</v-icon>
         <span>{{ docuSignStatus.text }}</span>
+        <v-tooltip
+          activator="parent"
+          location="end"
+        >{{ docuSignStatus.tooltip }}</v-tooltip>
       </v-sheet>
     </div>
     <div 
@@ -68,30 +84,68 @@ type DocuSignStatus = {
   color: string
 }
 
+const overOneYearInProgress = computed(() => {
+  const now = new Date()
+  try {
+    const created = new Date(props.item.docuSignCreated)
+    const diff = now.getTime() - created.getTime()
+    const diffDays = Math.ceil(diff / (1000 * 60 * 60 * 24))
+    return diffDays > 365
+  } catch (e) {
+    console.warn(e)
+    return false
+  }
+})
+
+const daysSinceDate = (date: string) => {
+  const now = new Date()
+  try {
+    const created = new Date(date)
+    const diff = now.getTime() - created.getTime()
+    const diffDays = Math.ceil(diff / (1000 * 60 * 60 * 24))
+    if (diffDays === 1) {
+      return 'Today'
+    } else if (diffDays === 2) {
+      return 'Yesterday'
+    } else if (diffDays < 0){
+      return `${diffDays * -1} Days In The Future... Woah!`
+    } else {
+      return `${diffDays - 1} Days Ago`
+    }
+  } catch (e) {
+    console.warn(e)
+    return 0
+  }
+}
+
 const docuSignStatus: ComputedRef<DocuSignStatus> = computed(() => {
   if (props.item.docuSignCreated && props.item.docuSignCompleted) {
     return {
       icon: 'mdi-file-document-check-outline',
       text: 'Completed',
-      color: 'green'
+      color: 'green',
+      tooltip: `DocuSign Completed (${props.item.docuSignCompleted})`
     }
   } else if (props.item.docuSignCreated) {
     return {
       icon: 'mdi-file-document-outline',
       text: 'In Progress',
-      color: 'blue'
+      color: 'blue',
+      tooltip: `DocuSign Created ${daysSinceDate(props.item.docuSignCreated)} (${props.item.docuSignCreated})`
     }
   } else if (!(props.item.docuSignCompleted || props.item.docuSignCreated)) {
     return {
       icon: 'mdi-file-document-alert-outline',
       text: 'Not Started',
-      color: 'red'
+      color: 'red',
+      tooltip: 'DocuSign Not Started'
     }
   } else {
     return {
       icon: 'mdi-file-document-remove-outline',
       text: 'Missing Start Date',
-      color: 'purple'
+      color: 'purple',
+      tooltip: 'DocuSign Missing Start Date'
     }
   }
 })
