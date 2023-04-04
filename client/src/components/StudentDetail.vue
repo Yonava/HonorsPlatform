@@ -114,6 +114,13 @@
           </template>
         </v-text-field>
       </div>
+      <v-select
+        v-model="item.value.athletics"
+        :items="Object.keys(athleticOptions)"
+        :prepend-icon="`mdi-${athleticOptions[item.value.athletics]}`"
+        label="Athletics"
+        class="mt-2"
+      ></v-select>
       <v-divider class="my-2"></v-divider>
       <div v-if="item.value.id">
         <div class="d-flex flex-row align-center">
@@ -228,11 +235,12 @@ import type { Ref } from 'vue'
 import ModuleFetch from './ModuleFetch.vue'
 import AddModal from './AddModal.vue'
 import LockArea from './LockArea.vue'
+import UpdateButton from './UpdateButton.vue'
 import { updateByRow, moveRowToRange, Range } from '../SheetsAPI'
 import { switchPanel, PanelType } from '../SwitchPanel'
 import { unmapStudents, unmapGraduates } from '../DataMappers'
 import { Student } from '../SheetTypes'
-import UpdateButton from './UpdateButton.vue'
+import { athleticOptions } from '../Athletics'
 
 const props = defineProps<{
   item: Ref<Student>

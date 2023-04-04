@@ -37,6 +37,7 @@ export interface Student extends SheetEntry {
   points: number;
   activeStatus: string;
   year: string;
+  athletics: string;
   note: string;
   misc: { 
     [key: string]: string 

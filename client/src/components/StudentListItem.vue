@@ -1,6 +1,11 @@
 <template>
   <div>
     <div class="d-flex flex-row">
+      <v-icon
+        v-if="item.athletics"
+        class="mr-2"
+      >{{ 'mdi-' + athleticOptions[item.athletics] }}
+      </v-icon>
       <div style="font-weight: 900; font-size: 1.5em; line-height: 1">
         {{ item.name || '(No Name)' }}
         <span 
@@ -8,6 +13,10 @@
           style="font-weight: 300; font-size: 0.6em"
         >
           {{ item.id || '(No ID)' }}
+          <v-tooltip
+            activator="parent"
+            location="end"
+          >{{ item.name + 's Student ID'}}</v-tooltip>
         </span>
       </div>
       <v-spacer></v-spacer>
@@ -58,6 +67,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { Student } from '../SheetTypes'
+import { athleticOptions } from '../Athletics'
 
 const props = defineProps<{
   item: Student

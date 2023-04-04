@@ -15,7 +15,7 @@ function removeEmptyObjects(item: Object) {
 
 export async function mapStudents(sheetData: string[][]): Promise<Student[]> {
   const headerRow = headerRowMemo[Range.STUDENTS] ?? await getHeaderRow(Range.STUDENTS);
-  const categories = headerRow.slice(7);
+  const categories = headerRow.slice(8);
   return sheetData
     .map((student, index) => ({
       row: index + 2, // + 1 for header row, + 1 for 0-indexing
@@ -25,10 +25,11 @@ export async function mapStudents(sheetData: string[][]): Promise<Student[]> {
       points: parseInt(student[3]) ?? 0,
       activeStatus: student[4] ?? '',
       year: student[5] ?? '',
-      note: student[6] ?? '',
+      athletics: student[6] ?? '',
+      note: student[7] ?? '',
       misc: categories.reduce((acc: { [key in string]: string }, category: string, index: number) => {
         if (category === '') return acc
-        acc[category] = student[index + 7] ?? ''
+        acc[category] = student[index + 8] ?? ''
         return acc
       }, {})
     }))
@@ -47,6 +48,7 @@ export async function unmapStudents(students: Student[]): Promise<string[][]> {
       student.points.toString(),
       student.activeStatus,
       student.year,
+      student.athletics,
       student.note,
       ...misc,
     ];
