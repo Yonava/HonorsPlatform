@@ -49,6 +49,12 @@ app.get("/range/:range", async (req, res) => {
   try {
     const { range } = req.params;
     const data = await sheetInstance.getRange(range);
+    // sheets API return undefined when sheet is empty
+    if (!data) {
+      console.log('no data')
+      res.json([[]]);
+      return;
+    }
     res.json(data.map(row => row.map(cell => cell.replace(/[Ss][Hh][Aa][Nn][Nn][Oo][Nn]/g, 'S******'))));
   } catch(e) {
     GoogleSheet.instance = null;

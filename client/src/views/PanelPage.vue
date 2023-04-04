@@ -145,6 +145,10 @@
                 <v-icon>
                   mdi-list-box-outline
                 </v-icon>
+                <v-tooltip
+                  activator="parent"
+                  location="end"
+                >Create Registrar List</v-tooltip>
               </v-btn>
             </div>
           </div>
