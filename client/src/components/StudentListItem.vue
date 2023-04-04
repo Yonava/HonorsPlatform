@@ -1,11 +1,18 @@
 <template>
   <div>
     <div class="d-flex flex-row">
+      <div>
       <v-icon
         v-if="item.athletics"
         class="mr-2"
-      >{{ 'mdi-' + athleticOptions[item.athletics] }}
+      >
+        {{ 'mdi-' + athleticOptions[item.athletics] }}
       </v-icon>
+      <v-tooltip
+        activator="parent"
+        location="bottom"
+      >{{ item.name + ' Is Registered For ' + item.athletics }}</v-tooltip>
+      </div>
       <div style="font-weight: 900; font-size: 1.5em; line-height: 1">
         {{ item.name || '(No Name)' }}
         <span 
@@ -16,7 +23,7 @@
           <v-tooltip
             activator="parent"
             location="end"
-          >{{ item.name + 's Student ID'}}</v-tooltip>
+          >{{ item.name + 's Student ID' }}</v-tooltip>
         </span>
       </div>
       <v-spacer></v-spacer>
@@ -40,25 +47,33 @@
       style="font-size: 0.9em;"
     >
       <div class="d-flex flex-row">
-        <v-icon 
-          class="mr-1"
-          style="opacity: 0.75"
-        >
-          mdi-email
-        </v-icon>
-        <p>
-          {{ item.email || '(No Email)' }} 
-        </p>
+        <div class="email d-flex flex-row">
+          <v-icon 
+            class="mr-1"
+            style="opacity: 0.75"
+          >
+            mdi-email
+          </v-icon>
+          <p>
+            {{ item.email || '(No Email)' }} 
+          </p>
+        </div>
         <v-spacer></v-spacer>
-        <p>
-          {{ points }}
-        </p>
-        <v-icon 
-          class="ml-1"
-          style="opacity: 0.75"
-        >
-          mdi-ticket
-        </v-icon>
+        <div class="d-flex">
+          <p>
+            {{ points }}
+          </p>
+          <v-icon 
+            class="ml-1"
+            style="opacity: 0.75"
+          >
+            mdi-ticket
+          </v-icon>
+          <v-tooltip
+            activator="parent"
+            location="end"
+          >{{ points }} Point{{ item.points === 1 ? '' : 's' }}</v-tooltip>
+        </div>
       </div>
     </div>
   </div>
