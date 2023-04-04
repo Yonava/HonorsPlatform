@@ -71,7 +71,7 @@
           </v-icon>
           <v-tooltip
             activator="parent"
-            location="end"
+            location="start"
           >{{ points }} Point{{ item.points === 1 ? '' : 's' }}</v-tooltip>
         </div>
       </div>

@@ -79,40 +79,47 @@
         />
       </div>
       <v-divider class="my-2"></v-divider>
-      <v-text-field
-        v-model="item.value.email"
-        label="Email"
-      >
-        <template #prepend>
-          <v-icon>mdi-email</v-icon>
-        </template>
-      </v-text-field>
+      <div class="d-flex align-center">
+        <v-text-field
+          v-model="item.value.email"
+          label="Email"
+          prepend-icon="mdi-email"
+          class="mr-4"
+        ></v-text-field>
+        <v-btn 
+          @click="sendEmail"
+          size="small"
+          color="blue-darken-2"
+        >
+          email {{ item.value.name.split(' ')[0] }}
+        </v-btn>
+      </div>
       <v-text-field
         v-model.number="item.value.points"
         label="Points"
+        type="number"
       >
         <template #prepend>
           <v-icon>mdi-ticket</v-icon>
         </template>
       </v-text-field>
       <div class="d-flex flex-row">
-        <v-text-field
+        <v-select
           v-model="item.value.activeStatus"
+          :items="Object.keys(statusOptions)"
+          :prepend-icon="`mdi-${statusOptions[item.value.activeStatus]}`"
           label="Active Status"
-          class="mr-2"
-        >
-          <template #prepend>
-            <v-icon>mdi-card-account-details</v-icon>
-          </template>
-        </v-text-field>
-        <v-text-field
+          style="width: 15%;"
+          class="mr-4"
+        ></v-select>
+        <v-select
           v-model="item.value.year"
+          :items="yearOptions"
           label="Year"
+          style="width: 15%;"
+          prepend-icon="mdi-calendar"
         >
-          <template #prepend>
-            <v-icon>mdi-calendar</v-icon>
-          </template>
-        </v-text-field>
+        </v-select>
       </div>
       <v-select
         v-model="item.value.athletics"
@@ -252,6 +259,22 @@ const emits = defineEmits([
   'unselect'
 ])
 
+const statusOptions = {
+  'Active': 'account-check',
+  'Inactive': 'account-remove',
+  'Graduated': 'school',
+  'Dropped': 'account-off',
+  'On Hold': 'account-clock',
+  'Pending': 'account-question',
+}
+
+const yearOptions = [
+  'Freshman',
+  'Sophomore',
+  'Junior',
+  'Senior',
+]
+
 function reqDeleteStudent() {
   if (!canDelete.value) return
   emits('delete')
@@ -270,6 +293,13 @@ const moduleListEmpty = ref(false)
 const canDelete = computed(() => {
   return moduleListEmpty.value || !props.item.value.id
 })
+
+function sendEmail() {
+  const { name, email } = props.item.value
+  const subject = `Hello ${name.split(' ')[0]}!`
+  const body = `Hi ${name.split(' ')[0]},%0D%0A%0D%0A`
+  window.open(`mailto:${email}?subject=${subject}&body=${body}`)
+}
 
 function studentIdRule(studentId: string) {
   return parseInt(studentId) && studentId.length === 7 || 'Invalid Student ID'          
