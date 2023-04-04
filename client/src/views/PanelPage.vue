@@ -332,15 +332,19 @@ const displayItems = computed(() => {
 })
 
 async function silentFetch() {
-  // needs to keep sorted order as defined by SortPanel
   const data = await getEvery(panel.value.sheetRange)
-  items.value = await panel.value.mappers.map(data)
+  const incomingItems = await panel.value.mappers.map(data)
+  items.value = items.value.map(item => {
+    const incomingItem = incomingItems.find(i => i.row === item.row)
+    if (!incomingItem) return item
+    return incomingItem
+  })
 }
 
 // 1s just to impress, 5s is probably better
 const autoSyncInterval = setInterval(() => {
   if (autoSync.value && pageVisible.value) silentFetch()
-}, 5000)
+}, 2000)
 
 onUnmounted(() => {
   clearInterval(autoSyncInterval)
