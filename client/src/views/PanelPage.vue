@@ -123,7 +123,6 @@
           >
             <div
               v-show="autoSync"
-              class="mb-1"
               style="width: 25px; height: 25px; border-radius: 50px; background: #ff0500;"
             ></div>
             <span 
@@ -135,6 +134,19 @@
               style="transform: translateY(-10px);"
               hide-details
             ></v-switch>
+            <div 
+              style="transform: translateY(-12px);"
+              class="mb-2"
+            >
+              <v-btn 
+                icon
+                @click="$router.push({ name: 'registrar' })"
+              >
+                <v-icon>
+                  mdi-list-box-outline
+                </v-icon>
+              </v-btn>
+            </div>
           </div>
         </v-sheet>
         <v-sheet 

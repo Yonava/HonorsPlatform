@@ -2,6 +2,7 @@ import { createWebHistory, createRouter } from 'vue-router'
 import Panel from '../views/PanelPage.vue'
 import Leaderboard from '../views/LeaderboardPage.vue'
 import Auth from '../views/AuthPage.vue'
+import Registrar from '../views/BuildRegistrarList.vue'
 
 const routes = [
   {
@@ -20,6 +21,11 @@ const routes = [
     component: Auth
   },
   {
+    path: '/registrar',
+    name: 'registrar',
+    component: Registrar
+  },
+  {
     path: '/leaderboard',
     name: 'leaderboard',
     component: Leaderboard
@@ -32,8 +38,13 @@ const router = createRouter({
   routes
 })
 
+const sensitiveRoutes = [
+  'panel', 
+  'registrar'
+]
+
 router.beforeEach(async (to, from) => {
-  if (to.name !== 'panel') return
+  if (!sensitiveRoutes.includes(to.name as string)) return
   const token = localStorage.getItem('token') ?? ''
   const res = await fetch(`/api/auth/${encodeURIComponent(token)}`)
   const data = await res.json()
