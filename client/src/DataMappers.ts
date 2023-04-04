@@ -45,7 +45,7 @@ export async function unmapStudents(students: Student[]): Promise<string[][]> {
       student.id,
       student.name,
       student.email,
-      student.points.toString(),
+      student.points ? student.points.toString() : '0',
       student.activeStatus,
       student.year,
       student.athletics,

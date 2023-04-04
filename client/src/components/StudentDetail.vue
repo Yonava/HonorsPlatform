@@ -6,9 +6,13 @@
     <div style="width: 55%;">
       <p
         v-if="item.value.id"
-        style="font-weight: 200"
+        style="font-weight: 200;"
       >
         {{ item.value.id }}
+        <v-tooltip
+          activator="parent"
+          location="start"
+        >Student ID</v-tooltip>
       </p>
       <v-dialog 
         v-else
