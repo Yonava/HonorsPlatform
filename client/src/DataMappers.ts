@@ -38,7 +38,7 @@ export async function mapStudents(sheetData: string[][]): Promise<Student[]> {
 
 export async function unmapStudents(students: Student[]): Promise<string[][]> {
   const headerRow = headerRowMemo[Range.STUDENTS] ?? await getHeaderRow(Range.STUDENTS);
-  const categories = headerRow.slice(7);
+  const categories = headerRow.slice(8);
   return students.map((student: Student) => {
     const misc = categories.map((category: string) => student.misc[category] ?? '');
     return [
