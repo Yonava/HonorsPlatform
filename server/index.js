@@ -51,7 +51,7 @@ app.get("/range/:range", async (req, res) => {
     const data = await sheetInstance.getRange(range);
     // sheets API return undefined when sheet is empty
     if (!data) {
-      console.log('no data')
+      console.log(`No data found in range ${range}`)
       res.json([[]]);
       return;
     }
