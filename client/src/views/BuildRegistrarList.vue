@@ -14,6 +14,7 @@
       </h1>
       <v-text-field
         v-model="term"
+        @keyup.enter="generateRegistrarList"
         class="mt-6"
         variant="outlined"
         label="Term"
@@ -27,7 +28,7 @@
         block
       >{{ button.text }}</v-btn>
       <v-btn
-        v-if="success"
+        v-if="hasSucceeded"
         size="small"
         href="https://docs.google.com/spreadsheets/d/1bW-aQRn-GAbTsNkV2VB9xtBFT3n-LPrSJXua_NA2G6Y/edit#gid=810473563"
         target="_blank"
@@ -36,13 +37,21 @@
       >
         view new registrar list
       </v-btn>
+      <div class="mt-5 d-flex flex-column jusify-center align-center">
+        <v-btn
+          @click="$router.push({ name: 'panel' })"
+          color="red"
+          size="small"
+          variant="text"
+        >Return To Panel</v-btn>
+      </div>
     </v-sheet>
   </v-sheet>
 </template>
 
 <script setup lang="ts">
 import { Range, getEvery, replaceRange } from "../SheetsAPI";
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import { useRoute } from "vue-router";
 
 const route = useRoute();
@@ -50,6 +59,7 @@ const sheet = ref(null);
 const loading = ref(false);
 const term = ref("");
 const success = ref(false);
+const hasSucceeded = ref(false);
 
 async function generateRegistrarList() {
   loading.value = true;
@@ -61,7 +71,7 @@ async function generateRegistrarList() {
   });
   const output = modulesInTerm.map(module => {
     let student = students.find(student => student[0] === module[0]);
-    student ??= ["Data Not Available", "Data Not Available", "Data Not Available"];
+    student ??= ["", "", ""];
     return [
       student[0],
       student[1],
@@ -79,6 +89,7 @@ async function generateRegistrarList() {
   await replaceRange(Range.REGISTRAR_LIST, output);
   loading.value = false;
   success.value = true;
+  hasSucceeded.value = true;
 }
 
 const button = computed(() => {
@@ -92,5 +103,14 @@ const button = computed(() => {
     text: "Generate",
     color: "blue-darken-2",
   };
+});
+
+watch(success, (val) => {
+  if (val) {
+    const successTimeout = setTimeout(() => {
+      success.value = false;
+      clearTimeout(successTimeout);
+    }, 6000);
+  }
 });
 </script>
