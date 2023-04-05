@@ -40,8 +40,16 @@ export function switchSortOptions(panel: PanelType) {
             desc: 'mdi-sort-numeric-descending'
           },
           func: {
-            asc: (a: Student, b: Student) => a.points - b.points,
-            desc: (a: Student, b: Student) => b.points - a.points
+            asc: (a: Student, b: Student) => {
+              const A = a.points || 0;
+              const B = b.points || 0;
+              return A - B;
+            },
+            desc: (a: Student, b: Student) => {
+              const A = a.points || 0;
+              const B = b.points || 0;
+              return B - A;
+            }
           }
         },
         { 
