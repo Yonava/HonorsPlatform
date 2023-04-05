@@ -2,6 +2,7 @@ const express = require("express")
 const GoogleSheet = require("./GoogleSheet.js");
 const openAccessAPI = require("./openAccessAPI.js");
 const { google } = require('googleapis');
+const cors = require("cors")
 
 const { OAuth2 } = google.auth;
 
@@ -12,6 +13,7 @@ const scope = 'https://www.googleapis.com/auth/spreadsheets';
 
 const app = express();
 app.use(express.json());
+app.use(cors())
 let sheetInstance;
 
 app.use("/open", openAccessAPI);

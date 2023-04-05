@@ -7,6 +7,7 @@ export default defineConfig({
     outDir: '../server/public'
   },
   server: {
+    port: 5177,
     proxy: {
       '/api': {
         target: 'https://honors.herokuapp.com',
