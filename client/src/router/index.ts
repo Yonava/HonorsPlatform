@@ -44,7 +44,9 @@ const sensitiveRoutes = [
 ]
 
 router.beforeEach(async (to, from) => {
-  if (!sensitiveRoutes.includes(to.name as string)) return
+  const name = to.name as string ?? 'Honors Program'
+  document.title = `${name[0].toUpperCase()}${name.slice(1)} - Honors Program`
+  if (!sensitiveRoutes.includes(name)) return
   const token = localStorage.getItem('token') ?? ''
   const res = await fetch(`/api/auth/${encodeURIComponent(token)}`)
   const data = await res.json()

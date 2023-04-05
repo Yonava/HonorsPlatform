@@ -256,11 +256,12 @@ provide('activePanel', panel)
 
 const changePanel = (panelType: PanelType) => {
   panel.value = switchPanel(panelType)
+  document.title = panel.value.title + ' - Honors Program'
   filterQuery.value = ''
   router.push({ 
     query: { 
       type: panelType 
-    } 
+    }
   })
 }
 

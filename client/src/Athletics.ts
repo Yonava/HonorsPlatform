@@ -5,7 +5,7 @@ export const athleticOptions = {
   'Bowling': 'bowling',
   'Cheerleading': 'bullhorn-variant',
   'Cross Country': 'run',
-  'Dance': 'dance-pole',
+  'Dance': 'human-female-dance',
   'Fencing': 'fencing',
   'Field Hockey': 'hockey-sticks',
   'Football': 'football',

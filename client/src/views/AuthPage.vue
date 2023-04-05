@@ -50,7 +50,8 @@
             Your internet is garbage
           </li>
           <li>
-            You attempted to perform an operation you are not authorized to perform (i.e. generating registrar reports)
+            You attempted to perform an operation you are 
+            not authorized to perform (i.e. generating registrar reports)
           </li>
           <li>
             Dr. Matthews doesn't like you
