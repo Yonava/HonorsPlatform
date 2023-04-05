@@ -98,3 +98,11 @@ export async function moveRowToRange(fromRange: Range, toRange: Range, row: numb
     catchAction();
   }
 }
+
+export async function replaceRange(range: Range, data: string[][]) {
+  try {
+    await axios.put(`/api/range/${range}`, data);
+  } catch {
+    catchAction();
+  }
+}

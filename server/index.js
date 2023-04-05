@@ -76,6 +76,19 @@ app.put("/range/:range/:row", async (req, res) => {
   }
 });
 
+app.put("/range/:range", async (req, res) => {
+  try {
+    const { range } = req.params;
+    const data = req.body;
+    await sheetInstance.replaceRange(range, data);
+    res.json({ success: true });
+  } catch(e) {
+    console.log(e);
+    GoogleSheet.instance = null;
+    res.status(401).json({ error: 'Forbidden' });
+  }
+});
+
 app.delete("/range/:range/:row", async (req, res) => {
   try {
     const { range, row } = req.params;

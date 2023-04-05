@@ -73,4 +73,20 @@ export default class GoogleSheet {
       }
     });
   }
+
+  async replaceRange(range, data) {
+    await this.sheets.spreadsheets.values.clear({
+      spreadsheetId: this.spreadsheetId,
+      range,
+    });
+    
+    await this.sheets.spreadsheets.values.update({
+      spreadsheetId: this.spreadsheetId,
+      range,
+      valueInputOption: 'RAW',
+      resource: {
+        values: data
+      }
+    });
+  }
 }
