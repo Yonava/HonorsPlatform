@@ -1,7 +1,7 @@
-import express from "express";
-import GoogleSheet from "./GoogleSheet.js";
-import { google } from 'googleapis';
-import openAccessAPI from "./openAccessAPI.js";
+const express = require("express")
+const GoogleSheet = require("./GoogleSheet.js");
+const openAccessAPI = require("./openAccessAPI.js");
+const { google } = require('googleapis');
 
 const { OAuth2 } = google.auth;
 

@@ -1,5 +1,5 @@
-import OpenSheet from "./OpenSheet.js";
-import express from "express";
+const OpenSheet = require("./OpenSheet.js");
+const express = require("express");
 const router = express.Router();
 
 const sheetInstance = async () => await OpenSheet.getInstance();
@@ -34,4 +34,4 @@ router.get("/points", async (req, res) => {
   }
 });
 
-export default router;
+module.exports = router

@@ -1,7 +1,7 @@
-import { google } from 'googleapis';
-import * as path from 'path';
+const { google } = require('googleapis');
+const path = require('path');
 
-export default class OpenSheet {
+module.exports = class OpenSheet {
   spreadsheetId = '1bW-aQRn-GAbTsNkV2VB9xtBFT3n-LPrSJXua_NA2G6Y';
   sheets;
   static instance;

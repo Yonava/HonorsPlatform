@@ -1,6 +1,6 @@
-import { google } from 'googleapis';
+const { google } = require("googleapis")
 
-export default class GoogleSheet {
+module.exports = class GoogleSheet {
   spreadsheetId = '1bW-aQRn-GAbTsNkV2VB9xtBFT3n-LPrSJXua_NA2G6Y';
   sheets;
   static instance;
