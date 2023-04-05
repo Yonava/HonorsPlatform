@@ -89,7 +89,7 @@ export function switchSortOptions(panel: PanelType) {
               return yearMap[b.year] - yearMap[a.year];
             }
           },
-        }
+        },
       ];
     case PanelType.GRADUATES:
       return [

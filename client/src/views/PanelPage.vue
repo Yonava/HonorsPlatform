@@ -202,7 +202,7 @@
         </v-sheet>
       </div>
       <img 
-        src="../assets/honorsLogo.png"
+        src="../assets/honorsLogo.jpeg"
         class="honors-logo"
       >
     </v-main>
@@ -449,8 +449,10 @@ img.honors-logo {
   position: absolute; 
   bottom: 0; 
   right: 0; 
+  width: 225px;
   mix-blend-mode: multiply; 
-  margin: 20px;
+  margin: 10px;
+  margin-right: 20px
 }
 
 @keyframes fade-in-out {
