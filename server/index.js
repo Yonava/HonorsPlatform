@@ -7,8 +7,7 @@ const { OAuth2 } = google.auth;
 
 const clientId = '190006346508-fsioaathe0vo6ou4c46dssgq3vnr0kk9.apps.googleusercontent.com';
 const clientSecret = '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';
-// TODO: replace with production url
-const redirectUri = 'http://localhost:5177/auth';
+const redirectUri =  process.env.NODE_ENV ? 'https://honors.herokuapp.com/auth' : 'http://localhost:5177/auth';
 const scope = 'https://www.googleapis.com/auth/spreadsheets';
 
 const app = express();
