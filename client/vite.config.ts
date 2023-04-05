@@ -10,7 +10,7 @@ export default defineConfig({
     port: 5177,
     proxy: {
       '/api': {
-        target: 'http://localhost:1010',
+        target: 'https://honors.herokuapp.com',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, '')
       }
