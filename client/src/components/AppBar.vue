@@ -84,6 +84,12 @@
           ></v-icon>
           Registrar List
         </v-btn>
+        <SortPanel 
+          class="mt-5"
+          @update="$emit('updateItems', $event)"
+          :items="items"
+          :panelType="panel.type"
+        />
       </div>
     </v-navigation-drawer>
     <v-app-bar
@@ -131,7 +137,7 @@
           }"
           class="ml-2"
         >
-          ({{ itemLength }})
+          ({{ displayItemsLength }})
         </p>
       </div>
       <input
@@ -244,6 +250,7 @@ import { SheetItem } from '../SheetTypes'
 import { inject, ref, computed } from 'vue'
 import type { Ref } from 'vue'
 import { useDisplay } from 'vuetify'
+import SortPanel from './SortPanel.vue'
 import Announcements from './AnnouncementMenu.vue'
 
 const autoSync = inject('autoSync') as Ref<boolean>
@@ -260,13 +267,15 @@ const props = defineProps<{
   panel: Panel<SheetItem>,
   modelValue: string
   loading: boolean,
-  itemLength: number
+  displayItemsLength: number,
+  items: SheetItem[]
 }>();
 
 const emit = defineEmits([
   'fetchData',
   'showAddModal',
   'changePanel',
+  'updateItems',
   'update:modelValue'
 ])
 

@@ -8,9 +8,11 @@
       @fetchData="fetchData"
       @showAddModal="showAddModal = true"
       @changePanel="changePanel($event)"
+      @updateItems="items = $event"
       :panel="panel"
       :loading="loadingItems"
-      :itemLength="displayItems.length"
+      :displayItemsLength="displayItems.length"
+      :items="items"
     />
     <v-main>
       <div 

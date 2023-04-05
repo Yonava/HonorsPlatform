@@ -16,9 +16,10 @@
       v-for="(sort, index) in sortOptions"
       :key="sort"
       @click="sortItems(sort, index)"
-      class="sort-box d-flex justify-center align-center flex-column px-2"
+      class="mt-1 sort-box d-flex justify-center align-center flex-column px-2"
       :style="{
-        background: activeSort === sort ? 'rgba(255, 255, 255, 0.2)' : ''
+        background: activeSort === sort ? 'rgba(255, 255, 255, 0.2)' : '',
+        borderRadius: '10px'
       }"
     >
       <v-icon>
