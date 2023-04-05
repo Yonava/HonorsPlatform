@@ -4,7 +4,7 @@
       v-model="navDrawer"
       temporary
       location="end"
-      :color="`${panel.color}-lighten-4`"
+      :color="`${panel.color}-darken-2`"
       style="width: 75%; max-width: 350px; height: 100vh; position: fixed; top: 0;"
     >
       <div class="pa-4">
@@ -12,13 +12,41 @@
           class="d-flex flex-row"
           style="width: 100%"
         >
+          <div 
+            class="px-5 d-flex flex-row align-center"
+            :style="{
+              background: autoSyncDivColor, 
+              color: 'rgb(240, 240, 240)',
+              borderRadius: '10px',
+              transition: '300ms'
+            }" 
+          >
+            <span class="mr-4">
+              Auto Sync
+            </span>
+            <v-switch
+              v-model="autoSync"
+              color="red-lighten-4" 
+              hide-details
+            ></v-switch>
+          </div>
           <v-spacer></v-spacer>
           <Announcements />
+          <v-btn 
+            icon
+            class="ml-3"
+          >
+            <v-icon 
+              @click="$router.push({ name: 'leaderboard' })"
+              icon="mdi-podium" 
+              size="large"
+            ></v-icon>
+          </v-btn>
         </div>
         <v-btn
           @click="emit('showAddModal')"
-          :color="`${panel.color}-darken-2`"
-          class="mt-3"
+          style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240);"
+          class="mt-5"
           block
         >
           <v-icon 
@@ -31,7 +59,7 @@
         <v-btn
           @click="$emit('fetchData')"
           :loading="loading"
-          :color="`${panel.color}-darken-2`"
+          style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240);"
           class="mt-3"
           block
         >
@@ -41,6 +69,20 @@
             class="mr-2"
           ></v-icon>
           Refresh Data
+        </v-btn>
+        <v-btn
+          @click="$router.push({ name: 'registrar' })"
+          :loading="loading"
+          style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240);"
+          class="mt-3"
+          block
+        >
+          <v-icon 
+            icon="mdi-list-box-outline" 
+            size="large"
+            class="mr-2"
+          ></v-icon>
+          Registrar List
         </v-btn>
       </div>
     </v-navigation-drawer>
@@ -247,6 +289,14 @@ const panelTitle = computed(() => {
   if (lgAndUp.value || title.split(' ').length <= 1) return title
   else {
     return title.split(' ')[1]
+  }
+})
+
+const autoSyncDivColor = computed(() => {
+  if (autoSync.value) {
+    return '#c80000'
+  } else {
+    return 'rgba(0, 0, 0, 0.4)'
   }
 })
 </script>
