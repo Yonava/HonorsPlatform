@@ -4,7 +4,6 @@
       <v-btn 
         v-bind="props"
         icon
-        class="ml-3"
       >
         <v-badge 
           v-if="!read && announcements.length > 0"

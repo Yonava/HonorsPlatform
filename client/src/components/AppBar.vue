@@ -1,135 +1,165 @@
 <template>
-  <v-app-bar
-    :color="`${panel.color}-darken-2`"
-    class="px-5"
-  >
-    <div class="d-flex align-center">
-      <v-icon 
-        :icon="panel.icon" 
-        size="x-large" 
-        class="mr-2"
-      ></v-icon>
-      <v-menu>
-        <template v-slot:activator="{ props }">
-          <h1 
-            v-bind="props"
-            class="title"
-          >
-            {{ panel.title }}
-          </h1>
-        </template>
-
-        <v-list>
-          <v-list-item
-            v-for="type in PanelType"
-            :key="type"
-            @click="$emit('changePanel', type)"
-            class="type-list-item"
-          >
-            <v-list-item-title
-              :style="typeListStyle(type)"
-              class="type-list-text"
-            >
-              <v-icon>
-                {{ switchPanel(type).icon }}
-              </v-icon>
-              {{ switchPanel(type).title }}
-            </v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </v-menu>
-      <p
-        :style="{
-          opacity: loading ? 0 : 1,
-        }"
-        class="ml-2"
-      >
-        ({{ itemLength }})
-      </p>
-    </div>
-    <input
-      v-if="mdAndUp"
-      @input="updateValue"
-      :value="modelValue"
-      :placeholder="filterPlaceholder"
-      class="search-input"
-      type="text"
+  <div>
+    <v-navigation-drawer
+      v-model="navDrawer"
+      temporary
+      location="end"
+      style="width: 75%; max-width: 350px; height: 100vh; position: fixed; top: 0;"
     >
-    <v-spacer></v-spacer>
-    <span 
-      v-if="autoSync"
-      class="d-flex align-center ml-5 px-2"
-      style="background: red; border-radius: 5px; font-weight: 700; cursor: default;"
+      <v-sheet color="white">
+        <h1>Navigate!</h1>
+      </v-sheet>
+    </v-navigation-drawer>
+    <v-app-bar
+      :color="`${panel.color}-darken-2`"
+      class="px-5"
     >
-      <div class="live-emblem fade-animate mr-2"></div>
-      LIVE
-      <v-tooltip
-        activator="parent"
-        location="bottom"
-      >Auto Sync Is Enabled</v-tooltip>
-    </span>
-    <v-btn 
-      v-if="smAndUp"
-      @click="$emit('showAddModal')"
-      class="ml-3"
-      style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240);"
-    >
-      <v-icon 
-        icon="mdi-plus" 
-        size="large" 
-      ></v-icon>
-      <span 
-        v-if="mdAndUp"
-        class="ml-2"
-      >
-        Add {{ panel.title.slice(0, -1) }}
-      </span>
-    </v-btn>
-    <v-btn 
-      v-if="smAndUp"
-      @click="$emit('fetchData')"
-      :loading="loading"
-      class="ml-3"
-      style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240);"
-    >
-      <v-icon 
-        icon="mdi-refresh" 
-        size="large" 
-      ></v-icon>
-      <span 
-        v-if="mdAndUp"
-        class="ml-2"
-      >
-        Refresh Data
-      </span>
-    </v-btn>
-    <div 
-      v-if="smAndUp"
-      class="d-flex flex-row align-center"
-    >
-      <Announcements />
-      <v-btn icon>
+      <div class="d-flex align-center">
         <v-icon 
-          @click="$router.push({ name: 'leaderboard' })"
-          icon="mdi-podium" 
+          :icon="panel.icon" 
+          size="x-large" 
+          class="mr-2"
+        ></v-icon>
+        <v-menu>
+          <template v-slot:activator="{ props }">
+            <h1 
+              v-bind="props"
+              class="title"
+            >
+              {{ panel.title }}
+            </h1>
+          </template>
+
+          <v-list>
+            <v-list-item
+              v-for="type in PanelType"
+              :key="type"
+              @click="$emit('changePanel', type)"
+              class="type-list-item"
+            >
+              <v-list-item-title
+                :style="typeListStyle(type)"
+                class="type-list-text"
+              >
+                <v-icon>
+                  {{ switchPanel(type).icon }}
+                </v-icon>
+                {{ switchPanel(type).title }}
+              </v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+        <p
+          :style="{
+            opacity: loading ? 0 : 1,
+          }"
+          class="ml-2"
+        >
+          ({{ itemLength }})
+        </p>
+      </div>
+      <input
+        v-if="mdAndUp"
+        @input="updateValue"
+        :value="modelValue"
+        :placeholder="filterPlaceholder"
+        class="search-input"
+        type="text"
+      >
+      <v-spacer></v-spacer>
+      <span 
+        v-if="autoSync"
+        class="d-flex align-center ml-5 px-2"
+        style="background: red; border-radius: 5px; font-weight: 700; cursor: default;"
+      >
+        <div class="live-emblem fade-animate mr-2"></div>
+        LIVE
+        <v-tooltip
+          activator="parent"
+          location="bottom"
+        >Auto Sync Is Enabled</v-tooltip>
+      </span>
+      <v-btn 
+        v-if="smAndUp"
+        @click="$emit('showAddModal')"
+        class="ml-3"
+        style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240);"
+      >
+        <v-icon 
+          icon="mdi-plus" 
+          size="large" 
+        ></v-icon>
+        <span 
+          v-if="mdAndUp"
+          class="ml-2"
+        >
+          Add {{ panel.title.slice(0, -1) }}
+        </span>
+      </v-btn>
+      <v-btn 
+        v-if="smAndUp"
+        @click="$emit('fetchData')"
+        :loading="loading"
+        class="ml-3"
+        style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240);"
+      >
+        <v-icon 
+          icon="mdi-refresh" 
+          size="large" 
+        ></v-icon>
+        <span 
+          v-if="mdAndUp"
+          class="ml-2"
+        >
+          Refresh Data
+        </span>
+      </v-btn>
+      <v-btn 
+        v-if="!mdAndUp"
+        class="ml-3"
+        icon
+      >
+        <v-icon 
+          @click="searchMode = true"
+          icon="mdi-magnify" 
           size="large"
         ></v-icon>
         <v-tooltip
           activator="parent"
           location="bottom"
-        >View Points Leaderboard</v-tooltip>
+        >Search {{ panel.title }}</v-tooltip>
       </v-btn>
-    </div>
-    <div v-else>
-      <v-btn icon>
-        <v-icon 
-          @click="openMenu"
-          icon="mdi-menu" 
-          size="large"
-        ></v-icon>
-      </v-btn>
-    </div>
-  </v-app-bar>
+      <div 
+        v-if="smAndUp"
+        class="pr-7 d-flex flex-row align-center"
+      >
+        <Announcements />
+        <v-btn icon>
+          <v-icon 
+            @click="$router.push({ name: 'leaderboard' })"
+            icon="mdi-podium" 
+            size="large"
+          ></v-icon>
+          <v-tooltip
+            activator="parent"
+            location="bottom"
+          >View Points Leaderboard</v-tooltip>
+        </v-btn>
+      </div>
+      <div 
+        v-else
+        class="pr-5"
+      >
+        <v-btn icon>
+          <v-icon 
+            @click="navDrawer = true"
+            icon="mdi-menu" 
+            size="large"
+          ></v-icon>
+        </v-btn>
+      </div>
+    </v-app-bar>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -141,6 +171,8 @@ import { useDisplay } from 'vuetify'
 import Announcements from './AnnouncementMenu.vue'
 
 const autoSync = inject('autoSync') as Ref<boolean>
+const navDrawer = ref(false)
+const searchMode = ref(false)
 
 const { mdAndUp, smAndUp } = useDisplay()
 
@@ -173,7 +205,7 @@ const filterPlaceholder = computed(() => {
 })
 
 function openMenu() {
-  
+
 }
 </script>
 
