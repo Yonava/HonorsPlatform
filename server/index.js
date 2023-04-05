@@ -17,7 +17,7 @@ app.use(bodyParser.json());
 app.use(cors());
 let sheetInstance;
 
-app.use("/open", openAccessAPI);
+app.use("/api/open", openAccessAPI);
 
 function getAuthUrl() {
   const auth = new OAuth2(clientId, clientSecret, redirectUri);
@@ -33,11 +33,11 @@ app.get('/api', (req, res) => {
   res.send('API is responding')
 })
 
-app.get('/auth/url', (req, res) => {
+app.get('/api/auth/url', (req, res) => {
   res.json({ url: getAuthUrl() });
 });
 
-app.get('/auth/:oauthtoken', async (req, res) => {
+app.get('/api/auth/:oauthtoken', async (req, res) => {
   const { oauthtoken } = req.params;
   const auth = new OAuth2(clientId, clientSecret, redirectUri);
   try {
@@ -52,7 +52,7 @@ app.get('/auth/:oauthtoken', async (req, res) => {
   res.json({ token_received: true });
 })
 
-app.get("/range/:range", async (req, res) => {
+app.get("/api/range/:range", async (req, res) => {
   try {
     const { range } = req.params;
     const data = await sheetInstance.getRange(range);
@@ -70,7 +70,7 @@ app.get("/range/:range", async (req, res) => {
   }
 });
 
-app.put("/range/:range/:row", async (req, res) => {
+app.put("/api/range/:range/:row", async (req, res) => {
   try {
     const { range, row } = req.params;
     const data = req.body;
@@ -83,7 +83,7 @@ app.put("/range/:range/:row", async (req, res) => {
   }
 });
 
-app.put("/range/:range", async (req, res) => {
+app.put("/api/range/:range", async (req, res) => {
   try {
     const { range } = req.params;
     const data = req.body;
@@ -96,7 +96,7 @@ app.put("/range/:range", async (req, res) => {
   }
 });
 
-app.delete("/range/:range/:row", async (req, res) => {
+app.delete("/api/range/:range/:row", async (req, res) => {
   try {
     const { range, row } = req.params;
     await sheetInstance.clearByRow(range, row);
@@ -108,7 +108,7 @@ app.delete("/range/:range/:row", async (req, res) => {
   }
 });
 
-app.post("/range/:range", async (req, res) => {
+app.post("/api/range/:range", async (req, res) => {
   try {
     const { range } = req.params;
     const data = req.body;
