@@ -11,7 +11,7 @@
         <v-tooltip
           activator="parent"
           location="bottom"
-        >{{ 'Registered For ' + item.athletics }}</v-tooltip>
+        >{{ 'Athlete: ' + item.athletics }}</v-tooltip>
       </div>
       <div style="font-weight: 900; font-size: 1.5em; line-height: 1">
         {{ item.name || '(No Name)' }}
@@ -75,8 +75,8 @@
           </v-icon>
           <v-tooltip
             activator="parent"
-            location="start"
-          >{{ points }} Point{{ item.points === 1 ? '' : 's' }}</v-tooltip>
+            location="bottom"
+          >Points</v-tooltip>
         </div>
       </div>
     </div>
