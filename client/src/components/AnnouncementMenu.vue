@@ -19,6 +19,10 @@
         <v-icon v-else>
           mdi-message-alert{{ active ? '' : '-outline' }}
         </v-icon>
+        <v-tooltip
+          activator="parent"
+          location="bottom"
+        >{{ announcements.length && !read ? `Unread Announcements (${announcements.length})` : 'No New Annoucements' }}</v-tooltip>
       </v-btn>
     </template>
 

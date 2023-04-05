@@ -13,10 +13,20 @@
           location="bottom"
         >{{ item.courseCode + ' In Progress For Over 1 Year' }}</v-tooltip>
       </div>
-      <div style="font-weight: 900; font-size: 1.5em; line-height: 1">
-        {{ item.courseCode || '(No Course Code)' }}
-        <span style="font-weight: 300; font-size: 0.6em">
+      <div style="font-weight: 900; font-size: 1.5em; line-height: 1.25">
+        <span class="mr-2">
+          {{ item.courseCode || '(No Course)' }}
+          <v-tooltip
+            activator="parent"
+            location="bottom"
+          >Course Code</v-tooltip>
+        </span>
+        <span style="font-weight: 300; font-size: 0.6em;">
           {{ item.term || '(No Term)' }}
+          <v-tooltip
+            activator="parent"
+            location="bottom"
+          >Term</v-tooltip>
         </span>
       </div>
       <v-spacer></v-spacer>
@@ -36,7 +46,7 @@
         <span>{{ docuSignStatus.text }}</span>
         <v-tooltip
           activator="parent"
-          location="end"
+          location="bottom"
         >{{ docuSignStatus.tooltip }}</v-tooltip>
       </v-sheet>
     </div>
@@ -45,25 +55,37 @@
       style="font-size: 0.9em;"
     >
       <div class="d-flex flex-row">
-        <v-icon 
-          class="mr-1"
-          style="opacity: 0.75"
-        >
-          mdi-human-male-board
-        </v-icon>
-        <p>
-          {{ item.instructor || '(No Instructor)' }} 
-        </p>
+        <div class="d-flex flew-row align-center">
+          <v-icon 
+            class="mr-1"
+            style="opacity: 0.75"
+          >
+            mdi-human-male-board
+          </v-icon>
+          <p>
+            {{ item.instructor || '(No Instructor)' }} 
+          </p>
+          <v-tooltip
+            activator="parent"
+            location="bottom"
+          >Instructor</v-tooltip>
+        </div>
         <v-spacer></v-spacer>
-        <p>
-          {{ item.studentId || '(No Student ID)' }}
-        </p>
-        <v-icon 
-          class="ml-1"
-          style="opacity: 0.75"
-        >
-          mdi-card-account-details
-        </v-icon>
+        <div class="d-flex flew-row align-center">
+          <p>
+            {{ item.studentId || '(No Student ID)' }}
+          </p>
+          <v-icon 
+            class="ml-1"
+            style="opacity: 0.75"
+          >
+            mdi-card-account-details
+          </v-icon>
+          <v-tooltip
+            activator="parent"
+            location="bottom"
+          >Student ID</v-tooltip>
+        </div>
       </div>
     </div>
   </div>

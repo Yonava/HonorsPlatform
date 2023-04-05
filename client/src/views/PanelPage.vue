@@ -61,10 +61,14 @@
       <span 
         v-if="autoSync"
         class="d-flex align-center ml-5 px-2"
-        style="background: red; border-radius: 5px; font-weight: 700;"
+        style="background: red; border-radius: 5px; font-weight: 700; cursor: default;"
       >
         <div class="live-emblem fade-animate mr-2"></div>
         LIVE
+        <v-tooltip
+          activator="parent"
+          location="bottom"
+        >Auto Sync Is Enabled</v-tooltip>
       </span>
       <v-btn 
         @click="showAddModal = true"
@@ -98,6 +102,10 @@
           icon="mdi-podium" 
           size="large"
         ></v-icon>
+        <v-tooltip
+          activator="parent"
+          location="bottom"
+        >View Points Leadboard</v-tooltip>
       </v-btn>
     </v-app-bar>
     <v-main>

@@ -32,7 +32,6 @@
       </v-text-field>
       <v-text-field
         v-model="item.value.term"
-        :rules="[(v) => termValidator(v) || 'Potentially invalid term']"
         label="Term"
       >
         <template #prepend>
@@ -103,7 +102,6 @@
 import type { Ref } from 'vue'
 import { CompletedModule } from '../SheetTypes'
 import UpdateButton from './UpdateButton.vue'
-import { termValidator } from '../TermValidator'
 
 const props = defineProps<{
   item: Ref<CompletedModule>
