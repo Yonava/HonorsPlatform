@@ -15,6 +15,7 @@
       <v-text-field
         v-model="term"
         @keyup.enter="generateRegistrarList"
+        :rules="[(v) => termValidator(v) || 'Potentially invalid term']"
         class="mt-6"
         variant="outlined"
         label="Term"
@@ -52,9 +53,8 @@
 <script setup lang="ts">
 import { Range, getEvery, replaceRange } from "../SheetsAPI";
 import { ref, computed, watch } from "vue";
-import { useRoute } from "vue-router";
+import { termValidator } from "../TermValidator";
 
-const route = useRoute();
 const sheet = ref(null);
 const loading = ref(false);
 const term = ref("");
