@@ -39,15 +39,21 @@
         <p style="font-weight: 900;">
           This could be due to one of the following reasons:
         </p>
-        <ol class="ml-4">
-          <li>
-            Dr. Matthews doesn't like you
-          </li>
+        <ol 
+          class="ml-4" 
+          style="width: 400px;"
+        >
           <li>
             Your previous credentials have expired
           </li>
           <li>
             Your internet is garbage
+          </li>
+          <li>
+            You attempted to perform an operation you are not authorized to perform (i.e. generating registrar reports)
+          </li>
+          <li>
+            Dr. Matthews doesn't like you
           </li>
         </ol>
       </div>

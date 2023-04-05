@@ -103,6 +103,12 @@ export async function replaceRange(range: Range, data: string[][]) {
   try {
     await axios.put(`/api/range/${range}`, data);
   } catch {
-    catchAction();
+    router.push({
+      name: "auth",
+      query: {
+        hold: "true",
+      }
+    })
+    throw new Error("Access denied");
   }
 }
