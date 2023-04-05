@@ -12,13 +12,12 @@ const defaultConfig = {
 export default defineConfig(({ command, mode }) => {
   const devEnv = mode === 'development'
   const target = devEnv ? 'http://localhost:1010' : 'https://honors.herokuapp.com'
-  console.log(devEnv)
   return {
     ...defaultConfig,
     server: {
       proxy: {
         '/api': {
-          target,
+          target: 'https://honors.herokuapp.com',
           changeOrigin: devEnv,
           secure: !devEnv,
           rewrite: (path) => path.replace(/^\/api/, '')
