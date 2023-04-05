@@ -5,6 +5,10 @@
         {{ item.name || '(No Name)' }}
         <span style="font-weight: 300; font-size: 0.6em">
           {{ item.id || '(No ID)' }}
+          <v-tooltip
+            activator="parent"
+            location="bottom"
+          >ID</v-tooltip>
         </span>
       </div>
     </div>

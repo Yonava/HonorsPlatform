@@ -3,6 +3,10 @@
     <div class="d-flex flex-row">
       <div style="font-weight: 900; font-size: 1.5em; line-height: 1">
         {{ item.courseCode || '-' }}
+        <v-tooltip
+          activator="parent"
+          location="bottom"
+        >Course Code</v-tooltip>
       </div>
       <v-spacer></v-spacer>
       <v-sheet 
@@ -26,25 +30,37 @@
       style="font-size: 0.9em;"
     >
       <div class="d-flex flex-row">
-        <v-icon 
-          class="mr-1"
-          style="opacity: 0.75"
-        >
-          mdi-calendar
-        </v-icon>
-        <p>
-          {{ item.term || '(No Term)' }} 
-        </p>
+        <div class="d-flex flex-row align-center">
+          <v-icon 
+            class="mr-1"
+            style="opacity: 0.75"
+          >
+            mdi-calendar
+          </v-icon>
+          <p>
+            {{ item.term || '(No Term)' }} 
+          </p>
+          <v-tooltip
+            activator="parent"
+            location="bottom"
+          >Term</v-tooltip>
+        </div>
         <v-spacer></v-spacer>
-        <p>
-          {{ item.studentId || '(No Student ID)' }}
-        </p>
-        <v-icon 
-          class="ml-1"
-          style="opacity: 0.75"
-        >
-          mdi-card-account-details
-        </v-icon>
+        <div class="d-flex flex-row align-center">
+          <p>
+            {{ item.studentId || '(No Student ID)' }}
+          </p>
+          <v-icon 
+            class="ml-1"
+            style="opacity: 0.75"
+          >
+            mdi-card-account-details
+          </v-icon>
+          <v-tooltip
+            activator="parent"
+            location="bottom"
+          >Student ID</v-tooltip>
+        </div>
       </div>
     </div>
   </div>

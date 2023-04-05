@@ -11,7 +11,7 @@
         <v-tooltip
           activator="parent"
           location="bottom"
-        >{{ item.name + ' Is Registered For ' + item.athletics }}</v-tooltip>
+        >{{ 'Registered For ' + item.athletics }}</v-tooltip>
       </div>
       <div style="font-weight: 900; font-size: 1.5em; line-height: 1">
         {{ item.name || '(No Name)' }}
@@ -22,8 +22,8 @@
           {{ item.id || '(No ID)' }}
           <v-tooltip
             activator="parent"
-            location="end"
-          >{{ item.name + 's Student ID' }}</v-tooltip>
+            location="bottom"
+          >Student ID</v-tooltip>
         </span>
       </div>
       <v-spacer></v-spacer>
@@ -40,6 +40,10 @@
         }"
       >
         {{ item.activeStatus || 'No Status' }}
+        <v-tooltip
+          activator="parent"
+          location="bottom"
+        >Status</v-tooltip>
       </v-sheet>
     </div>
     <div 

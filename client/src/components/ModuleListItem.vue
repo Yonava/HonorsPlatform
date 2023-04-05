@@ -14,7 +14,7 @@
         >{{ item.courseCode + ' In Progress For Over 1 Year' }}</v-tooltip>
       </div>
       <div style="font-weight: 900; font-size: 1.5em; line-height: 1.25">
-        <span class="mr-2">
+        <span>
           {{ item.courseCode || '(No Course)' }}
           <v-tooltip
             activator="parent"
