@@ -22,7 +22,7 @@
         <v-tooltip
           activator="parent"
           location="bottom"
-        >{{ announcements.length && !read ? `Unread Announcements (${announcements.length})` : 'No New Annoucements' }}</v-tooltip>
+        >{{ tooltipText }}</v-tooltip>
       </v-btn>
     </template>
 
@@ -76,7 +76,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 import { getEvery, Range } from '../SheetsAPI'
 
 const announcements = ref<string[]>([])
@@ -99,6 +99,14 @@ async function fetchAnnouncements() {
     .filter(announcement => announcement)
   loading.value = false
 }
+
+const tooltipText = computed(() => {
+  if (announcements.value.length && !read.value) {
+    return `Unread Announcements (${announcements.value.length})`
+  } else {
+    return 'No New Annoucements'
+  }
+})
 
 fetchAnnouncements()
 </script>
