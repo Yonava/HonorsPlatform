@@ -21,12 +21,12 @@
             location="bottom"
           >Course Code</v-tooltip>
         </span>
-        <span style="font-weight: 300; font-size: 0.6em;">
+        <span :style="termStyle">
           {{ item.term || '(No Term)' }}
           <v-tooltip
             activator="parent"
             location="bottom"
-          >Term</v-tooltip>
+          >{{ termTooltip }}</v-tooltip>
         </span>
       </div>
       <v-spacer></v-spacer>
@@ -95,6 +95,7 @@
 import { computed } from 'vue'
 import { Module } from '../SheetTypes'
 import type { ComputedRef } from 'vue'
+import { termValidator } from '../TermValidator'
 
 const props = defineProps<{
   item: Module
@@ -168,6 +169,30 @@ const docuSignStatus: ComputedRef<DocuSignStatus> = computed(() => {
       text: 'Missing Start Date',
       color: 'purple',
       tooltip: 'DocuSign Missing Start Date'
+    }
+  }
+})
+
+const termTooltip = computed(() => {
+  if (termValidator(props.item.term)) {
+    return 'Term'
+  } else {
+    return `Term (Potentially Invalid)`
+  }
+})
+
+const termStyle = computed(() => {
+  if (termValidator(props.item.term)) {
+    return {
+      'font-weight': '300',
+      'font-size': '0.6em',
+      'color': 'black'
+    }
+  } else {
+    return {
+      'font-weight': '900',
+      'font-size': '0.6em',
+      'color': 'red'
     }
   }
 })
