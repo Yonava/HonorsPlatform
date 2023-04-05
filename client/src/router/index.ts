@@ -47,10 +47,20 @@ router.beforeEach(async (to, from) => {
   const name = to.name as string ?? 'Honors Program'
   document.title = `${name[0].toUpperCase()}${name.slice(1)} - Honors Program`
   if (!sensitiveRoutes.includes(name)) return
-  const token = localStorage.getItem('token') ?? ''
-  const res = await fetch(`/api/auth/${encodeURIComponent(token)}`)
-  const data = await res.json()
-  if (data.url) location.replace(data.url)
+  const token = localStorage.getItem('token') ?? 'null'
+  try {
+    const res = await fetch(`/api/auth/${encodeURIComponent(token)}`)
+    const data = await res.json()
+    if (data.url) location.replace(data.url)
+  } catch {
+    console.error('Failed to verify token')
+    router.push({
+      name: 'auth',
+      query: { 
+        hold: 'no_token'
+      }
+    })
+  }
 })
 
 export default router
