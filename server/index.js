@@ -3,7 +3,6 @@ const GoogleSheet = require("./GoogleSheet.js");
 const openAccessAPI = require("./openAccessAPI.js");
 const { google } = require('googleapis');
 const cors = require("cors");
-const bodyParser = require("body-parser");
 
 const { OAuth2 } = google.auth;
 
@@ -13,7 +12,7 @@ const redirectUri =  process.env.NODE_ENV ? 'https://honors.herokuapp.com/auth' 
 const scope = 'https://www.googleapis.com/auth/spreadsheets';
 
 const app = express();
-app.use(bodyParser.json());
+app.use(express.json());
 app.use(cors());
 let sheetInstance;
 
@@ -30,7 +29,7 @@ function getAuthUrl() {
 
 app.get('/api', (req, res) => {
   console.log('api endpoint hit')
-  res.send('API is responding')
+  res.send('API online')
 })
 
 app.get('/api/auth/url', (req, res) => {
