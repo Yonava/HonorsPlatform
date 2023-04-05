@@ -25,6 +25,7 @@
         <div>
           <v-text-field
             v-model="selectedModule.term"
+            :rules="[(v) => termValidator(v) || 'Potentially invalid term']"
             label="Term"
             variant="outlined"
           ></v-text-field>
@@ -87,6 +88,7 @@
 <script setup lang="ts">
 import { computed, watch, ref } from 'vue'
 import { Module } from '../SheetTypes'
+import { termValidator } from '../TermValidator'
 
 const props = defineProps<{
   module: Module

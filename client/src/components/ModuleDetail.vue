@@ -23,6 +23,7 @@
       <v-divider class="my-2"></v-divider>
       <v-text-field
         v-model="item.value.term"
+        :rules="[(v) => termValidator(v) || 'Potentially invalid term']"
         label="Term"
       >
         <template #prepend>
@@ -224,6 +225,7 @@ import { updateByRow, moveRowToRange, Range } from '../SheetsAPI'
 import { unmapModules, unmapCompletedModules } from '../DataMappers'
 import { Module, Grade, CompletedModule } from '../SheetTypes'
 import UpdateButton from './UpdateButton.vue'
+import { termValidator } from '../TermValidator'
 
 const props = defineProps<{
   item: Ref<Module>

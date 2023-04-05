@@ -1,9 +1,11 @@
 /*
   the first 2 numbers should be the year
-  the following 5 characters are the season identifier
-  the total length should be 7 characters
+  the following characters contain the season identifier
 */
 export function termValidator(term: string) {
+  
+  if (term.length === 0) return true;
+
   const seasonIdentifiers = [
     'SPDAY',
     'FADAY',
