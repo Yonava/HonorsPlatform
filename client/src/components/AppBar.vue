@@ -38,7 +38,7 @@
           </v-list-item>
         </v-list>
       </v-menu>
-      <p 
+      <p
         :style="{
           opacity: loading ? 0 : 1,
         }"
@@ -48,6 +48,7 @@
       </p>
     </div>
     <input
+      v-if="mdAndUp"
       @input="updateValue"
       :value="modelValue"
       :placeholder="filterPlaceholder"
@@ -68,6 +69,7 @@
       >Auto Sync Is Enabled</v-tooltip>
     </span>
     <v-btn 
+      v-if="smAndUp"
       @click="$emit('showAddModal')"
       class="ml-3"
       style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240);"
@@ -75,11 +77,16 @@
       <v-icon 
         icon="mdi-plus" 
         size="large" 
-        class="mr-2"
       ></v-icon>
-      Add {{ panel.title.slice(0, -1) }}
+      <span 
+        v-if="mdAndUp"
+        class="ml-2"
+      >
+        Add {{ panel.title.slice(0, -1) }}
+      </span>
     </v-btn>
     <v-btn 
+      v-if="smAndUp"
       @click="$emit('fetchData')"
       :loading="loading"
       class="ml-3"
@@ -88,22 +95,40 @@
       <v-icon 
         icon="mdi-refresh" 
         size="large" 
-        class="mr-2"
       ></v-icon>
-      Refresh Data
+      <span 
+        v-if="mdAndUp"
+        class="ml-2"
+      >
+        Refresh Data
+      </span>
     </v-btn>
-    <Announcements />
-    <v-btn icon>
-      <v-icon 
-        @click="$router.push({ name: 'leaderboard' })"
-        icon="mdi-podium" 
-        size="large"
-      ></v-icon>
-      <v-tooltip
-        activator="parent"
-        location="bottom"
-      >View Points Leaderboard</v-tooltip>
-    </v-btn>
+    <div 
+      v-if="smAndUp"
+      class="d-flex flex-row align-center"
+    >
+      <Announcements />
+      <v-btn icon>
+        <v-icon 
+          @click="$router.push({ name: 'leaderboard' })"
+          icon="mdi-podium" 
+          size="large"
+        ></v-icon>
+        <v-tooltip
+          activator="parent"
+          location="bottom"
+        >View Points Leaderboard</v-tooltip>
+      </v-btn>
+    </div>
+    <div v-else>
+      <v-btn icon>
+        <v-icon 
+          @click="openMenu"
+          icon="mdi-menu" 
+          size="large"
+        ></v-icon>
+      </v-btn>
+    </div>
   </v-app-bar>
 </template>
 
@@ -112,9 +137,12 @@ import { Panel, switchPanel, PanelType } from '../SwitchPanel'
 import { SheetItem } from '../SheetTypes'
 import { inject, ref, computed } from 'vue'
 import type { Ref } from 'vue'
+import { useDisplay } from 'vuetify'
 import Announcements from './AnnouncementMenu.vue'
 
 const autoSync = inject('autoSync') as Ref<boolean>
+
+const { mdAndUp, smAndUp } = useDisplay()
 
 const props = defineProps<{
   panel: Panel<SheetItem>,
@@ -143,6 +171,10 @@ function typeListStyle(type: PanelType) {
 const filterPlaceholder = computed(() => {
   return `Search ${props.panel.title.toLowerCase()}...`
 })
+
+function openMenu() {
+  
+}
 </script>
 
 <style scoped>
