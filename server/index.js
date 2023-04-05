@@ -27,6 +27,11 @@ function getAuthUrl() {
   return url;
 }
 
+app.get('/api', (req, res) => {
+  console.log('api endpoint hit')
+  res.send('API is responding')
+})
+
 app.get('/auth/url', (req, res) => {
   res.json({ url: getAuthUrl() });
 });
