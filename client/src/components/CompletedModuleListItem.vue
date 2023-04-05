@@ -37,13 +37,13 @@
           >
             mdi-calendar
           </v-icon>
-          <p>
+          <p :style="termStyle">
             {{ item.term || '(No Term)' }} 
           </p>
           <v-tooltip
             activator="parent"
             location="bottom"
-          >Term</v-tooltip>
+          >{{ termTooltip }}</v-tooltip>
         </div>
         <v-spacer></v-spacer>
         <div class="d-flex flex-row align-center">
@@ -69,8 +69,28 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { CompletedModule } from '../SheetTypes'
+import { termValidator } from '../TermValidator'
 
 const props = defineProps<{
   item: CompletedModule
 }>()
+
+const termStyle = computed(() => {
+  if (termValidator(props.item.term)) {
+    return {}
+  } else {
+    return {
+      color: 'red',
+      fontWeight: 900
+    }
+  }
+})
+
+const termTooltip = computed(() => {
+  if (termValidator(props.item.term)) {
+    return 'Term'
+  } else {
+    return 'Term (Potentially Invalid)'
+  }
+})
 </script>

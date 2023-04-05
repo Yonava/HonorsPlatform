@@ -63,10 +63,10 @@ const hasSucceeded = ref(false);
 
 async function generateRegistrarList() {
   loading.value = true;
-  const modules = await getEvery(Range.MODULES);
   const students = await getEvery(Range.STUDENTS);
+  const completedModules = await getEvery(Range.COMPLETED_MODULES)
   const termColumn = 3;
-  const modulesInTerm = modules.filter((module) => {
+  const modulesInTerm = completedModules.filter((module) => {
     return module[termColumn].toLowerCase() === term.value.toLowerCase();
   });
   const output = modulesInTerm.map(module => {
