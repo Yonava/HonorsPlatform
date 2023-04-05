@@ -19,6 +19,7 @@
           mdi-message-alert{{ active ? '' : '-outline' }}
         </v-icon>
         <v-tooltip
+          v-if="mdAndUp"
           activator="parent"
           location="bottom"
         >{{ tooltipText }}</v-tooltip>
@@ -26,7 +27,7 @@
     </template>
 
     <v-list 
-      width="600"
+      style="max-width: 80vw; width: 800px"
       class="pa-5"
     >
       <div class="d-flex align-center">
@@ -34,7 +35,7 @@
           size="x-large"
           class="mr-3"
         >mdi-bullhorn-variant</v-icon>
-        <h1 style="line-height: 0.8">
+        <h1 style="line-height: 1">
           Dr. Matthews Says...
         </h1>
       </div>
@@ -77,6 +78,9 @@
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue'
 import { getEvery, Range } from '../SheetsAPI'
+import { useDisplay } from 'vuetify'
+
+const { mdAndUp } = useDisplay()
 
 const announcements = ref<string[]>([])
 const loading = ref(true)

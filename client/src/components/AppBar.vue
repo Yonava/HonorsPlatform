@@ -4,11 +4,45 @@
       v-model="navDrawer"
       temporary
       location="end"
+      :color="`${panel.color}-lighten-4`"
       style="width: 75%; max-width: 350px; height: 100vh; position: fixed; top: 0;"
     >
-      <v-sheet color="white">
-        <h1>Navigate!</h1>
-      </v-sheet>
+      <div class="pa-4">
+        <div 
+          class="d-flex flex-row"
+          style="width: 100%"
+        >
+          <v-spacer></v-spacer>
+          <Announcements />
+        </div>
+        <v-btn
+          @click="emit('showAddModal')"
+          :color="`${panel.color}-darken-2`"
+          class="mt-3"
+          block
+        >
+          <v-icon 
+            icon="mdi-plus" 
+            size="large"
+            class="mr-2"
+          ></v-icon>
+          Add {{ panel.title.slice(0, -1) }}
+        </v-btn>
+        <v-btn
+          @click="$emit('fetchData')"
+          :loading="loading"
+          :color="`${panel.color}-darken-2`"
+          class="mt-3"
+          block
+        >
+          <v-icon 
+            icon="mdi-refresh" 
+            size="large"
+            class="mr-2"
+          ></v-icon>
+          Refresh Data
+        </v-btn>
+      </div>
     </v-navigation-drawer>
     <v-app-bar
       :color="`${panel.color}-darken-2`"
@@ -26,7 +60,7 @@
               v-bind="props"
               class="title"
             >
-              {{ panel.title }}
+              {{ panelTitle }}
             </h1>
           </template>
 
@@ -174,7 +208,11 @@ const autoSync = inject('autoSync') as Ref<boolean>
 const navDrawer = ref(false)
 const searchMode = ref(false)
 
-const { mdAndUp, smAndUp } = useDisplay()
+const {
+  lgAndUp,
+  mdAndUp, 
+  smAndUp
+} = useDisplay()
 
 const props = defineProps<{
   panel: Panel<SheetItem>,
@@ -204,9 +242,13 @@ const filterPlaceholder = computed(() => {
   return `Search ${props.panel.title.toLowerCase()}...`
 })
 
-function openMenu() {
-
-}
+const panelTitle = computed(() => {
+  const title = props.panel.title
+  if (lgAndUp.value || title.split(' ').length <= 1) return title
+  else {
+    return title.split(' ')[1]
+  }
+})
 </script>
 
 <style scoped>
@@ -246,7 +288,8 @@ h1.title {
   padding: 3px; 
   padding-left: 15px;
   border: none; 
-  width: 400px; 
+  width: 30%;
+  max-width: 800px;
   font-size: 1.4em; 
   font-weight: 200; 
   box-shadow: 2px 1px 4px rgba(0, 0, 0, 0.5);
