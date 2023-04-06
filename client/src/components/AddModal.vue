@@ -10,17 +10,28 @@
       }"
       class="pa-5 parent"
     >
-      <h1 class="mb-3 d-flex align-center">
+      <h1 
+        style="white-space: nowrap"
+        :class="[
+          'mb-3',
+          'mt-5',
+          'd-flex',
+          'align-center'
+        ]"
+      >
         <v-icon 
           class="mr-2"
           style="font-size: 2.5rem;"
         >{{ panel.icon }}</v-icon>
-        <span>Add {{ panel.title.slice(0, -1) }}</span>
+        <span>
+          Add {{ panel.title.slice(0, -1) }}
+        </span>
       </h1>
       <div 
         @keyup.enter="reqAdd"
         v-if="!loading"
         class="d-flex flex-wrap justify-center align-center"
+        style="height: 50%; overflow: auto"
       >
         <div
           v-for="(attr, index) in attrs"
@@ -30,7 +41,8 @@
             v-if="attr"
             v-model="item[index]"
             :label="attr"
-            class="field-input"
+            class="mx-2"
+            :style="`width: ${xs ? '400' : '250'}px;`"
           ></v-text-field>
         </div>
       </div>
@@ -60,6 +72,7 @@
 import { Panel } from '../SwitchPanel'
 import { SheetItem } from '../SheetTypes'
 import { postInRange, getHeaderRow, headerRowMemo } from '../SheetsAPI'
+import { useDisplay } from 'vuetify'
 import { 
   ref, 
   toRef,
@@ -93,6 +106,8 @@ watch(showDialog, async (val) => {
     await initItem()
   }
 })
+
+const { xs } = useDisplay()
 
 const item = ref<string[]>([])
 const loading = ref(false)
@@ -132,14 +147,7 @@ const color = computed(() => {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: white;
   border-radius: 15px;
-}
-
-.field-input {
-  width: 250px; 
-  margin-left: 10px; 
-  margin-right: 10px;
 }
 
 .close-dialog {
