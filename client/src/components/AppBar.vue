@@ -162,7 +162,7 @@
       >
       <v-spacer></v-spacer>
       <span 
-        v-if="autoSync && !searchMode && !xs"
+        v-if="autoSync && !xs"
         class="d-flex align-center ml-5 px-2"
         style="background: red; border-radius: 5px; font-weight: 700; cursor: default;"
       >
