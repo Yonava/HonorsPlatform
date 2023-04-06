@@ -191,7 +191,7 @@
     >
       <div style="width: 100%;">
         <v-textarea
-          v-model="item.value.note"
+          v-model="item.value.description"
           auto-grow
           variant="outlined"
           clearable
@@ -217,7 +217,7 @@
           Mark Module As Completed
         </v-btn>
         <v-btn 
-          @click="reqDeleteStudent"
+          @click="$emit('delete')"
           size="large"
           color="red"
           class="mt-3"
@@ -283,6 +283,7 @@ async function moveToCompleted() {
     ...props.item.value,
     ...completedModuleData.value
   }
+  console.log(movedModule.value)
   await moveRowToRange(
     Range.MODULES, 
     Range.COMPLETED_MODULES, 

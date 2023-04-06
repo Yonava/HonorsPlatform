@@ -98,7 +98,7 @@
     >
       <div style="width: 100%;">
         <v-textarea
-          v-model="item.value.note"
+          v-model="item.value.description"
           auto-grow
           variant="outlined"
           clearable
@@ -113,7 +113,7 @@
         style="width: 100%"
       >
         <v-btn 
-          @click="reqDeleteStudent"
+          @click="$emit('delete')"
           size="large"
           color="red"
           class="mt-3"

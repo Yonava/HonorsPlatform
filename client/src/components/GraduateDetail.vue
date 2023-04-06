@@ -109,7 +109,7 @@
           Move Back to Students
         </v-btn>
         <v-btn 
-          @click="reqDeleteStudent"
+          @click="$emit('delete')"
           :disabled="!canDelete"
           size="large"
           color="red"
@@ -129,20 +129,14 @@
 <script setup lang="ts">
 import { 
   ref, 
-  watch, 
   computed,
-  toRefs, 
   onMounted,
-  onUnmounted
 } from 'vue'
 import type { Ref } from 'vue'
 import { 
   updateByRow, 
   moveRowToRange,
-  postInRange,
-  clearByRow,
   Range, 
-  getEvery
 } from '../SheetsAPI'
 import { 
   unmapGraduates, 

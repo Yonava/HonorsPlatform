@@ -67,6 +67,7 @@ async function generateRegistrarList() {
   const completedModules = await getEvery(Range.COMPLETED_MODULES)
   const termColumn = 3;
   const modulesInTerm = completedModules.filter((module) => {
+    if (!module[termColumn]) return false
     return module[termColumn].toLowerCase() === term.value.toLowerCase();
   });
   const output = modulesInTerm.map(module => {
