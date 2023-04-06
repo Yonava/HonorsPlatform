@@ -20,7 +20,7 @@ module.exports = class OpenSheet {
 
   async init() {
     const config = {
-      keyFilename: path.join(process.cwd(), './credentials.json'),
+      keyFilename: path.join(__dirname, 'credentials.json'),
       scopes: ['https://www.googleapis.com/auth/spreadsheets']
     };
 
