@@ -126,13 +126,13 @@
         >
         </v-select>
       </div>
-      <v-select
+      <v-autocomplete
         v-model="item.value.athletics"
         :items="Object.keys(athleticOptions)"
         :prepend-icon="`mdi-${athleticOptions[item.value.athletics]}`"
         label="Athletics"
         class="mt-2"
-      ></v-select>
+      ></v-autocomplete>
       <v-divider class="my-2"></v-divider>
       <div v-if="item.value.id">
         <div class="d-flex flex-row align-center">

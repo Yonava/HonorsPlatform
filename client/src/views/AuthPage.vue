@@ -3,7 +3,6 @@
     class="d-flex align-center justify-center flex-column"
     height="100vh"
     width="100vw"
-    color="blue-lighten-3"
   >
     <v-progress-circular
       v-if="loading"
@@ -11,53 +10,67 @@
       color="blue-darken-2"
       size="64"
     ></v-progress-circular>
-    <!-- <img
+    <img
       v-if="!loading"
-      src="../assets/honorsLogo.png"
-      class="logo mb-7"
-    /> -->
+      src="../assets/honorsLogo.jpeg"
+      class="logo"
+    />
     <v-sheet 
       v-if="!loading"
-      color="blue-darken-2"
-      class="d-flex align-center justify-center flex-column pa-5"
-      style="border-radius: 10px;"
-      elevation="10"
+      class="d-flex align-center justify-center flex-column ma-5"
     >
-      <h1 class="mb-5">
-        <v-icon class="mr-1 mb-1">mdi-alert</v-icon>
-        Authorization Failed!
-      </h1>
+      <div class="mb-8 d-flex flex-row align-center">
+        <!-- <v-icon 
+          class="mr-3"
+          size="x-large"
+        >mdi-alert</v-icon> -->
+        <h1 style="font-size: 250%">
+          Not Authorized
+        </h1>
+      </div>
       <v-btn 
         @click="authorize"
-        color="white"
-        rounded
-        elevation="10"
+        color="red-darken-2"
+        elevation="3"
+        class="mb-12"
+        size="x-large"
       >
-        Re-Attempt Authorization
+        <v-icon class="mr-2">mdi-google</v-icon>
+        Continue With Google
       </v-btn>
-      <div class="mt-7">
-        <p style="font-weight: 900;">
-          This could be due to one of the following reasons:
-        </p>
-        <ol 
-          class="ml-4" 
-          style="width: 400px;"
+      <v-expansion-panels>
+        <v-expansion-panel 
+          elevation="0"
+          color="grey-lighten-3"
         >
-          <li>
-            Your previous credentials have expired
-          </li>
-          <li>
-            Your internet is garbage
-          </li>
-          <li>
-            You attempted to perform an operation you are 
-            not authorized to perform (i.e. generating registrar reports)
-          </li>
-          <li>
-            Dr. Matthews doesn't like you
-          </li>
-        </ol>
-      </div>
+          <template #title>
+            <v-icon class="mr-2">mdi-information-outline</v-icon>
+            <p>Why Am I Seeing This?</p>
+          </template>
+          <template #text>
+            <div>
+              <h3 style="font-weight: 900;">
+                This could be due to one of the following reasons:
+              </h3>
+              <ol class="ml-4">
+                <li>
+                  Your previous credentials have expired
+                </li>
+                <li>
+                  Your internet is garbage
+                </li>
+                <li>
+                  You attempted to perform an operation you are 
+                  not authorized to perform (i.e. generating registrar reports)
+                </li>
+                <li>
+                  Dr. Matthews doesn't like you
+                </li>
+              </ol>
+            </div>
+          </template>
+        </v-expansion-panel>
+      </v-expansion-panels>
     </v-sheet>
   </v-sheet>
 </template>
@@ -96,8 +109,9 @@ const authorize = async () => {
 
 <style scoped>
 .logo {
+  position: absolute;
+  top: 20px;
   width: 300px;
-  height: 200px;
   object-fit: cover;
   mix-blend-mode: multiply;
 }
