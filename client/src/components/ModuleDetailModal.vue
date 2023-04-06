@@ -3,6 +3,7 @@
     <div 
       v-if="selectedModule"
       class="d-flex justify-center align-center"
+      style="max-height: 80%; overflow: auto"
     >
       <v-card
         class="module-card pa-5"

@@ -189,41 +189,65 @@
         </div>
       </div>
     </div>
+    <v-divider 
+      v-if="sm"
+      class="my-2"
+    ></v-divider>
     <div 
-      
-      class="ml-5 d-flex flex-column"
+      :class="[
+        sm ? '' : 'ml-5', 
+        'd-flex', 
+        'flex-column',
+        'align-center'
+      ]"
+      :style="sm ? '' : 'width: 55%'"
     >
-      <span 
-        @click="reqDeleteStudent"
+      <div
+        style="width: 100%;"
+      >
+        <v-textarea
+          v-model="item.value.note"
+          auto-grow
+          variant="outlined"
+          clearable
+          label="Meeting notes"
+        ></v-textarea>
+      </div>
+      <div 
         :class="[
-          'd-flex', 
-          'align-center', 
-          'mb-2', 
-          `${canDelete ? 'delete-student' : 'delete-student-disabled'}`
+          'd-flex',
+          sm ? 'flex-row' : 'flex-column'
         ]"
+        style="width: 100%"
       >
-        <v-icon>mdi-delete</v-icon>
-        delete {{ item.value.name }} permanently
-      </span>
-      <v-textarea
-        v-model="item.value.note"
-        clearable
-        :label="`${item.value.name.split(' ')[0]}'s meeting notes`"
-      ></v-textarea>
-      <v-btn
-        @click="moveToGraduates"
-        :disabled="!canDelete"
-        :loading="movingStudent"
-        size="x-large"
-        color="blue-darken-2"
-        style="transform: translateY(-130px);"
-      >
-        <v-icon 
-          class="mr-4"
-          size="x-large"
-        >mdi-school-outline</v-icon>
-        Graduate {{ item.value.name.split(' ')[0] }}
-      </v-btn>
+        <v-btn
+          @click="moveToGraduates"
+          :disabled="!canDelete"
+          :loading="movingStudent"
+          size="large"
+          color="blue-darken-2"
+        >
+          <v-icon 
+            class="mr-4"
+            size="x-large"
+          >mdi-school-outline</v-icon>
+          Move To Graduates
+        </v-btn>
+        <v-spacer></v-spacer>
+        <v-btn 
+          @click="reqDeleteStudent"
+          :disabled="!canDelete"
+          size="large"
+          color="red"
+          :class="sm ? '' : 'mt-3'"
+        >
+          <v-icon
+            class="mr-4"
+            size="x-large"
+          >mdi-delete</v-icon>
+          delete {{ item.value.name.split(' ')[0] }}
+        </v-btn>
+      </div>
     </div>
     <AddModal 
       @close="showModuleAddModal = false"
@@ -358,20 +382,6 @@ async function moveToGraduates() {
 </script>
 
 <style scoped>
-.delete-student-disabled {
-  opacity: 0.25;
-  cursor: default;
-}
-
-.delete-student {
-  color: red;
-  cursor: pointer;
-}
-
-.delete-student:hover {
-  text-decoration: underline;
-}
-
 input.student-name-input {
   font-weight: 900; 
   font-size: 3em; 
