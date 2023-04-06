@@ -29,8 +29,11 @@ router.get("/points", async (req, res) => {
         return studentObj;
       });
     res.json(points);
-  } catch {
-    res.status(401).json({ error: "Forbidden" });
+  } catch (e) {
+    res.status(401).json({ 
+      error: "Forbidden", 
+      message: e 
+    });
   }
 });
 
