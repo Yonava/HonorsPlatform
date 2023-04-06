@@ -32,7 +32,7 @@
             <v-text-field
               v-model="item.event"
               prepend-inner-icon="mdi-calendar"
-              label="Event"
+              label="Event name"
               variant="outlined"
               class="mr-5"
             ></v-text-field>

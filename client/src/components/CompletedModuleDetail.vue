@@ -1,9 +1,14 @@
 <template>
   <div 
-    class="d-flex flex-row"
-    style="width: 100%; padding: 20px"
+    :class="[
+      'pa-5',
+      'd-flex',
+      sm ? 'flex-column' : 'flex-row'
+    ]"
+    style="width: 100%;"
+    id="parent-wrapper"
   >
-    <div style="width: 55%;">
+    <div>
       <p style="font-weight: 200">
         {{ item.value.studentId }}
       </p>
@@ -78,27 +83,54 @@
         >
       </div>
     </div>
+    <v-divider 
+      v-if="sm"
+      class="my-2"
+    ></v-divider>
     <div 
-      style="width: 45%;" 
-      class="ml-5 d-flex flex-column"
+      :class="[
+        sm ? '' : 'ml-5', 
+        'd-flex', 
+        'flex-column',
+        'align-center'
+      ]"
+      :style="sm ? '' : 'width: 55%'"
     >
-      <span 
-        @click="emits('delete')"
-        class="delete d-flex align-center mb-2"
+      <div style="width: 100%;">
+        <v-textarea
+          v-model="item.value.note"
+          auto-grow
+          variant="outlined"
+          clearable
+          label="Module description"
+        ></v-textarea>
+      </div>
+      <div
+        :class="[
+          'd-flex',
+          'flex-column'
+        ]"
+        style="width: 100%"
       >
-        <v-icon>mdi-delete</v-icon>
-        delete module permanently
-      </span>
-      <v-textarea
-        v-model="item.value.description"
-        clearable
-        label="Description"
-      ></v-textarea>
+        <v-btn 
+          @click="reqDeleteStudent"
+          size="large"
+          color="red"
+          class="mt-3"
+        >
+          <v-icon
+            class="mr-4"
+            size="x-large"
+          >mdi-delete</v-icon>
+          delete completed module
+        </v-btn>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { onMounted, ref } from 'vue'
 import type { Ref } from 'vue'
 import { CompletedModule } from '../SheetTypes'
 import UpdateButton from './UpdateButton.vue'
@@ -106,6 +138,13 @@ import UpdateButton from './UpdateButton.vue'
 const props = defineProps<{
   item: Ref<CompletedModule>
 }>()
+
+const sm = ref(false)
+
+onMounted(() => {
+  const parentWidth = document.getElementById('parent-wrapper').clientWidth
+  sm.value = parentWidth < 700
+})
 
 const emits = defineEmits([
   'delete', 

@@ -86,7 +86,7 @@
           auto-grow
           variant="outlined"
           clearable
-          label="Meeting notes"
+          label="Notes"
         ></v-textarea>
       </div>
       <div

@@ -39,7 +39,7 @@
       </div>
       <div
         v-else
-        style="height: 350px; overflow: auto"
+        style="max-height: 500px; overflow: auto"
       >
         <EngagementView
           @selected="i => openModal(i)"
