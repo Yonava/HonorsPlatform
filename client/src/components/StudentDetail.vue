@@ -1,9 +1,14 @@
 <template>
   <div 
-    class="d-flex flex-row"
-    style="width: 100%; padding: 20px"
+    :class="[
+      'pa-5',
+      'd-flex',
+      sm ? 'flex-column' : 'flex-row'
+    ]"
+    style="width: 100%;"
+    id="parent-wrapper"
   >
-    <div style="width: 55%;">
+    <div>
       <p
         v-if="item.value.id"
         style="font-weight: 200;"
@@ -185,7 +190,7 @@
       </div>
     </div>
     <div 
-      style="width: 45%;" 
+      
       class="ml-5 d-flex flex-column"
     >
       <span 
@@ -238,9 +243,7 @@ import {
   ref, 
   watch, 
   computed,
-  toRefs, 
   onMounted,
-  onUnmounted,
 } from 'vue'
 import type { Ref } from 'vue'
 import ModuleFetch from './ModuleFetch.vue'
@@ -278,6 +281,13 @@ const yearOptions = [
   'Junior',
   'Senior',
 ]
+
+const sm = ref(false)
+
+onMounted(() => {
+  const parentWidth = document.getElementById('parent-wrapper').clientWidth
+  sm.value = parentWidth < 700
+})
 
 function reqDeleteStudent() {
   if (!canDelete.value) return

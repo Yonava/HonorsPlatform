@@ -125,6 +125,22 @@
       :panel="panel"
       :show="showAddModal"
     />
+    <v-navigation-drawer
+      v-if="smAndDown"
+      v-model="showDetailDrawer"
+      temporary
+      location="bottom"
+      style="width: 100vw; height: 85%;"
+    >
+      <component
+        v-if="selectedItem"
+        @delete="reqDelete"
+        @update="updateList($event)"
+        @unselect="unselect"
+        :is="panel.components.detail" 
+        :item="ref(clone(selectedItem))"
+      />
+    </v-navigation-drawer>
   </v-sheet>
 </template>
 
@@ -151,7 +167,7 @@ import { useDisplay } from 'vuetify'
 
 const route = useRoute()
 const router = useRouter()
-const { smAndUp, mdAndUp, lgAndUp } = useDisplay()
+const { smAndUp, mdAndUp, lgAndUp, smAndDown } = useDisplay()
 
 const items = ref<SheetItem[]>([])
 const loadingItems = ref(true)
@@ -182,6 +198,15 @@ const changePanel = (panelType: PanelType) => {
 
 watch(panel, async () => {
   await fetchData()
+})
+
+const showDetailDrawer = computed({
+  get: () => !!selectedItem.value,
+  set: (v) => {
+    if (!v) {
+      selectedItem.value = null
+    }
+  }
 })
 
 const keyBindToggle = (panelType: PanelType) => {
