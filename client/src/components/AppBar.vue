@@ -228,7 +228,12 @@
       </v-btn>
       <div 
         v-if="smAndUp"
-        class="d-flex flex-row align-center"
+        :class="[
+          mdAndUp ? 'ml-3' : '',
+          'd-flex', 
+          'flex-row', 
+          'align-center'
+        ]"
       >
         <Announcements />
         <v-btn icon>

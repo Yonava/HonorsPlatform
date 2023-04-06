@@ -131,6 +131,7 @@
       rounded
       location="bottom"
       style="width: 100%; height: 82.5%;"
+      :color="`${panel.color}-lighten-5`"
     >
       <component
         v-if="selectedItem"
