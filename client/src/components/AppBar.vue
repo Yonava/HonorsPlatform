@@ -158,6 +158,7 @@
         :placeholder="filterPlaceholder"
         class="search-input"
         type="text"
+        id="input"
       >
       <v-spacer></v-spacer>
       <span 
@@ -261,12 +262,17 @@ import { SheetItem } from '../SheetTypes'
 import { inject, ref, computed } from 'vue'
 import type { Ref } from 'vue'
 import { useDisplay } from 'vuetify'
+import { useKeyBindings } from '../KeyBindings'
 import SortPanel from './SortPanel.vue'
 import Announcements from './AnnouncementMenu.vue'
 
 const autoSync = inject('autoSync') as Ref<boolean>
 const navDrawer = ref(false)
 const searchMode = ref(false)
+
+useKeyBindings({
+  '/': () => document.getElementById('input').focus(),
+})
 
 const {
   lgAndUp,

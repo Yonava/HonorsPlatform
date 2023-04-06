@@ -75,7 +75,7 @@
         <v-sheet 
           :color="`${panel.color}-lighten-4`"
           border 
-          style="min-width: 400px; height: 100%; overflow: auto;"
+          style="min-width: 400px; height: 100%; overflow: auto"
           class="d-flex flex-grow-1 flex-column align-center"
         >  
           <PanelList
@@ -90,7 +90,7 @@
         <v-sheet 
           v-if="mdAndUp"
           :color="`${panel.color}-lighten-5`"
-          style="width: 70%; height: 100%;"
+          style="width: 70%; height: 100%; overflow: auto;"
         >
           <div v-if="selectedItem">
             <component
@@ -114,7 +114,7 @@
         </v-sheet>
       </div>
       <img 
-        v-if="mdAndUp"
+        v-if="lgAndUp"
         src="../assets/honorsLogo.jpeg"
         class="honors-logo"
       >
@@ -151,7 +151,7 @@ import { useDisplay } from 'vuetify'
 
 const route = useRoute()
 const router = useRouter()
-const { smAndUp, mdAndUp } = useDisplay()
+const { smAndUp, mdAndUp, lgAndUp } = useDisplay()
 
 const items = ref<SheetItem[]>([])
 const loadingItems = ref(true)
@@ -193,7 +193,6 @@ useKeyBindings({
   'a': () => autoSync.value = !autoSync.value,
   's': () => showAddModal.value = !showAddModal.value,
   'r': () => fetchData(),
-  '/': () => document.querySelector('input').focus(),
   '1': () => keyBindToggle(PanelType.STUDENTS),
   '2': () => keyBindToggle(PanelType.GRADUATES),
   '3': () => keyBindToggle(PanelType.MODULES),
@@ -286,6 +285,7 @@ onUnmounted(() => {
 <style scoped>
 img.honors-logo {
   position: absolute; 
+  z-index: 1;
   bottom: 0; 
   right: 0; 
   width: 225px;
