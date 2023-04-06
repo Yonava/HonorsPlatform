@@ -3,6 +3,7 @@
     <v-navigation-drawer
       v-model="navDrawer"
       temporary
+      fixed
       location="end"
       :color="`${panel.color}-darken-2`"
       style="width: 75%; max-width: 350px; height: 120vh; position: fixed; top: 0;"

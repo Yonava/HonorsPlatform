@@ -73,7 +73,7 @@
         </v-sheet>
         <v-sheet 
           :color="`${panel.color}-lighten-4`"
-          style="min-width: 400px; overflow: auto"
+          style="overflow: auto"
           class="d-flex flex-grow-1 flex-column align-center"
         >
           <PanelList
@@ -129,6 +129,7 @@
       temporary
       touchless
       rounded
+      fixed
       location="bottom"
       style="width: 100%; height: 82.5%;"
       :color="`${panel.color}-lighten-5`"
