@@ -20,10 +20,11 @@
         class="d-flex flex-row"
       >
         <v-sheet 
+          v-if="smAndUp"
           class="d-flex align-center flex-column flex-start pt-3"
           :color="`${panel.color}-darken-2`"
           border 
-          style="width: 5%; height: 100%; background: green"
+          style="width: 70px; height: 100%; background: green"
         >
           <SortPanel 
             @update="items = $event"
@@ -70,8 +71,8 @@
         <v-sheet 
           :color="`${panel.color}-lighten-4`"
           border 
-          style="width: 25%; height: 100%; overflow: auto;"
-          class="d-flex flex-column align-center"
+          style="min-width: 400px; height: 100%; overflow: auto;"
+          class="d-flex flex-grow-1 flex-column align-center"
         >  
           <PanelList
             @select="selectedItem = $event"
@@ -83,6 +84,7 @@
           />
         </v-sheet>
         <v-sheet 
+          v-if="mdAndUp"
           :color="`${panel.color}-lighten-5`"
           style="width: 70%; height: 100%;"
         >
@@ -108,6 +110,7 @@
         </v-sheet>
       </div>
       <img 
+        v-if="smAndUp"
         src="../assets/honorsLogo.jpeg"
         class="honors-logo"
       >
@@ -140,9 +143,11 @@ import AppBar from '../components/AppBar.vue'
 import { useKeyBindings } from '../KeyBindings'
 import { PanelType, Panel, switchPanel } from '../SwitchPanel'
 import { SheetEntry, SheetItem } from '../SheetTypes'
+import { useDisplay } from 'vuetify'
 
 const route = useRoute()
 const router = useRouter()
+const { smAndUp, mdAndUp } = useDisplay()
 
 const items = ref<SheetItem[]>([])
 const loadingItems = ref(false)

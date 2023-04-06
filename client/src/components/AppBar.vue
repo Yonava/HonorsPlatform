@@ -13,7 +13,7 @@
           style="width: 100%"
         >
           <div 
-            class="px-5 d-flex flex-row align-center"
+            class="px-3 d-flex flex-row align-center"
             :style="{
               background: autoSyncDivColor, 
               color: 'rgb(240, 240, 240)',
@@ -21,7 +21,7 @@
               transition: '300ms'
             }" 
           >
-            <span class="mr-4">
+            <span class="mr-2">
               Auto Sync
             </span>
             <v-switch
@@ -72,7 +72,6 @@
         </v-btn>
         <v-btn
           @click="$router.push({ name: 'registrar' })"
-          :loading="loading"
           style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240);"
           class="mt-3"
           block
@@ -102,7 +101,7 @@
           :value="modelValue"
           :placeholder="filterPlaceholder"
           class="search-input ml-0"
-          style="width: 125%"
+          style="width: 250px"
           type="text"
         >
       </div>
