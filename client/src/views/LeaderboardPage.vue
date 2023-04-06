@@ -6,9 +6,13 @@
       elevation="10"
       color="grey-lighten-4"
     >
-      <h1 style="font-size: 4rem; font-weight: 700; position: absolute; top: 10%;">
+      <h1 style="font-size: 7.5vw; font-weight: 700; position: absolute; top: 10%;">
         Honors Leaderboard
       </h1>
+      <div
+        v-if="smAndUp"
+        style="margin: 100px"
+      ></div>
       <div 
         v-if="!error && !loading"
         class="d-flex flex-column align-center mt-10"
@@ -22,19 +26,32 @@
             style="border-radius: 10px; border: 1px solid black;"
             elevation="4"
           > 
-            <h4>#{{ index + 1 }} with {{ students[index].points.toLocaleString() }} points</h4>
-            <h2>{{ students[index].name }}</h2>
+            <h4 
+              :style="{
+                fontSize: xs.value ? '4vw' : '2vw',
+                fontWeight: 700,
+              }"
+            >
+              #{{ index + 1 }} with {{ students[index].points.toLocaleString() }} points
+            </h4>
+            <h2 
+              :style="{
+                fontSize: xs.value ? '6vw' : '3vw',
+                fontWeight: 700,
+              }"
+            >
+              {{ students[index].name }}
+            </h2>
           </v-sheet>
         </div>
-        <div style="border-bottom: 1px solid black; width: 100%;"></div>
         <div 
-          class="d-flex flex-column align-center justify-space-between"
+          class="d-flex flex-column align-center"
           style="height: 50vh; width: 100%; overflow: auto"
         >
           <div 
             v-for="student in students.slice(3)"
             :key="student.name"
-            style="width: 60%;"
+            style="width: 60%; min-width: 300px; border-bottom:"
           >
             <div 
               class="d-flex flex-row align-center justify-space-between"
@@ -60,6 +77,9 @@
               </div>
             </div>
           </div>
+          <div
+            style="margin-top: 500px;"
+          ></div>
         </div>
       </div>
       <div v-else-if="error">
@@ -67,7 +87,7 @@
       </div>
       <div 
         v-else-if="loading"
-        style="position: absolute; top: 24%;"
+        style="position: absolute; top: 30%;"
       >
         <v-progress-circular
           indeterminate
@@ -81,7 +101,9 @@
 <script setup lang="ts">
 import { getNonSensitiveData } from "../SheetsAPI";
 import { ref } from "vue";
+import { useDisplay } from 'vuetify'
 
+const { xs, smAndUp } = useDisplay()
 const students = ref<LeaderboardItem[]>([]);
 const error = ref(false);
 const loading = ref(true);
