@@ -1,8 +1,9 @@
 <template>
-  <v-sheet 
-    :color="`${panel.color}-darken-2`"
-    style="overscroll-y-behavior: none;"
-  >
+  <v-sheet>
+    <v-sheet 
+      class="background-matte"
+      :color="`${panel.color}-lighten-4`"
+    ></v-sheet>
     <AppBar 
       v-model="filterQuery"
       @fetchData="fetchData"
@@ -15,16 +16,13 @@
       :items="items"
     />
     <v-main>
-      <div 
-        style="position: relative; height: calc(100vh - 64px);" 
-        class="d-flex flex-row"
-      >
+      <div class="d-flex flex-row">
         <v-sheet 
           v-if="smAndUp"
           class="d-flex align-center flex-column flex-start pt-3"
           :color="`${panel.color}-darken-2`"
           border 
-          style="width: 70px; height: 100%; background: green"
+          style="width: 90px; height: 100%; background: green"
         >
           <SortPanel 
             @update="items = $event"
@@ -110,7 +108,7 @@
         </v-sheet>
       </div>
       <img 
-        v-if="smAndUp"
+        v-if="mdAndUp"
         src="../assets/honorsLogo.jpeg"
         class="honors-logo"
       >
@@ -150,7 +148,7 @@ const router = useRouter()
 const { smAndUp, mdAndUp } = useDisplay()
 
 const items = ref<SheetItem[]>([])
-const loadingItems = ref(false)
+const loadingItems = ref(true)
 const showAddModal = ref(false)
 const filterQuery = ref('')
 const pageVisible = ref(true)
@@ -288,5 +286,13 @@ img.honors-logo {
   mix-blend-mode: multiply; 
   margin: 10px;
   margin-right: 20px
+}
+
+.background-matte {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 120vh;
+  width: 120vw;
 }
 </style>
