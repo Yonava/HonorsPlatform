@@ -103,6 +103,7 @@
           :placeholder="filterPlaceholder"
           class="vanilla-search-input"
           type="text"
+          id="input"
         >
       </div>
       <div 
@@ -412,7 +413,7 @@ h1.title {
 }
 
 .search-input:focus {
-  width: 600px;
+  /* width: 600px; */
   box-shadow: 3px 2px 9px rgba(0, 0, 0, 0.5);
   outline: none;
 }
