@@ -92,8 +92,8 @@
       </div>
     </v-navigation-drawer>
     <v-app-bar
-      :color="`${panel.color}-darken-2`"
-      class="px-5"
+      :color="appBarColor"
+      class="app-bar px-5"
     >
       <div v-if="searchMode">
         <input
@@ -162,7 +162,7 @@
       >
       <v-spacer></v-spacer>
       <span 
-        v-if="autoSync && !searchMode"
+        v-if="autoSync && !searchMode && !xs"
         class="d-flex align-center ml-5 px-2"
         style="background: red; border-radius: 5px; font-weight: 700; cursor: default;"
       >
@@ -277,7 +277,8 @@ useKeyBindings({
 const {
   lgAndUp,
   mdAndUp, 
-  smAndUp
+  smAndUp,
+  xs
 } = useDisplay()
 
 const props = defineProps<{
@@ -325,9 +326,21 @@ const autoSyncDivColor = computed(() => {
     return 'rgba(0, 0, 0, 0.4)'
   }
 })
+
+const appBarColor = computed(() => {
+  if (xs.value && autoSync.value) {
+    return 'red-darken-4'
+  } else {
+    return `${props.panel.color}-darken-2`
+  }
+})
 </script>
 
 <style scoped>
+.app-bar {
+  transition: 300ms;
+}
+
 h1.title {
   font-weight: 700; 
   user-select: none; 

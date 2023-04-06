@@ -42,7 +42,7 @@
             v-model="item[index]"
             :label="attr"
             class="mx-2"
-            :style="`width: ${xs ? '400' : '250'}px;`"
+            :style="`width: ${xs ? '300' : '200'}px;`"
           ></v-text-field>
         </div>
       </div>
