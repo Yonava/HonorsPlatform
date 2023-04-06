@@ -16,7 +16,13 @@
       :items="items"
     />
     <v-main>
-      <div class="d-flex flex-row">
+      <div 
+        class="d-flex flex-row"
+        :style="{
+          position: 'relative',
+          height: smAndUp ? 'calc(100vh - 64px)' : ''
+        }"
+      >
         <v-sheet 
           v-if="smAndUp"
           class="d-flex align-center flex-column flex-start pt-3"
@@ -289,10 +295,10 @@ img.honors-logo {
 }
 
 .background-matte {
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
-  height: 120vh;
-  width: 120vw;
+  height: 100vh;
+  width: 100vw;
 }
 </style>

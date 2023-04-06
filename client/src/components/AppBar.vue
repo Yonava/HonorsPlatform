@@ -161,7 +161,7 @@
       >
       <v-spacer></v-spacer>
       <span 
-        v-if="autoSync"
+        v-if="autoSync && !searchMode"
         class="d-flex align-center ml-5 px-2"
         style="background: red; border-radius: 5px; font-weight: 700; cursor: default;"
       >
@@ -401,6 +401,18 @@ h1.title {
 }
 
 .search-input::placeholder {
+  color: rgba(255, 255, 255, 0.569);
+}
+
+.vanilla-search-input:focus::placeholder {
+  color: transparent;
+}
+
+.vanilla-search-input:hover {
+  box-shadow: 3px 2px 9px rgba(0, 0, 0, 0.5);
+}
+
+.vanilla-search-input::placeholder {
   color: rgba(255, 255, 255, 0.569);
 }
 
