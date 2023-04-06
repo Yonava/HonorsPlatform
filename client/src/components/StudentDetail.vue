@@ -14,10 +14,6 @@
         style="font-weight: 200;"
       >
         {{ item.value.id }}
-        <v-tooltip
-          activator="parent"
-          location="start"
-        >Student ID</v-tooltip>
       </p>
       <v-dialog 
         v-else
@@ -216,7 +212,7 @@
       <div 
         :class="[
           'd-flex',
-          sm ? 'flex-row' : 'flex-column'
+          'flex-column'
         ]"
         style="width: 100%"
       >
@@ -239,7 +235,7 @@
           :disabled="!canDelete"
           size="large"
           color="red"
-          :class="sm ? '' : 'mt-3'"
+          class="mt-3"
         >
           <v-icon
             class="mr-4"

@@ -130,7 +130,7 @@
       v-model="showDetailDrawer"
       temporary
       location="bottom"
-      style="width: 100vw; height: 85%;"
+      style="width: 100%; height: 82.5%;"
     >
       <component
         v-if="selectedItem"
