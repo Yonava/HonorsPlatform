@@ -1,5 +1,5 @@
 <template>
-  <v-sheet>
+  <div>
     <v-sheet 
       class="background-matte"
       :color="`${panel.color}-lighten-4`"
@@ -27,7 +27,6 @@
           v-if="smAndUp"
           class="d-flex align-center flex-column flex-start pt-3"
           :color="`${panel.color}-darken-2`"
-          border 
           style="width: 90px; height: 100%; background: green"
         >
           <SortPanel 
@@ -74,10 +73,9 @@
         </v-sheet>
         <v-sheet 
           :color="`${panel.color}-lighten-4`"
-          border 
-          style="min-width: 400px; height: 100%; overflow: auto"
+          style="min-width: 400px; overflow: auto"
           class="d-flex flex-grow-1 flex-column align-center"
-        >  
+        >
           <PanelList
             @select="selectedItem = $event"
             :items="displayItems"
@@ -130,6 +128,7 @@
       v-model="showDetailDrawer"
       temporary
       touchless
+      rounded
       location="bottom"
       style="width: 100%; height: 82.5%;"
     >
@@ -142,7 +141,7 @@
         :item="ref(clone(selectedItem))"
       />
     </v-navigation-drawer>
-  </v-sheet>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -321,10 +320,10 @@ img.honors-logo {
 }
 
 .background-matte {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
-  height: 100vh;
-  width: 100vw;
+  height: 130%;
+  width: 130%;
 }
 </style>
