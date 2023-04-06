@@ -100,7 +100,7 @@
             class="d-flex flex-column align-center justify-center"
           >
             <v-icon
-              style="font-size: 30rem; opacity: 0.1;"
+              style="font-size: 35vw; opacity: 0.1;"
             >
               {{ panel.icon }}
             </v-icon>

@@ -96,7 +96,20 @@
       :color="`${panel.color}-darken-2`"
       class="px-5"
     >
-      <div class="d-flex align-center">
+      <div v-if="searchMode">
+        <input
+          @input="updateValue"
+          :value="modelValue"
+          :placeholder="filterPlaceholder"
+          class="search-input ml-0"
+          style="width: 125%"
+          type="text"
+        >
+      </div>
+      <div 
+        v-else
+        class="d-flex align-center"
+      >
         <v-icon 
           :icon="panel.icon" 
           size="x-large" 
@@ -202,18 +215,21 @@
         icon
       >
         <v-icon 
+          v-if="!searchMode"
           @click="searchMode = true"
           icon="mdi-magnify" 
           size="large"
         ></v-icon>
-        <v-tooltip
-          activator="parent"
-          location="bottom"
-        >Search {{ panel.title }}</v-tooltip>
+        <v-icon 
+          v-else
+          @click="searchMode = false"
+          icon="mdi-close" 
+          size="large"
+        ></v-icon>
       </v-btn>
       <div 
         v-if="smAndUp"
-        class="pr-7 d-flex flex-row align-center"
+        class="d-flex flex-row align-center"
       >
         <Announcements />
         <v-btn icon>
@@ -228,10 +244,7 @@
           >View Points Leaderboard</v-tooltip>
         </v-btn>
       </div>
-      <div 
-        v-else
-        class="pr-5"
-      >
+      <div v-else>
         <v-btn icon>
           <v-icon 
             @click="navDrawer = true"
