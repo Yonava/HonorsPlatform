@@ -198,9 +198,7 @@
       ]"
       :style="sm ? '' : 'width: 55%'"
     >
-      <div
-        style="width: 100%;"
-      >
+      <div style="width: 100%;">
         <v-textarea
           v-model="item.value.note"
           auto-grow
@@ -229,7 +227,6 @@
           >mdi-school-outline</v-icon>
           Move To Graduates
         </v-btn>
-        <v-spacer></v-spacer>
         <v-btn 
           @click="reqDeleteStudent"
           :disabled="!canDelete"

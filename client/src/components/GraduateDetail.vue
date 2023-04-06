@@ -1,9 +1,14 @@
 <template>
   <div 
-    class="d-flex flex-row"
-    style="width: 100%; padding: 20px"
+    :class="[
+      'pa-5',
+      'd-flex',
+      sm ? 'flex-column' : 'flex-row'
+    ]"
+    style="width: 100%;"
+    id="parent-wrapper"
   >
-    <div style="width: 55%; height: 100%; overflow: auto">
+    <div>
       <p 
         v-if="item.value.id"
         style="font-weight: 200"
@@ -62,38 +67,61 @@
         :id="item.value.id"
       />
     </div>
+    <v-divider 
+      v-if="sm"
+      class="my-2"
+    ></v-divider>
     <div 
-      style="width: 45%; height: 100%; overflow: auto" 
-      class="ml-5 d-flex flex-column"
+      :class="[
+        sm ? '' : 'ml-5', 
+        'd-flex', 
+        'flex-column',
+        'align-center'
+      ]"
+      :style="sm ? '' : 'width: 55%'"
     >
-      <span 
-        @click="canDelete ? emits('delete') : null"
+      <div style="width: 100%;">
+        <v-textarea
+          v-model="item.value.note"
+          auto-grow
+          variant="outlined"
+          clearable
+          label="Meeting notes"
+        ></v-textarea>
+      </div>
+      <div
         :class="[
-          'd-flex', 
-          'align-center', 
-          'mb-2',
-          canDelete ? 'delete' : 'delete-disabled'
+          'd-flex',
+          'flex-column'
         ]"
+        style="width: 100%"
       >
-        <v-icon>mdi-delete</v-icon>
-        delete {{ item.value.name.split(' ')[0] }} permanently
-      </span>
-      <v-textarea
-        v-model="item.value.note"
-        clearable
-        :label="`Notes on ${item.value.name.split(' ')[0]}`"
-      ></v-textarea>
-      <v-btn
-        @click="moveToStudents"
-        :loading="movingGrad"
-        color="purple-darken-2"
-      >
-        <v-icon
-          class="mr-4"
-          size="x-large"
-        >mdi-account-arrow-right</v-icon>
-        Move Back to Students
-      </v-btn>
+        <v-btn
+          @click="moveToStudents"
+          :loading="movingGrad"
+          color="purple-darken-2"
+          size="large"
+        >
+          <v-icon
+            class="mr-4"
+            size="x-large"
+          >mdi-account-arrow-right</v-icon>
+          Move Back to Students
+        </v-btn>
+        <v-btn 
+          @click="reqDeleteStudent"
+          :disabled="!canDelete"
+          size="large"
+          color="red"
+          class="mt-3"
+        >
+          <v-icon
+            class="mr-4"
+            size="x-large"
+          >mdi-delete</v-icon>
+          delete {{ item.value.name.split(' ')[0] }}
+        </v-btn>
+      </div>
     </div>
   </div>
 </template>
@@ -136,6 +164,13 @@ const emits = defineEmits([
   'update'
 ])
 
+const sm = ref(false)
+
+onMounted(() => {
+  const parentWidth = document.getElementById('parent-wrapper').clientWidth
+  sm.value = parentWidth < 700
+})
+
 const movingGrad = ref(false)
 const showEngagementModal = ref(false)
 const engagements = ref<GradEngagement[]>([])
@@ -171,6 +206,7 @@ async function moveToStudents() {
       points: 0,
       activeStatus: 'Active',
       year: '',
+      athletics: '',
       note: props.item.value.note,
       misc: {}
     }])
