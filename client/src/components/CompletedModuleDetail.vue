@@ -154,15 +154,6 @@ const emits = defineEmits([
 </script>
 
 <style scoped>
-.delete {
-  color: red;
-  cursor: pointer;
-}
-
-.delete:hover {
-  text-decoration: underline;
-}
-
 input.header-input {
   font-weight: 900; 
   font-size: 3em; 
