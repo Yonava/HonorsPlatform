@@ -77,6 +77,12 @@ watch(() => props.panelType, newVal => {
   sortOptions.value = switchSortOptions(newVal)
   activeIcons.value = sortOptions.value.map(sort => sort.icon.asc)
 }, { immediate: true })
+
+watch(() => props.items, () => {
+  if (activeSort.value) {
+    itemList.value.sort(activeSort.value.func[ascending.value ? 'asc' : 'desc'])
+  }
+})
 </script>
 
 <style scoped>

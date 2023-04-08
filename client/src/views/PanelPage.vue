@@ -272,7 +272,8 @@ async function itemAdded<T extends SheetEntry>(item: T) {
 async function fetchData() {
   selectedItem.value = undefined;
   loadingItems.value = true
-  items.value = []
+  // TODO: is resetting the items array necessary?
+  // items.value = []
   const data = await getEvery(panel.value.sheetRange)
   items.value = await panel.value.mappers.map(data)
   loadingItems.value = false
@@ -289,13 +290,7 @@ const displayItems = computed(() => {
 
 async function silentFetch() {
   const data = await getEvery(panel.value.sheetRange)
-  const incomingItems = await panel.value.mappers.map(data)
-  // TODO: edge case in this prevents newly created or deleted items from being updated
-  items.value = items.value.map(item => {
-    const incomingItem = incomingItems.find(i => i.row === item.row)
-    if (!incomingItem) return item
-    return incomingItem
-  })
+  items.value = await panel.value.mappers.map(data)
 }
 
 // 1s just to impress, 5s is probably better
