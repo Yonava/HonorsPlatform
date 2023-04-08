@@ -1,6 +1,6 @@
 <template>
   <v-sheet
-    color="blue-lighten-1"
+    color="blue-darken-1"
     style="height: 100%; width: 100%;"
     class="d-flex flex-column align-center justify-center"
   >
