@@ -269,17 +269,6 @@ async function itemAdded<T extends SheetEntry>(item: T) {
   items.value.unshift(selectedItem.value)
 }
 
-async function fetchData() {
-  loadingItems.value = true
-  const data = await getEvery(panel.value.sheetRange)
-  items.value = await panel.value.mappers.map(data)
-  loadingItems.value = false
-  // TODO: ref prop must update on new fetch
-  if (!selectedItem.value) return
-  const findSelected = items.value.findIndex(i => i.row === selectedItem.value.row)
-  if (findSelected === -1) selectedItem.value = undefined
-}
-
 const displayItems = computed(() => {
   if (filterQuery.value === '') return items.value
   return items.value.filter(<T extends SheetEntry>(item: T) => {
@@ -289,9 +278,18 @@ const displayItems = computed(() => {
   })
 })
 
+async function fetchData() {
+  loadingItems.value = true
+  await silentFetch()
+  loadingItems.value = false
+}
+
 async function silentFetch() {
   const data = await getEvery(panel.value.sheetRange)
   items.value = await panel.value.mappers.map(data)
+  if (!selectedItem.value) return
+  const findSelected = items.value.findIndex(i => i.row === selectedItem.value.row)
+  if (findSelected === -1) selectedItem.value = undefined
 }
 
 // 1s just to impress, 5s is probably better
