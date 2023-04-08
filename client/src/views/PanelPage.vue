@@ -270,13 +270,14 @@ async function itemAdded<T extends SheetEntry>(item: T) {
 }
 
 async function fetchData() {
-  selectedItem.value = undefined;
   loadingItems.value = true
-  // TODO: is resetting the items array necessary?
-  // items.value = []
   const data = await getEvery(panel.value.sheetRange)
   items.value = await panel.value.mappers.map(data)
   loadingItems.value = false
+  // TODO: ref prop must update on new fetch
+  if (!selectedItem.value) return
+  const findSelected = items.value.findIndex(i => i.row === selectedItem.value.row)
+  if (findSelected === -1) selectedItem.value = undefined
 }
 
 const displayItems = computed(() => {
