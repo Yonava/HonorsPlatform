@@ -79,7 +79,7 @@ export function switchPanel(panel: PanelType) {
         title: 'Students',
         color: 'blue',
         icon: 'mdi-account-group',
-        keys: ['id'],
+        keys: ['id', 'name', 'athletics', 'note', 'email', 'points'],
         sheetRange: Range.STUDENTS,
         mappers: {
           map: mapStudents,

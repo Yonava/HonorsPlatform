@@ -5,6 +5,7 @@ import {
   Module,
   CompletedModule,
   GradEngagement,
+  Grade,
 } from "./SheetTypes";
 
 function removeEmptyObjects(item: Object) {
@@ -94,7 +95,7 @@ export function mapCompletedModules(sheetData: string[][]): CompletedModule[] {
         docuSignCreated: module[5] ?? '',
         docuSignCompleted: module[6] ?? '',
         completedDate: module[7] ?? '',
-        grade: module[8] ?? '',
+        grade: (module[8] ?? null) as Grade,
       };
     })
     .filter(removeEmptyObjects);
@@ -102,9 +103,10 @@ export function mapCompletedModules(sheetData: string[][]): CompletedModule[] {
 
 export function unmapCompletedModules(modules: CompletedModule[]): string[][] {
   return modules.map((module) => {
+    type StringValues<T> = { [P in keyof T]: string };
     const { row, ...rest } = module;
     return [
-      ...Object.values(rest),
+      ...Object.values(rest as StringValues<CompletedModule>),
     ];
   });
 }
