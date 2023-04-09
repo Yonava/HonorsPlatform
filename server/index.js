@@ -72,10 +72,12 @@ app.get('/api/auth/url', (req, res) => {
 
 app.get('/api/auth/:authCode', async (req, res) => {
   const { authCode } = req.params;
+  console.log('auth code: ', authCode)
   try {
     const auth = new OAuth2(clientId, clientSecret, redirectUri);
     const { tokens } = await auth.getToken(authCode);
     console.log('refresh token: ', tokens.refresh_token);
+    console.log('token: ', tokens);
     res.json({ refreshToken: tokens.refresh_token });
   } catch (e) {
     res.json({ 
