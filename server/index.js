@@ -20,25 +20,25 @@ app.use("/api/open", openAccessAPI);
 
 function removeTokenFromCache(req) {
   if (!req.headers.authorization) return;
-  const refreshToken = req.headers.authorization.split(' ')[1];
-  delete sheetInstances[refreshToken];
+  const accessToken = req.headers.authorization.split(' ')[1];
+  delete sheetInstances[accessToken];
 }
 
 async function validateToken(req) {
-  const refreshToken = req.headers.authorization.split(' ')[1];
-  if (!refreshToken) {
+  const accessToken = req.headers.authorization.split(' ')[1];
+  if (!accessToken) {
     throw new Error('No bearer token provided');
   }
   
-  if (sheetInstances[refreshToken]) return refreshToken;
+  if (sheetInstances[accessToken]) return accessToken;
 
   try {
-    await createNewSheetInstanceRefresh(refreshToken);
+    await newSheetInstance(accessToken);
   } catch (e) {
     console.log(e)
   }
 
-  return refreshToken;
+  return accessToken;
 }
 
 function getAuthUrl() {
@@ -50,14 +50,14 @@ function getAuthUrl() {
   return url;
 }
 
-async function createNewSheetInstanceRefresh(refreshToken) {
+async function newSheetInstance(accessToken) {
   try {
     const auth = new OAuth2(clientId, clientSecret, redirectUri);
-    auth.setCredentials({ refresh_token: refreshToken });
-    sheetInstances[refreshToken] = await new GoogleSheet().init(auth);
+    auth.setCredentials({ access_token: accessToken });
+    sheetInstances[accessToken] = await new GoogleSheet().init(auth);
   } catch (e) {
     console.log(e)
-    throw "Invalid Grant: Create New Sheet Instance Refresh";
+    throw "Invalid Grant: New Sheet Instance";
   }
 }
 
@@ -72,13 +72,10 @@ app.get('/api/auth/url', (req, res) => {
 
 app.get('/api/auth/:authCode', async (req, res) => {
   const { authCode } = req.params;
-  console.log('auth code: ', authCode)
   try {
     const auth = new OAuth2(clientId, clientSecret, redirectUri);
     const { tokens } = await auth.getToken(authCode);
-    console.log('refresh token: ', tokens.refresh_token);
-    console.log('token: ', tokens);
-    res.json({ refreshToken: tokens.refresh_token });
+    res.json({ accessToken: tokens.access_token });
   } catch (e) {
     res.json({ 
       error: 'Invalid token',
@@ -89,9 +86,9 @@ app.get('/api/auth/:authCode', async (req, res) => {
 
 app.get("/api/range/:range", async (req, res) => {
   try {
-    const refreshToken = await validateToken(req);
+    const accessToken = await validateToken(req);
     const { range } = req.params;
-    const data = await sheetInstances[refreshToken].getRange(range);
+    const data = await sheetInstances[accessToken].getRange(range);
     // sheets API return undefined when sheet is empty
     if (!data) {
       console.log(`No data found in range ${range}`)
@@ -108,10 +105,10 @@ app.get("/api/range/:range", async (req, res) => {
 
 app.put("/api/range/:range/:row", async (req, res) => {
   try {
-    const oauthtoken = await validateToken(req);
+    const accessToken = await validateToken(req);
     const { range, row } = req.params;
     const data = req.body;
-    await sheetInstances[oauthtoken].updateByRow(range, row, data);
+    await sheetInstances[accessToken].updateByRow(range, row, data);
     res.json({ success: true });
   } catch(e) {
     removeTokenFromCache(req)
@@ -122,10 +119,10 @@ app.put("/api/range/:range/:row", async (req, res) => {
 
 app.put("/api/range/:range", async (req, res) => {
   try {
-    const oauthtoken = await validateToken(req);
+    const accessToken = await validateToken(req);
     const { range } = req.params;
     const data = req.body;
-    await sheetInstances[oauthtoken].updateRange(range, data);
+    await sheetInstances[accessToken].updateRange(range, data);
     res.json({ success: true });
   } catch(e) {
     console.log(e);
@@ -136,9 +133,9 @@ app.put("/api/range/:range", async (req, res) => {
 
 app.delete("/api/range/:range/:row", async (req, res) => {
   try {
-    await validateToken(req);
+    const accessToken = await validateToken(req);
     const { range, row } = req.params;
-    await sheetInstances[oauthtoken].deleteByRow(range, row);
+    await sheetInstances[accessToken].deleteByRow(range, row);
     res.json({ success: true });
   } catch(e) {
     console.log(e);
@@ -149,10 +146,10 @@ app.delete("/api/range/:range/:row", async (req, res) => {
 
 app.post("/api/range/:range", async (req, res) => {
   try {
-    await validateToken(req);
+    const accessToken = await validateToken(req);
     const { range } = req.params;
     const data = req.body;
-    await sheetInstances[oauthtoken].appendRange(range, data);
+    await sheetInstances[accessToken].appendRange(range, data);
     res.json({ success: true });
   } catch(e) {
     console.log(e);
