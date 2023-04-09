@@ -17,15 +17,12 @@
     />
     <v-sheet 
       v-if="!loading"
+      position="absolute"
       class="d-flex align-center justify-center flex-column ma-5"
     >
-      <div class="mb-8 d-flex flex-row align-center">
-        <!-- <v-icon 
-          class="mr-3"
-          size="x-large"
-        >mdi-alert</v-icon> -->
+      <div class="my-8 d-flex flex-row align-center">
         <h1 style="font-size: 250%">
-          Not Authorized
+          Authorize
         </h1>
       </div>
       <v-btn 
@@ -38,39 +35,41 @@
         <v-icon class="mr-2">mdi-google</v-icon>
         Continue With Google
       </v-btn>
-      <v-expansion-panels>
-        <v-expansion-panel 
-          elevation="0"
-          color="grey-lighten-3"
-        >
-          <template #title>
-            <v-icon class="mr-2">mdi-information-outline</v-icon>
-            <p>Why Am I Seeing This?</p>
-          </template>
-          <template #text>
-            <div>
-              <h3 style="font-weight: 900;">
-                This could be due to one of the following reasons:
-              </h3>
-              <ol class="ml-4">
-                <li>
-                  Your previous credentials have expired
-                </li>
-                <li>
-                  Your internet is garbage
-                </li>
-                <li>
-                  You attempted to perform an operation you are 
-                  not authorized to perform (i.e. generating registrar reports)
-                </li>
-                <li>
-                  Dr. Matthews doesn't like you
-                </li>
-              </ol>
-            </div>
-          </template>
-        </v-expansion-panel>
-      </v-expansion-panels>
+      <div>
+        <v-expansion-panels variant="accordion">
+          <v-expansion-panel 
+            elevation="0"
+            color="grey-lighten-3"
+          >
+            <template #title>
+              <v-icon class="mr-2">mdi-information-outline</v-icon>
+              <p>Why Am I Seeing This?</p>
+            </template>
+            <template #text>
+              <div>
+                <h3 style="font-weight: 900;">
+                  This could be due to one of the following reasons:
+                </h3>
+                <ol class="ml-4">
+                  <li>
+                    Your previous credentials have expired
+                  </li>
+                  <li>
+                    Your internet is garbage
+                  </li>
+                  <li>
+                    You attempted to perform an operation you are 
+                    not authorized to perform (i.e. generating registrar reports)
+                  </li>
+                  <li>
+                    Dr. Matthews doesn't like you
+                  </li>
+                </ol>
+              </div>
+            </template>
+          </v-expansion-panel>
+        </v-expansion-panels>
+      </div>
     </v-sheet>
   </v-sheet>
 </template>

@@ -73,7 +73,10 @@
         </v-sheet>
         <v-sheet 
           :color="`${panel.color}-lighten-4`"
-          style="overflow: auto"
+          :style="{
+            overflow: 'auto',
+            width: smAndUp ? `${panelListWidth}px` : '100%',
+          }"
           class="d-flex flex-grow-1 flex-column align-center"
         >
           <PanelList
@@ -85,6 +88,13 @@
             :panel="panel"
           />
         </v-sheet>
+        <v-sheet 
+          v-if="mdAndUp"
+          :color="`${panel.color}-lighten-5`"
+          @mousedown="resizeStart"
+          @mouseup="resizeEnd"
+          style="width: 3px; height: 100%; cursor: col-resize;"
+        ></v-sheet>
         <v-sheet 
           v-if="mdAndUp"
           :color="`${panel.color}-lighten-5`"
@@ -176,6 +186,7 @@ const loadingItems = ref(true)
 const showAddModal = ref(false)
 const filterQuery = ref('')
 const pageVisible = ref(true)
+const panelListWidth = ref(30)
 
 const clone = <T>(obj: T) => JSON.parse(JSON.stringify(obj))
 
@@ -301,6 +312,23 @@ onUnmounted(() => {
   clearInterval(autoSyncInterval)
   document.removeEventListener('visibilitychange', toggleVisibility)
 })
+
+const resizeStart = (e: MouseEvent) => {
+  e.preventDefault()
+  document.addEventListener('mousemove', resizeMove)
+  document.addEventListener('mouseup', resizeEnd)
+}
+
+const resizeMove = (e: MouseEvent) => {
+  e.preventDefault()
+  panelListWidth.value = e.clientX - 50
+}
+
+const resizeEnd = (e: MouseEvent) => {
+  e.preventDefault()
+  document.removeEventListener('mousemove', resizeMove)
+  document.removeEventListener('mouseup', resizeEnd)
+}
 </script>
 
 <style scoped>
