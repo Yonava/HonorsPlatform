@@ -122,7 +122,7 @@ app.put("/api/range/:range", async (req, res) => {
     const accessToken = await validateToken(req);
     const { range } = req.params;
     const data = req.body;
-    await sheetInstances[accessToken].updateRange(range, data);
+    await sheetInstances[accessToken].replaceRange(range, data);
     res.json({ success: true });
   } catch(e) {
     console.log(e);
@@ -135,7 +135,7 @@ app.delete("/api/range/:range/:row", async (req, res) => {
   try {
     const accessToken = await validateToken(req);
     const { range, row } = req.params;
-    await sheetInstances[accessToken].deleteByRow(range, row);
+    await sheetInstances[accessToken].clearByRow(range, row);
     res.json({ success: true });
   } catch(e) {
     console.log(e);
@@ -149,7 +149,7 @@ app.post("/api/range/:range", async (req, res) => {
     const accessToken = await validateToken(req);
     const { range } = req.params;
     const data = req.body;
-    await sheetInstances[accessToken].appendRange(range, data);
+    await sheetInstances[accessToken].postInRange(range, data);
     res.json({ success: true });
   } catch(e) {
     console.log(e);
