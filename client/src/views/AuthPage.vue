@@ -84,12 +84,20 @@ const route = useRoute()
 const router = useRouter()
 const loading = ref(true)
 
-onMounted(() => {
+onMounted(async () => {
   setTimeout(() => {
     loading.value = false
   }, 1000)
-  localStorage.setItem('token', route.query.code as string)
   if (route.query.hold) return
+  const code = (route.query.code ?? '') as string
+  if (!code) return
+  const res = await axios.get(`/api/auth/${encodeURIComponent(code)}`)
+
+  if (!res.data.refreshToken) throw new Error('No refresh token')
+
+  console.log(res.data.refreshToken)
+  localStorage.setItem('token', res.data.refreshToken)
+
   router.push({ 
     name: 'panel' 
   })

@@ -3,34 +3,17 @@ const { google } = require("googleapis")
 module.exports = class GoogleSheet {
   spreadsheetId = '1bW-aQRn-GAbTsNkV2VB9xtBFT3n-LPrSJXua_NA2G6Y';
   sheets;
-  static instance;
 
-  static async getInstance(auth, authCode) {
-    if (!GoogleSheet.instance) {
-      try {
-        GoogleSheet.instance = await new GoogleSheet().init(auth, authCode);
-      } catch (e) {
-        throw e
-      }
-    }
-
-    return GoogleSheet.instance;
-  }
-
-  async init(auth, authCode) {
+  async init(auth) {
     try {
-      const { tokens } = await auth.getToken(authCode);
-      auth.setCredentials(tokens);
+      this.sheets = google.sheets({
+        version: 'v4',
+        auth,
+      });
+      return this;
     } catch (e) {
       throw e
     }
-
-    this.sheets = google.sheets({ 
-      version: 'v4', 
-      auth
-    });
-
-    return this;
   }
 
   async getRange(range) {
