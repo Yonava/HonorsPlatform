@@ -95,7 +95,18 @@ app.get("/api/range/:range", async (req, res) => {
       res.json([[]]);
       return;
     }
-    res.json(data.map(row => row.map(cell => cell.replace(/[Ss][Hh][Aa][Nn][Nn][Oo][Nn]/g, 'S******'))));
+    res.json(data.map(row => row.map(cell => cell.replace(/[Ss][Hh][Aa][Nn][Nn][Oo][Nn]/g, () => {
+      const findIndexUpper = cell.indexOf('Shannon');
+      const uppercase = findIndexUpper > -1;
+      const name = `${uppercase ? 'S' : 's' }hannon`.split('');
+      if (Math.random() < 0.9) return name.join('');
+      const randomIndex = Math.floor(Math.random() * name.length) + 1;
+      if (randomIndex === name.length) return name.join('');
+      const temp = name[randomIndex];
+      name[randomIndex] = name[randomIndex - 1];
+      name[randomIndex - 1] = temp;
+      return name.join('');
+    }))));
   } catch (e) {
     console.log('unauthorized request', e);
     removeTokenFromCache(req)
