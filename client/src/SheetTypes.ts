@@ -50,3 +50,19 @@ export interface GradEngagement extends SheetEntry {
   dateTime: string;
   note: string;
 }
+
+export interface Thesis extends SheetEntry {
+  studentId: string;
+  name: string;
+  email: string;
+  title: string;
+  proposalReceived: string;
+  breakoutRoom: string;
+  decision: string;
+  term: string;
+  mentor: string;
+  mentorEmail: string;
+  draftReceived: string;
+  note: string;
+}
+
