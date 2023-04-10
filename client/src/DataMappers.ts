@@ -7,6 +7,7 @@ import {
   GradEngagement,
   Grade,
   Thesis,
+  ThesisDecision,
 } from "./SheetTypes";
 
 function removeEmptyObjects(item: Object) {
@@ -174,7 +175,7 @@ export function mapTheses(sheetData: string[][]): Thesis[] {
         email: thesis[3] ?? '',
         proposalReceived: thesis[4] ?? '',
         breakoutRoom: thesis[5] ?? '',
-        decision: thesis[6] ?? '',
+        decision: (thesis[6] ?? ThesisDecision.PENDING) as ThesisDecision,
         term: thesis[7] ?? '',
         mentor: thesis[8] ?? '',
         mentorEmail: thesis[9] ?? '',

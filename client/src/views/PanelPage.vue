@@ -244,6 +244,7 @@ useKeyBindings({
   '2': () => keyBindToggle(PanelType.GRADUATES),
   '3': () => keyBindToggle(PanelType.MODULES),
   '4': () => keyBindToggle(PanelType.COMPLETED_MODULES),
+  '5': () => keyBindToggle(PanelType.THESES),
 })
 
 onMounted(async () => {
