@@ -99,7 +99,7 @@
             height: '100%',
             cursor: 'col-resize',
             position: 'absolute',
-            left: `${80 + proposedWidth}px`,
+            left: `${proposedWidth + sortPanelWidth}px`,
           }"
         ></v-sheet>
         <v-sheet 
@@ -194,7 +194,6 @@ const loadingItems = ref(true)
 const showAddModal = ref(false)
 const filterQuery = ref('')
 const pageVisible = ref(true)
-const panelListWidth = ref(420)
 
 const clone = <T>(obj: T) => JSON.parse(JSON.stringify(obj))
 
@@ -312,20 +311,25 @@ async function silentFetch() {
   if (findSelected === -1) selectedItem.value = undefined
 }
 
-// 1s just to impress, 5s is probably better
 const autoSyncInterval = setInterval(() => {
   if (autoSync.value && pageVisible.value) silentFetch()
-}, 5000)
+}, 10_000)
 
 onUnmounted(() => {
   clearInterval(autoSyncInterval)
   document.removeEventListener('visibilitychange', toggleVisibility)
 })
 
-
+function getDefaultWidth() {
+  const local = localStorage.getItem('panelListWidth')
+  if (local) return parseInt(local)
+  return 420
+}
 
 const resizing = ref(false)
+const panelListWidth = ref(getDefaultWidth())
 const proposedWidth = ref(panelListWidth.value)
+const sortPanelWidth = 80
 
 const resizeStart = (e: MouseEvent) => {
   resizing.value = true
@@ -338,7 +342,6 @@ const resizeStart = (e: MouseEvent) => {
 
 const resizeMove = (e: MouseEvent) => {
   if (!resizing.value) return
-  const sortPanelWidth = 80
   const newWidth = e.clientX - sortPanelWidth
   if (newWidth < 200 || newWidth > 700) return
   proposedWidth.value = newWidth
@@ -349,6 +352,7 @@ const resizeEnd = (e: MouseEvent) => {
   const panelParent = document.getElementById('panel-parent')
   panelParent.style.userSelect = 'auto'
   panelListWidth.value = proposedWidth.value
+  localStorage.setItem('panelListWidth', panelListWidth.value.toString())
   document.removeEventListener('mousemove', resizeMove)
   document.removeEventListener('mouseup', resizeEnd)
 }
