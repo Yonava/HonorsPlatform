@@ -27,7 +27,7 @@
           v-if="smAndUp"
           class="d-flex align-center flex-column flex-start pt-3"
           :color="`${panel.color}-darken-2`"
-          style="width: 90px; height: 100%; background: green"
+          style="max-width: 80px; height: 100%; background: green"
         >
           <SortPanel 
             @update="items = $event"
@@ -90,14 +90,14 @@
         </v-sheet>
         <v-sheet 
           v-if="mdAndUp"
-          :color="`${panel.color}-lighten-5`"
+          :color="`white`"
           @mousedown="resizeStart"
           @mouseup="resizeEnd"
           style="width: 3px; height: 100%; cursor: col-resize;"
         ></v-sheet>
         <v-sheet 
           v-if="mdAndUp"
-          :color="`${panel.color}-lighten-5`"
+          :color="`white`"
           style="width: 70%; height: 100%; overflow: auto;"
         >
           <div v-if="selectedItem">
@@ -200,6 +200,7 @@ provide('activePanel', panel)
 
 const changePanel = (panelType: PanelType) => {
   panel.value = switchPanel(panelType)
+  selectedItem.value = null
   document.title = panel.value.title + ' - Honors Program'
   filterQuery.value = ''
   router.push({ 
@@ -321,7 +322,7 @@ const resizeStart = (e: MouseEvent) => {
 
 const resizeMove = (e: MouseEvent) => {
   e.preventDefault()
-  panelListWidth.value = e.clientX - 50
+  panelListWidth.value = e.clientX
 }
 
 const resizeEnd = (e: MouseEvent) => {
