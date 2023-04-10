@@ -147,10 +147,8 @@
       temporary
       touchless
       rounded
-      fixed
       location="bottom"
-      style="width: 100%; height: 82.5%;"
-      :color="`${panel.color}-lighten-5`"
+      style="width: 100%; height: 80%;"
     >
       <component
         v-if="selectedItem"

@@ -33,11 +33,11 @@ export function termValidator(term: string) {
     return false;
   }
 
-  if (isNaN(year)) {
+  else if (isNaN(year)) {
     return false;
   }
 
-  if (Math.abs(yearDifference) > 2) {
+  else if (Math.abs(yearDifference) > 2) {
     return false;
   }
 
