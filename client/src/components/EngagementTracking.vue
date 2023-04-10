@@ -79,11 +79,18 @@ const props = defineProps<{
 
 const clone = <T>(obj: T): T => JSON.parse(JSON.stringify(obj))
 
-const emits = defineEmits(['update'])
+const emits = defineEmits([
+  'update', 
+  'loading-state'
+])
 const loading = ref(true)
 const engagements = ref<GradEngagement[]>([])
 const selectedEngagement = ref<GradEngagement | undefined>(undefined)
 const showModal = ref(false)
+
+watch(loading, (val) => {
+  emits('loading-state', val)
+})
 
 watch(() => props.id , async () => {
   await fetchEngagements()
@@ -94,6 +101,7 @@ async function fetchEngagements() {
   engagements.value = []
   const events = await getEvery(Range.GRAD_ENGAGEMENT)
   engagements.value = mapGradEngagement(events).filter(e => e.gradId === props.id)
+  emits('update', engagements.value)
   loading.value = false
 }
 

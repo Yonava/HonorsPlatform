@@ -1,12 +1,12 @@
 <template>
   <div 
+    ref="el"
     :class="[
       'pa-5',
       'd-flex',
       sm ? 'flex-column' : 'flex-row'
     ]"
     style="width: 100%;"
-    id="parent-wrapper"
   >
     <div>
       <p 
@@ -64,6 +64,7 @@
       </v-text-field>
       <EngagementTracking 
         @update="engagements = $event"
+        @loading-state="loadingEngagements = $event"
         :id="item.value.id"
       />
     </div>
@@ -98,6 +99,7 @@
       >
         <v-btn
           @click="moveToStudents"
+          :disabled="!canDelete"
           :loading="movingGrad"
           color="purple-darken-2"
           size="large"
@@ -130,7 +132,7 @@
 import { 
   ref, 
   computed,
-  onMounted,
+  watch,
 } from 'vue'
 import type { Ref } from 'vue'
 import { 
@@ -144,6 +146,7 @@ import {
   mapGradEngagement,
   unmapGradEngagement
 } from '../DataMappers'
+import { useElementSize } from '@vueuse/core'
 import { Graduate, GradEngagement } from '../SheetTypes'
 import EngagementTracking from './EngagementTracking.vue'
 import UpdateButton from './UpdateButton.vue'
@@ -159,11 +162,12 @@ const emits = defineEmits([
 ])
 
 const sm = ref(false)
+const el = ref(null)
+const { width } = useElementSize(el)
 
-onMounted(() => {
-  const parentWidth = document.getElementById('parent-wrapper').clientWidth
-  sm.value = parentWidth < 700
-})
+watch(width, (newWidth) => {
+  sm.value = newWidth < 700
+}, { immediate: true })
 
 const movingGrad = ref(false)
 const showEngagementModal = ref(false)
@@ -172,7 +176,7 @@ const loadingEngagements = ref(true)
 const selectedEngagement = ref<GradEngagement>(null)
 
 const canDelete = computed(() => {
-  return engagements.value.length === 0 && !loadingEngagements
+  return engagements.value.length === 0 && !loadingEngagements.value
 })
 
 function openModal(event: GradEngagement) {

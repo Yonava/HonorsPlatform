@@ -75,8 +75,8 @@
           :color="`${panel.color}-lighten-4`"
           :style="{
             overflow: 'auto',
-            minWidth: smAndUp ? `${panelListWidth}px` : '100%',
-            maxWidth: smAndUp ? `${panelListWidth}px` : '100%',
+            minWidth: mdAndUp ? `${panelListWidth}px` : '',
+            maxWidth: mdAndUp ? `${panelListWidth}px` : '',
           }"
           class="d-flex flex-grow-1 flex-column align-center"
         >
