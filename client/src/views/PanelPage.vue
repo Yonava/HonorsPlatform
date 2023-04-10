@@ -343,7 +343,7 @@ const resizeStart = (e: MouseEvent) => {
 const resizeMove = (e: MouseEvent) => {
   if (!resizing.value) return
   const newWidth = e.clientX - sortPanelWidth
-  if (newWidth < 200 || newWidth > 700) return
+  if (newWidth < 300 || newWidth > 800) return
   proposedWidth.value = newWidth
 }
 
