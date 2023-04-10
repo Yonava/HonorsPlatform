@@ -51,6 +51,12 @@ export interface GradEngagement extends SheetEntry {
   note: string;
 }
 
+export enum ThesisDecision {
+  APPROVED = "Approved",
+  REJECTED = "Rejected",
+  PENDING = "Pending"
+}
+
 export interface Thesis extends SheetEntry {
   studentId: string;
   name: string;
@@ -58,7 +64,7 @@ export interface Thesis extends SheetEntry {
   title: string;
   proposalReceived: string;
   breakoutRoom: string;
-  decision: string;
+  decision: ThesisDecision;
   term: string;
   mentor: string;
   mentorEmail: string;

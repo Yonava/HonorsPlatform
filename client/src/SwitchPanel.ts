@@ -10,6 +10,9 @@ import CompletedModuleListItem from '../src/components/CompletedModuleListItem.v
 import GraduateListItem from '../src/components/GraduateListItem.vue';
 import GraduateDetail from '../src/components/GraduateDetail.vue';
 
+import ThesisDetail from '../src/components/ThesisDetail.vue';
+import ThesisListItem from '../src/components/ThesisListItem.vue';
+
 import { markRaw } from 'vue';
 import { Range } from './SheetsAPI';
 import { 
@@ -20,7 +23,9 @@ import {
   mapModules,
   unmapModules,
   mapCompletedModules,
-  unmapCompletedModules
+  unmapCompletedModules,
+  mapTheses,
+  unmapTheses
 } from './DataMappers';
 import { SheetEntry } from './SheetTypes';
 
@@ -125,8 +130,8 @@ export function switchPanel(panel: PanelType) {
     case PanelType.THESES:
       return {
         components: {
-          detail: markRaw(CompletedModuleDetail),
-          list: markRaw(CompletedModuleListItem)
+          detail: markRaw(ThesisDetail),
+          list: markRaw(ThesisListItem)
         },
         title: 'Theses',
         color: 'green',
@@ -134,8 +139,8 @@ export function switchPanel(panel: PanelType) {
         sheetRange: Range.THESES,
         keys: ['studentId'],
         mappers: {
-          map: mapCompletedModules,
-          unmap: unmapCompletedModules
+          map: mapTheses,
+          unmap: unmapTheses
         },
         type: PanelType.THESES
       };
