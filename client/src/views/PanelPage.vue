@@ -130,7 +130,7 @@
         </v-sheet>
       </div>
       <img 
-        v-if="lgAndUp"
+        v-if="lgAndUp && !selectedItem"
         src="../assets/honorsLogo.jpeg"
         class="honors-logo"
       >
