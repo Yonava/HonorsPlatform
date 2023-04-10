@@ -1,12 +1,12 @@
 <template>
   <div 
+    ref="el"
     :class="[
       'pa-5',
       'd-flex',
       sm ? 'flex-column' : 'flex-row'
     ]"
     style="width: 100%;"
-    id="parent-wrapper"
   >
     <div>
       <p style="font-weight: 200">
@@ -234,7 +234,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, watch } from 'vue'
+import { useElementSize } from '@vueuse/core'
 import type { Ref } from 'vue'
 import { updateByRow, moveRowToRange, Range } from '../SheetsAPI'
 import { unmapModules, unmapCompletedModules } from '../DataMappers'
@@ -261,11 +262,12 @@ const grades: Grade[] = [
 ]
 
 const sm = ref(false)
+const el = ref(null)
+const { width } = useElementSize(el)
 
-onMounted(() => {
-  const parentWidth = document.getElementById('parent-wrapper').clientWidth
-  sm.value = parentWidth < 700
-})
+watch(width, (newWidth) => {
+  sm.value = newWidth < 700
+}, { immediate: true })
 
 const dialog = ref(false)
 const movingModuleToCompleted = ref(false)

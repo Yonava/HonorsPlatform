@@ -1,12 +1,12 @@
 <template>
   <div 
+    ref="el"
     :class="[
       'pa-5',
       'd-flex',
       sm ? 'flex-column' : 'flex-row'
     ]"
     style="width: 100%;"
-    id="parent-wrapper"
   >
     <div>
       <p style="font-weight: 200">
@@ -130,7 +130,8 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { watch, ref } from 'vue'
+import { useElementSize } from '@vueuse/core'
 import type { Ref } from 'vue'
 import { CompletedModule } from '../SheetTypes'
 import UpdateButton from './UpdateButton.vue'
@@ -140,11 +141,12 @@ const props = defineProps<{
 }>()
 
 const sm = ref(false)
+const el = ref(null)
+const { width } = useElementSize(el)
 
-onMounted(() => {
-  const parentWidth = document.getElementById('parent-wrapper').clientWidth
-  sm.value = parentWidth < 700
-})
+watch(width, (newWidth) => {
+  sm.value = newWidth < 700
+}, { immediate: true })
 
 const emits = defineEmits([
   'delete', 

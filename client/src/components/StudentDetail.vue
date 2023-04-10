@@ -1,12 +1,12 @@
 <template>
   <div 
+    ref="el"
     :class="[
       'pa-5',
       'd-flex',
       sm ? 'flex-column' : 'flex-row'
     ]"
     style="width: 100%;"
-    id="parent-wrapper"
   >
     <div>
       <p
@@ -260,8 +260,8 @@ import {
   ref, 
   watch, 
   computed,
-  onMounted,
 } from 'vue'
+import { useElementSize } from '@vueuse/core'
 import type { Ref } from 'vue'
 import ModuleFetch from './ModuleFetch.vue'
 import AddModal from './AddModal.vue'
@@ -300,11 +300,12 @@ const yearOptions = [
 ]
 
 const sm = ref(false)
+const el = ref(null)
+const { width } = useElementSize(el)
 
-onMounted(() => {
-  const parentWidth = document.getElementById('parent-wrapper').clientWidth
-  sm.value = parentWidth < 700
-})
+watch(width, (newWidth) => {
+  sm.value = newWidth < 700
+}, { immediate: true })
 
 function reqDeleteStudent() {
   if (!canDelete.value) return
