@@ -1,5 +1,6 @@
 <template>
   <v-btn 
+    icon
     @click="reqUpdate"
     :loading="loading"
     :color="upToDate ? 'green' : `${panel.color}-darken-2`"
@@ -9,7 +10,9 @@
     rounded
     class="ml-7"
   >
-    {{ upToDate ? 'All Synced Up!' : `Update ${itemName}` }}
+    <v-icon
+      :icon="upToDate ? 'mdi-check' : 'mdi-cloud-upload'"
+    ></v-icon>
   </v-btn>
 </template>
 
@@ -24,7 +27,6 @@ import { useAutoSync, useChangeWatcher } from '../AutoSync'
 const clone = <T>(obj: T): T => JSON.parse(JSON.stringify(obj))
 
 const props = defineProps<{
-  itemName?: string,
   item: Ref<SheetItem>
 }>()
 
@@ -32,10 +34,6 @@ const { upToDate } = useChangeWatcher(() => props.item)
 useAutoSync(reqUpdate)
 
 const panel = inject("activePanel") as Ref<Panel<SheetItem>>
-
-const itemName = computed(() => {
-  return props?.itemName ?? panel.value.title.slice(0, -1)
-})
 
 const emits = defineEmits([
   'updated'

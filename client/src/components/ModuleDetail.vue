@@ -6,7 +6,6 @@
       'd-flex',
       sm ? 'flex-column' : 'flex-row'
     ]"
-    style="width: 100%;"
   >
     <div>
       <p style="font-weight: 200">

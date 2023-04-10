@@ -108,7 +108,10 @@
           style="height: 100%; overflow: auto;"
           class="d-flex flex-grow-1 flex-column align-center"
         >
-          <div v-if="selectedItem">
+          <div 
+            v-if="selectedItem"
+            style="width: 100%" 
+          >
             <component
               @delete="reqDelete"
               @update="updateList($event)"

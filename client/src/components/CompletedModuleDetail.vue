@@ -6,7 +6,6 @@
       'd-flex',
       sm ? 'flex-column' : 'flex-row'
     ]"
-    style="width: 100%;"
   >
     <div>
       <p style="font-weight: 200">
@@ -23,7 +22,6 @@
         <update-button
           @updated="$emit('update', $event)"
           :item="item"
-          itemName="Module"
         />
       </div>
       <v-divider class="my-2"></v-divider>
