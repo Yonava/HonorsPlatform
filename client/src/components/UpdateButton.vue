@@ -22,15 +22,16 @@ import { SheetItem } from "../SheetTypes";
 import { updateByRow } from "../SheetsAPI";
 import { ref, inject, computed, toRefs, watch } from "vue";
 import type { Ref } from 'vue'
-import { useAutoSync, useChangeWatcher } from '../AutoSync'
+import { useAutoSync } from '../AutoSync'
 
 const clone = <T>(obj: T): T => JSON.parse(JSON.stringify(obj))
 
 const props = defineProps<{
-  item: Ref<SheetItem>
+  item: SheetItem
 }>()
 
-const { upToDate } = useChangeWatcher(() => props.item)
+const { item } = toRefs(props)
+
 useAutoSync(reqUpdate)
 
 const panel = inject("activePanel") as Ref<Panel<SheetItem>>
@@ -38,20 +39,34 @@ const panel = inject("activePanel") as Ref<Panel<SheetItem>>
 const emits = defineEmits([
   'updated'
 ]);
+
 const loading = ref(false);
+const upToDate = ref(false);
+const cooldown = ref(false);
 
 async function reqUpdate() {
   if (upToDate.value) return
   upToDate.value = true
+  cooldown.value = true
+  setTimeout(() => cooldown.value = false, 500)
   loading.value = true
   await updateByRow(
     panel.value.sheetRange, 
-    props.item.value.row, 
+    props.item.row, 
     await panel.value.mappers.unmap([
-      props.item.value
+      props.item
     ])
   )
-  emits('updated', clone(props.item.value))
+  emits('updated', clone(props.item))
   loading.value = false
 }
+
+watch(item,
+  () => {
+    if (cooldown.value) return
+    upToDate.value = false
+    console.log('item changed')
+  }, 
+  { deep: true }
+)
 </script>

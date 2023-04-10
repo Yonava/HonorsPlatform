@@ -9,10 +9,10 @@
   >
     <div>
       <p
-        v-if="item.value.id"
+        v-if="item.id"
         style="font-weight: 200;"
       >
-        {{ item.value.id }}
+        {{ item.id }}
       </p>
       <v-dialog 
         v-else
@@ -71,7 +71,7 @@
       </v-dialog>
       <div class="d-flex flex-row align-center">
         <input 
-          v-model="item.value.name"
+          v-model="item.name"
           placeholder="Enter Name"
           type="text" 
           class="student-name-input"
@@ -85,21 +85,21 @@
       <v-divider class="my-2"></v-divider>
       <div class="d-flex align-center">
         <v-text-field
-          v-model="item.value.email"
+          v-model="item.email"
           label="Email"
           prepend-icon="mdi-email"
-          class="mr-4"
+          class="mr-4" 
         ></v-text-field>
         <v-btn 
           @click="sendEmail"
           size="small"
           color="blue-darken-2"
         >
-          email {{ item.value.name.split(' ')[0] }}
+          email {{ item.name.split(' ')[0] }}
         </v-btn>
       </div>
       <v-text-field
-        v-model.number="item.value.points"
+        v-model.number="item.points"
         label="Points"
         type="number"
       >
@@ -109,15 +109,15 @@
       </v-text-field>
       <div class="d-flex flex-row">
         <v-select
-          v-model="item.value.activeStatus"
+          v-model="item.activeStatus"
           :items="Object.keys(statusOptions)"
-          :prepend-icon="`mdi-${statusOptions[item.value.activeStatus]}`"
+          :prepend-icon="`mdi-${statusOptions[item.activeStatus]}`"
           label="Active Status"
           style="width: 15%;"
           class="mr-4"
         ></v-select>
         <v-select
-          v-model="item.value.year"
+          v-model="item.year"
           :items="yearOptions"
           label="Year"
           style="width: 15%;"
@@ -126,14 +126,14 @@
         </v-select>
       </div>
       <v-autocomplete
-        v-model="item.value.athletics"
+        v-model="item.athletics"
         :items="Object.keys(athleticOptions)"
-        :prepend-icon="`mdi-${athleticOptions[item.value.athletics]}`"
+        :prepend-icon="`mdi-${athleticOptions[item.athletics]}`"
         label="Athletics"
         class="mt-2"
       ></v-autocomplete>
       <v-divider class="my-2"></v-divider>
-      <div v-if="item.value.id">
+      <div v-if="item.id">
         <div class="d-flex flex-row align-center">
           <h2>
             Modules In Progress:
@@ -150,7 +150,7 @@
         </div>
         <ModuleFetch
           @toggleCanDelete="moduleListEmpty = !moduleListEmpty"
-          :studentId="item.value.id"
+          :studentId="item.id"
           :refetch="refetchModules"
         />
       </div>
@@ -168,18 +168,18 @@
         class="d-flex flex-row flex-wrap"
       >
         <div
-          v-for="(value, key) in item.value.misc"
+          v-for="(value, key) in item.misc"
           :key="key"
           style="width: 30%;"
           class="mx-1"
         >
           <v-text-field
-            v-model="item.value.misc[key]"
+            v-model="item.misc[key]"
             :label="key"
             outlined
           ></v-text-field>
         </div>
-        <div v-if="Object.keys(item.value.misc).length === 0">
+        <div v-if="Object.keys(item.misc).length === 0">
           No additional information. Allocate custom data tracking on google sheets.
         </div>
       </div>
@@ -199,7 +199,7 @@
     >
       <div style="width: 100%;">
         <v-textarea
-          v-model="item.value.note"
+          v-model="item.note"
           auto-grow
           variant="outlined"
           clearable
@@ -237,7 +237,7 @@
             class="mr-4"
             size="x-large"
           >mdi-delete</v-icon>
-          delete {{ item.value.name.split(' ')[0] }}
+          delete {{ item.name.split(' ')[0] }}
         </v-btn>
       </div>
     </div>
@@ -248,7 +248,7 @@
       :panel="switchPanel(PanelType.MODULES)"
       :override="{
         color: 'blue',
-        predefineColumnData: [item.value.id],
+        predefineColumnData: [item.id],
       }"
     />
   </div>
@@ -259,9 +259,9 @@ import {
   ref, 
   watch, 
   computed,
+  toRefs
 } from 'vue'
 import { useElementSize } from '@vueuse/core'
-import type { Ref } from 'vue'
 import ModuleFetch from './ModuleFetch.vue'
 import AddModal from './AddModal.vue'
 import LockArea from './LockArea.vue'
@@ -273,8 +273,10 @@ import { Student } from '../SheetTypes'
 import { athleticOptions } from '../Athletics'
 
 const props = defineProps<{
-  item: Ref<Student>
+  item: Student
 }>()
+
+const { item } = toRefs(props)
 
 const emits = defineEmits([
   'delete', 
@@ -322,11 +324,11 @@ const movingStudent = ref(false)
 const moduleListEmpty = ref(false)
 
 const canDelete = computed(() => {
-  return moduleListEmpty.value || !props.item.value.id
+  return moduleListEmpty.value || !item.value.id
 })
 
 function sendEmail() {
-  const { name, email } = props.item.value
+  const { name, email } = item.value
   const subject = `Hello ${name.split(' ')[0]}!`
   const body = `Hi ${name.split(' ')[0]},%0D%0A%0D%0A`
   window.open(`mailto:${email}?subject=${subject}&body=${body}`)
@@ -338,7 +340,7 @@ function studentIdRule(studentId: string) {
 
 async function saveId() {
   if (!studentIdRule(tempStudentId.value)) return
-  const { id, ...rest } = props.item.value
+  const { id, ...rest } = item.value
   updatingStudent.value = true
   const newStudent = {
     ...rest,
@@ -346,7 +348,7 @@ async function saveId() {
   }
   await updateByRow(
     Range.STUDENTS, 
-    props.item.value.row, 
+    item.value.row, 
     await unmapStudents([newStudent])
   )
   emits('update', newStudent)
@@ -359,15 +361,15 @@ async function moveToGraduates() {
   await moveRowToRange(
     Range.STUDENTS, 
     Range.GRADUATES,
-    props.item.value.row, 
+    item.value.row, 
     unmapGraduates([{
-      row: props.item.value.row,
-      id: props.item.value.id,
-      name: props.item.value.name,
+      row: item.value.row,
+      id: item.value.id,
+      name: item.value.name,
       phone: '',
-      email: props.item.value.email,
+      email: item.value.email,
       graduationDate: new Date().toLocaleDateString(),
-      note: props.item.value.note,
+      note: item.value.note,
     }])
   )
   emits('unselect')

@@ -117,7 +117,7 @@
               @update="updateList($event)"
               @unselect="unselect"
               :is="panel.components.detail" 
-              :item="ref(clone(selectedItem))"
+              :item="selectedItem"
             />
           </div>
           <div 
@@ -159,7 +159,7 @@
         @update="updateList($event)"
         @unselect="unselect"
         :is="panel.components.detail" 
-        :item="ref(clone(selectedItem))"
+        :item="selectedItem"
       />
     </v-navigation-drawer>
   </div>

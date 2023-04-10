@@ -9,10 +9,10 @@
   >
     <div>
       <p 
-        v-if="item.value.id"
+        v-if="item.id"
         style="font-weight: 200"
       >
-        {{ item.value.id }}
+        {{ item.id }}
       </p>
       <v-btn 
         v-else
@@ -24,7 +24,7 @@
       </v-btn>
       <div class="d-flex flex-row align-center">
         <input 
-          v-model="item.value.name"
+          v-model="item.name"
           placeholder="Name"
           type="text" 
           class="header-input"
@@ -37,7 +37,7 @@
       </div>
       <v-divider class="my-2"></v-divider>
       <v-text-field
-        v-model="item.value.email"
+        v-model="item.email"
         label="Email"
       >
         <template #prepend>
@@ -45,7 +45,7 @@
         </template>
       </v-text-field>
       <v-text-field
-        v-model="item.value.phone"
+        v-model="item.phone"
         label="Phone"
       >
         <template #prepend>
@@ -53,7 +53,7 @@
         </template>
       </v-text-field>
       <v-text-field
-        v-model="item.value.graduationDate"
+        v-model="item.graduationDate"
         label="Graduation Date"
       >
         <template #prepend>
@@ -63,7 +63,7 @@
       <EngagementTracking 
         @update="engagements = $event"
         @loading-state="loadingEngagements = $event"
-        :id="item.value.id"
+        :id="item.id"
       />
     </div>
     <v-divider 
@@ -81,7 +81,7 @@
     >
       <div style="width: 100%;">
         <v-textarea
-          v-model="item.value.note"
+          v-model="item.note"
           auto-grow
           variant="outlined"
           clearable
@@ -119,7 +119,7 @@
             class="mr-4"
             size="x-large"
           >mdi-delete</v-icon>
-          delete {{ item.value.name.split(' ')[0] }}
+          delete {{ item.name.split(' ')[0] }}
         </v-btn>
       </div>
     </div>
@@ -131,6 +131,7 @@ import {
   ref, 
   computed,
   watch,
+  toRefs
 } from 'vue'
 import type { Ref } from 'vue'
 import { 
@@ -152,6 +153,8 @@ import UpdateButton from './UpdateButton.vue'
 const props = defineProps<{
   item: Ref<Graduate>
 }>()
+
+const { item } = toRefs(props)
 
 const emits = defineEmits([
   'delete', 
@@ -184,8 +187,8 @@ function openModal(event: GradEngagement) {
 
 async function reqGenerateGradId() {
   const newId = 'G' + Math.random().toString().substring(2, 9);
-  props.item.value.id = newId
-  await updateByRow(Range.GRADUATES, props.item.value.row, unmapGraduates([props.item.value]))
+  item.value.id = newId
+  await updateByRow(Range.GRADUATES, item.value.row, unmapGraduates([item.value]))
 }
 
 async function moveToStudents() {
@@ -193,17 +196,17 @@ async function moveToStudents() {
   await moveRowToRange(
     Range.GRADUATES,
     Range.STUDENTS,
-    props.item.value.row,
+    item.value.row,
     await unmapStudents([{
-      row: props.item.value.row,
-      id: props.item.value.id.startsWith('G') ? '' : props.item.value.id,
-      name: props.item.value.name,
-      email: props.item.value.email,
+      row: item.value.row,
+      id: item.value.id.startsWith('G') ? '' : item.value.id,
+      name: item.value.name,
+      email: item.value.email,
       points: 0,
       activeStatus: 'Active',
       year: '',
       athletics: '',
-      note: props.item.value.note,
+      note: item.value.note,
       misc: {}
     }])
   )
