@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="panel-parent">
     <v-sheet 
       class="background-matte"
       :color="`${panel.color}-lighten-4`"
@@ -27,7 +27,7 @@
           v-if="smAndUp"
           class="d-flex align-center flex-column flex-start pt-3"
           :color="`${panel.color}-darken-2`"
-          style="max-width: 80px; height: 100%; background: green"
+          style="min-width: 80px; max-width: 80px; height: 100%; background: green"
         >
           <SortPanel 
             @update="items = $event"
@@ -75,7 +75,8 @@
           :color="`${panel.color}-lighten-4`"
           :style="{
             overflow: 'auto',
-            width: smAndUp ? `${panelListWidth}px` : '100%',
+            minWidth: smAndUp ? `${panelListWidth}px` : '100%',
+            maxWidth: smAndUp ? `${panelListWidth}px` : '100%',
           }"
           class="d-flex flex-grow-1 flex-column align-center"
         >
@@ -90,15 +91,22 @@
         </v-sheet>
         <v-sheet 
           v-if="mdAndUp"
-          :color="`white`"
+          :color="resizing ? panel.color : ''"
           @mousedown="resizeStart"
           @mouseup="resizeEnd"
-          style="width: 3px; height: 100%; cursor: col-resize;"
+          :style="{
+            width: '3px',
+            height: '100%',
+            cursor: 'col-resize',
+            position: 'absolute',
+            left: `${80 + proposedWidth}px`,
+          }"
         ></v-sheet>
         <v-sheet 
           v-if="mdAndUp"
           :color="`white`"
-          style="width: 70%; height: 100%; overflow: auto;"
+          style="height: 100%; overflow: auto;"
+          class="d-flex flex-grow-1 flex-column align-center"
         >
           <div v-if="selectedItem">
             <component
@@ -186,7 +194,7 @@ const loadingItems = ref(true)
 const showAddModal = ref(false)
 const filterQuery = ref('')
 const pageVisible = ref(true)
-const panelListWidth = ref(30)
+const panelListWidth = ref(420)
 
 const clone = <T>(obj: T) => JSON.parse(JSON.stringify(obj))
 
@@ -314,19 +322,33 @@ onUnmounted(() => {
   document.removeEventListener('visibilitychange', toggleVisibility)
 })
 
+
+
+const resizing = ref(false)
+const proposedWidth = ref(panelListWidth.value)
+
 const resizeStart = (e: MouseEvent) => {
-  e.preventDefault()
+  resizing.value = true
+  const panelParent = document.getElementById('panel-parent')
+  panelParent.style.userSelect = 'none'
+  proposedWidth.value = panelListWidth.value
   document.addEventListener('mousemove', resizeMove)
   document.addEventListener('mouseup', resizeEnd)
 }
 
 const resizeMove = (e: MouseEvent) => {
-  e.preventDefault()
-  panelListWidth.value = e.clientX
+  if (!resizing.value) return
+  const sortPanelWidth = 80
+  const newWidth = e.clientX - sortPanelWidth
+  if (newWidth < 200 || newWidth > 700) return
+  proposedWidth.value = newWidth
 }
 
 const resizeEnd = (e: MouseEvent) => {
-  e.preventDefault()
+  resizing.value = false
+  const panelParent = document.getElementById('panel-parent')
+  panelParent.style.userSelect = 'auto'
+  panelListWidth.value = proposedWidth.value
   document.removeEventListener('mousemove', resizeMove)
   document.removeEventListener('mouseup', resizeEnd)
 }
