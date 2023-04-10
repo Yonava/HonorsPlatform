@@ -45,9 +45,9 @@
         <v-select
           v-model="item.value.decision"
           :items="[
-            'Pending',
             'Approved',
-            'Rejected'
+            'Rejected',
+            'Pending',
           ]"
           label="Decision"
           class="mr-6"
@@ -67,10 +67,11 @@
         label="Draft Received"
         prepend-icon="mdi-calendar-check"
       ></v-text-field>
-      <div class="d-flex flex-column align-center justify-center">
+      <div class="d-flex flex-row align-center justify-center">
         <v-text-field
           v-model="item.value.mentor"
           label="Faculty Mentor"
+          class="mr-6"
         >
           <template #prepend>
             <v-icon>mdi-human-male-board</v-icon>
