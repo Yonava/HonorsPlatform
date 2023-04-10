@@ -6,6 +6,7 @@ import {
   CompletedModule,
   GradEngagement,
   Grade,
+  Thesis,
 } from "./SheetTypes";
 
 function removeEmptyObjects(item: Object) {
@@ -111,6 +112,7 @@ export function unmapCompletedModules(modules: CompletedModule[]): string[][] {
   });
 }
 
+
 export function mapGraduates(sheetData: string[][]): Graduate[] {
   return sheetData
     .map((graduate, index) => {
@@ -157,6 +159,37 @@ export function unmapGradEngagement(engagements: GradEngagement[]): string[][] {
       engagement.event,
       engagement.dateTime,
       engagement.note,
+    ];
+  });
+}
+
+export function mapTheses(sheetData: string[][]): Thesis[] {
+  return sheetData
+    .map((thesis, index) => {
+      return {
+        row: index + 2,
+        studentId: thesis[0] ?? '',
+        name: thesis[1] ?? '',
+        title: thesis[2] ?? '',
+        email: thesis[3] ?? '',
+        proposalReceived: thesis[4] ?? '',
+        breakoutRoom: thesis[5] ?? '',
+        decision: thesis[6] ?? '',
+        term: thesis[7] ?? '',
+        mentor: thesis[8] ?? '',
+        mentorEmail: thesis[9] ?? '',
+        draftReceived: thesis[10] ?? '',
+        note: thesis[11] ?? '',
+      };
+    })
+    .filter(removeEmptyObjects);
+}
+
+export function unmapTheses(theses: Thesis[]): string[][] {
+  return theses.map((thesis) => {
+    const { row, ...rest } = thesis;
+    return [
+      ...Object.values(rest),
     ];
   });
 }

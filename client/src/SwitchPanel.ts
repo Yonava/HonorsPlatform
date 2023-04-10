@@ -28,7 +28,8 @@ export enum PanelType {
   STUDENTS = 'students',
   GRADUATES = 'graduates',
   MODULES = 'modules',
-  COMPLETED_MODULES = 'completedModules'
+  COMPLETED_MODULES = 'completedModules',
+  THESES = 'theses',
 }
 
 // i don't think this does anything
@@ -120,6 +121,23 @@ export function switchPanel(panel: PanelType) {
           unmap: unmapCompletedModules
         },
         type: PanelType.COMPLETED_MODULES
+      };
+    case PanelType.THESES:
+      return {
+        components: {
+          detail: markRaw(CompletedModuleDetail),
+          list: markRaw(CompletedModuleListItem)
+        },
+        title: 'Theses',
+        color: 'green',
+        icon: 'mdi-application-edit-outline',
+        sheetRange: Range.THESES,
+        keys: ['studentId'],
+        mappers: {
+          map: mapCompletedModules,
+          unmap: unmapCompletedModules
+        },
+        type: PanelType.THESES
       };
     default:
       throw new Error(`switchPanel: Invalid panel type ${panel}`);

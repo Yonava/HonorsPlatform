@@ -1,5 +1,6 @@
 <template>
   <div 
+    v-if="sortOptions.length > 0"
     class="pa-2"
     style="width: 100%"
   >

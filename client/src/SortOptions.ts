@@ -244,6 +244,8 @@ export function switchSortOptions(panel: PanelType) {
           }
         }
       ]
+    case PanelType.THESES:
+      return [];
     default:
       console.warn('No sort options for panel type: ' + panel);
       return [];
