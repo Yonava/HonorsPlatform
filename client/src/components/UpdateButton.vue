@@ -48,7 +48,8 @@ async function reqUpdate() {
   if (upToDate.value) return
   upToDate.value = true
   cooldown.value = true
-  setTimeout(() => cooldown.value = false, 500)
+  // TODO: this reactivity system is a mess, refactor!!!!
+  setTimeout(() => cooldown.value = false, 1000)
   loading.value = true
   await updateByRow(
     panel.value.sheetRange, 

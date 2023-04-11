@@ -24,16 +24,37 @@
           :item="item"
         />
       </div>
-      <v-divider class="my-2"></v-divider>
 
+      <v-divider class="my-3"></v-divider>
+
+      <v-btn
+        v-if="item.studentId && !item.name"
+        @click="setStudentData"
+        :loading="studentDataState.loading"
+        :color="studentDataState.color"
+        class="mb-3"
+        block
+      >
+        <v-icon class="mr-2">mdi-account-group</v-icon>
+        <span v-if="!studentDataState.error">
+          Fill With Data From Students ({{ item.studentId }})
+        </span>
+        <span v-else>
+          {{ studentDataState.error }}
+        </span>
+      </v-btn> 
+      <v-text-field
+        v-model="item.name"
+        label="Student Name"
+        prepend-icon="mdi-account"
+      ></v-text-field>
       <v-text-field
         v-model="item.email"
         label="Student Email"
-      >
-        <template #prepend>
-          <v-icon>mdi-email</v-icon>
-        </template>
-      </v-text-field>
+        prepend-icon="mdi-email"
+      ></v-text-field>
+
+      <v-divider class="mb-5"></v-divider>
 
       <div class="d-flex align-center flex-row">
         <v-text-field
@@ -149,12 +170,19 @@ import { getCurrentTerm, termValidator } from '../TermValidator'
 import { useElementSize } from '@vueuse/core'
 import { Thesis } from '../SheetTypes'
 import UpdateButton from './UpdateButton.vue'
+import { getEvery, Range } from '../SheetsAPI'
+import { mapStudents } from '../DataMappers'
 
 const props = defineProps<{
   item: Thesis
 }>()
 
 const { item } = toRefs(props)
+const studentDataState = ref({
+  loading: false,
+  error: '',
+  color: 'blue-darken-2',
+})
 
 const sm = ref(false)
 const el = ref(null)
@@ -169,6 +197,23 @@ const emits = defineEmits([
   'update', 
   'unselect'
 ])
+
+async function setStudentData() {
+  studentDataState.value.loading = true
+  const students = await getEvery(Range.STUDENTS)
+  const mappedStudents = await mapStudents(students)
+  const student = mappedStudents.find(s => s.id === item.value.studentId)
+  if (!student) {
+    studentDataState.value.error = `Student with ID ${item.value.studentId} not found`
+    studentDataState.value.color = 'red'
+    studentDataState.value.loading = false
+    return
+  }
+  item.value.name = student.name
+  item.value.email = student.email
+  studentDataState.value.loading = false
+  studentDataState.value.color = 'blue-darken-2'
+}
 </script>
 
 <style scoped>
