@@ -11,9 +11,19 @@
         width: smAndDown ? '100vw' : '500px',
         height: smAndDown ? '100vh' : '',
         borderRadius: smAndDown ? '0px' : '10px',
+        overflowY: 'scroll',
+        position: 'relative',
       }"
     >
-      <h1 class="mb-4">
+      <v-btn 
+        @click="back"
+        variant="text"
+        style="position: absolute; left: 0; top: 0"
+      >
+        <v-icon class="mr-1">mdi-arrow-left</v-icon>
+        Back to Dashboard
+      </v-btn>
+      <h1 class="my-4">
         <v-icon>
           mdi-email-fast-outline
         </v-icon>
@@ -102,8 +112,8 @@
           </div>
           <v-btn
             @click="sendEmail"
-            block
             :disabled="emails.length === 0"
+            block
             color="blue-darken-2"
             size="large"
             class="mt-3"
@@ -230,6 +240,13 @@ watch(selectedRange, async (newVal) => {
 watch(selectedHeader, () => {
   quantity.value = "";
 });
+
+const sendEmail = () => {
+  const emailString = emails.value.join(",");
+  window.open(`mailto:${emailString}`);
+};
+
+const back = () => history.back();
 </script>
 
 <style scoped>
