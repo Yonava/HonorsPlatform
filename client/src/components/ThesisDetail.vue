@@ -64,48 +64,60 @@
 
       <v-divider class="mb-5"></v-divider>
 
-      <div class="d-flex align-center flex-row">
+        <v-btn
+          v-if="!item.term"
+          @click="item.term = getCurrentTerm()"
+          class="mb-2"
+          color="green"
+          size="small"
+        >Current Term</v-btn>
         <v-text-field
           v-model="item.term"
+          :rules="[(v) => termValidator(v) || 'Potentially invalid term']"
           label="Term"
-        >
-          <template #prepend>
-            <v-icon>mdi-calendar</v-icon>
-          </template>
-        </v-text-field>
+          prepend-icon="mdi-calendar"
+        ></v-text-field>
+
+
+      <div class="mb-2 d-flex flex-row ">
         <v-btn
-          class="ml-6"
+          v-if="!item.draftReceived"
+          @click="item.draftReceived = new Date().toLocaleString().split(',')[0]"
           color="green"
-          @click="item.term = getCurrentTerm()"
-        >Current Term</v-btn>
+          size="small"
+        >Today</v-btn>
+        <v-spacer></v-spacer>
+        <v-btn
+          v-if="!item.proposalReceived"
+          @click="item.proposalReceived = new Date().toLocaleString().split(',')[0]"
+          color="green"
+          size="small"
+        >Today</v-btn>
       </div>
 
       <div class="d-flex flex-row">
-        <v-select
-          v-model="item.decision"
-          :items="[
-            'Approved',
-            'Rejected',
-            'Pending',
-          ]"
-          label="Decision"
+        <v-text-field
+          v-model="item.draftReceived"
+          label="Draft Received"
+          prepend-icon="mdi-calendar-check"
           class="mr-6"
-          :prepend-icon="item.decision === 'Approved' ? 'mdi-check-circle' : item.decision === 'Rejected' ? 'mdi-close-circle' : 'mdi-alert-circle'"
-        ></v-select>
+        ></v-text-field>
         <v-text-field
           v-model="item.proposalReceived"
           label="Proposal Received"
-        >
-          <template #prepend>
-            <v-icon>mdi-calendar-alert</v-icon>
-          </template>
-        </v-text-field>
+          prepend-icon="mdi-calendar-check"
+        ></v-text-field>
       </div>
-      <v-text-field
-        v-model="item.draftReceived"
-        label="Draft Received"
-        prepend-icon="mdi-calendar-check"
-      ></v-text-field>
+      <v-select
+        v-model="item.decision"
+        :items="[
+          'Approved',
+          'Rejected',
+          'Pending',
+        ]"
+        label="Decision"
+        :prepend-icon="item.decision === 'Approved' ? 'mdi-check-circle' : item.decision === 'Rejected' ? 'mdi-close-circle' : 'mdi-alert-circle'"
+      ></v-select>
       <div class="d-flex flex-row">
         <v-spacer></v-spacer>
         <v-btn
