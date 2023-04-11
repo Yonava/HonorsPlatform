@@ -95,7 +95,7 @@
             size="large"
             class="mr-2"
           ></v-icon>
-          Compose Mass Email
+          Mass Email
         </v-btn>
         <SortPanel 
           class="mt-5"

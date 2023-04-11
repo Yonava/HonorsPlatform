@@ -40,7 +40,7 @@
       </v-btn>
       <div class="mt-5 d-flex flex-column jusify-center align-center">
         <v-btn
-          @click="$router.push({ name: 'panel' })"
+          @click="goBack"
           color="red"
           size="small"
           variant="text"
@@ -91,6 +91,10 @@ async function generateRegistrarList() {
   loading.value = false;
   success.value = true;
   hasSucceeded.value = true;
+}
+
+function goBack() {
+  history.back();
 }
 
 const button = computed(() => {
