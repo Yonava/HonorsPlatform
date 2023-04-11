@@ -55,39 +55,42 @@
             variant="outlined"
             class="mt-6"
           ></v-text-field>
-          
         </div>
         <div style="position: relative">
           <v-progress-linear
             v-if="loading"
             indeterminate
+            absolute
             color="blue-darken-2"
-            style="position: absolute;"
           ></v-progress-linear>
-          <h3 
-            :style="{
-              opacity: loading ? 0 : 1,
-              textAlign: 'center'
-            }"
-            class="mt-2"
-          >
-            Your Query Captures {{ emails.length }} 
-            Email Address{{ emails.length === 1 ? '' : 'es' }}
-          </h3>
           <div
-            class="px-1 email-box"
             :style="{
               opacity: loading ? 0.25 : 1
             }"
+            class="px-1 email-box"
           >
             <v-chip
               v-for="email in emails"
               :key="email"
               color="blue-darken-4"
-              class="my-1 mr-1"
+              class="my-1 mr-1 text-center"
             >
               {{ email }}
+              <v-icon
+                @click="tempEmailFilter.push(email)"
+                class="ml-1"
+                style="cursor: pointer;"
+              >mdi-close</v-icon>
             </v-chip>
+            <div v-if="emails.length === 0 && !loading">
+              <h3 
+                style="opacity: 0.5;"
+                class="text-center mt-5"
+              >
+                <v-icon>mdi-email</v-icon>
+                No Emails Found
+              </h3>
+            </div>
           </div>
         </div>
       </div>
@@ -116,32 +119,66 @@ const selectedOperand = ref("=");
 const quantity = ref("");
 const data = ref([])
 const loading = ref(false);
+const tempEmailFilter = ref([]);
 
 watch(selectedRange, async (newVal) => {
   selectedHeader.value = null;
+  selectedOperand.value = "=";
+  quantity.value = "";
+  tempEmailFilter.value = [];
   headerRow.value = await getHeaderRow(newVal.sheetRange);
+  // removes ability to query for custom student ranges
+  if (newVal.sheetRange === Range.STUDENTS) {
+    headerRow.value = headerRow.value.slice(0, 7);
+  }
 }, { immediate: true });
 
 const emails = computed(() => {
 
-  const allEmails = [...new Set(data.value.map((row) => row.email))];
-  return allEmails;
+  if (!selectedHeader.value || !selectedOperand.value || quantity.value === "") {
+    return [...new Set(data.value.map((row: any) => row.email))]
+  };
+
   const header = selectedHeader.value;
   const operand = selectedOperand.value;
 
+  const headerRowIndex = headerRow.value.indexOf(header);
+  const dataArrayForm = data.value.map(row => {
+    const array = Object.values(row)
+    // remove the row number
+    array.shift()
+    return array
+  });
+
   if (isNaN(parseInt(quantity.value)) && operand !== "=") return [];
 
-  return data.value.filter((row) => {
+  const filteredData = dataArrayForm.filter((row: string[]) => {
     switch (operand) {
       case "=":
-        return row[header] === quantity;
+        return row[headerRowIndex] == quantity.value;
       case ">":
-        return row[header] > quantity;
+        return row[headerRowIndex] > quantity.value;
       case "<":
-        return row[header] < quantity;
+        return row[headerRowIndex] < quantity.value;
       default:
         return false;
     }
+  });
+
+  const output = [];
+
+  // if any of the data in filteredData matches email regex, return it in an array
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  for (let i = 0; i < filteredData.length; i++) {
+    for (let j = 0; j < filteredData[i].length; j++) {
+      if (emailRegex.test(filteredData[i][j] as string)) {
+        output.push(filteredData[i][j]);
+      }
+    }
+  }
+
+  return [...new Set(output)].filter((email) => {
+    return tempEmailFilter.value.indexOf(email) === -1;
   });
 });
 
@@ -161,8 +198,6 @@ watch(selectedRange, async (newVal) => {
   }
 
   data.value = data.value.filter((sheetItem) => sheetItem.email);
-
-  console.log(data.value)
 
   loading.value = false;
 
