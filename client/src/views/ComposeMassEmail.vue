@@ -38,14 +38,14 @@
           class="mt-3"
         ></v-select>
         <div v-if="selectedHeader">
-          <div class="d-flex flex-row">
+          <div class="d-flex flex-row flex-wrap">
             <v-btn
-              v-for="operand in ['= Equal To', '> Greater Than', '< Less Than']"
+              v-for="operand in ['Includes', '= Equal To', '> Greater Than', '< Less Than']"
               :key="operand"
               @click="selectedOperand = operand[0]"
               :color="selectedOperand === operand[0] ? 'blue-darken-2' : 'grey'"
               size="small"
-              class="mx-1"
+              class="mx-1 my-1"
             >{{ operand }}</v-btn>
           </div>
           <v-text-field
@@ -115,7 +115,7 @@ const panels = Object.values(PanelType).map((panel) => switchPanel(panel));
 const selectedRange = ref(panels[0]);
 const headerRow = ref([]);
 const selectedHeader = ref(null);
-const selectedOperand = ref("=");
+const selectedOperand = ref<string>("I");
 const quantity = ref("");
 const data = ref([])
 const loading = ref(false);
@@ -123,7 +123,7 @@ const tempEmailFilter = ref([]);
 
 watch(selectedRange, async (newVal) => {
   selectedHeader.value = null;
-  selectedOperand.value = "=";
+  selectedOperand.value = "I";
   quantity.value = "";
   tempEmailFilter.value = [];
   headerRow.value = await getHeaderRow(newVal.sheetRange);
@@ -136,7 +136,9 @@ watch(selectedRange, async (newVal) => {
 const emails = computed(() => {
 
   if (!selectedHeader.value || !selectedOperand.value || quantity.value === "") {
-    return [...new Set(data.value.map((row: any) => row.email))]
+    return [...new Set(data.value.map((row: any) => row.email))].filter((email) => {
+      return tempEmailFilter.value.indexOf(email) === -1;
+    });
   };
 
   const header = selectedHeader.value;
@@ -150,10 +152,11 @@ const emails = computed(() => {
     return array
   });
 
-  if (isNaN(parseInt(quantity.value)) && operand !== "=") return [];
-
   const filteredData = dataArrayForm.filter((row: string[]) => {
     switch (operand) {
+      case "I":
+        const str = row[headerRowIndex].toString().toLowerCase();
+        return str.includes(quantity.value.toLowerCase());
       case "=":
         return row[headerRowIndex] == quantity.value;
       case ">":
