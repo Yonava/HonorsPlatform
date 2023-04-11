@@ -1,5 +1,14 @@
 <template>
   <div class="outer-matte">
+    <v-btn
+      @click="$router.push('/panel')"
+      variant="text"
+      class="mt-3 ml-3"
+      style="position: absolute; left: 0; top: 0"
+    >
+      <v-icon>mdi-arrow-left</v-icon>
+      Admin Dashboard
+    </v-btn>
     <v-sheet 
       class="d-flex align-center justify-center flex-column"
       style="width: 90%; height: 90%; overflow: hidden;"
@@ -141,5 +150,6 @@ getStudents();
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
 }
 </style>

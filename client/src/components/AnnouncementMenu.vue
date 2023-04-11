@@ -27,7 +27,7 @@
     </template>
 
     <v-list 
-      style="max-width: 80vw; width: 800px"
+      style="max-width: 80vw; width: 500px"
       class="pa-5"
     >
       <div class="d-flex align-center">
