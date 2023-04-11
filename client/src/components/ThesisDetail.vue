@@ -9,11 +9,11 @@
   >
     <div>
       <p style="font-weight: 200">
-        {{ item.value.studentId }}
+        {{ item.studentId }}
       </p>
       <div class="d-flex flex-row align-center">
         <input 
-          v-model="item.value.title"
+          v-model="item.title"
           placeholder="Thesis Title"
           type="text" 
           class="header-input"
@@ -25,25 +25,35 @@
         />
       </div>
       <v-divider class="my-2"></v-divider>
+
       <v-text-field
-        v-model="item.value.email"
+        v-model="item.email"
         label="Student Email"
       >
         <template #prepend>
           <v-icon>mdi-email</v-icon>
         </template>
       </v-text-field>
-      <v-text-field
-        v-model="item.value.term"
-        label="Term"
-      >
-        <template #prepend>
-          <v-icon>mdi-calendar</v-icon>
-        </template>
-      </v-text-field>
+
+      <div class="d-flex align-center flex-row">
+        <v-text-field
+          v-model="item.term"
+          label="Term"
+        >
+          <template #prepend>
+            <v-icon>mdi-calendar</v-icon>
+          </template>
+        </v-text-field>
+        <v-btn
+          class="ml-6"
+          color="green"
+          @click="item.term = getCurrentTerm()"
+        >Current Term</v-btn>
+      </div>
+
       <div class="d-flex flex-row">
         <v-select
-          v-model="item.value.decision"
+          v-model="item.decision"
           :items="[
             'Approved',
             'Rejected',
@@ -51,10 +61,10 @@
           ]"
           label="Decision"
           class="mr-6"
-          :prepend-icon="item.value.decision === 'Approved' ? 'mdi-check-circle' : item.value.decision === 'Rejected' ? 'mdi-close-circle' : 'mdi-alert-circle'"
+          :prepend-icon="item.decision === 'Approved' ? 'mdi-check-circle' : item.decision === 'Rejected' ? 'mdi-close-circle' : 'mdi-alert-circle'"
         ></v-select>
         <v-text-field
-          v-model="item.value.proposalReceived"
+          v-model="item.proposalReceived"
           label="Proposal Received"
         >
           <template #prepend>
@@ -63,13 +73,13 @@
         </v-text-field>
       </div>
       <v-text-field
-        v-model="item.value.draftReceived"
+        v-model="item.draftReceived"
         label="Draft Received"
         prepend-icon="mdi-calendar-check"
       ></v-text-field>
       <div class="d-flex flex-row align-center justify-center">
         <v-text-field
-          v-model="item.value.mentor"
+          v-model="item.mentor"
           label="Faculty Mentor"
           class="mr-6"
         >
@@ -78,7 +88,7 @@
           </template>
         </v-text-field>
         <v-text-field
-          v-model="item.value.mentorEmail"
+          v-model="item.mentorEmail"
           label="Faculty Mentor Email"
         >
           <template #prepend>
@@ -102,7 +112,7 @@
     >
       <div style="width: 100%;">
         <v-textarea
-          v-model="item.value.note"
+          v-model="item.note"
           auto-grow
           variant="outlined"
           clearable
@@ -134,15 +144,17 @@
 </template>
 
 <script setup lang="ts">
-import { watch, ref } from 'vue'
+import { watch, ref, toRefs } from 'vue'
+import { getCurrentTerm, termValidator } from '../TermValidator'
 import { useElementSize } from '@vueuse/core'
-import type { Ref } from 'vue'
 import { Thesis } from '../SheetTypes'
 import UpdateButton from './UpdateButton.vue'
 
 const props = defineProps<{
-  item: Ref<Thesis>
+  item: Thesis
 }>()
+
+const { item } = toRefs(props)
 
 const sm = ref(false)
 const el = ref(null)

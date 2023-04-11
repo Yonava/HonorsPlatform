@@ -9,11 +9,11 @@
   >
     <div>
       <p style="font-weight: 200">
-        {{ item.value.studentId }}
+        {{ item.studentId }}
       </p>
       <div class="d-flex flex-row align-center">
         <input 
-          v-model="item.value.courseCode"
+          v-model="item.courseCode"
           placeholder="Course Code"
           type="text" 
           class="header-input"
@@ -26,7 +26,7 @@
       </div>
       <v-divider class="my-2"></v-divider>
       <v-text-field
-        v-model="item.value.completedDate"
+        v-model="item.completedDate"
         label="Completed Date"
       >
         <template #prepend>
@@ -34,7 +34,7 @@
         </template>
       </v-text-field>
       <v-text-field
-        v-model="item.value.term"
+        v-model="item.term"
         label="Term"
       >
         <template #prepend>
@@ -42,7 +42,7 @@
         </template>
       </v-text-field>
       <v-text-field
-        v-model="item.value.instructor"
+        v-model="item.instructor"
         label="Instructor"
       >
         <template #prepend>
@@ -51,7 +51,7 @@
       </v-text-field>
       <div class="d-flex flex-row">
         <v-text-field
-          v-model="item.value.docuSignCreated"
+          v-model="item.docuSignCreated"
           class="mr-6"
           label="DocuSign Created"
         >
@@ -60,7 +60,7 @@
           </template>
         </v-text-field>
         <v-text-field
-          v-model="item.value.docuSignCompleted"
+          v-model="item.docuSignCompleted"
           label="DocuSign Completed"
         >
           <template #prepend>
@@ -73,7 +73,7 @@
           Final Grade
         </h2>
         <input 
-          v-model="item.value.grade"
+          v-model="item.grade"
           type="text" 
           class="header-input" 
           placeholder="Grade"
@@ -96,7 +96,7 @@
     >
       <div style="width: 100%;">
         <v-textarea
-          v-model="item.value.description"
+          v-model="item.description"
           auto-grow
           variant="outlined"
           clearable
@@ -128,15 +128,16 @@
 </template>
 
 <script setup lang="ts">
-import { watch, ref } from 'vue'
+import { watch, ref, toRefs } from 'vue'
 import { useElementSize } from '@vueuse/core'
-import type { Ref } from 'vue'
 import { CompletedModule } from '../SheetTypes'
 import UpdateButton from './UpdateButton.vue'
 
 const props = defineProps<{
-  item: Ref<CompletedModule>
+  item: CompletedModule
 }>()
+
+const { item } = toRefs(props)
 
 const sm = ref(false)
 const el = ref(null)

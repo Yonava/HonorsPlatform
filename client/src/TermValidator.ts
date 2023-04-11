@@ -43,3 +43,12 @@ export function termValidator(term: string) {
 
   return true;
 }
+
+export function getCurrentTerm() {
+  const date = new Date();
+  const year = date.getFullYear() - 2000;
+  const month = date.getMonth();
+
+  let seasonIdentifier = month < 7 ? 'SPDAY' : 'FADAY';
+  return `${year}${seasonIdentifier}`;
+}

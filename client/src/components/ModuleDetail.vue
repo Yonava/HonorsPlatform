@@ -9,11 +9,11 @@
   >
     <div>
       <p style="font-weight: 200">
-        {{ item.value.studentId }}
+        {{ item.studentId }}
       </p>
       <div class="d-flex flex-row align-center">
         <input 
-          v-model="item.value.courseCode"
+          v-model="item.courseCode"
           placeholder="Course Code"
           type="text" 
           class="header-input"
@@ -26,7 +26,7 @@
       </div>
       <v-divider class="my-2"></v-divider>
       <v-text-field
-        v-model="item.value.term"
+        v-model="item.term"
         :rules="[(v) => termValidator(v) || 'Potentially invalid term']"
         label="Term"
       >
@@ -35,7 +35,7 @@
         </template>
       </v-text-field>
       <v-text-field
-        v-model="item.value.instructor"
+        v-model="item.instructor"
         label="Instructor"
       >
         <template #prepend>
@@ -47,7 +47,7 @@
       </h1>
       <div class="d-flex flex-row">
         <v-text-field
-          v-model="item.value.docuSignCreated"
+          v-model="item.docuSignCreated"
           class="mr-6"
           label="DocuSign Created"
         >
@@ -56,7 +56,7 @@
           </template>
         </v-text-field>
         <v-text-field
-          v-model="item.value.docuSignCompleted"
+          v-model="item.docuSignCompleted"
           label="DocuSign Completed"
         >
           <template #prepend>
@@ -69,15 +69,15 @@
         class="d-flex flex-row"
       >
         <v-btn
-          v-if="!item.value.docuSignCreated"
-          @click="item.value.docuSignCreated = new Date().toLocaleDateString()"
+          v-if="!item.docuSignCreated"
+          @click="item.docuSignCreated = new Date().toLocaleDateString()"
           color="orange-darken-2"
           size="small"
         >Created Now</v-btn>
         <v-spacer></v-spacer>
         <v-btn
-          v-if="!item.value.docuSignCompleted"
-          @click="item.value.docuSignCompleted = new Date().toLocaleDateString()"
+          v-if="!item.docuSignCompleted"
+          @click="item.docuSignCompleted = new Date().toLocaleDateString()"
           color="orange-darken-2"
           size="small"
         >Completed Now</v-btn>
@@ -190,7 +190,7 @@
     >
       <div style="width: 100%;">
         <v-textarea
-          v-model="item.value.description"
+          v-model="item.description"
           auto-grow
           variant="outlined"
           clearable
@@ -233,9 +233,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, toRefs } from 'vue'
 import { useElementSize } from '@vueuse/core'
-import type { Ref } from 'vue'
 import { updateByRow, moveRowToRange, Range } from '../SheetsAPI'
 import { unmapModules, unmapCompletedModules } from '../DataMappers'
 import { Module, Grade, CompletedModule } from '../SheetTypes'
@@ -243,7 +242,7 @@ import UpdateButton from './UpdateButton.vue'
 import { termValidator } from '../TermValidator'
 
 const props = defineProps<{
-  item: Ref<Module>
+  item: Module
 }>()
 
 const emits = defineEmits([
@@ -259,6 +258,8 @@ const grades: Grade[] = [
   'Low Pass',
   'Fail'
 ]
+
+const { item } = toRefs(props)
 
 const sm = ref(false)
 const el = ref(null)
@@ -281,14 +282,14 @@ const completedModuleData = ref({
 async function moveToCompleted() {
   movingModuleToCompleted.value = true
   movedModule.value = {
-    ...props.item.value,
+    ...item.value,
     ...completedModuleData.value
   }
   console.log(movedModule.value)
   await moveRowToRange(
     Range.MODULES, 
     Range.COMPLETED_MODULES, 
-    props.item.value.row, 
+    item.value.row, 
     unmapCompletedModules([movedModule.value])
   )
   moduleMoveSuccess.value = true
