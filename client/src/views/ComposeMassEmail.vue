@@ -5,14 +5,21 @@
     class="d-flex flex-column align-center justify-center"
   >
     <v-sheet 
-      class="pa-7 d-flex flex-column align-center justify-center"
-      style="border-radius: 20px;"
+      class="pa-6 d-flex flex-column align-center justify-center"
       elevation="7"
+      :style="{
+        width: smAndDown ? '100vw' : '500px',
+        height: smAndDown ? '100vh' : '',
+        borderRadius: smAndDown ? '0px' : '10px',
+      }"
     >
-      <h1>
+      <h1 class="mb-4">
+        <v-icon>
+          mdi-email-fast-outline
+        </v-icon>
         Compose Mass Email
       </h1>
-      <div style="width: 400px">
+      <div>
         <h3>
           Target All
         </h3>
@@ -65,7 +72,8 @@
           ></v-progress-linear>
           <div
             :style="{
-              opacity: loading ? 0.25 : 1
+              opacity: loading ? 0.25 : 1,
+              width: smAndDown ? 'calc(100vw - 30px)' : '450px',
             }"
             class="px-1 email-box"
           >
@@ -92,6 +100,17 @@
               </h3>
             </div>
           </div>
+          <v-btn
+            @click="sendEmail"
+            block
+            :disabled="emails.length === 0"
+            color="blue-darken-2"
+            size="large"
+            class="mt-3"
+          >
+            Send Email ({{ emails.length }} 
+            recipient{{ emails.length === 1 ? '' : 's' }})
+          </v-btn>
         </div>
       </div>
     </v-sheet>
@@ -103,6 +122,7 @@ import { ref, computed, watch } from "vue";
 import { switchPanel, Panel, PanelType } from "../SwitchPanel";
 import { Student, Graduate, Module, CompletedModule, Thesis } from "../SheetTypes";
 import { getHeaderRow, getEvery, Range } from "../SheetsAPI";
+import { useDisplay } from "vuetify";
 import { 
   mapStudents,
   mapGraduates,
@@ -112,6 +132,7 @@ import {
 } from "../DataMappers";
 
 const panels = Object.values(PanelType).map((panel) => switchPanel(panel));
+const { smAndDown } = useDisplay();
 const selectedRange = ref(panels[0]);
 const headerRow = ref([]);
 const selectedHeader = ref(null);
@@ -205,6 +226,10 @@ watch(selectedRange, async (newVal) => {
   loading.value = false;
 
 }, { immediate: true });
+
+watch(selectedHeader, () => {
+  quantity.value = "";
+});
 </script>
 
 <style scoped>
@@ -212,6 +237,7 @@ watch(selectedRange, async (newVal) => {
   height: 200px; 
   overflow-y: scroll; 
   border: 1px solid grey; 
-  border-radius: 10px;
+  background: rgb(248, 248, 248);
+  border-radius: 5px;
 }
 </style>
