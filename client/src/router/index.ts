@@ -3,6 +3,7 @@ import Panel from '../views/PanelPage.vue'
 import Leaderboard from '../views/LeaderboardPage.vue'
 import Auth from '../views/AuthPage.vue'
 import Registrar from '../views/BuildRegistrarList.vue'
+import Email from '../views/ComposeMassEmail.vue'
 
 const routes = [
   {
@@ -29,6 +30,11 @@ const routes = [
     path: '/leaderboard',
     name: 'leaderboard',
     component: Leaderboard
+  },
+  {
+    path: '/email',
+    name: 'email',
+    component: Email
   }
 ]
 
