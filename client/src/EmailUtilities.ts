@@ -3,6 +3,7 @@
   generating and validating SNHU email addresses.
 */
 export function emailValidator(email: string) {
+  if (email === "") return true;
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
 }
 

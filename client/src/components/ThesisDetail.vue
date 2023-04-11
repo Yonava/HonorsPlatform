@@ -48,6 +48,13 @@
         label="Student Name"
         prepend-icon="mdi-account"
       ></v-text-field>
+      <v-btn
+        v-if="item.name && !item.email"
+        @click="item.email = getStudentEmail(item.name)"
+        color="green"
+        size="small"
+        class="mb-2"
+      >New Student Email</v-btn>
       <v-text-field
         v-model="item.email"
         :rules="[(v) => emailValidator(v) || 'Invalid email address']"
