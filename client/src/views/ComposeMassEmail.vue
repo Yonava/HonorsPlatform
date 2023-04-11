@@ -26,17 +26,36 @@
           variant="outlined"
           class="mt-3"
         ></v-select>
-        Where
+        <h3>
+          Where
+        </h3>
         <v-select
           v-model="selectedHeader"
-          :items="panels"
-          :prepend-icon="selectedRange.icon"
-          item-title="title.plural"
-          return-object
-          label="Group"
+          :items="headerRow"
+          :prepend-icon="selectedHeader ? 'mdi-check' : 'mdi-alert-circle-outline'"
+          label="Criteria"
           variant="outlined"
           class="mt-3"
         ></v-select>
+        <div v-if="selectedHeader">
+          <div class="d-flex flex-row">
+            <v-btn
+              v-for="operand in ['= Equal To', '> Greater Than', '< Less Than']"
+              :key="operand"
+              @click="selectedOperand = operand[0]"
+              :color="selectedOperand === operand[0] ? 'blue-darken-2' : 'grey'"
+              size="small"
+              class="mx-1"
+            >{{ operand }}</v-btn>
+          </div>
+          <v-text-field
+            v-model="quantity"
+            :prepend-icon="quantity ? 'mdi-check' : 'mdi-alert-circle-outline'"
+            label="Content"
+            variant="outlined"
+            class="mt-3"
+          ></v-text-field>
+        </div>
       </div>
     </v-sheet>
   </v-sheet>
@@ -51,8 +70,11 @@ const panels = Object.values(PanelType).map((panel) => switchPanel(panel));
 const selectedRange = ref(panels[0]);
 const headerRow = ref([]);
 const selectedHeader = ref(null);
+const selectedOperand = ref(null);
+const quantity = ref("");
 
 watch(selectedRange, async (newVal) => {
+  selectedHeader.value = null;
   headerRow.value = await getHeaderRow(newVal.sheetRange);
 }, { immediate: true });
 </script>
