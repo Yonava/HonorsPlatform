@@ -50,6 +50,7 @@
       ></v-text-field>
       <v-text-field
         v-model="item.email"
+        :rules="[(v) => emailValidator(v) || 'Invalid email address']"
         label="Student Email"
         prepend-icon="mdi-email"
       ></v-text-field>
@@ -98,6 +99,16 @@
         label="Draft Received"
         prepend-icon="mdi-calendar-check"
       ></v-text-field>
+      <div class="d-flex flex-row">
+        <v-spacer></v-spacer>
+        <v-btn
+          v-if="item.mentor && !item.mentorEmail"
+          @click="item.mentorEmail = getFacultyEmail(item.mentor)"
+          color="green"
+          size="small"
+          class="mb-2"
+        >New Faculty Email</v-btn>
+      </div>
       <div class="d-flex flex-row align-center justify-center">
         <v-text-field
           v-model="item.mentor"
@@ -110,6 +121,7 @@
         </v-text-field>
         <v-text-field
           v-model="item.mentorEmail"
+          :rules="[(v) => emailValidator(v) || 'Invalid email address']"
           label="Faculty Mentor Email"
         >
           <template #prepend>
@@ -172,6 +184,11 @@ import { Thesis } from '../SheetTypes'
 import UpdateButton from './UpdateButton.vue'
 import { getEvery, Range } from '../SheetsAPI'
 import { mapStudents } from '../DataMappers'
+import { 
+  emailValidator, 
+  getFacultyEmail,
+  getStudentEmail 
+} from '../EmailUtilities'
 
 const props = defineProps<{
   item: Thesis

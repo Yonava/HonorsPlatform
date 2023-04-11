@@ -1,4 +1,8 @@
-export function validEmail(email: string) {
+/*
+  This file contains utility functions for 
+  generating and validating SNHU email addresses.
+*/
+export function emailValidator(email: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
 }
 
