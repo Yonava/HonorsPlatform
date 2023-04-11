@@ -45,7 +45,10 @@ export type Panel<T extends SheetEntry> = {
     detail: Component,
     list: Component
   },
-  title: string,
+  title: {
+    singular: string,
+    plural: string
+  },
   color: string,
   icon: string,
   keys: string[],
@@ -65,7 +68,10 @@ export function switchPanel(panel: PanelType) {
           detail: markRaw(GraduateDetail),
           list: markRaw(GraduateListItem)
         },
-        title: 'Graduates',
+        title: {
+          singular: 'Graduate',
+          plural: 'Graduates'
+        },
         color: 'purple',
         icon: 'mdi-account-school',
         sheetRange: Range.GRADUATES,
@@ -82,7 +88,10 @@ export function switchPanel(panel: PanelType) {
           detail: markRaw(StudentDetail),
           list: markRaw(StudentListItem)
         },
-        title: 'Students',
+        title: {
+          singular: 'Student',
+          plural: 'Students'
+        },
         color: 'blue',
         icon: 'mdi-account-group',
         keys: ['id', 'name', 'athletics', 'note', 'email', 'points'],
@@ -99,7 +108,10 @@ export function switchPanel(panel: PanelType) {
           detail: markRaw(ModuleDetail),
           list: markRaw(ModuleListItem)
         },
-        title: 'Modules',
+        title: {
+          singular: 'Module',
+          plural: 'Modules'
+        },
         color: 'orange',
         icon: 'mdi-book-open-variant',
         keys: ['studentId', 'courseCode'],
@@ -116,7 +128,10 @@ export function switchPanel(panel: PanelType) {
           detail: markRaw(CompletedModuleDetail),
           list: markRaw(CompletedModuleListItem)
         },
-        title: 'Completed Modules',
+        title: {
+          singular: 'Completed Module',
+          plural: 'Completed Modules'
+        },
         color: 'red',
         icon: 'mdi-book',
         sheetRange: Range.COMPLETED_MODULES,
@@ -133,7 +148,10 @@ export function switchPanel(panel: PanelType) {
           detail: markRaw(ThesisDetail),
           list: markRaw(ThesisListItem)
         },
-        title: 'Theses',
+        title: {
+          singular: 'Thesis',
+          plural: 'Theses'
+        },
         color: 'green',
         icon: 'mdi-application-edit-outline',
         sheetRange: Range.THESES,

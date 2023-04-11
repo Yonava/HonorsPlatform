@@ -24,7 +24,7 @@
           style="font-size: 2.5rem;"
         >{{ panel.icon }}</v-icon>
         <span>
-          Add {{ panel.title.slice(0, -1) }}
+          Add {{ panel.title.singular }}
         </span>
       </h1>
       <div 
@@ -59,7 +59,7 @@
         @click="reqAdd"
         :loading="loading"
         :color="`${color}-darken-1`"
-      >add {{ panel.title.slice(0, -1) }}</v-btn>
+      >add {{ panel.title.singular }}</v-btn>
       <v-icon 
         @click="showDialog = false"
         class="close-dialog ma-4"

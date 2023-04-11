@@ -68,6 +68,19 @@
                   location="end"
                 >Create Registrar List</v-tooltip>
               </v-btn>
+              <v-btn 
+                class="mt-3"
+                icon
+                @click="$router.push({ name: 'email' })"
+              >
+                <v-icon>
+                  mdi-email-fast-outline
+                </v-icon>
+                <v-tooltip
+                  activator="parent"
+                  location="end"
+                >Compose Mass Email</v-tooltip>
+              </v-btn>
             </div>
           </div>
         </v-sheet>
@@ -209,7 +222,7 @@ provide('activePanel', panel)
 const changePanel = (panelType: PanelType) => {
   panel.value = switchPanel(panelType)
   selectedItem.value = null
-  document.title = panel.value.title + ' - Honors Program'
+  document.title = panel.value.title.plural + ' - Honors Program'
   filterQuery.value = ''
   router.push({ 
     query: { 

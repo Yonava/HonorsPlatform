@@ -36,10 +36,11 @@
             <v-icon class="mr-1 mb-1">
               {{ panel.icon }}
             </v-icon>
-            no {{ panel.title.toLowerCase() }} in system
+            no {{ panel.title.plural.toLowerCase() }} in system
           </h3>
           <span v-if="filterQuery">
-            try clearing "{{ filterQuery }}" from the search filter to view all {{ panel.title.toLowerCase() }}
+            try clearing "{{ filterQuery }}" from the search filter 
+            to view all {{ panel.title.plural.toLowerCase() }}
           </span>
         </div>
       </v-sheet>

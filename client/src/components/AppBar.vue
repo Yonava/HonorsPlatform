@@ -55,7 +55,7 @@
             size="large"
             class="mr-2"
           ></v-icon>
-          Add {{ panel.title.slice(0, -1) }}
+          Add {{ panel.title.singular }}
         </v-btn>
         <v-btn
           @click="$emit('fetchData')"
@@ -83,6 +83,19 @@
             class="mr-2"
           ></v-icon>
           Registrar List
+        </v-btn>
+        <v-btn
+          @click="$router.push({ name: 'email' })"
+          style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240);"
+          class="mt-3"
+          block
+        >
+          <v-icon 
+            icon="mdi-email-fast-outline" 
+            size="large"
+            class="mr-2"
+          ></v-icon>
+          Compose Mass Email
         </v-btn>
         <SortPanel 
           class="mt-5"
@@ -139,7 +152,7 @@
                 <v-icon>
                   {{ switchPanel(type).icon }}
                 </v-icon>
-                {{ switchPanel(type).title }}
+                {{ switchPanel(type).title.plural }}
               </v-list-item-title>
             </v-list-item>
           </v-list>
@@ -189,7 +202,7 @@
           v-if="mdAndUp"
           class="ml-2"
         >
-          Add {{ panel.title.slice(0, -1) }}
+          Add {{ panel.title.singular }}
         </span>
       </v-btn>
       <v-btn 
@@ -319,7 +332,7 @@ const filterPlaceholder = computed(() => {
 })
 
 const panelTitle = computed(() => {
-  const title = props.panel.title
+  const title = props.panel.title.plural
   if (lgAndUp.value || title.split(' ').length <= 1) return title
   else {
     return title.split(' ')[1]
