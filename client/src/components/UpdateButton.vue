@@ -66,7 +66,6 @@ watch(item,
   () => {
     if (cooldown.value) return
     upToDate.value = false
-    console.log('item changed')
   }, 
   { deep: true }
 )

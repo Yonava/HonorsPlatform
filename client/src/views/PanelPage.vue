@@ -281,8 +281,8 @@ onMounted(async () => {
 
 function scrollCapture() {
   const el = panelList.value
-  // capture how far down the panelList has been scrolled
   const percentScrolled = el.scrollTop / (el.scrollHeight - el.clientHeight)
+  if (isNaN(percentScrolled)) return
   localStorage.setItem('panelScrollY', percentScrolled.toString())
 }
 
@@ -335,9 +335,11 @@ async function fetchData() {
   await silentFetch()
   const panelScrollY = localStorage.getItem('panelScrollY')
   if (panelScrollY) {
-    const el = panelList.value
-    const height = parseFloat(panelScrollY) * (el.scrollHeight - el.clientHeight)
-    panelList.value.scrollTop = height
+    setTimeout(() => {
+      const el = panelList.value
+      const height = parseFloat(panelScrollY) * (el.scrollHeight - el.clientHeight)
+      panelList.value.scrollTop = height
+    }, 1)
   }
   loadingItems.value = false
 }
