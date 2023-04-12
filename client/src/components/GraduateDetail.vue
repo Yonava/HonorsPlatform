@@ -36,22 +36,23 @@
         />
       </div>
       <v-divider class="my-2"></v-divider>
+
       <v-text-field
         v-model="item.email"
+        :rules="[(v) => emailValidator(v) || 'Invalid email']"
+        clearable
         label="Email"
-      >
-        <template #prepend>
-          <v-icon>mdi-email</v-icon>
-        </template>
-      </v-text-field>
+        prepend-icon="mdi-email"
+      ></v-text-field>
+
       <v-text-field
         v-model="item.phone"
+        :rules="[(v) => phoneValidator(v) || 'Invalid phone number']"
+        clearable
         label="Phone"
-      >
-        <template #prepend>
-          <v-icon>mdi-phone</v-icon>
-        </template>
-      </v-text-field>
+        prepend-icon="mdi-phone"
+      ></v-text-field>
+
       <v-btn
         v-if="!item.graduationDate"
         @click="item.graduationDate = new Date().toLocaleString().split(',')[0]" 
@@ -61,12 +62,11 @@
       >Today</v-btn>
       <v-text-field
         v-model="item.graduationDate"
+        clearable
         label="Graduation Date"
-      >
-        <template #prepend>
-          <v-icon>mdi-calendar</v-icon>
-        </template>
-      </v-text-field>
+        prepend-icon="mdi-calendar"
+      ></v-text-field>
+
       <EngagementTracking 
         @update="engagements = $event"
         @loading-state="loadingEngagements = $event"
@@ -156,6 +156,7 @@ import { useElementSize } from '@vueuse/core'
 import { Graduate, GradEngagement } from '../SheetTypes'
 import EngagementTracking from './EngagementTracking.vue'
 import UpdateButton from './UpdateButton.vue'
+import { emailValidator, phoneValidator } from '../EmailUtilities'
 
 const props = defineProps<{
   item: Ref<Graduate>
