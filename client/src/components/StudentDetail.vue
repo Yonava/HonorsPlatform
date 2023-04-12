@@ -83,19 +83,28 @@
         />
       </div>
       <v-divider class="my-2"></v-divider>
+      <v-btn
+        v-if="!item.email"
+        @click="item.email = getStudentEmail(item.name)"
+        size="x-small"
+        color="blue-darken-2"
+        class="mb-3"
+      >new student email</v-btn>
       <div class="d-flex align-center">
         <v-text-field
           v-model="item.email"
+          :rules="[(v) => emailValidator(v) || 'Invalid email']"
           label="Email"
           prepend-icon="mdi-email"
           class="mr-4" 
         ></v-text-field>
         <v-btn 
+          v-if="item.email"
           @click="sendEmail"
           size="small"
           color="blue-darken-2"
         >
-          email {{ item.name.split(' ')[0] }}
+          draft email
         </v-btn>
       </div>
       <v-text-field
@@ -271,6 +280,7 @@ import { switchPanel, PanelType } from '../SwitchPanel'
 import { unmapStudents, unmapGraduates } from '../DataMappers'
 import { Student } from '../SheetTypes'
 import { athleticOptions } from '../Athletics'
+import { emailValidator, getStudentEmail } from '../EmailUtilities'
 
 const props = defineProps<{
   item: Student
