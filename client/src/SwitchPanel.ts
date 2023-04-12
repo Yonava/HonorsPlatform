@@ -94,7 +94,7 @@ export function switchPanel(panel: PanelType) {
         },
         color: 'blue',
         icon: 'mdi-account-group',
-        keys: ['id', 'name', 'athletics', 'note', 'email', 'points'],
+        keys: ['id', 'name'],
         sheetRange: Range.STUDENTS,
         mappers: {
           map: mapStudents,

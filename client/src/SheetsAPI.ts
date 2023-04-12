@@ -20,7 +20,6 @@ export type HeaderRows = { [key in Range]?: string[] }
 export const headerRowMemo: HeaderRows = {}
 
 function catchAction() {
-  console.log('failed!')
   router.push({
     name: "auth",
     query: {

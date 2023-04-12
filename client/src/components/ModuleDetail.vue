@@ -83,7 +83,8 @@
         >Completed Now</v-btn>
       </div>
       <FinishModuleModal
-        @close="closeMoveModuleDialog"
+        @success="emits('unselect')"
+        @close="moveModuleDialog = false"
         :show="moveModuleDialog"
         :module="item"
       />
@@ -170,11 +171,6 @@ watch(width, (newWidth) => {
 }, { immediate: true })
 
 const moveModuleDialog = ref(false)
-
-function closeMoveModuleDialog() {
-  emits('unselect')
-  moveModuleDialog.value = false
-}
 </script>
 
 <style scoped>

@@ -89,13 +89,19 @@
             color="red"
           >discard changes</v-btn> -->
           <v-btn
-            @click=""
+            @click="showCompleteModal = true"
             variant="outlined"
             color="blue"
           >mark as complete</v-btn>
         </v-card-actions>
       </v-card>
     </div>
+    <FinishModuleModal
+      @success="emits('update')"
+      @close="showCompleteModal = false"
+      :show="showCompleteModal"
+      :module="selectedModule"
+    />
   </v-dialog>
 </template>
 
@@ -103,6 +109,7 @@
 import { computed, watch, ref } from 'vue'
 import { Module } from '../SheetTypes'
 import { termValidator, getCurrentTerm } from '../TermValidator'
+import FinishModuleModal from './FinishModuleModal.vue'
 
 const props = defineProps<{
   module: Module
@@ -111,6 +118,7 @@ const props = defineProps<{
 
 const selectedModule = ref<Module>(null)
 const startingState = ref<Module>(null)
+const showCompleteModal = ref(false)
 const clone = <T>(obj: T) => JSON.parse(JSON.stringify(obj))
 
 watch(() => props.show, (val) => {

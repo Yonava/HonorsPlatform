@@ -76,7 +76,9 @@ async function reqDeleteModule(row) {
 
 async function reqUpdateModule(module) {
   loadingModules.value = true
-  await updateByRow(Range.MODULES, module.row, unmapModules([module]))
+  if (module) {
+    await updateByRow(Range.MODULES, module.row, unmapModules([module]))
+  }
   await fetchModules()
 }
 </script>

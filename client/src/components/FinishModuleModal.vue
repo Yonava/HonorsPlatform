@@ -109,12 +109,14 @@ const props = defineProps<{
 
 const emits = defineEmits<{
   (e: 'close'): void;
+  (e: 'success'): void;
 }>();
 
 const showModal = computed({
   get: () => props.show,
   set: (val) => {
     if (!val) {
+      if (success.value) emits('success')
       emits('close')
     }
   },
@@ -151,8 +153,4 @@ async function moveToCompleted() {
   loading.value = false
   success.value = true
 }
-
-watch(loading, (val) => {
-  console.log(val)
-})
 </script>

@@ -312,7 +312,7 @@ function updateList<T extends SheetItem>(item: T) {
 }
 
 async function itemAdded<T extends SheetEntry>(item: T) {
-  await fetchData()
+  await silentFetch()
   const index = items.value.findIndex(<T>(i: T) => {
     return panel.value.keys.every(key => i[key] === item[key]);
   })
@@ -320,6 +320,9 @@ async function itemAdded<T extends SheetEntry>(item: T) {
   selectedItem.value = items.value[index]
   items.value.splice(index, 1)
   items.value.unshift(selectedItem.value)
+  if (panelList.value) {
+    panelList.value.scrollTop = 0
+  }
 }
 
 const displayItems = computed(() => {
@@ -360,6 +363,7 @@ const autoSyncInterval = setInterval(() => {
 onUnmounted(() => {
   clearInterval(autoSyncInterval)
   document.removeEventListener('visibilitychange', toggleVisibility)
+  if (!panelList.value) return
   panelList.value.removeEventListener('scroll', scrollCapture)
 })
 
