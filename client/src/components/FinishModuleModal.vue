@@ -116,6 +116,14 @@ const showModal = computed({
   },
 });
 
+const grades: Grade[] = [
+  null,
+  'High Pass',
+  'Pass',
+  'Low Pass',
+  'Fail'
+]
+
 const loading = ref(false);
 const movedModule = ref<CompletedModule>(null);
 const completedModuleData = ref({
@@ -135,14 +143,5 @@ async function moveToCompleted() {
     props.module.row, 
     unmapCompletedModules([movedModule.value])
   )
-  moduleMoveSuccess.value = true
 }
-
-const grades: Grade[] = [
-  null,
-  'High Pass',
-  'Pass',
-  'Low Pass',
-  'Fail'
-]
 </script>

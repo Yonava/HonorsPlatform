@@ -83,7 +83,7 @@
         >Completed Now</v-btn>
       </div>
       <FinishModuleModal
-        :show="dialog"
+        :show="moveModuleDialog"
         :module="item"
       />
     </div>
@@ -113,7 +113,7 @@
         style="width: 100%"
       >
         <v-btn
-          @click="dialog = true"
+          @click="moveModuleDialog = true"
           color="orange-darken-2"
           size="large"
         >
@@ -143,11 +143,9 @@
 <script setup lang="ts">
 import { ref, watch, toRefs } from 'vue'
 import { useElementSize } from '@vueuse/core'
-import { updateByRow, moveRowToRange, Range } from '../SheetsAPI'
-import { unmapModules, unmapCompletedModules } from '../DataMappers'
-import { Module, Grade, CompletedModule } from '../SheetTypes'
-import UpdateButton from './UpdateButton.vue'
+import { Module } from '../SheetTypes'
 import { termValidator } from '../TermValidator'
+import UpdateButton from './UpdateButton.vue'
 import FinishModuleModal from './FinishModuleModal.vue'
 
 const props = defineProps<{
@@ -170,35 +168,11 @@ watch(width, (newWidth) => {
   sm.value = newWidth < 700
 }, { immediate: true })
 
-const dialog = ref(false)
-const movingModuleToCompleted = ref(false)
-const moduleMoveSuccess = ref(false)
-const movedModule = ref<CompletedModule>(null)
+const moveModuleDialog = ref(false)
 
-const completedModuleData = ref({
-  completedDate: '',
-  grade: null,
-})
-
-async function moveToCompleted() {
-  movingModuleToCompleted.value = true
-  movedModule.value = {
-    ...item.value,
-    ...completedModuleData.value
-  }
-  console.log(movedModule.value)
-  await moveRowToRange(
-    Range.MODULES, 
-    Range.COMPLETED_MODULES, 
-    item.value.row, 
-    unmapCompletedModules([movedModule.value])
-  )
-  moduleMoveSuccess.value = true
-}
-
-function closeDialog() {
+function closeMoveModuleDialog() {
   emits('unselect')
-  dialog.value = false
+  moveModuleDialog.value = false
 }
 </script>
 
