@@ -10,6 +10,7 @@
       @showAddModal="showAddModal = true"
       @changePanel="changePanel($event)"
       @updateItems="items = $event"
+      :selectedItem="selectedItem"
       :panel="panel"
       :loading="loadingItems"
       :displayItemsLength="displayItems.length"

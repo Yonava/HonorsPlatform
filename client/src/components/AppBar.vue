@@ -279,7 +279,7 @@
 <script setup lang="ts">
 import { Panel, switchPanel, PanelType } from '../SwitchPanel'
 import { SheetItem } from '../SheetTypes'
-import { inject, ref, computed } from 'vue'
+import { inject, ref, computed, watch } from 'vue'
 import type { Ref } from 'vue'
 import { useDisplay } from 'vuetify'
 import { useKeyBindings } from '../KeyBindings'
@@ -306,7 +306,8 @@ const props = defineProps<{
   modelValue: string
   loading: boolean,
   displayItemsLength: number,
-  items: SheetItem[]
+  items: SheetItem[],
+  selectedItem: SheetItem | null,
 }>();
 
 const emit = defineEmits([
@@ -353,6 +354,10 @@ const appBarColor = computed(() => {
   } else {
     return `${props.panel.color}-darken-2`
   }
+})
+
+watch(() => props.selectedItem, () => {
+  navDrawer.value = false
 })
 </script>
 

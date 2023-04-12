@@ -10,7 +10,7 @@
     </div>
     <v-sheet 
       v-else-if="showDialog"
-      style="width: 100vw; height: 100vh; position: fixed; top: 0; left: 0; z-index: 10000"
+      class="xs-outer-wrapper"
       :color="bgColor"
     >
       <slot></slot>
@@ -38,3 +38,14 @@ const showDialog = computed({
   set: (v) => emits('update:modelValue', v)
 })
 </script>
+
+<style scoped>
+.xs-outer-wrapper {
+  width: 100vw; 
+  height: 100vh; 
+  position: fixed; 
+  top: 0; 
+  left: 0; 
+  z-index: 10000;
+}
+</style>
