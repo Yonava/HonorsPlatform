@@ -111,11 +111,8 @@
         v-model.number="item.points"
         label="Points"
         type="number"
-      >
-        <template #prepend>
-          <v-icon>mdi-ticket</v-icon>
-        </template>
-      </v-text-field>
+        prepend-icon="mdi-ticket"
+      ></v-text-field>
       <div class="d-flex flex-row">
         <v-select
           v-model="item.activeStatus"

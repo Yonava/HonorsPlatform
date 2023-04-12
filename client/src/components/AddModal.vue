@@ -1,12 +1,12 @@
 <template>
-  <v-dialog
+  <ModalContent 
     v-model="showDialog"
-    max-width="600px"
+    :bgColor="`${color}-lighten-5`"
   >
-    <v-sheet 
+    <v-sheet
       :color="`${color}-lighten-5`"
       :style="{
-        border: `5px solid ${color}`,
+        border: xs ? '' : `5px solid ${color}`,
       }"
       class="pa-5 parent"
     >
@@ -31,7 +31,6 @@
         @keyup.enter="reqAdd"
         v-if="!loading"
         class="d-flex flex-wrap justify-center align-center"
-        style="height: 50%; overflow: auto"
       >
         <div
           v-for="(attr, index) in attrs"
@@ -42,7 +41,7 @@
             v-model="item[index]"
             :label="attr"
             class="mx-2"
-            :style="`width: ${xs ? '300' : '200'}px;`"
+            :style="`width: ${xs ? '150' : '200'}px;`"
           ></v-text-field>
         </div>
       </div>
@@ -65,7 +64,7 @@
         class="close-dialog ma-4"
       >mdi-close</v-icon>
     </v-sheet>
-  </v-dialog>
+  </ModalContent>
 </template>
 
 <script setup lang="ts">
@@ -79,6 +78,7 @@ import {
   computed,
   watch
 } from 'vue'
+import ModalContent from './ModalContent.vue'
 
 export type OverrideOptions = {
   color?: string,
