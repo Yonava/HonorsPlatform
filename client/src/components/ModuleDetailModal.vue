@@ -24,6 +24,13 @@
           class="course-code mt-2"
         >
         <div>
+          <v-btn
+            v-if="!selectedModule.term"
+            @click="selectedModule.term = getCurrentTerm()"
+            color="blue"
+            size="x-small"
+            class="mb-3"
+          >Current Term</v-btn>
           <v-text-field
             v-model="selectedModule.term"
             :rules="[(v) => termValidator(v) || 'Potentially invalid term']"
@@ -69,17 +76,23 @@
             variant="outlined"
           ></v-textarea>
         </div>
-        <v-card-actions>
+        <v-card-actions class="pa-0">
           <v-btn
             @click="update"
             color="green"
-            filled
+            variant="outlined"
           >update</v-btn>
           <v-spacer></v-spacer>
-          <v-btn
+          <!-- <v-btn
             @click="emits('close')"
+            variant="outlined"
             color="red"
-          >discard changes</v-btn>
+          >discard changes</v-btn> -->
+          <v-btn
+            @click=""
+            variant="outlined"
+            color="blue"
+          >mark as complete</v-btn>
         </v-card-actions>
       </v-card>
     </div>
@@ -89,7 +102,7 @@
 <script setup lang="ts">
 import { computed, watch, ref } from 'vue'
 import { Module } from '../SheetTypes'
-import { termValidator } from '../TermValidator'
+import { termValidator, getCurrentTerm } from '../TermValidator'
 
 const props = defineProps<{
   module: Module

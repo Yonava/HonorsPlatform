@@ -82,102 +82,10 @@
           size="small"
         >Completed Now</v-btn>
       </div>
-      <v-dialog
-        v-model="dialog"
-        max-width="500"
-      >
-        <v-card
-          v-if="!moduleMoveSuccess"
-          class="d-flex flex-column align-center pa-3"
-        >
-          <h1>
-            Let's Finish It Up!
-          </h1>
-          <div 
-            v-if="!movingModuleToCompleted"
-            style="width: 90%;"
-          >
-            <div
-              class="d-flex flex-column mt-5"
-              style="width: 100%;"
-            >
-              <div>
-                <v-text-field
-                  v-model="completedModuleData.completedDate"
-                  label="Date Completed"
-                  variant="outlined"
-                  prepend-inner-icon="mdi-calendar"
-                  class="mx-2"
-                ></v-text-field>
-                <v-btn
-                  v-if="!completedModuleData.completedDate"
-                  @click="completedModuleData.completedDate = new Date().toLocaleDateString()"
-                  color="orange-darken-2"
-                  size="small"
-                  class="ml-2"
-                  style="transform: translateY(-10px);"
-                >Completed Today</v-btn>
-              </div>
-              <div class="d-flex flex-column mb-7 mt-3">
-                <v-btn
-                  v-for="grade in grades"
-                  :key="grade"
-                  @click="completedModuleData.grade = grade"
-                  :color="completedModuleData.grade === grade ? 'orange-darken-2' : 'grey'"
-                  rounded
-                  class="mx-10 mt-2"
-                >{{ grade || "Leave Ungraded" }}</v-btn>
-              </div>
-            </div>
-          </div>
-          <div 
-            v-else
-            class="mt-7"
-          >
-            <v-progress-circular
-              indeterminate
-              color="orange-darken-2"
-            ></v-progress-circular>
-          </div>
-          <v-card-actions>
-            <v-btn
-              v-if="!movingModuleToCompleted"
-              @click="moveToCompleted"
-              color="orange-darken-2"
-            >
-              <v-icon class="mr-2">mdi-check</v-icon>
-              Mark As Complete
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-        <v-card
-          v-else
-          class="d-flex flex-column align-center flex-start pa-3"
-        >
-          <div class="d-flex flex-row align-center">
-            <v-icon
-              size="x-large"
-              color="orange-darken-2"
-              class="mr-4 mb-2"
-            >mdi-check</v-icon>
-            <h2 style="font-size: 1.5em">
-              Module Completed Successfully!
-            </h2>
-            </div>
-            <p>
-              Moved {{ movedModule.courseCode }} to completed modules 
-              with a grade of {{ movedModule.grade || "ungraded" }}. 
-              This module is now accessible through the completed modules tab.
-            </p>
-          <v-btn
-            @click="closeDialog"
-            color="orange-darken-2"
-            class="mt-5"
-          >
-            Finish
-          </v-btn>
-        </v-card>
-      </v-dialog>
+      <FinishModuleModal
+        :show="dialog"
+        :module="item"
+      />
     </div>
     <div 
       :class="[
@@ -240,6 +148,7 @@ import { unmapModules, unmapCompletedModules } from '../DataMappers'
 import { Module, Grade, CompletedModule } from '../SheetTypes'
 import UpdateButton from './UpdateButton.vue'
 import { termValidator } from '../TermValidator'
+import FinishModuleModal from './FinishModuleModal.vue'
 
 const props = defineProps<{
   item: Module
@@ -250,14 +159,6 @@ const emits = defineEmits([
   'update',
   'unselect'
 ])
-
-const grades: Grade[] = [
-  null,
-  'High Pass',
-  'Pass',
-  'Low Pass',
-  'Fail'
-]
 
 const { item } = toRefs(props)
 
