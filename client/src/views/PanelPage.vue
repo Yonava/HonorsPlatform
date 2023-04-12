@@ -84,24 +84,29 @@
             </div>
           </div>
         </v-sheet>
-        <v-sheet 
-          :color="`${panel.color}-lighten-4`"
+        <div
           :style="{
             overflow: 'auto',
             minWidth: mdAndUp ? `${panelListWidth}px` : '',
             maxWidth: mdAndUp ? `${panelListWidth}px` : '',
           }"
           class="d-flex flex-grow-1 flex-column align-center"
+          ref="panelList"
         >
-          <PanelList
-            @select="selectedItem = $event"
-            :items="displayItems"
-            :filterQuery="filterQuery"
-            :selected="selectedItem"
-            :loading="loadingItems"
-            :panel="panel"
-          />
-        </v-sheet>
+          <v-sheet 
+            :color="`${panel.color}-lighten-4`"
+            style="width: 100%;"
+          >
+            <PanelList
+              @select="selectedItem = $event"
+              :items="displayItems"
+              :filterQuery="filterQuery"
+              :selected="selectedItem"
+              :loading="loadingItems"
+              :panel="panel"
+            />
+          </v-sheet>
+        </div>
         <v-sheet 
           v-if="mdAndUp"
           :color="resizing ? panel.color : 'transparent'"
@@ -186,7 +191,8 @@ import {
   computed, 
   watch,
   onUnmounted,
-  provide
+  provide,
+  h
 } from 'vue' 
 import { useRoute, useRouter } from 'vue-router'
 import { getEvery, clearByRow } from '../SheetsAPI'
@@ -213,6 +219,9 @@ const pageVisible = ref(true)
 const clone = <T>(obj: T) => JSON.parse(JSON.stringify(obj))
 
 const selectedItem = ref<SheetItem>(undefined)
+
+// dom element of the panel list
+const panelList = ref(null)
 
 const autoSync = ref(false)
 provide('autoSync', autoSync)
@@ -266,8 +275,16 @@ onMounted(async () => {
     changePanel(route.query.type as PanelType)
   }
   document.addEventListener('visibilitychange', toggleVisibility)
+  panelList.value.addEventListener('scroll', scrollCapture)
   await fetchData()
 })
+
+function scrollCapture() {
+  const el = panelList.value
+  // capture how far down the panelList has been scrolled
+  const percentScrolled = el.scrollTop / (el.scrollHeight - el.clientHeight)
+  localStorage.setItem('panelScrollY', percentScrolled.toString())
+}
 
 function toggleVisibility() {
   pageVisible.value = !document.hidden
@@ -316,6 +333,12 @@ const displayItems = computed(() => {
 async function fetchData() {
   loadingItems.value = true
   await silentFetch()
+  const panelScrollY = localStorage.getItem('panelScrollY')
+  if (panelScrollY) {
+    const el = panelList.value
+    const height = parseFloat(panelScrollY) * (el.scrollHeight - el.clientHeight)
+    panelList.value.scrollTop = height
+  }
   loadingItems.value = false
 }
 
