@@ -17,25 +17,53 @@
       style="font-size: 0.9em;"
     >
       <div class="d-flex flex-row">
-        <v-icon 
-          class="mr-1"
-          style="opacity: 0.75"
-        >
-          mdi-email
-        </v-icon>
-        <p>
-          {{ item.email || '(No Email)' }} 
-        </p>
+        <div class="d-flex flex-row align-center">
+          <v-icon 
+            class="mr-1"
+            style="opacity: 0.75"
+          >
+            mdi-email
+          </v-icon>
+          <p 
+            :style="{
+              'text-decoration': emailValidator(item.email) ? '' : 'line-through',
+              'color': emailValidator(item.email) ? '' : 'red',
+              'font-weight': emailValidator(item.email) ? '' : '900'
+            }"
+          >
+            {{ item.email || '(No Email)' }} 
+          </p>
+          <v-tooltip
+            activator="parent"
+            location="bottom"
+          >
+            Email{{ emailValidator(item.email) ? '' : ' Invalid' }}
+          </v-tooltip>
+        </div>
         <v-spacer></v-spacer>
-        <p>
-          {{ item.phone || '(No Phone)' }}
-        </p>
-        <v-icon 
-          class="ml-1"
-          style="opacity: 0.75"
-        >
-          mdi-phone
-        </v-icon>
+        <div class="d-flex flex-row align-center">
+          <p
+            :style="{
+              'text-decoration': phoneValidator(item.phone) ? '' : 'line-through',
+              'color': phoneValidator(item.phone) ? '' : 'red',
+              'font-weight': phoneValidator(item.phone) ? '' : '900'
+            }"
+          >
+            {{ item.phone || '(No Phone)' }}
+          </p>
+          <v-icon 
+            class="ml-1"
+            style="opacity: 0.75"
+          >
+            mdi-phone
+          </v-icon>
+          <v-tooltip
+            activator="parent"
+            location="bottom"
+          >
+            Phone Number{{ phoneValidator(item.phone) ? '' : ' Invalid' }}
+          </v-tooltip>
+        </div>
       </div>
     </div>
   </div>
@@ -44,6 +72,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { Graduate } from '../SheetTypes'
+import { emailValidator, phoneValidator } from '../EmailUtilities'
 
 const props = defineProps<{
   item: Graduate

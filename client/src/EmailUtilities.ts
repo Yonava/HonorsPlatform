@@ -7,6 +7,11 @@ export function emailValidator(email: string) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
 }
 
+export function phoneValidator(phone: string) {
+  if (phone === "") return true;
+  return /^(\+?1\s?)?(\(\d{3}\)|\d{3})[\s.-]?\d{3}[\s.-]?\d{4}$/.test(phone)
+}
+
 function sanitizeName(name: string) {
   const fullName = name.split(' ').map(name => name.trim().toLowerCase());
 

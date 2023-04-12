@@ -104,7 +104,7 @@
         </v-sheet>
         <v-sheet 
           v-if="mdAndUp"
-          :color="resizing ? panel.color : ''"
+          :color="resizing ? panel.color : 'transparent'"
           @mousedown="resizeStart"
           @mouseup="resizeEnd"
           :style="{
@@ -112,6 +112,7 @@
             height: '100%',
             cursor: 'col-resize',
             position: 'absolute',
+            zIndex: 2,
             left: `${proposedWidth + sortPanelWidth}px`,
           }"
         ></v-sheet>
@@ -164,7 +165,7 @@
       touchless
       rounded
       location="bottom"
-      style="width: 100%; height: 80%;"
+      style="width: 100%; height: calc(100% - 120px);"
     >
       <component
         v-if="selectedItem"
