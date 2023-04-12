@@ -1,10 +1,10 @@
 <template>
   <v-dialog
-    v-model="dialog"
+    v-model="showModal"
     max-width="500"
   >
     <v-card
-      v-if="!movedModule"
+      v-if="!success"
       class="d-flex flex-column align-center pa-3"
     >
       <h1>
@@ -57,7 +57,7 @@
       </div>
       <v-card-actions>
         <v-btn
-          v-if="!movingModuleToCompleted"
+          v-if="!loading"
           @click="moveToCompleted"
           color="orange-darken-2"
         >
@@ -86,7 +86,7 @@
           This module is now accessible through the completed modules tab.
         </p>
       <v-btn
-        @click="closeDialog"
+        @click="showModal = false"
         color="orange-darken-2"
         class="mt-5"
       >
@@ -107,11 +107,15 @@ const props = defineProps<{
   module: Module;
 }>();
 
+const emits = defineEmits<{
+  (e: 'close'): void;
+}>();
+
 const showModal = computed({
   get: () => props.show,
   set: (val) => {
     if (!val) {
-      return false;
+      emits('close')
     }
   },
 });
@@ -125,6 +129,7 @@ const grades: Grade[] = [
 ]
 
 const loading = ref(false);
+const success = ref(false);
 const movedModule = ref<CompletedModule>(null);
 const completedModuleData = ref({
   completedDate: "",
@@ -143,5 +148,11 @@ async function moveToCompleted() {
     props.module.row, 
     unmapCompletedModules([movedModule.value])
   )
+  loading.value = false
+  success.value = true
 }
+
+watch(loading, (val) => {
+  console.log(val)
+})
 </script>

@@ -83,6 +83,7 @@
         >Completed Now</v-btn>
       </div>
       <FinishModuleModal
+        @close="closeMoveModuleDialog"
         :show="moveModuleDialog"
         :module="item"
       />

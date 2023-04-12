@@ -231,6 +231,7 @@ provide('activePanel', panel)
 
 const changePanel = (panelType: PanelType) => {
   panel.value = switchPanel(panelType)
+  localStorage.setItem('panelScrollY', '0')
   selectedItem.value = null
   document.title = panel.value.title.plural + ' - Honors Program'
   filterQuery.value = ''
