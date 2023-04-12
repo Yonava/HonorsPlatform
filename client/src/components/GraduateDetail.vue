@@ -52,6 +52,13 @@
           <v-icon>mdi-phone</v-icon>
         </template>
       </v-text-field>
+      <v-btn
+        v-if="!item.graduationDate"
+        @click="item.graduationDate = new Date().toLocaleString().split(',')[0]" 
+        size="x-small"
+        color="purple-darken-2"
+        class="mb-2"
+      >Today</v-btn>
       <v-text-field
         v-model="item.graduationDate"
         label="Graduation Date"

@@ -85,13 +85,13 @@
           </div>
         </v-sheet>
         <div
+          ref="panelList"
           :style="{
             overflow: 'auto',
             minWidth: mdAndUp ? `${panelListWidth}px` : '',
             maxWidth: mdAndUp ? `${panelListWidth}px` : '',
           }"
           class="d-flex flex-grow-1 flex-column align-center"
-          ref="panelList"
         >
           <v-sheet 
             :color="`${panel.color}-lighten-4`"
@@ -359,6 +359,7 @@ const autoSyncInterval = setInterval(() => {
 onUnmounted(() => {
   clearInterval(autoSyncInterval)
   document.removeEventListener('visibilitychange', toggleVisibility)
+  panelList.value.removeEventListener('scroll', scrollCapture)
 })
 
 function getDefaultWidth() {
