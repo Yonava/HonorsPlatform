@@ -1,6 +1,6 @@
 <template>
   <v-sheet
-    color="blue-darken-1"
+    color="blue-darken-3"
     style="height: 100%; width: 100%;"
     class="d-flex flex-column align-center justify-center"
   >
@@ -9,14 +9,20 @@
       style="border-radius: 20px;"
       elevation="7"
     >
-      <h1>
+      <h1 class="mb-4">
         Create Registrar List
       </h1>
+      <v-btn
+        v-if="!term"
+        @click="term = getCurrentTerm()"
+        color="blue-darken-2"
+        size="x-small"
+        class="mb-3"
+      >Current Term</v-btn>
       <v-text-field
         v-model="term"
         @keyup.enter="generateRegistrarList"
         :rules="[(v) => termValidator(v) || 'Potentially invalid term']"
-        class="mt-6"
         variant="outlined"
         label="Term"
       ></v-text-field>
@@ -53,12 +59,14 @@
 <script setup lang="ts">
 import { Range, getEvery, replaceRange } from "../SheetsAPI";
 import { ref, computed, watch } from "vue";
-import { termValidator } from "../TermValidator";
+import { termValidator, getCurrentTerm } from "../TermValidator";
 
 const sheet = ref(null);
 const loading = ref(false);
 const term = ref("");
 const success = ref(false);
+
+// if the user has successfully generated at least one registrar list
 const hasSucceeded = ref(false);
 
 async function generateRegistrarList() {
@@ -117,5 +125,9 @@ watch(success, (val) => {
       clearTimeout(successTimeout);
     }, 6000);
   }
+});
+
+watch(term, () => {
+  success.value = false;
 });
 </script>
