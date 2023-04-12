@@ -92,7 +92,7 @@
             @click="showCompleteModal = true"
             variant="outlined"
             color="blue"
-          >mark as complete</v-btn>
+          >complete</v-btn>
         </v-card-actions>
       </v-card>
     </div>
@@ -101,6 +101,7 @@
       @close="showCompleteModal = false"
       :show="showCompleteModal"
       :module="selectedModule"
+      color="blue-darken-2"
     />
   </v-dialog>
 </template>

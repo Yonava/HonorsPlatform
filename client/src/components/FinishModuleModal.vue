@@ -22,7 +22,7 @@
             <v-btn
               v-if="!completedModuleData.completedDate"
               @click="completedModuleData.completedDate = new Date().toLocaleDateString()"
-              color="orange-darken-2"
+              :color="color"
               size="small"
               class="mb-3"
             >Completed Now</v-btn>
@@ -39,8 +39,8 @@
               v-for="grade in grades"
               :key="grade"
               @click="completedModuleData.grade = grade"
-              :color="completedModuleData.grade === grade ? 'orange-darken-2' : 'grey'"
-              rounded
+              :variant="completedModuleData.grade === grade ? 'tonal' : 'default'"
+              :color="color"
               class="mx-10 mt-2"
             >{{ grade || "Leave Ungraded" }}</v-btn>
           </div>
@@ -52,14 +52,14 @@
       >
         <v-progress-circular
           indeterminate
-          color="orange-darken-2"
+          :color="color"
         ></v-progress-circular>
       </div>
       <v-card-actions>
         <v-btn
           v-if="!loading"
           @click="moveToCompleted"
-          color="orange-darken-2"
+          :color="color"
         >
           <v-icon class="mr-2">mdi-check</v-icon>
           Mark As Complete
@@ -73,7 +73,7 @@
       <div class="d-flex flex-row align-center">
         <v-icon
           size="x-large"
-          color="orange-darken-2"
+          :color="color"
           class="mr-4 mb-2"
         >mdi-check</v-icon>
         <h2 style="font-size: 1.5em">
@@ -81,13 +81,13 @@
         </h2>
         </div>
         <p>
-          Moved {{ movedModule.courseCode }} to completed modules 
-          with a grade of {{ movedModule.grade || "ungraded" }}. 
+          Moved <strong>{{ movedModule.courseCode }}</strong> to completed modules 
+          with a grade of <strong>{{ movedModule.grade || "ungraded" }}</strong>. 
           This module is now accessible through the completed modules tab.
         </p>
       <v-btn
         @click="showModal = false"
-        color="orange-darken-2"
+        :color="color"
         class="mt-5"
       >
         Finish
@@ -105,6 +105,7 @@ import { unmapCompletedModules } from '../DataMappers'
 const props = defineProps<{
   show: boolean;
   module: Module;
+  color?: string;
 }>();
 
 const emits = defineEmits<{
@@ -121,6 +122,8 @@ const showModal = computed({
     }
   },
 });
+
+const color = computed(() => props.color || 'orange-darken-2')
 
 const grades: Grade[] = [
   null,
