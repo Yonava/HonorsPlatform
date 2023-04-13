@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="showDialog">
+  <ModalContent v-model="showDialog">
     <div 
       v-if="item"
       class="d-flex justify-center align-center"
@@ -70,7 +70,7 @@
         </v-card-actions>
       </v-card>
     </div>
-  </v-dialog>
+  </ModalContent>
 </template>
 
 <script setup lang="ts">

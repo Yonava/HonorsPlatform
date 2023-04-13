@@ -1,13 +1,12 @@
 <template>
-  <v-dialog v-model="showDialog">
+  <ModalContent v-model="showDialog">
     <div 
       v-if="selectedModule"
       class="d-flex justify-center align-center"
-      style="max-height: 80%; overflow: auto"
     >
-      <v-card
+      <v-card 
         class="module-card pa-5"
-        width="500"
+        elevation="0"
       >
         <v-sheet 
           class="py-2 px-4 d-flex align-center"
@@ -15,7 +14,9 @@
           style="font-weight: bold; color: white; border-radius: 20px; width: 120%"
         >
           <v-icon class="mr-1">mdi-file-document-edit-outline</v-icon>
-          <span>Edit Module</span>
+          <span>
+            Edit Module
+          </span>
         </v-sheet>
         <input 
           type="text"
@@ -71,6 +72,7 @@
             ></v-text-field>
           </div>
           <v-textarea
+            no-resize
             v-model="selectedModule.description"
             label="Description"
             variant="outlined"
@@ -83,11 +85,6 @@
             variant="outlined"
           >update</v-btn>
           <v-spacer></v-spacer>
-          <!-- <v-btn
-            @click="emits('close')"
-            variant="outlined"
-            color="red"
-          >discard changes</v-btn> -->
           <v-btn
             @click="showCompleteModal = true"
             variant="outlined"
@@ -103,7 +100,7 @@
       :module="selectedModule"
       color="blue-darken-2"
     />
-  </v-dialog>
+  </ModalContent>
 </template>
 
 <script setup lang="ts">
@@ -111,6 +108,7 @@ import { computed, watch, ref } from 'vue'
 import { Module } from '../SheetTypes'
 import { termValidator, getCurrentTerm } from '../TermValidator'
 import FinishModuleModal from './FinishModuleModal.vue'
+import ModalContent from './ModalContent.vue'
 
 const props = defineProps<{
   module: Module

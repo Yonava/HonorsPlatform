@@ -14,6 +14,7 @@
       :color="bgColor"
     >
       <slot></slot>
+      <div style="margin-bottom: 18vh"></div>
     </v-sheet>
   </div>
 </template>
@@ -44,6 +45,7 @@ const showDialog = computed({
   width: 100vw; 
   height: 100vh; 
   position: fixed; 
+  overflow: auto;
   top: 0; 
   left: 0; 
   z-index: 10000;
