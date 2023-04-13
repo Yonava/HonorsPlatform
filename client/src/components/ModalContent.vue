@@ -11,7 +11,7 @@
     <v-sheet 
       v-else-if="showDialog"
       class="xs-outer-wrapper"
-      :color="bgColor"
+      :color="color"
     >
       <slot></slot>
       <div style="margin-bottom: 18vh"></div>
@@ -29,6 +29,8 @@ const props = defineProps<{
   modelValue: boolean,
   bgColor?: string,
 }>()
+
+const color = computed(() => props.bgColor || 'white')
 
 const emits = defineEmits([
   'update:modelValue'
