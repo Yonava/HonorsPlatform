@@ -6,7 +6,8 @@
     >
       <v-card
         class="module-card pa-5"
-        width="500"
+        width="400"
+        elevation="0"
       >
         <v-sheet 
           class="py-2 px-4 d-flex align-center"
@@ -45,26 +46,28 @@
           </div>
           <v-textarea
             v-model="item.note"
+            no-resize
             label="Note"
             variant="outlined"
           ></v-textarea>
         </div>
-        <v-card-actions>
+        <v-card-actions class="pa-0">
           <v-btn
             v-if="creating"
             @click="add"
             color="green"
-            filled
+            variant="outlined"
           >create</v-btn>
           <v-btn
             v-else
             @click="update"
             color="green"
-            filled
+            variant="outlined"
           >update</v-btn>
           <v-spacer></v-spacer>
           <v-btn
             @click="close"
+            variant="outlined"
             color="red"
           >discard changes</v-btn>
         </v-card-actions>
@@ -75,6 +78,7 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
+import ModalContent from './ModalContent.vue'
 import { GradEngagement } from '../SheetTypes'
 
 const props = defineProps<{
