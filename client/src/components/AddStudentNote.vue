@@ -1,16 +1,34 @@
 <template>
   <ModalContent v-model="show">
     <v-card elevation="0">
-      <v-card-title>
+      <div
+        @click="show = false"
+        class="ma-2"
+        style="left: 0; top: 0; position: absolute; cursor: pointer;"
+      >
+        <v-icon>mdi-close</v-icon>
+      </div>
+      <v-card-title class="mt-8">
         <strong>
           Add Student Note
         </strong>
       </v-card-title>
       <div class="px-4">
         <div v-if="initials">
-          <p class="mb-3">
-            Initials set as {{ initials }}
-          </p>
+          <div class="d-flex flex-row">
+            <p class="mb-3">
+              Initials set as
+              <strong>
+                {{ initials }}
+              </strong>
+            </p>
+            <v-btn
+              @click="initials = ''"
+              class="ml-5"
+              color="red"
+              size="x-small"
+            >clear initials</v-btn>
+          </div>
           <v-textarea
             v-model="note"
             no-resize
@@ -28,14 +46,18 @@
             Add Note
           </v-btn>
         </div>
-        <div v-else>
-          <input 
+        <div 
+          v-else
+          class="d-flex flex-column mb-4"
+        >
+          <v-text-field 
             v-model="tempInitials"
-            type="text"
-            placeholder="Enter Initials"
-          >
+            label="Initials"
+            variant="outlined"
+          ></v-text-field>
           <v-btn 
             @click="setInitials"
+            color="blue-darken-2"
           >Set Initials</v-btn>
         </div>
       </div>
