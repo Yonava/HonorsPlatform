@@ -5,7 +5,7 @@
       class="d-flex justify-center align-center"
     >
       <v-card
-        class="module-card pa-5"
+        class="pa-5"
         width="400"
         elevation="0"
       >
