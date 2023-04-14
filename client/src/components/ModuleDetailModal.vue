@@ -9,6 +9,7 @@
         elevation="0"
       >
         <v-sheet 
+          v-if="!xs"
           class="py-2 px-4 d-flex align-center"
           color="blue-darken-2"
           style="font-weight: bold; color: white; border-radius: 20px; width: 120%"
@@ -23,6 +24,9 @@
           v-model="selectedModule.courseCode"
           placeholder="Course Code"
           class="course-code mt-2"
+          :style="{
+            fontSize: xs ? '2.5rem' : '3rem'
+          }"
         >
         <div>
           <v-btn
@@ -32,18 +36,28 @@
             size="x-small"
             class="mb-3"
           >Current Term</v-btn>
-          <v-text-field
-            v-model="selectedModule.term"
-            :rules="[(v) => termValidator(v) || 'Potentially invalid term']"
-            label="Term"
-            variant="outlined"
-          ></v-text-field>
-          <v-text-field
-            v-model="selectedModule.instructor"
-            label="Instructor"
-            variant="outlined"
-          ></v-text-field>
-          <div class="d-flex flex-row mb-3">
+          <div 
+            :class="[
+              'd-flex', 
+              xs ? 'flex-row' : 'flex-column', 
+            ]"
+          >
+            <v-text-field
+              v-model="selectedModule.term"
+              :rules="[(v) => termValidator(v) || 'Potentially invalid term']"
+              label="Term"
+              variant="outlined"
+              :class="[
+                xs ? 'mr-5' : ''
+              ]"
+            ></v-text-field>
+            <v-text-field
+              v-model="selectedModule.instructor"
+              label="Instructor"
+              variant="outlined"
+            ></v-text-field>
+          </div>
+          <div class="d-flex flex-row">
             <v-btn 
               v-if="!selectedModule.docuSignCreated"
               @click="selectedModule.docuSignCreated = new Date().toLocaleDateString()"
@@ -106,6 +120,7 @@
 <script setup lang="ts">
 import { computed, watch, ref } from 'vue'
 import { Module } from '../SheetTypes'
+import { useDisplay } from 'vuetify'
 import { termValidator, getCurrentTerm } from '../TermValidator'
 import FinishModuleModal from './FinishModuleModal.vue'
 import ModalContent from './ModalContent.vue'
@@ -119,6 +134,8 @@ const selectedModule = ref<Module>(null)
 const startingState = ref<Module>(null)
 const showCompleteModal = ref(false)
 const clone = <T>(obj: T) => JSON.parse(JSON.stringify(obj))
+
+const { xs } = useDisplay() 
 
 watch(() => props.show, (val) => {
   if (val) {
@@ -148,7 +165,6 @@ const emits = defineEmits([
 
 <style scoped>
 input.course-code {
-  font-size: 3rem;
   font-weight: 900;
   border: none;
   outline: none;

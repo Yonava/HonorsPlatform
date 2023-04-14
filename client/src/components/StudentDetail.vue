@@ -265,9 +265,11 @@ import {
   ref, 
   watch, 
   computed,
-  toRefs
+  toRefs,
+  inject
 } from 'vue'
 import { useElementSize } from '@vueuse/core'
+import { useDisplay } from 'vuetify'
 import ModuleFetch from './ModuleFetch.vue'
 import AddModal from './AddModal.vue'
 import LockArea from './LockArea.vue'
@@ -275,7 +277,7 @@ import UpdateButton from './UpdateButton.vue'
 import { updateByRow, moveRowToRange, Range } from '../SheetsAPI'
 import { switchPanel, PanelType } from '../SwitchPanel'
 import { unmapStudents, unmapGraduates } from '../DataMappers'
-import { Student } from '../SheetTypes'
+import { Student, Module } from '../SheetTypes'
 import { athleticOptions } from '../Athletics'
 import { emailValidator, getStudentEmail } from '../EmailUtilities'
 
@@ -284,6 +286,7 @@ const props = defineProps<{
 }>()
 
 const { item } = toRefs(props)
+const { xs } = useDisplay()
 
 const emits = defineEmits([
   'delete', 
@@ -399,5 +402,9 @@ input.student-name-input:focus {
   background: rgb(230, 230, 230); 
   border-radius: 5px; 
   box-shadow: 0 0 10px 0 rgba(0,0,0,0.2);
+}
+
+.op {
+  opacity: 1 !important
 }
 </style>

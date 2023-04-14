@@ -42,7 +42,9 @@ const props = defineProps<{
   refetch: boolean
 }>()
 
-const emits = defineEmits(['toggleCanDelete'])
+const emits = defineEmits([
+  'toggleCanDelete',
+])
 
 watch(() => props.studentId, async () => {
   await fetchModules()

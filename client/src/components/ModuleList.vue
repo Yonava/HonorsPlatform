@@ -50,7 +50,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import ModuleDetailModal from './ModuleDetailModal.vue'
 import { Module } from '../SheetTypes'
 
@@ -66,7 +66,11 @@ function showModuleDetailModal(module: Module) {
   showDetail.value = true
 }
 
-const emits = defineEmits(['delete', 'update'])
+const emits = defineEmits([
+  'delete', 
+  'update',
+])
+
 const reqDeleteModule = (row: number) => emits('delete', row)
 </script>
 
