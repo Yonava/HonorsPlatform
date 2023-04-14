@@ -3,7 +3,7 @@
     <div 
       v-for="mod in modules"
       :key="mod.courseCode"
-      @click="showModuleDetailModal(mod)"
+      @click="select(mod)"
       class="module-card pa-2 mt-2 d-flex flex-row align-center"
     >
       <div style="d-flex flex-column align-center">
@@ -27,7 +27,7 @@
         </div>
       </div>
       <v-icon 
-        @click.stop="reqDeleteModule(mod.row)"
+        @click.stop="remove(mod)"
         color="white"
         style="cursor: pointer; margin-left: auto;"
         class="delete-module"
@@ -35,43 +35,23 @@
         mdi-close
       </v-icon>
     </div>
-    <div v-if="modules.length === 0">
-      <span style="color: red; font-size: 1.25em">
-        No modules in progress
-      </span>
-    </div>
-    <ModuleDetailModal 
-      @close="showDetail = false"
-      @update="emits('update', $event)"
-      :show="showDetail"
-      :module="selectedModule"
-    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
-import ModuleDetailModal from './ModuleDetailModal.vue'
-import { Module } from '../SheetTypes'
+import { Module } from "../SheetTypes"
 
 const props = defineProps<{
-  modules: Module[]
-}>()
-
-const showDetail = ref(false)
-const selectedModule = ref<Module>(null)
-
-function showModuleDetailModal(module: Module) {
-  selectedModule.value = module
-  showDetail.value = true
-}
+  modules: Module[];
+}>();
 
 const emits = defineEmits([
-  'delete', 
-  'update',
-])
+  'selected', 
+  'delete'
+]);
 
-const reqDeleteModule = (row: number) => emits('delete', row)
+const select = (event: Module) => emits('selected', event);
+const remove = (event: Module) => emits('delete', event);
 </script>
 
 <style scoped>

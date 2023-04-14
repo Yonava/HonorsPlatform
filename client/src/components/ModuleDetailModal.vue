@@ -6,11 +6,10 @@
     >
       <v-card 
         class="pa-5"
-        width="400"
+        :width="xs ? '100%' : '400'"
         elevation="0"
       >
         <v-sheet 
-          v-if="!xs"
           class="py-2 px-4 d-flex align-center"
           color="blue-darken-2"
           style="font-weight: bold; color: white; border-radius: 20px; width: 120%"
@@ -25,9 +24,6 @@
           v-model="selectedModule.courseCode"
           placeholder="Course Code"
           class="course-code mt-2"
-          :style="{
-            fontSize: xs ? '2.5rem' : '3rem'
-          }"
         >
         <div>
           <v-btn
@@ -37,28 +33,18 @@
             size="x-small"
             class="mb-3"
           >Current Term</v-btn>
-          <div 
-            :class="[
-              'd-flex', 
-              xs ? 'flex-row' : 'flex-column', 
-            ]"
-          >
-            <v-text-field
-              v-model="selectedModule.term"
-              :rules="[(v) => termValidator(v) || 'Potentially invalid term']"
-              label="Term"
-              variant="outlined"
-              :class="[
-                xs ? 'mr-5' : ''
-              ]"
-            ></v-text-field>
-            <v-text-field
-              v-model="selectedModule.instructor"
-              label="Instructor"
-              variant="outlined"
-            ></v-text-field>
-          </div>
-          <div class="d-flex flex-row">
+          <v-text-field
+            v-model="selectedModule.term"
+            :rules="[(v) => termValidator(v) || 'Potentially invalid term']"
+            label="Term"
+            variant="outlined"
+          ></v-text-field>
+          <v-text-field
+            v-model="selectedModule.instructor"
+            label="Instructor"
+            variant="outlined"
+          ></v-text-field>
+          <div class="d-flex flex-row mb-3">
             <v-btn 
               v-if="!selectedModule.docuSignCreated"
               @click="selectedModule.docuSignCreated = new Date().toLocaleDateString()"
@@ -131,6 +117,11 @@ const props = defineProps<{
   show: boolean
 }>()
 
+const emits = defineEmits([
+  'close', 
+  'update'
+])
+
 const selectedModule = ref<Module>(null)
 const startingState = ref<Module>(null)
 const showCompleteModal = ref(false)
@@ -157,11 +148,6 @@ const showDialog = computed({
   get: () => props.show,
   set: (val) => emits('close')
 })
-
-const emits = defineEmits([
-  'close', 
-  'update'
-])
 </script>
 
 <style scoped>
@@ -171,5 +157,6 @@ input.course-code {
   outline: none;
   width: 100%;
   margin-bottom: 1rem;
+  font-size: 3rem;
 }
 </style>

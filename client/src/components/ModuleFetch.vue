@@ -12,7 +12,7 @@
         </h2>
         <v-spacer></v-spacer>
         <v-btn
-          @click="showModuleAddModal = true"
+          @click="showAddModal = true"
           size="small"
           color="green"
         >
@@ -30,27 +30,25 @@
         ></v-progress-circular>
       </div>
       <div
-        v-else-if="engagements.length === 0"
+        v-else-if="modules.length === 0"
         style="font-weight: 200; color: red; font-size: 25px"
       >
-        No events yet.
+        No modules in progress.
       </div>
       <div
         v-else
         style="max-height: 500px; overflow: auto"
       >
         <ModuleList
-          v-if="!loadingModules"
-          @delete="reqDeleteModule($event)"
-          @update="reqUpdateModule($event)"
+          @selected="i => openModal(i)"
+          @delete="deleteModule($event)"
           :modules="modules"
         />
       </div>
       <ModuleDetailModal 
         @close="closeModal"
-        @add="addEngagementEvent($event)"
-        @update="updateEngagementEvent($event)"
-        :item="selectedEngagement"
+        @update="updateModule($event)"
+        :module="selectedModule"
         :show="showModal"
       />
       <AddModal 
@@ -71,8 +69,10 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import ModuleList from './ModuleList.vue'
+import AddModal from './AddModal.vue'
 import LockArea from './LockArea.vue'
 import { Module } from '../SheetTypes'
+import { PanelType, switchPanel } from '../SwitchPanel'
 import ModuleDetailModal from './ModuleDetailModal.vue'
 import { mapModules, unmapModules } from '../DataMappers'
 import { 
@@ -118,6 +118,7 @@ async function fetch() {
 
 async function updateModule(event: Module) {
   loading.value = true
+  closeModal()
   await updateByRow(Range.MODULES, event.row, unmapModules([event]))
   await fetch()
 }

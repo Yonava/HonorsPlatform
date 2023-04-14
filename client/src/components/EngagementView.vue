@@ -38,7 +38,11 @@ const props = defineProps<{
   engagements: GradEngagement[];
 }>();
 
-const emits = defineEmits(['selected', 'delete']);
+const emits = defineEmits([
+  'selected', 
+  'delete'
+]);
+
 const select = (event: GradEngagement) => emits('selected', event);
 const remove = (event: GradEngagement) => emits('delete', event);
 </script>

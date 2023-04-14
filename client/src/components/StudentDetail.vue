@@ -138,34 +138,13 @@
         label="Athletics"
         class="mt-2"
       ></v-autocomplete>
-      <v-divider class="my-2"></v-divider>
-      <div v-if="item.id">
-        <div class="d-flex flex-row align-center">
-          <h2>
-            Modules In Progress:
-          </h2>
-          <v-spacer></v-spacer>
-          <v-btn
-            @click="showModuleAddModal = true"
-            size="small"
-            color="green"
-          >
-            <v-icon class="mr-1">mdi-plus</v-icon>
-            Add Module
-          </v-btn>
-        </div>
-        <ModuleFetch
-          @toggleCanDelete="moduleListEmpty = !moduleListEmpty"
-          :studentId="item.id"
-          :refetch="refetchModules"
-        />
-      </div>
-      <LockArea 
-        v-else
-        title="Module Tracking"
-        condition="student ID"
+      
+      <ModuleFetch
+        @update="modules = $event"
+        @loading-state="loadingModules = $event"
+        :id="item.id"
       />
-      <v-divider class="my-2"></v-divider>
+
       <h2>
         Other:
       </h2>
@@ -247,16 +226,6 @@
         </v-btn>
       </div>
     </div>
-    <AddModal 
-      @close="showModuleAddModal = false"
-      @success="refetchModules = !refetchModules"
-      :show="showModuleAddModal"
-      :panel="switchPanel(PanelType.MODULES)"
-      :override="{
-        color: 'blue',
-        predefineColumnData: [item.id],
-      }"
-    />
   </div>
 </template>
 
@@ -271,8 +240,6 @@ import {
 import { useElementSize } from '@vueuse/core'
 import { useDisplay } from 'vuetify'
 import ModuleFetch from './ModuleFetch.vue'
-import AddModal from './AddModal.vue'
-import LockArea from './LockArea.vue'
 import UpdateButton from './UpdateButton.vue'
 import { updateByRow, moveRowToRange, Range } from '../SheetsAPI'
 import { switchPanel, PanelType } from '../SwitchPanel'
@@ -324,17 +291,16 @@ function reqDeleteStudent() {
 }
 
 const updatingStudent = ref(false)
-const showModuleAddModal = ref(false)
 const refetchModules = ref(false)
 const tempStudentId = ref('')
 const dialog = ref(false)
 const movingStudent = ref(false)
 
-// emitted from ModuleFetch
-const moduleListEmpty = ref(false)
+const modules = ref<Module[]>([])
+const loadingModules = ref(false)
 
 const canDelete = computed(() => {
-  return moduleListEmpty.value || !item.value.id
+  return modules.value.length === 0 && !loadingModules.value
 })
 
 function sendEmail() {
