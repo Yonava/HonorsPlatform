@@ -183,6 +183,12 @@
       :style="sm ? '' : 'width: 55%'"
     >
       <div style="width: 100%;">
+        <v-btn
+          @click="showAddNote = true"
+          size="x-small"
+          color="blue-darken-2"
+          class="mb-3"
+        >Add Meeting Note</v-btn>
         <v-textarea
           v-model="item.note"
           auto-grow
@@ -226,6 +232,11 @@
         </v-btn>
       </div>
     </div>
+    <AddStudentNote 
+      @success="addStudentNote($event)"
+      @close="showAddNote = false"
+      :show="showAddNote"
+    />
   </div>
 </template>
 
@@ -241,6 +252,7 @@ import { useElementSize } from '@vueuse/core'
 import { useDisplay } from 'vuetify'
 import ModuleFetch from './ModuleFetch.vue'
 import UpdateButton from './UpdateButton.vue'
+import AddStudentNote from './AddStudentNote.vue'
 import { updateByRow, moveRowToRange, Range } from '../SheetsAPI'
 import { unmapStudents, unmapGraduates } from '../DataMappers'
 import { Student, Module } from '../SheetTypes'
@@ -298,6 +310,8 @@ const movingStudent = ref(false)
 const modules = ref<Module[]>([])
 const loadingModules = ref(false)
 
+const showAddNote = ref(false)
+
 const canDelete = computed(() => {
   return modules.value.length === 0 && !loadingModules.value
 })
@@ -348,6 +362,12 @@ async function moveToGraduates() {
     }])
   )
   emits('unselect')
+}
+
+function addStudentNote(event: { initials: string, note: string }) {
+  const { initials, note } = event
+  if (item.value.note) item.value.note += '\n\n'
+  item.value.note += `${initials}: ${note}`
 }
 </script>
 
