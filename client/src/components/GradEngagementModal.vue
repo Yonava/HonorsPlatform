@@ -6,7 +6,7 @@
     >
       <v-card
         class="pa-5"
-        width="400"
+        :width="xs ? '100%' : '400'"
         elevation="0"
       >
         <v-sheet 
@@ -50,6 +50,18 @@
             label="Note"
             variant="outlined"
           ></v-textarea>
+          <v-textarea
+            v-model="item.note"
+            no-resize
+            label="Note"
+            variant="outlined"
+          ></v-textarea>
+          <v-textarea
+            v-model="item.note"
+            no-resize
+            label="Note"
+            variant="outlined"
+          ></v-textarea>
         </div>
         <v-card-actions class="pa-0">
           <v-btn
@@ -78,6 +90,7 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
+import { useDisplay } from 'vuetify'
 import ModalContent from './ModalContent.vue'
 import { GradEngagement } from '../SheetTypes'
 
@@ -88,6 +101,7 @@ const props = defineProps<{
 
 const startingItem = ref(null)
 const item = ref<GradEngagement>(null)
+const { xs } = useDisplay()
 
 const changed = computed(() => {
   return JSON.stringify(item.value) !== JSON.stringify(startingItem.value)
