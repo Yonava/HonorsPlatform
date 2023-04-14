@@ -26,7 +26,8 @@
       >
         <v-progress-circular
           indeterminate
-          color="purple-darken-2"
+          class="mt-3"
+          color="blue-darken-2"
         ></v-progress-circular>
       </div>
       <div
@@ -119,7 +120,9 @@ async function fetch() {
 async function updateModule(event: Module) {
   loading.value = true
   closeModal()
-  await updateByRow(Range.MODULES, event.row, unmapModules([event]))
+  if (event) {
+    await updateByRow(Range.MODULES, event.row, unmapModules([event]))
+  }
   await fetch()
 }
 

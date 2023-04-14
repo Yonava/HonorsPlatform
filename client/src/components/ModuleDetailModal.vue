@@ -6,7 +6,7 @@
     >
       <v-card 
         class="pa-5"
-        :width="xs ? '100%' : '400'"
+        :width="xs ? '100%' : '550'"
         elevation="0"
       >
         <v-sheet 

@@ -242,7 +242,6 @@ import { useDisplay } from 'vuetify'
 import ModuleFetch from './ModuleFetch.vue'
 import UpdateButton from './UpdateButton.vue'
 import { updateByRow, moveRowToRange, Range } from '../SheetsAPI'
-import { switchPanel, PanelType } from '../SwitchPanel'
 import { unmapStudents, unmapGraduates } from '../DataMappers'
 import { Student, Module } from '../SheetTypes'
 import { athleticOptions } from '../Athletics'
@@ -368,9 +367,5 @@ input.student-name-input:focus {
   background: rgb(230, 230, 230); 
   border-radius: 5px; 
   box-shadow: 0 0 10px 0 rgba(0,0,0,0.2);
-}
-
-.op {
-  opacity: 1 !important
 }
 </style>

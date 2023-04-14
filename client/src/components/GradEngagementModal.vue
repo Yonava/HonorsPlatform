@@ -6,7 +6,7 @@
     >
       <v-card
         class="pa-5"
-        :width="xs ? '100%' : '600'"
+        :width="xs ? '100%' : '550'"
         elevation="0"
       >
         <v-sheet 
@@ -44,18 +44,6 @@
               variant="outlined"
             ></v-text-field>
           </div>
-          <v-textarea
-            v-model="item.note"
-            no-resize
-            label="Note"
-            variant="outlined"
-          ></v-textarea>
-          <v-textarea
-            v-model="item.note"
-            no-resize
-            label="Note"
-            variant="outlined"
-          ></v-textarea>
           <v-textarea
             v-model="item.note"
             no-resize

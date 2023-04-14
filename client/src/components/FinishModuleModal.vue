@@ -39,7 +39,6 @@
               v-for="grade in grades"
               :key="grade"
               @click="completedModuleData.grade = grade"
-              :variant="completedModuleData.grade === grade ? 'tonal' : 'default'"
               :color="color"
               class="mx-10 mt-2"
             >{{ grade || "Leave Ungraded" }}</v-btn>
