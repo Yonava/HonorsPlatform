@@ -281,6 +281,15 @@ const statusOptions = {
   'Pending': 'account-question',
 }
 
+enum ActiveStatus {
+  ACTIVE = 'Active',
+  INACTIVE = 'Inactive',
+  GRADUATED = 'Graduated',
+  DROPPED = 'Dropped',
+  ON_HOLD = 'On Hold',
+  PENDING = 'Pending',
+}
+
 const yearOptions = [
   'Freshman',
   'Sophomore',
@@ -291,6 +300,16 @@ const yearOptions = [
 const sm = ref(false)
 const el = ref(null)
 const { width } = useElementSize(el)
+
+watch(item, (newItem) => {
+  if (!newItem.points) {
+    newItem.points = 0
+  }
+
+  if (!newItem.id && !newItem.activeStatus) {
+    newItem.activeStatus = ActiveStatus.PENDING
+  }
+})
 
 watch(width, (newWidth) => {
   sm.value = newWidth < 700
@@ -329,12 +348,18 @@ function studentIdRule(studentId: string) {
 
 async function saveId() {
   if (!studentIdRule(tempStudentId.value)) return
+
   const { id, ...rest } = item.value
   updatingStudent.value = true
   const newStudent = {
     ...rest,
     id: tempStudentId.value,
   }
+
+  if (newStudent.activeStatus === statusOptions.Pending) {
+    newStudent.activeStatus = ActiveStatus.ACTIVE
+  }
+
   await updateByRow(
     Range.STUDENTS, 
     item.value.row, 
