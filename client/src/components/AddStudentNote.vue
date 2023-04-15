@@ -10,7 +10,7 @@
       </div>
       <v-card-title class="mt-8">
         <strong>
-          Add Student Note
+          Add Meeting Note
         </strong>
       </v-card-title>
       <div class="px-4">
@@ -31,6 +31,7 @@
           </div>
           <v-textarea
             v-model="note"
+            clearable
             no-resize
             variant="outlined"
             label="Note"
@@ -82,7 +83,10 @@ const emits = defineEmits([
 const show = computed({
   get: () => props.show,
   set: (v) => {
-    if (!v) emits('close')
+    if (!v) {
+      emits('close')
+      note.value = ''
+    }
   }
 })
 
