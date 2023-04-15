@@ -14,6 +14,7 @@
         overflowY: 'scroll',
         position: 'relative',
       }"
+      :color="smAndDown ? 'blue-darken-4' : 'white'"
     >
       <v-btn 
         @click="back"
@@ -32,10 +33,13 @@
         </v-icon>
         Compose Mass Email
       </h1>
-      <div class="d-flex flex-column align-center justify-center">
+      <div 
+        class="mt-5 d-flex flex-column align-center justify-center"
+        style="width: 96%"
+      >
         <div 
           class="d-flex flex-row mt-5 mb-2"
-          style="width: 96%"
+          style="width: 100%"
         >
           <v-btn
             v-for="i in filter.count"
@@ -45,11 +49,11 @@
             icon
             size="x-small"
             @click="filter.selected = i"
-            :color="i === filter.selected ? 'blue-darken-2' : 'grey'"
+            :color="i === filter.selected ? 'blue' : 'grey'"
           >{{ i }}</v-btn>
           <v-btn
+            v-if="filter.count < 7"
             @click="addFilter"
-            :disabled="filter.count === 8"
             rounded
             icon
             size="x-small"
@@ -69,83 +73,86 @@
             <v-icon>mdi-minus</v-icon>
           </v-btn>
         </div>
-        <div 
-          class="d-flex flex-row"
+        <v-sheet 
+          elevation="7"
+          class="d-flex flex-column align-center justify-center pt-2 px-2"
           style="width: 100%"
+          rounded
         >
-          <v-sheet
-            style="width: 48%"
-            class="px-2"
-          >
-            <h3>
-              Target All:
-            </h3>
-            <v-select
-              v-model="selectedRange"
-              :items="panels"
-              :prepend-icon="selectedRange.icon"
-              item-title="title.plural"
-              return-object
-              label="Group"
-              variant="outlined"
-              class="mt-3"
-            ></v-select>
-          </v-sheet>
-          <v-spacer></v-spacer>
           <v-sheet 
-            style="width: 48%"
-            class="px-2"
+            class="d-flex flex-row"
+            style="width: 100%"
           >
-            <h3>
-              Where:
-            </h3>
-            <v-select
-              v-model="selectedHeader"
-              :items="headerRow"
-              :prepend-icon="selectedHeader ? 'mdi-check' : 'mdi-alert-circle-outline'"
-              label="Criteria"
-              variant="outlined"
-              class="mt-3"
-            ></v-select>
+            <v-sheet
+              style="width: 50%"
+              class="px-2"
+            >
+              <h3>
+                Target All:
+              </h3>
+              <v-select
+                v-model="selectedRange"
+                :items="panels"
+                item-title="title.plural"
+                return-object
+                variant="outlined"
+                class="mt-3"
+              ></v-select>
+            </v-sheet>
+            <v-spacer></v-spacer>
+            <v-sheet 
+              style="width: 50%"
+              class="px-2"
+            >
+              <h3>
+                Where:
+              </h3>
+              <v-select
+                v-model="selectedHeader"
+                :items="headerRow"
+                variant="outlined"
+                class="mt-3"
+              ></v-select>
+            </v-sheet>
           </v-sheet>
-        </div>
-        <div class="d-flex flex-row flex-wrap align-center justify-center">
-          <v-btn
-            v-for="operand in operandButtons"
-            :key="operand"
-            @click="selectedOperand = operand.value"
-            :color="selectedOperand === operand.value ? 'blue-darken-2' : 'grey'"
-            size="small"
-            class="mx-1"
-            rounded
-          >
-            {{ xs ? operand.shortText : operand.text }}
-          </v-btn>
-        </div>
-        <v-text-field
-          v-model="quantity"
-          :prepend-icon="quantity ? 'mdi-check' : 'mdi-alert-circle-outline'"
-          label="Content"
-          variant="outlined"
-          class="mt-6"
-          style="width: 96%"
-        ></v-text-field>
+          <div>
+            <v-btn
+              v-for="operand in operandButtons"
+              :key="operand"
+              @click="selectedOperand = operand.value"
+              :color="selectedOperand === operand.value ? 'blue-darken-2' : 'grey'"
+              size="small"
+              class="mx-1"
+              rounded
+            >
+              {{ xs ? operand.shortText : operand.text }}
+            </v-btn>
+          </div>
+          <v-text-field
+            v-model="quantity"
+            :prepend-icon="quantity ? 'mdi-check' : 'mdi-alert-circle-outline'"
+            label="Content"
+            variant="outlined"
+            class="mt-6"
+            style="width: 96%"
+          ></v-text-field>
+        </v-sheet>
         <v-icon 
-          v-if="xs"
-          class="mb-6"
+          v-if="smAndDown"
+          class="my-3"
           size="x-large"
         >mdi-arrow-down</v-icon>
-        <div style="position: relative">
+        <div style="position: relative; width: 100%">
           <v-progress-linear
             v-if="loading"
             indeterminate
             absolute
-            color="blue-darken-2"
+            color="blue"
           ></v-progress-linear>
           <div
             :style="{
               opacity: loading ? 0.25 : 1,
-              width: smAndDown ? 'calc(100vw - 30px)' : '450px',
+              width: smAndDown ? '100%' : '450px',
             }"
             class="px-1 email-box"
           >
@@ -176,12 +183,12 @@
             @click="sendEmail"
             :disabled="emails.length === 0"
             block
-            color="blue-darken-2"
+            :color="smAndDown ? 'white' : 'blue-darken-2'"
             size="large"
             class="my-3"
           >
-            Send Email ({{ emails.length }} 
-            recipient{{ emails.length === 1 ? '' : 's' }})
+            Send Email To {{ emails.length }} 
+            recipient{{ emails.length === 1 ? '' : 's' }}
           </v-btn>
         </div>
       </div>
