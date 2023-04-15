@@ -34,6 +34,42 @@
       </h1>
       <div class="d-flex flex-column align-center justify-center">
         <div 
+          class="d-flex flex-row mt-5 mb-2"
+          style="width: 96%"
+        >
+          <v-btn
+            v-for="i in filter.count"
+            :key="i"
+            rounded
+            class="mr-1"
+            icon
+            size="x-small"
+            @click="filter.selected = i"
+            :color="i === filter.selected ? 'blue-darken-2' : 'grey'"
+          >{{ i }}</v-btn>
+          <v-btn
+            @click="addFilter"
+            :disabled="filter.count === 8"
+            rounded
+            icon
+            size="x-small"
+            color="green"
+          >
+            <v-icon>mdi-plus</v-icon>
+          </v-btn>
+          <v-spacer></v-spacer>
+          <v-btn
+            @click="removeFilter"
+            :disabled="filter.count === 1"
+            rounded
+            icon
+            size="x-small"
+            color="red"
+          >
+            <v-icon>mdi-minus</v-icon>
+          </v-btn>
+        </div>
+        <div 
           class="d-flex flex-row"
           style="width: 100%"
         >
@@ -200,6 +236,23 @@ const quantity = ref("");
 const data = ref([])
 const loading = ref(false);
 const tempEmailFilter = ref([]);
+
+const filter = ref({
+  count: 1,
+  selected: 1
+})
+
+function addFilter() {
+  filter.value.count++;
+  filter.value.selected = filter.value.count;
+}
+
+function removeFilter() {
+  filter.value.count--;
+  if (filter.value.selected > filter.value.count) {
+    filter.value.selected = filter.value.count;
+  }
+}
 
 watch(selectedRange, async (newVal) => {
   selectedHeader.value = null;
