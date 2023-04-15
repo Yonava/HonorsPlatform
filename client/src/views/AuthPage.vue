@@ -30,7 +30,7 @@
         color="red-darken-2"
         elevation="3"
         class="mb-12"
-        size="x-large"
+        :size="xs ? 'default' : 'x-large'"
       >
         <v-icon class="mr-2">mdi-google</v-icon>
         Continue With Google
@@ -55,14 +55,14 @@
                     Your previous credentials have expired
                   </li>
                   <li>
-                    Your internet is garbage
+                    Your internet connection is unstable
                   </li>
                   <li>
                     You attempted to perform an operation you are 
                     not authorized to perform (i.e. generating registrar reports)
                   </li>
                   <li>
-                    Dr. Matthews doesn't like you
+                    You are not whitelisted as a Honors Program staff member
                   </li>
                 </ol>
               </div>
@@ -78,6 +78,9 @@
 import { useRoute, useRouter } from 'vue-router'
 import { onMounted, ref } from 'vue'
 import axios from 'axios'
+import { useDisplay } from 'vuetify'
+
+const { xs } = useDisplay()
 
 const route = useRoute()
 const router = useRouter()

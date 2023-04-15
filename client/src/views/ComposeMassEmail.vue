@@ -5,7 +5,7 @@
     class="d-flex flex-column align-center justify-center"
   >
     <v-sheet 
-      class="pa-6 d-flex flex-column align-center justify-center"
+      class="d-flex flex-column align-center justify-center"
       elevation="7"
       :style="{
         width: smAndDown ? '100vw' : '500px',
@@ -23,56 +23,82 @@
         <v-icon class="mr-1">mdi-arrow-left</v-icon>
         Back to Dashboard
       </v-btn>
-      <h1 class="my-4">
+      <h1 
+        v-if="!xs"
+        class="mt-10 mb-4"
+      >
         <v-icon>
           mdi-email-fast-outline
         </v-icon>
         Compose Mass Email
       </h1>
-      <div>
-        <h3>
-          Target All
-        </h3>
-        <v-select
-          v-model="selectedRange"
-          :items="panels"
-          :prepend-icon="selectedRange.icon"
-          item-title="title.plural"
-          return-object
-          label="Group"
-          variant="outlined"
-          class="mt-3"
-        ></v-select>
-        <h3>
-          Where
-        </h3>
-        <v-select
-          v-model="selectedHeader"
-          :items="headerRow"
-          :prepend-icon="selectedHeader ? 'mdi-check' : 'mdi-alert-circle-outline'"
-          label="Criteria"
-          variant="outlined"
-          class="mt-3"
-        ></v-select>
-        <div v-if="selectedHeader">
-          <div class="d-flex flex-row flex-wrap">
-            <v-btn
-              v-for="operand in ['Includes', '= Equal To', '> Greater Than', '< Less Than']"
-              :key="operand"
-              @click="selectedOperand = operand[0]"
-              :color="selectedOperand === operand[0] ? 'blue-darken-2' : 'grey'"
-              size="small"
-              class="mx-1 my-1"
-            >{{ operand }}</v-btn>
-          </div>
-          <v-text-field
-            v-model="quantity"
-            :prepend-icon="quantity ? 'mdi-check' : 'mdi-alert-circle-outline'"
-            label="Content"
-            variant="outlined"
-            class="mt-6"
-          ></v-text-field>
+      <div class="d-flex flex-column align-center justify-center">
+        <div 
+          class="d-flex flex-row"
+          style="width: 100%"
+        >
+          <v-sheet
+            style="width: 48%"
+            class="px-2"
+          >
+            <h3>
+              Target All:
+            </h3>
+            <v-select
+              v-model="selectedRange"
+              :items="panels"
+              :prepend-icon="selectedRange.icon"
+              item-title="title.plural"
+              return-object
+              label="Group"
+              variant="outlined"
+              class="mt-3"
+            ></v-select>
+          </v-sheet>
+          <v-spacer></v-spacer>
+          <v-sheet 
+            style="width: 48%"
+            class="px-2"
+          >
+            <h3>
+              Where:
+            </h3>
+            <v-select
+              v-model="selectedHeader"
+              :items="headerRow"
+              :prepend-icon="selectedHeader ? 'mdi-check' : 'mdi-alert-circle-outline'"
+              label="Criteria"
+              variant="outlined"
+              class="mt-3"
+            ></v-select>
+          </v-sheet>
         </div>
+        <div class="d-flex flex-row flex-wrap align-center justify-center">
+          <v-btn
+            v-for="operand in operandButtons"
+            :key="operand"
+            @click="selectedOperand = operand.value"
+            :color="selectedOperand === operand.value ? 'blue-darken-2' : 'grey'"
+            size="small"
+            class="mx-1"
+            rounded
+          >
+            {{ xs ? operand.shortText : operand.text }}
+          </v-btn>
+        </div>
+        <v-text-field
+          v-model="quantity"
+          :prepend-icon="quantity ? 'mdi-check' : 'mdi-alert-circle-outline'"
+          label="Content"
+          variant="outlined"
+          class="mt-6"
+          style="width: 96%"
+        ></v-text-field>
+        <v-icon 
+          v-if="xs"
+          class="mb-6"
+          size="x-large"
+        >mdi-arrow-down</v-icon>
         <div style="position: relative">
           <v-progress-linear
             v-if="loading"
@@ -116,7 +142,7 @@
             block
             color="blue-darken-2"
             size="large"
-            class="mt-3"
+            class="my-3"
           >
             Send Email ({{ emails.length }} 
             recipient{{ emails.length === 1 ? '' : 's' }})
@@ -141,12 +167,35 @@ import {
   mapTheses
 } from "../DataMappers";
 
+const operandButtons = [
+  { 
+    text: "Includes", 
+    shortText: "Includes",
+    value: "I" 
+  },
+  { 
+    text: "Equals", 
+    shortText: "=",
+    value: "=" 
+  },
+  { 
+    text: "Greater Than", 
+    shortText: ">",
+    value: ">" 
+  },
+  { 
+    text: "Less Than", 
+    shortText: "<",
+    value: "<" 
+  },
+];
+
 const panels = Object.values(PanelType).map((panel) => switchPanel(panel));
-const { smAndDown } = useDisplay();
+const { smAndDown, xs } = useDisplay();
 const selectedRange = ref(panels[0]);
 const headerRow = ref([]);
 const selectedHeader = ref(null);
-const selectedOperand = ref<string>("I");
+const selectedOperand = ref("I");
 const quantity = ref("");
 const data = ref([])
 const loading = ref(false);
