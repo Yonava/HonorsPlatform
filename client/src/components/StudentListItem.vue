@@ -58,9 +58,21 @@
           >
             mdi-email
           </v-icon>
-          <p>
+          <p
+            :style="{
+              'text-decoration': emailValidator(item.email) ? '' : 'line-through',
+              'color': emailValidator(item.email) ? '' : 'red',
+              'font-weight': emailValidator(item.email) ? '' : '900'
+            }"
+          >
             {{ item.email || '(No Email)' }} 
           </p>
+          <v-tooltip
+            activator="parent"
+            location="bottom"
+          >
+            Email{{ emailValidator(item.email) ? '' : ' Invalid' }}
+          </v-tooltip>
         </div>
         <v-spacer></v-spacer>
         <div class="d-flex">
@@ -87,6 +99,7 @@
 import { computed } from 'vue'
 import { Student } from '../SheetTypes'
 import { athleticOptions } from '../Athletics'
+import { emailValidator } from '../EmailUtilities'
 
 const props = defineProps<{
   item: Student

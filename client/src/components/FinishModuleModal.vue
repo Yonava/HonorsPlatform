@@ -39,7 +39,7 @@
               v-for="grade in grades"
               :key="grade"
               @click="completedModuleData.grade = grade"
-              :color="color"
+              :color="grade === completedModuleData.grade ? color : 'grey lighten-2'"
               class="mx-10 mt-2"
             >{{ grade || "Leave Ungraded" }}</v-btn>
           </div>
