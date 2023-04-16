@@ -71,4 +71,3 @@ export interface Thesis extends SheetEntry {
   draftReceived: string;
   note: string;
 }
-
