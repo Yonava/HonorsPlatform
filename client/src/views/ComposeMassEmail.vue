@@ -4,6 +4,10 @@
     style="height: 100vh; width: 100vw;"
     class="d-flex flex-column align-center justify-center"
   >
+    <div 
+      v-if="xs"
+      class="mt-10"
+    ></div>
     <v-sheet 
       class="d-flex flex-column align-center justify-center"
       :elevation="smAndDown ? 0 : 7"
@@ -12,8 +16,6 @@
         maxWidth: '500px',
         height: smAndDown ? '100vh' : '',
         borderRadius: smAndDown ? '0px' : '10px',
-        overflowY: 'scroll',
-        position: 'relative',
       }"
       color="blue-darken-4"
     >
