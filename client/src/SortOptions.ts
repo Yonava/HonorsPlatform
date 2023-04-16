@@ -4,6 +4,7 @@ import {
   Graduate,  
   Module,
   CompletedModule,
+  Thesis,
 } from './SheetTypes';
 
 export type SortOption<T> = {
@@ -245,7 +246,52 @@ export function switchSortOptions(panel: PanelType) {
         }
       ]
     case PanelType.THESES:
-      return [];
+      return [
+        {
+          label: 'Decision',
+          icon: {
+            asc: 'mdi-check',
+            desc: 'mdi-close'
+          },
+          func: {
+            asc: (a: Thesis, b: Thesis) => a.decision.localeCompare(b.decision),
+            desc: (a: Thesis, b: Thesis) => b.decision.localeCompare(a.decision)
+          }
+        },
+        {
+          label: 'Term',
+          icon: {
+            asc: 'mdi-sort-alphabetical-ascending',
+            desc: 'mdi-sort-alphabetical-descending'
+          },
+          func: {
+            asc: (a: Thesis, b: Thesis) => a.term.localeCompare(b.term),
+            desc: (a: Thesis, b: Thesis) => b.term.localeCompare(a.term)
+          }
+        },
+        {
+          label: 'Student Name',
+          icon: {
+            asc: 'mdi-sort-alphabetical-ascending',
+            desc: 'mdi-sort-alphabetical-descending'
+          },
+          func: {
+            asc: (a: Thesis, b: Thesis) => a.name.localeCompare(b.name),
+            desc: (a: Thesis, b: Thesis) => b.name.localeCompare(a.name)
+          }
+        },
+        {
+          label: 'Faculty Mentor',
+          icon: {
+            asc: 'mdi-human-male-board',
+            desc: 'mdi-human-male-board',
+          },
+          func: {
+            asc: (a: Thesis, b: Thesis) => a.mentor.localeCompare(b.mentor),
+            desc: (a: Thesis, b: Thesis) => b.mentor.localeCompare(a.mentor)
+          }
+        }
+      ];
     default:
       console.warn('No sort options for panel type: ' + panel);
       return [];
