@@ -9,6 +9,7 @@
           {{ 'mdi-' + athleticOptions[item.athletics] }}
         </v-icon>
         <v-tooltip
+          :disabled="smAndDown"
           activator="parent"
           location="bottom"
         >{{ 'Athlete: ' + item.athletics }}</v-tooltip>
@@ -21,6 +22,7 @@
         >
           {{ item.id || '(No ID)' }}
           <v-tooltip
+            :disabled="smAndDown"
             activator="parent"
             location="bottom"
           >Student ID</v-tooltip>
@@ -28,9 +30,7 @@
       </div>
       <v-spacer></v-spacer>
       <v-sheet 
-        class="px-2"
         :color="color"
-        elevation="1"
         :style="{
           height: '25px',
           color: 'white',
@@ -38,9 +38,12 @@
           whiteSpace: 'nowrap',
           textTransform: 'capitalize',
         }"
+        class="px-2"
+        elevation="1"
       >
         {{ item.activeStatus || 'No Status' }}
         <v-tooltip
+          :disabled="smAndDown"
           activator="parent"
           location="bottom"
         >Status</v-tooltip>
@@ -58,20 +61,15 @@
           >
             mdi-email
           </v-icon>
-          <p
-            :style="{
-              'text-decoration': emailValidator(item.email) ? '' : 'line-through',
-              'color': emailValidator(item.email) ? '' : 'red',
-              'font-weight': emailValidator(item.email) ? '' : '900'
-            }"
-          >
+          <p :style="emailTextStyles">
             {{ item.email || '(No Email)' }} 
           </p>
           <v-tooltip
+            :disabled="smAndDown"
             activator="parent"
             location="bottom"
           >
-            Email{{ emailValidator(item.email) ? '' : ' Invalid' }}
+            Email{{ emailValid ? '' : ' Invalid' }}
           </v-tooltip>
         </div>
         <v-spacer></v-spacer>
@@ -86,6 +84,7 @@
             mdi-ticket
           </v-icon>
           <v-tooltip
+            :disabled="smAndDown"
             activator="parent"
             location="bottom"
           >Points</v-tooltip>
@@ -100,10 +99,13 @@ import { computed } from 'vue'
 import { Student } from '../SheetTypes'
 import { athleticOptions } from '../Athletics'
 import { emailValidator } from '../EmailUtilities'
+import { useDisplay } from 'vuetify'
 
 const props = defineProps<{
   item: Student
 }>()
+
+const { smAndDown } = useDisplay()
 
 const color = computed(() => {
   if (props.item.activeStatus.toLowerCase() === 'active') return 'green'
@@ -114,5 +116,16 @@ const color = computed(() => {
 const points = computed(() => {
   if (!props.item.points) return 0
   return props.item.points.toLocaleString()
+})
+
+const emailValid = computed(() => emailValidator(props.item.email))
+
+const emailTextStyles = computed(() => {
+  if (emailValid) return {}
+  return {
+    color: 'red',
+    fontWeight: 'bold',
+    textDecoration: 'line-through',
+  }
 })
 </script>

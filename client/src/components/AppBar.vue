@@ -184,6 +184,7 @@
         <div class="live-emblem fade-animate mr-2"></div>
         LIVE
         <v-tooltip
+          :disabled="smAndDown"
           activator="parent"
           location="bottom"
         >Auto Sync Is Enabled</v-tooltip>
@@ -258,6 +259,7 @@
             size="large"
           ></v-icon>
           <v-tooltip
+            :disabled="smAndDown"
             activator="parent"
             location="bottom"
           >View Points Leaderboard</v-tooltip>
@@ -298,6 +300,7 @@ const {
   lgAndUp,
   mdAndUp, 
   smAndUp,
+  smAndDown,
   xs
 } = useDisplay()
 

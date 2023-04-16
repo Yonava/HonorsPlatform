@@ -4,6 +4,7 @@
       <div style="font-weight: 900; font-size: 1.5em; line-height: 1">
         {{ item.courseCode || '-' }}
         <v-tooltip
+          :disabled="smAndDown"
           activator="parent"
           location="bottom"
         >Course Code</v-tooltip>
@@ -41,6 +42,7 @@
             {{ item.term || '(No Term)' }} 
           </p>
           <v-tooltip
+            :disabled="smAndDown"
             activator="parent"
             location="bottom"
           >{{ termTooltip }}</v-tooltip>
@@ -57,6 +59,7 @@
             mdi-card-account-details
           </v-icon>
           <v-tooltip
+            :disabled="smAndDown"
             activator="parent"
             location="bottom"
           >Student ID</v-tooltip>
@@ -68,12 +71,15 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import { useDisplay } from 'vuetify'
 import { CompletedModule } from '../SheetTypes'
 import { termValidator } from '../TermValidator'
 
 const props = defineProps<{
   item: CompletedModule
 }>()
+
+const { smAndDown } = useDisplay()
 
 const termStyle = computed(() => {
   if (termValidator(props.item.term)) {

@@ -6,6 +6,7 @@
         <span style="font-weight: 300; font-size: 0.6em">
           {{ item.id || '(No ID)' }}
           <v-tooltip
+            :disabled="smAndDown"
             activator="parent"
             location="bottom"
           >ID</v-tooltip>
@@ -34,6 +35,7 @@
             {{ item.email || '(No Email)' }} 
           </p>
           <v-tooltip
+            :disabled="smAndDown"
             activator="parent"
             location="bottom"
           >
@@ -58,6 +60,7 @@
             mdi-phone
           </v-icon>
           <v-tooltip
+            :disabled="smAndDown"
             activator="parent"
             location="bottom"
           >
@@ -72,9 +75,12 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { Graduate } from '../SheetTypes'
+import { useDisplay } from 'vuetify'
 import { emailValidator, phoneValidator } from '../EmailUtilities'
 
 const props = defineProps<{
   item: Graduate
 }>()
+
+const { smAndDown } = useDisplay()
 </script>

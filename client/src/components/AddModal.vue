@@ -28,8 +28,8 @@
         </span>
       </h1>
       <div 
-        @keyup.enter="reqAdd"
         v-if="!loading"
+        @keyup.enter="reqAdd"
         class="d-flex flex-wrap justify-center align-center"
       >
         <div
@@ -40,8 +40,8 @@
             v-if="attr"
             v-model="item[index]"
             :label="attr"
-            class="mx-2"
             :style="`width: ${xs ? '150' : '200'}px;`"
+            class="mx-2"
           ></v-text-field>
         </div>
       </div>

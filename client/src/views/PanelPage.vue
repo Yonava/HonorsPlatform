@@ -18,16 +18,16 @@
     />
     <v-main>
       <div 
-        class="d-flex flex-row"
         :style="{
           position: 'relative',
           height: smAndUp ? 'calc(100vh - 64px)' : ''
         }"
+        class="d-flex flex-row"
       >
         <v-sheet 
           v-if="smAndUp"
-          class="d-flex align-center flex-column flex-start pt-3"
           :color="`${panel.color}-darken-2`"
+          class="d-flex align-center flex-column flex-start pt-3"
           style="min-width: 80px; max-width: 80px; height: 100%; background: green"
         >
           <SortPanel 
@@ -50,16 +50,16 @@
             <v-switch
               v-model="autoSync"
               :color="`${panel.color}-lighten-4`"
-              style="transform: translateY(-10px);"
               hide-details
+              style="transform: translateY(-10px);"
             ></v-switch>
             <div 
               style="transform: translateY(-12px);"
               class="mb-2"
             >
               <v-btn 
-                icon
                 @click="$router.push({ name: 'registrar' })"
+                icon
               >
                 <v-icon>
                   mdi-list-box-outline
@@ -70,14 +70,15 @@
                 >Create Registrar List</v-tooltip>
               </v-btn>
               <v-btn 
-                class="mt-3"
-                icon
                 @click="$router.push({ name: 'email' })"
+                icon
+                class="mt-3"
               >
                 <v-icon>
                   mdi-email-fast-outline
                 </v-icon>
                 <v-tooltip
+                  :disabled="smAndDown"
                   activator="parent"
                   location="end"
                 >Compose Mass Email</v-tooltip>
@@ -110,9 +111,9 @@
         </div>
         <v-sheet 
           v-if="mdAndUp"
-          :color="resizing ? panel.color : 'transparent'"
           @mousedown="resizeStart"
           @mouseup="resizeEnd"
+          :color="resizing ? panel.color : 'transparent'"
           :style="{
             width: '3px',
             height: '100%',
@@ -144,9 +145,7 @@
             v-else
             class="d-flex flex-column align-center justify-center"
           >
-            <v-icon
-              style="font-size: 35vw; opacity: 0.1;"
-            >
+            <v-icon style="font-size: 35vw; opacity: 0.1;">
               {{ panel.icon }}
             </v-icon>
           </div>
@@ -192,8 +191,7 @@ import {
   computed, 
   watch,
   onUnmounted,
-  provide,
-  h
+  provide
 } from 'vue' 
 import { useRoute, useRouter } from 'vue-router'
 import { getEvery, clearByRow } from '../SheetsAPI'
@@ -209,7 +207,13 @@ import { useDisplay } from 'vuetify'
 
 const route = useRoute()
 const router = useRouter()
-const { smAndUp, mdAndUp, lgAndUp, smAndDown } = useDisplay()
+
+const { 
+  smAndUp, 
+  mdAndUp, 
+  lgAndUp, 
+  smAndDown 
+} = useDisplay()
 
 const items = ref<SheetItem[]>([])
 const loadingItems = ref(true)

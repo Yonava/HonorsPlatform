@@ -19,7 +19,7 @@
           mdi-message-alert{{ active ? '' : '-outline' }}
         </v-icon>
         <v-tooltip
-          v-if="mdAndUp"
+          :disabled="smAndDown"
           activator="parent"
           location="bottom"
         >{{ tooltipText }}</v-tooltip>
@@ -80,7 +80,7 @@ import { ref, watch, computed } from 'vue'
 import { getEvery, Range } from '../SheetsAPI'
 import { useDisplay } from 'vuetify'
 
-const { mdAndUp } = useDisplay()
+const { mdAndUp, smAndDown } = useDisplay()
 
 const announcements = ref<string[]>([])
 const loading = ref(true)

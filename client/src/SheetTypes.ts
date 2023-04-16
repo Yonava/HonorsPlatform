@@ -1,4 +1,4 @@
-export type SheetItem = Module | Graduate | Student | CompletedModule;
+export type SheetItem = Module | Graduate | Student | CompletedModule | Thesis;
 
 export type Grade = "High Pass" | "Pass" | "Low Pass" | "Fail" | null;
 

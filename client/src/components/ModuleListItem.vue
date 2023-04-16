@@ -9,6 +9,7 @@
           mdi-alert
         </v-icon>
         <v-tooltip
+          :disabled="smAndDown"
           activator="parent"
           location="bottom"
         >{{ item.courseCode + ' In Progress For Over 1 Year' }}</v-tooltip>
@@ -17,6 +18,7 @@
         <span>
           {{ item.courseCode || '(No Course)' }}
           <v-tooltip
+            :disabled="smAndDown"
             activator="parent"
             location="bottom"
           >Course Code</v-tooltip>
@@ -24,6 +26,7 @@
         <span :style="termStyle">
           {{ item.term || '(No Term)' }}
           <v-tooltip
+            :disabled="smAndDown"
             activator="parent"
             location="bottom"
           >{{ termTooltip }}</v-tooltip>
@@ -31,9 +34,7 @@
       </div>
       <v-spacer></v-spacer>
       <v-sheet 
-        class="px-3 py-1 d-flex flex-row align-center"
         :color="docuSignStatus.color"
-        elevation="1"
         :style="{
           height: '25px',
           color: 'white',
@@ -41,10 +42,17 @@
           whiteSpace: 'nowrap',
           textTransform: 'capitalize',
         }"
+        class="px-3 py-1 d-flex flex-row align-center"
+        elevation="1"
       >
-        <v-icon class="mr-1">{{ docuSignStatus.icon }}</v-icon>
-        <span>{{ docuSignStatus.text }}</span>
+        <v-icon class="mr-1">
+          {{ docuSignStatus.icon }}
+        </v-icon>
+        <span>
+          {{ docuSignStatus.text }}
+        </span>
         <v-tooltip
+          :disabled="smAndDown"
           activator="parent"
           location="bottom"
         >{{ docuSignStatus.tooltip }}</v-tooltip>
@@ -66,6 +74,7 @@
             {{ item.instructor || '(No Instructor)' }} 
           </p>
           <v-tooltip
+            :disabled="smAndDown"
             activator="parent"
             location="bottom"
           >Instructor</v-tooltip>
@@ -82,6 +91,7 @@
             mdi-card-account-details
           </v-icon>
           <v-tooltip
+            :disabled="smAndDown"
             activator="parent"
             location="bottom"
           >Student ID</v-tooltip>
@@ -96,10 +106,13 @@ import { computed } from 'vue'
 import { Module } from '../SheetTypes'
 import type { ComputedRef } from 'vue'
 import { termValidator } from '../TermValidator'
+import { useDisplay } from 'vuetify'
 
 const props = defineProps<{
   item: Module
 }>()
+
+const { smAndDown } = useDisplay()
 
 type DocuSignStatus = {
   icon: string,

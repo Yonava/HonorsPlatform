@@ -10,8 +10,8 @@
     </div>
     <v-sheet 
       v-else-if="showDialog"
-      class="xs-outer-wrapper"
       :color="color"
+      class="xs-outer-wrapper"
     >
       <slot></slot>
       <div style="margin-bottom: 18vh"></div>
