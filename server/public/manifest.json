@@ -1,6 +1,6 @@
 {
   "name": "SNHU Honors Program Tracker",
-  "short_name": "Honors Tracker",
+  "short_name": "Honors Program",
   "start_url": "https://honors.herokuapp.com/",
   "display": "standalone",
   "background_color": "#FFA500",

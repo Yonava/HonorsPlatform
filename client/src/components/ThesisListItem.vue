@@ -90,6 +90,8 @@ const props = defineProps<{
   item: Thesis
 }>()
 
+const { smAndDown } = useDisplay()
+
 const termTooltip = computed(() => {
   if (termValidator(props.item.term)) {
     return 'Term'
