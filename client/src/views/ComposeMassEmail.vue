@@ -1,20 +1,21 @@
 <template> 
   <v-sheet 
-    color="blue-darken-2"
+    :color="smAndDown ? 'blue-darken-4' : 'blue-darken-1'"
     style="height: 100vh; width: 100vw;"
     class="d-flex flex-column align-center justify-center"
   >
     <v-sheet 
       class="d-flex flex-column align-center justify-center"
-      elevation="7"
+      :elevation="smAndDown ? 0 : 7"
       :style="{
         width: smAndDown ? '100vw' : '500px',
+        maxWidth: '500px',
         height: smAndDown ? '100vh' : '',
         borderRadius: smAndDown ? '0px' : '10px',
         overflowY: 'scroll',
         position: 'relative',
       }"
-      :color="smAndDown ? 'blue-darken-4' : 'white'"
+      color="blue-darken-4"
     >
       <v-btn 
         @click="back"
@@ -26,7 +27,7 @@
       </v-btn>
       <h1 
         v-if="!xs"
-        class="mt-10 mb-4"
+        class="mt-10"
       >
         <v-icon>
           mdi-email-fast-outline
@@ -34,7 +35,7 @@
         Compose Mass Email
       </h1>
       <div 
-        class="mt-5 d-flex flex-column align-center justify-center"
+        class="d-flex flex-column align-center justify-center"
         style="width: 96%"
       >
         <div 
@@ -42,17 +43,21 @@
           style="width: 100%"
         >
           <v-btn
-            v-for="i in filter.count"
-            :key="i"
+            v-for="(aFilter, index) in filter.filters"
+            :key="index"
+            @click="filter.selected = aFilter.id"
+            :color="aFilter.id === filter.selected ? 'blue' : 'grey'"
             rounded
-            class="mr-1"
             icon
+            class="mr-1"
             size="x-small"
-            @click="filter.selected = i"
-            :color="i === filter.selected ? 'blue' : 'grey'"
-          >{{ i }}</v-btn>
+          >
+            <span style="font-size: 0.9rem">
+              {{ index + 1 }}
+            </span>
+          </v-btn>
           <v-btn
-            v-if="filter.count < 7"
+            v-if="filter.filters.length < 7"
             @click="addFilter"
             rounded
             icon
@@ -64,7 +69,7 @@
           <v-spacer></v-spacer>
           <v-btn
             @click="removeFilter"
-            :disabled="filter.count === 1"
+            :disabled="filter.filters.length === 1"
             rounded
             icon
             size="x-small"
@@ -72,73 +77,28 @@
           >
             <v-icon>mdi-minus</v-icon>
           </v-btn>
-        </div>
-        <v-sheet 
-          elevation="7"
-          class="d-flex flex-column align-center justify-center pt-2 px-2"
-          style="width: 100%"
-          rounded
-        >
-          <v-sheet 
-            class="d-flex flex-row"
-            style="width: 100%"
+          <v-btn
+            @click="gate = !gate"
+            rounded
+            icon
+            size="x-small"
+            class="ml-1"
           >
-            <v-sheet
-              style="width: 50%"
-              class="px-2"
-            >
-              <h3>
-                Target All:
-              </h3>
-              <v-select
-                v-model="selectedRange"
-                :items="panels"
-                item-title="title.plural"
-                return-object
-                variant="outlined"
-                class="mt-3"
-              ></v-select>
-            </v-sheet>
-            <v-spacer></v-spacer>
-            <v-sheet 
-              style="width: 50%"
-              class="px-2"
-            >
-              <h3>
-                Where:
-              </h3>
-              <v-select
-                v-model="selectedHeader"
-                :items="headerRow"
-                variant="outlined"
-                class="mt-3"
-              ></v-select>
-            </v-sheet>
-          </v-sheet>
-          <div>
-            <v-btn
-              v-for="operand in operandButtons"
-              :key="operand"
-              @click="selectedOperand = operand.value"
-              :color="selectedOperand === operand.value ? 'blue-darken-2' : 'grey'"
-              size="small"
-              class="mx-1"
-              rounded
-            >
-              {{ xs ? operand.shortText : operand.text }}
-            </v-btn>
-          </div>
-          <v-text-field
-            v-model="quantity"
-            :prepend-icon="quantity ? 'mdi-check' : 'mdi-alert-circle-outline'"
-            label="Content"
-            variant="outlined"
-            class="mt-6"
-            style="width: 96%"
-          ></v-text-field>
-        </v-sheet>
+            <v-icon>mdi-{{ gate ? 'set-all' : 'set-center'}}</v-icon>
+          </v-btn>
+        </div>
+        <div
+          v-for="aFilter in filter.filters"
+          :key="aFilter.id"
+          v-show="aFilter.id === filter.selected"
+          style="width: 100%"
+        >
+          <MassEmailFilter 
+            @subset="aFilter.data = $event"
+            @loading="loading = $event"
+          />
+        </div>
         <v-icon 
-          v-if="smAndDown"
           class="my-3"
           size="x-large"
         >mdi-arrow-down</v-icon>
@@ -152,7 +112,6 @@
           <div
             :style="{
               opacity: loading ? 0.25 : 1,
-              width: smAndDown ? '100%' : '450px',
             }"
             class="px-1 email-box"
           >
@@ -171,7 +130,7 @@
             </v-chip>
             <div v-if="emails.length === 0 && !loading">
               <h3 
-                style="opacity: 0.5;"
+                style="opacity: 0.5; color: #000"
                 class="text-center mt-5"
               >
                 <v-icon>mdi-email</v-icon>
@@ -183,7 +142,7 @@
             @click="sendEmail"
             :disabled="emails.length === 0"
             block
-            :color="smAndDown ? 'white' : 'blue-darken-2'"
+            color="white"
             size="large"
             class="my-3"
           >
@@ -197,158 +156,69 @@
 </template>
 
 <script setup lang="ts">
+import { all } from "axios";
 import { ref, computed, watch } from "vue";
-import { switchPanel, Panel, PanelType } from "../SwitchPanel";
-import { Student, Graduate, Module, CompletedModule, Thesis } from "../SheetTypes";
-import { getHeaderRow, getEvery, Range } from "../SheetsAPI";
 import { useDisplay } from "vuetify";
-import { 
-  mapStudents,
-  mapGraduates,
-  mapModules,
-  mapCompletedModules,
-  mapTheses
-} from "../DataMappers";
+import MassEmailFilter from "../components/MassEmailFilter.vue";
 
-const operandButtons = [
-  { 
-    text: "Includes", 
-    shortText: "Includes",
-    value: "I" 
-  },
-  { 
-    text: "Equals", 
-    shortText: "=",
-    value: "=" 
-  },
-  { 
-    text: "Greater Than", 
-    shortText: ">",
-    value: ">" 
-  },
-  { 
-    text: "Less Than", 
-    shortText: "<",
-    value: "<" 
-  },
-];
-
-const panels = Object.values(PanelType).map((panel) => switchPanel(panel));
 const { smAndDown, xs } = useDisplay();
-const selectedRange = ref(panels[0]);
-const headerRow = ref([]);
-const selectedHeader = ref(null);
-const selectedOperand = ref("I");
-const quantity = ref("");
-const data = ref([])
+
 const loading = ref(false);
 const tempEmailFilter = ref([]);
 
+const gate = ref(true)
+
+const emails = computed(() => {
+  // if true, or gate, else and gate
+  if (gate.value) {
+    const allEmails = filter.value.filters.map(filter => filter.data).reduce((acc, curr) => {
+      return [...acc, ...curr];
+    }, []);
+
+    return [...new Set(allEmails)]
+      .filter((email) => !tempEmailFilter.value.includes(email));
+  } else {
+    const allEmails = filter.value.filters.map(filter => filter.data);
+    const first = allEmails[0];
+    if (allEmails.length === 1) {
+      return first.filter((email) => !tempEmailFilter.value.includes(email));
+    }
+    const rest = allEmails.slice(1);
+    return first.filter((email) => {
+      return rest.every((emails) => emails.includes(email));
+    }).filter((email) => !tempEmailFilter.value.includes(email));
+  }
+});
+
 const filter = ref({
-  count: 1,
-  selected: 1
+  filters: [
+    {
+      id: 0,
+      data: [],
+    },
+  ],
+  selected: 0
 })
 
 function addFilter() {
-  filter.value.count++;
-  filter.value.selected = filter.value.count;
+  const id = Math.floor(Math.random() * 100_000);
+  filter.value.filters.push({
+    id,
+    data: [],
+  });
+  filter.value.selected = id;
 }
 
 function removeFilter() {
-  filter.value.count--;
-  if (filter.value.selected > filter.value.count) {
-    filter.value.selected = filter.value.count;
+  const id = filter.value.selected;
+  const index = filter.value.filters.findIndex((f) => f.id === id);
+  filter.value.filters.splice(index, 1);
+  if (index === 0) {
+    filter.value.selected = filter.value.filters[0].id;
+  } else {
+    filter.value.selected = filter.value.filters[index - 1].id;
   }
 }
-
-watch(selectedRange, async (newVal) => {
-  selectedHeader.value = null;
-  selectedOperand.value = "I";
-  quantity.value = "";
-  tempEmailFilter.value = [];
-  headerRow.value = await getHeaderRow(newVal.sheetRange);
-  // removes ability to query for custom student ranges
-  if (newVal.sheetRange === Range.STUDENTS) {
-    headerRow.value = headerRow.value.slice(0, 7);
-  }
-}, { immediate: true });
-
-const emails = computed(() => {
-
-  if (!selectedHeader.value || !selectedOperand.value || quantity.value === "") {
-    return [...new Set(data.value.map((row: any) => row.email))].filter((email) => {
-      return tempEmailFilter.value.indexOf(email) === -1;
-    });
-  };
-
-  const header = selectedHeader.value;
-  const operand = selectedOperand.value;
-
-  const headerRowIndex = headerRow.value.indexOf(header);
-  const dataArrayForm = data.value.map(row => {
-    const array = Object.values(row)
-    // remove the row number
-    array.shift()
-    return array
-  });
-
-  const filteredData = dataArrayForm.filter((row: string[]) => {
-    switch (operand) {
-      case "I":
-        const str = row[headerRowIndex].toString().toLowerCase();
-        return str.includes(quantity.value.toLowerCase());
-      case "=":
-        return row[headerRowIndex] == quantity.value;
-      case ">":
-        return row[headerRowIndex] > quantity.value;
-      case "<":
-        return row[headerRowIndex] < quantity.value;
-      default:
-        return false;
-    }
-  });
-
-  const output = [];
-
-  // if any of the data in filteredData matches email regex, return it in an array
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  for (let i = 0; i < filteredData.length; i++) {
-    for (let j = 0; j < filteredData[i].length; j++) {
-      if (emailRegex.test(filteredData[i][j] as string)) {
-        output.push(filteredData[i][j]);
-      }
-    }
-  }
-
-  return [...new Set(output)].filter((email) => {
-    return tempEmailFilter.value.indexOf(email) === -1;
-  });
-});
-
-watch(selectedRange, async (newVal) => {
-
-  loading.value = true;
-
-  const rawData = await getEvery(newVal.sheetRange);
-  data.value = await newVal.mappers.map(rawData);
-
-  if (newVal.type === PanelType.MODULES || newVal.type === PanelType.COMPLETED_MODULES) {
-    const students = await mapStudents(await getEvery(Range.STUDENTS));
-    data.value.forEach((module) => {
-      const student = students.find((student: Student) => student.id === module.studentId);
-      if (student) module.email = student.email;
-    });
-  }
-
-  data.value = data.value.filter((sheetItem) => sheetItem.email);
-
-  loading.value = false;
-
-}, { immediate: true });
-
-watch(selectedHeader, () => {
-  quantity.value = "";
-});
 
 const sendEmail = () => {
   const emailString = emails.value.join(",");
@@ -362,8 +232,8 @@ const back = () => history.back();
 .email-box {
   height: 200px; 
   overflow-y: scroll; 
-  border: 1px solid grey; 
-  background: rgb(248, 248, 248);
+  border: 1px solid rgb(0, 0, 0); 
+  background: rgb(238, 238, 238);
   border-radius: 5px;
 }
 </style>
