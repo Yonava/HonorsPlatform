@@ -19,7 +19,7 @@
           mdi-message-alert{{ active ? '' : '-outline' }}
         </v-icon>
         <v-tooltip
-          :disabled="smAndDown"
+          :disabled="smAndDown || active"
           activator="parent"
           location="bottom"
         >{{ tooltipText }}</v-tooltip>
