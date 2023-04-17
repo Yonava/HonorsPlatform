@@ -112,7 +112,6 @@
         <v-sheet 
           v-if="mdAndUp"
           @mousedown="resizeStart"
-          @mouseup="resizeEnd"
           :color="resizing ? panel.color : 'transparent'"
           :style="{
             width: '3px',
@@ -194,7 +193,7 @@ import {
   provide
 } from 'vue' 
 import { useRoute, useRouter } from 'vue-router'
-import { getEvery, clearByRow } from '../SheetsAPI'
+import { getEvery, clearByRow, updateByRow } from '../SheetsAPI'
 import AddModal from '../components/AddModal.vue'
 import PanelList from '../components/PanelList.vue'
 import StudentDetail from '../components/StudentDetail.vue'
@@ -204,6 +203,7 @@ import { useKeyBindings } from '../KeyBindings'
 import { PanelType, Panel, switchPanel } from '../SwitchPanel'
 import { SheetEntry, SheetItem } from '../SheetTypes'
 import { useDisplay } from 'vuetify'
+import { useUpdateManager } from '../SheetItemUpdateManager'
 
 const route = useRoute()
 const router = useRouter()
@@ -275,6 +275,8 @@ useKeyBindings({
   '4': () => keyBindToggle(PanelType.COMPLETED_MODULES),
   '5': () => keyBindToggle(PanelType.THESES),
 })
+
+useUpdateManager(selectedItem, panel)
 
 onMounted(async () => {
   if (route.query.type) {
