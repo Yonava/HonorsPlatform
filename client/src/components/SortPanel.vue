@@ -67,7 +67,7 @@ function sortItems(sort: SortOption<SheetItem>, index: number) {
   } else {
     activeSort.value = sort
   }
-  itemList.value.sort(sort.func[ascending.value ? 'asc' : 'desc'])
+  itemList.value = [...itemList.value].sort(sort.func[ascending.value ? 'asc' : 'desc'])
   activeIcons.value[index] = sort.icon[ascending.value ? 'asc' : 'desc']
 }
 

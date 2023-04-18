@@ -81,7 +81,7 @@
             <PanelList
               @select="selectedItem = $event"
               :items="displayItems"
-              :pin="pinSelectedItem"
+              :pinnedItem="pinnedItem"
               :filterQuery="filterQuery"
               :selected="selectedItem"
               :loading="loadingItems"
@@ -199,7 +199,7 @@ const showAddModal = ref(false)
 const filterQuery = ref('')
 
 const selectedItem = ref<SheetItem>(undefined)
-const pinSelectedItem = ref(false)
+const pinnedItem = ref(null)
 
 // dom element of the panel list
 const panelList = ref(null)
@@ -257,15 +257,14 @@ onMounted(async () => {
   await fetchData()
 })
 
-function scrollCapture() {
-  const el = panelList.value
-  const percentScrolled = el.scrollTop / (el.scrollHeight - el.clientHeight)
-  if (isNaN(percentScrolled)) return
-  localStorage.setItem('panelScrollY', percentScrolled.toString())
-}
+onUnmounted(() => {
+  if (!panelList.value) return
+  panelList.value.removeEventListener('scroll', scrollCapture)
+})
 
 function sortUpdate(sortedItems: SheetItem[]) {
   items.value = sortedItems
+  pinnedItem.value = null
 }
 
 async function unselect() {
@@ -288,7 +287,7 @@ async function itemAdded(item: SheetItem) {
   })
   if (index === -1) return
   selectedItem.value = items.value[index]
-  pinSelectedItem.value = true
+  pinnedItem.value = items.value[index]
   if (panelList.value) {
     panelList.value.scrollTop = 0
   }
@@ -337,11 +336,6 @@ async function silentFetch() {
   if (findSelected === -1) selectedItem.value = undefined
 }
 
-onUnmounted(() => {
-  if (!panelList.value) return
-  panelList.value.removeEventListener('scroll', scrollCapture)
-})
-
 function getDefaultWidth() {
   const local = localStorage.getItem('panelListWidth')
   if (local) return parseInt(local)
@@ -352,6 +346,13 @@ const resizing = ref(false)
 const panelListWidth = ref(getDefaultWidth())
 const proposedWidth = ref(panelListWidth.value)
 const sortPanelWidth = 80
+
+function scrollCapture() {
+  const el = panelList.value
+  const percentScrolled = el.scrollTop / (el.scrollHeight - el.clientHeight)
+  if (isNaN(percentScrolled)) return
+  localStorage.setItem('panelScrollY', percentScrolled.toString())
+}
 
 const resizeStart = (e: MouseEvent) => {
   resizing.value = true

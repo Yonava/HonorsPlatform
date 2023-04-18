@@ -73,11 +73,10 @@ const props = defineProps<{
   loading: boolean,
   panel: Panel<SheetItem>,
   filterQuery: string,
-  pin: boolean
+  pinnedItem: SheetItem | null
 }>()
 
 const emits = defineEmits(['select'])
-const { pin } = toRefs(props)
 
 const selectedItem = computed({
   get: () => props.selected,
@@ -85,10 +84,10 @@ const selectedItem = computed({
 })
 
 const items = computed(() => {
-  if (!pin.value) return props.items
+  if (!props.pinnedItem) return props.items
   else {
     const index = props.items.findIndex((i) => {
-      return props.panel.keys.every(key => i[key] === props.selected[key]);
+      return props.panel.keys.every(key => i[key] === props.pinnedItem[key]);
     })
     if (index === -1) return props.items
     const pinnedItem = props.items[index]
