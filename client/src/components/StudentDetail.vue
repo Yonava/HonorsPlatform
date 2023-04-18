@@ -15,7 +15,7 @@
       >
         <template #id>
           <v-dialog 
-            v-model="dialog"
+            v-model="idDialog"
             width="300"
           >
             <template #activator="{ props }">
@@ -52,7 +52,7 @@
                 </v-btn>
                 <v-spacer></v-spacer>
                 <v-btn
-                  @click="dialog = false"
+                  @click="idDialog = false"
                   color="red"
                 >
                   Cancel
@@ -302,14 +302,12 @@ function reqDeleteStudent() {
   emits('delete')
 }
 
-const updatingStudent = ref(false)
-const refetchModules = ref(false)
-const tempStudentId = ref('')
-const dialog = ref(false)
-const movingStudent = ref(false)
-
 const modules = ref<Module[]>([])
 const loadingModules = ref(false)
+
+const tempStudentId = ref('')
+const idDialog = ref(false)
+const movingStudent = ref(false)
 
 const showAddNote = ref(false)
 
@@ -318,10 +316,8 @@ const canDelete = computed(() => {
 })
 
 function sendEmail() {
-  const { name, email } = props.item
-  const subject = `Hello ${name.split(' ')[0]}!`
-  const body = `Hi ${name.split(' ')[0]},%0D%0A%0D%0A`
-  window.open(`mailto:${email}?subject=${subject}&body=${body}`)
+  const { email } = props.item
+  window.open(`mailto:${email}`)
 }
 
 function studentIdRule(studentId: string) {
@@ -329,9 +325,8 @@ function studentIdRule(studentId: string) {
 }
 
 async function saveId() {
-  if (!studentIdRule(tempStudentId.value)) return
   props.item.id = tempStudentId.value
-  dialog.value = false
+  idDialog.value = false
 }
 
 async function moveToGraduates() {
@@ -361,19 +356,8 @@ function addStudentNote(event: { initials: string, note: string }) {
 </script>
 
 <style scoped>
-input.student-name-input {
-  font-weight: 900; 
-  font-size: 3em; 
-  line-height: 0.9; 
-  width: 100%;
-}
-
-input.student-name-input:focus {
-  outline: none;
-}
-
 .student-id-dialog {
-  background: rgb(230, 230, 230); 
+  background: rgb(244, 244, 244); 
   border-radius: 5px; 
   box-shadow: 0 0 10px 0 rgba(0,0,0,0.2);
 }
