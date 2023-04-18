@@ -8,31 +8,25 @@
     ]"
   >
     <div>
-      <p 
-        v-if="item.id"
-        style="font-weight: 200"
+      
+      <DetailHeader 
+        v-model="item.name"
+        :id="item.id"
+        placeholder="Name"
       >
-        {{ item.id }}
-      </p>
-      <v-btn 
-        v-else
-        @click="reqGenerateGradId"
-        size="x-small"
-        color="purple-darken-2"
-      >
-        Generate Grad ID
-      </v-btn>
-      <div class="d-flex flex-row align-center">
-        <input 
-          v-model="item.name"
-          placeholder="Name"
-          type="text" 
-          class="header-input"
+        <template 
+          v-if="!item.id"
+          #id
         >
-        <v-spacer></v-spacer>
-        <SyncStatus />
-      </div>
-      <v-divider class="my-2"></v-divider>
+          <v-btn
+            @click="reqGenerateGradId"
+            size="x-small"
+            color="purple-darken-2"
+          >
+            Generate Grad ID
+          </v-btn>
+        </template>
+      </DetailHeader>
 
       <v-text-field
         v-model="item.email"
@@ -131,40 +125,22 @@
 </template>
 
 <script setup lang="ts">
-import { 
-  ref, 
-  computed,
-  watch,
-  toRefs
-} from 'vue'
-import type { Ref } from 'vue'
-import { 
-  updateByRow, 
-  moveRowToRange,
-  Range, 
-} from '../SheetsAPI'
-import { 
-  unmapGraduates, 
-  unmapStudents, 
-  mapGradEngagement,
-  unmapGradEngagement
-} from '../DataMappers'
+import { ref, computed, watch } from 'vue'
+import { moveRowToRange, Range } from '../SheetsAPI'
+import { unmapStudents } from '../DataMappers'
 import { useElementSize } from '@vueuse/core'
 import { Graduate, GradEngagement } from '../SheetTypes'
 import EngagementTracking from './EngagementTracking.vue'
-import SyncStatus from './SyncStatus.vue'
+import DetailHeader from './DetailHeader.vue'
 import { emailValidator, phoneValidator } from '../EmailUtilities'
 
 const props = defineProps<{
-  item: Ref<Graduate>
+  item: Graduate
 }>()
-
-const { item } = toRefs(props)
 
 const emits = defineEmits([
   'delete', 
-  'unselect',
-  'update'
+  'unselect'
 ])
 
 const sm = ref(false)
@@ -176,24 +152,17 @@ watch(width, (newWidth) => {
 }, { immediate: true })
 
 const movingGrad = ref(false)
-const showEngagementModal = ref(false)
+
 const engagements = ref<GradEngagement[]>([])
 const loadingEngagements = ref(true)
-const selectedEngagement = ref<GradEngagement>(null)
 
 const canDelete = computed(() => {
   return engagements.value.length === 0 && !loadingEngagements.value
 })
 
-function openModal(event: GradEngagement) {
-  selectedEngagement.value = event
-  showEngagementModal.value = true
-}
-
 async function reqGenerateGradId() {
   const newId = 'G' + Math.random().toString().substring(2, 9);
-  item.value.id = newId
-  await updateByRow(Range.GRADUATES, item.value.row, unmapGraduates([item.value]))
+  props.item.id = newId
 }
 
 async function moveToStudents() {
@@ -201,17 +170,17 @@ async function moveToStudents() {
   await moveRowToRange(
     Range.GRADUATES,
     Range.STUDENTS,
-    item.value.row,
+    props.item.row,
     await unmapStudents([{
-      row: item.value.row,
-      id: item.value.id.startsWith('G') ? '' : item.value.id,
-      name: item.value.name,
-      email: item.value.email,
+      row: props.item.row,
+      id: props.item.id.startsWith('G') ? '' : props.item.id,
+      name: props.item.name,
+      email: props.item.email,
       points: 0,
       activeStatus: 'Active',
       year: '',
       athletics: '',
-      note: item.value.note,
+      note: props.item.note,
       misc: {}
     }])
   )

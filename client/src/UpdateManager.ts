@@ -68,6 +68,7 @@ export function useUpdateManager(
   });
 
   watch(selectedItemRef, async (newItem, oldItem) => {
+    console.log(newItem)
     if (blockDeepWatch) return;
     switchedStudentProfile = newItem !== oldItem;
     syncState.value.status = false;

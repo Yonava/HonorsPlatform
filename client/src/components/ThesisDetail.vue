@@ -200,7 +200,8 @@ const props = defineProps<{
   item: Thesis
 }>()
 
-const { item } = toRefs(props)
+
+
 const studentDataState = ref({
   loading: false,
   error: '',
@@ -224,29 +225,16 @@ async function setStudentData() {
   studentDataState.value.loading = true
   const students = await getEvery(Range.STUDENTS)
   const mappedStudents = await mapStudents(students)
-  const student = mappedStudents.find(s => s.id === item.value.studentId)
+  const student = mappedStudents.find(s => s.id === props.item.studentId)
   if (!student) {
-    studentDataState.value.error = `Student with ID ${item.value.studentId} not found`
+    studentDataState.value.error = 'Student not found'
     studentDataState.value.color = 'red'
     studentDataState.value.loading = false
     return
   }
-  item.value.name = student.name
-  item.value.email = student.email
+  props.item.name = student.name
+  props.item.email = student.email
   studentDataState.value.loading = false
   studentDataState.value.color = 'blue-darken-2'
 }
 </script>
-
-<style scoped>
-input.header-input {
-  font-weight: 900; 
-  font-size: 3em; 
-  line-height: 0.9; 
-  width: 100%;
-}
-
-input.header-input:focus {
-  outline: none;
-}
-</style>

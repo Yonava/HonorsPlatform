@@ -206,22 +206,18 @@ const panelList = ref(null)
 
 const panel = ref(switchPanel(PanelType.STUDENTS))
 
-const changePanel = (panelType: PanelType) => {
+const changePanel = async (panelType: PanelType) => {
+  
   panel.value = switchPanel(panelType)
   localStorage.setItem('panelScrollY', '0')
   selectedItem.value = null
   document.title = panel.value.title.plural + ' - Honors Program'
   filterQuery.value = ''
-  router.push({ 
-    query: { 
-      type: panelType 
-    }
-  })
-}
 
-watch(panel, async () => {
-  await fetchData()
-})
+  loadingItems.value = true
+  items.value = await panel.value.mappers.map(await getEvery(panel.value.sheetRange))
+  loadingItems.value = false
+}
 
 const showDetailDrawer = computed({
   get: () => !!selectedItem.value,
@@ -268,14 +264,14 @@ function sortUpdate(sortedItems: SheetItem[]) {
 }
 
 async function unselect() {
-  selectedItem.value = undefined
+  selectedItem.value = null
   await fetchData()
 }
 
 async function reqDelete() {
   loadingItems.value = true
   const row = selectedItem.value.row
-  selectedItem.value = undefined
+  selectedItem.value = null
   await clearByRow(panel.value.sheetRange, row)
   await fetchData()
 }
@@ -330,10 +326,6 @@ async function silentFetch() {
 
   items.value = newItems
   items.value.sort((a, b) => a.row - b.row)
-
-  if (!selectedItem.value) return
-  const findSelected = items.value.findIndex(i => i.row === selectedItem.value.row)
-  if (findSelected === -1) selectedItem.value = undefined
 }
 
 function getDefaultWidth() {

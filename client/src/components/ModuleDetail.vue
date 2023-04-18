@@ -8,11 +8,13 @@
     ]"
   >
     <div>
+
       <DetailHeader 
         v-model="item.courseCode"
         :id="item.studentId"
         placeholder="Course Code"
       />
+
       <v-text-field
         v-model="item.term"
         :rules="[(v) => termValidator(v) || 'Potentially invalid term']"
@@ -131,7 +133,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, toRefs } from 'vue'
+import { ref, watch } from 'vue'
 import { useElementSize } from '@vueuse/core'
 import { Module } from '../SheetTypes'
 import { termValidator } from '../TermValidator'
@@ -146,8 +148,6 @@ const emits = defineEmits([
   'delete', 
   'unselect'
 ])
-
-const { item } = toRefs(props)
 
 const sm = ref(false)
 const el = ref(null)
