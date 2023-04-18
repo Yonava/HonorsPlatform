@@ -214,6 +214,13 @@ const changePanel = async (panelType: PanelType) => {
   document.title = panel.value.title.plural + ' - Honors Program'
   filterQuery.value = ''
 
+  router.push({
+    name: 'panel',
+    query: {
+      type: panelType
+    }
+  })
+
   loadingItems.value = true
   items.value = await panel.value.mappers.map(await getEvery(panel.value.sheetRange))
   loadingItems.value = false

@@ -47,7 +47,7 @@ const router = createRouter({
 router.beforeEach(async (to, from) => {
   const defaultTitle = 'Honors Program'
   const name = to.name as string ?? defaultTitle
-  if (name === defaultTitle) return
+  if (name === defaultTitle || to.name === 'panel') return
   document.title = `${name[0].toUpperCase()}${name.slice(1)} - Honors Program`
 })
 
