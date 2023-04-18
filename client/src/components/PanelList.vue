@@ -61,7 +61,8 @@
 <script setup lang="ts">
 import { 
   ref, 
-  computed
+  computed,
+  toRefs
 } from 'vue'
 import { SheetItem } from '../SheetTypes'
 import { Panel } from '../SwitchPanel'
@@ -76,6 +77,7 @@ const props = defineProps<{
 }>()
 
 const emits = defineEmits(['select'])
+const { pin } = toRefs(props)
 
 const selectedItem = computed({
   get: () => props.selected,
@@ -83,7 +85,7 @@ const selectedItem = computed({
 })
 
 const items = computed(() => {
-  if (!props.pin) return props.items
+  if (!pin.value) return props.items
   else {
     console.log('pinning')
     const index = props.items.findIndex((i) => {

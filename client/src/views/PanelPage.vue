@@ -31,7 +31,7 @@
           style="min-width: 80px; max-width: 80px; height: 100%; background: green"
         >
           <SortPanel 
-            @update="items = $event"
+            @update="sortUpdate($event)"
             :items="items"
             :panelType="panel.type"
           />
@@ -168,8 +168,7 @@ import {
   onMounted, 
   computed, 
   watch,
-  onUnmounted,
-  provide
+  onUnmounted
 } from 'vue' 
 import { useRoute, useRouter } from 'vue-router'
 import { getEvery, clearByRow, updateByRow } from '../SheetsAPI'
@@ -206,7 +205,6 @@ const pinSelectedItem = ref(false)
 const panelList = ref(null)
 
 const panel = ref(switchPanel(PanelType.STUDENTS))
-provide('activePanel', panel)
 
 const changePanel = (panelType: PanelType) => {
   panel.value = switchPanel(panelType)
@@ -223,10 +221,6 @@ const changePanel = (panelType: PanelType) => {
 
 watch(panel, async () => {
   await fetchData()
-})
-
-watch(selectedItem, () => {
-  pinSelectedItem.value = false
 })
 
 const showDetailDrawer = computed({
@@ -268,6 +262,10 @@ function scrollCapture() {
   const percentScrolled = el.scrollTop / (el.scrollHeight - el.clientHeight)
   if (isNaN(percentScrolled)) return
   localStorage.setItem('panelScrollY', percentScrolled.toString())
+}
+
+function sortUpdate(sortedItems: SheetItem[]) {
+  items.value = sortedItems
 }
 
 async function unselect() {

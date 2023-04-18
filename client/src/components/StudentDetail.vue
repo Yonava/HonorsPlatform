@@ -28,43 +28,35 @@
               </v-btn>
             </template>
             <div class="student-id-dialog pa-4">
-              <div v-if="!updatingStudent">
-                <v-icon color="red">mdi-alert</v-icon>
-                <p 
-                  style="color: red"
-                  class="mb-2"
+              <v-icon color="red">mdi-alert</v-icon>
+              <p 
+                style="color: red"
+                class="mb-2"
+              >
+                Warning: Student IDs are unique and cannot be changed once set!
+              </p>
+              <v-text-field
+                v-model="tempStudentId"
+                :rules="[studentIdRule]"
+                variant="solo"
+                label="Student ID"
+                class="mb-2"
+              ></v-text-field>
+              <div class="d-flex">
+                <v-btn
+                  @click="saveId"
+                  :disabled="typeof studentIdRule(tempStudentId) === 'string'"
+                  color="green"
                 >
-                  Warning: Student IDs are unique and cannot be changed once set!
-                </p>
-                <v-text-field
-                  v-model="tempStudentId"
-                  :rules="[studentIdRule]"
-                  variant="solo"
-                  label="Student ID"
-                  class="mb-2"
-                ></v-text-field>
-                <div class="d-flex">
-                  <v-btn
-                    @click="saveId"
-                    :disabled="typeof studentIdRule(tempStudentId) === 'string'"
-                    color="green"
-                  >
-                    Save
-                  </v-btn>
-                  <v-spacer></v-spacer>
-                  <v-btn
-                    @click="dialog = false"
-                    color="red"
-                  >
-                    Cancel
-                  </v-btn>
-                </div>
-              </div>
-              <div v-else>
-                <v-progress-circular
-                  indeterminate
-                  color="blue"
-                ></v-progress-circular>
+                  Save
+                </v-btn>
+                <v-spacer></v-spacer>
+                <v-btn
+                  @click="dialog = false"
+                  color="red"
+                >
+                  Cancel
+                </v-btn>
               </div>
             </div>
           </v-dialog>
@@ -338,25 +330,7 @@ function studentIdRule(studentId: string) {
 
 async function saveId() {
   if (!studentIdRule(tempStudentId.value)) return
-
-  const { id, ...rest } = props.item
-  updatingStudent.value = true
-  const newStudent = {
-    ...rest,
-    id: tempStudentId.value,
-  }
-
-  if (newStudent.activeStatus === statusOptions.Pending) {
-    newStudent.activeStatus = ActiveStatus.ACTIVE
-  }
-
-  await updateByRow(
-    Range.STUDENTS, 
-    props.item.row, 
-    await unmapStudents([newStudent])
-  )
-  emits('update', newStudent)
-  updatingStudent.value = false
+  props.item.id = tempStudentId.value
   dialog.value = false
 }
 

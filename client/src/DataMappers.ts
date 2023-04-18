@@ -26,7 +26,7 @@ export async function mapStudents(sheetData: string[][]): Promise<Student[]> {
       name: student[1] ?? '',
       email: student[2] ?? '',
       points: parseInt(student[3]) || 0,
-      activeStatus: student[4] ?? 'Pending',
+      activeStatus: student[4] ?? '',
       year: student[5] ?? '',
       athletics: student[6] ?? '',
       note: student[7] ?? '',
