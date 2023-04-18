@@ -75,12 +75,14 @@ const sortOptions = ref<SortOption<SheetItem>[]>([])
 const activeIcons = ref<string[]>([])
 
 watch(() => props.panelType, newVal => {
+  activeSort.value = undefined
   sortOptions.value = switchSortOptions(newVal)
   activeIcons.value = sortOptions.value.map(sort => sort.icon.asc)
 }, { immediate: true })
 
 watch(() => props.items, () => {
   if (activeSort.value) {
+    console.log('actively sorting')
     itemList.value.sort(activeSort.value.func[ascending.value ? 'asc' : 'desc'])
   }
 })

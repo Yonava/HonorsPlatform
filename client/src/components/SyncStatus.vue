@@ -1,18 +1,35 @@
 <template>
-  <v-btn 
-    icon
-    :loading="syncState.processing"
-    :color="syncState.status ? 'green' : `red-darken-2`"
-    :style="{
-      cursor: syncState.status ? 'default' : 'pointer',
-    }"
-    rounded
-    class="ml-7"
-  >
-    <v-icon
-      :icon="syncState.status ? 'mdi-check' : 'mdi-cloud-upload'"
-    ></v-icon>
-  </v-btn>
+  <div>
+    <div 
+      v-if="syncState.processing"
+      class="d-flex flex-row align-center"
+      style="height: 25px"
+    >
+      <v-progress-circular
+        class="mr-2"
+        indeterminate
+        size="20"
+      ></v-progress-circular>
+      <p>
+        saving all changes...
+      </p>
+    </div>
+    <p 
+      v-else
+      style="height: 25px"
+    >
+      <v-icon>
+        mdi-cloud-check-variant-outline
+      </v-icon>
+      saved at 
+      {{ 
+        syncState.lastSynced.toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        }).toLowerCase() 
+      }}
+    </p>
+  </div>
 </template>
 
 <script setup lang="ts">

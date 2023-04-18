@@ -1,9 +1,13 @@
 <template>
   <div>
-    <p style="font-weight: 200">
-      {{ id }}
-    </p>
-    <slot name="id"></slot>
+    <div class="d-flex flex-row align-center"> 
+      <p style="font-weight: 200">
+        {{ id }}
+      </p>
+      <slot name="id"></slot>
+      <v-spacer></v-spacer>
+      <SyncStatus />
+    </div>
     <div class="d-flex flex-row align-center">
       <input 
         v-model="title"
@@ -11,8 +15,6 @@
         type="text" 
         class="header-input"
       >
-      <v-spacer></v-spacer>
-      <SyncStatus />
     </div>
     <v-divider class="my-2"></v-divider>
   </div>

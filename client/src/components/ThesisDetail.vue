@@ -190,6 +190,7 @@ import { useElementSize } from '@vueuse/core'
 import { Thesis } from '../SheetTypes'
 import { getEvery, Range } from '../SheetsAPI'
 import { mapStudents } from '../DataMappers'
+import DetailHeader from './DetailHeader.vue'
 import { 
   emailValidator, 
   getFacultyEmail,
@@ -199,8 +200,6 @@ import {
 const props = defineProps<{
   item: Thesis
 }>()
-
-
 
 const studentDataState = ref({
   loading: false,
