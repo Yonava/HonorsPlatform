@@ -87,17 +87,14 @@ const selectedItem = computed({
 const items = computed(() => {
   if (!pin.value) return props.items
   else {
-    console.log('pinning')
     const index = props.items.findIndex((i) => {
       return props.panel.keys.every(key => i[key] === props.selected[key]);
     })
-    console.log('index', index)
     if (index === -1) return props.items
     const pinnedItem = props.items[index]
     const items = [...props.items]
     items.splice(index, 1)
     items.unshift(pinnedItem)
-    console.log('returning with pin')
     return items
   }
 })

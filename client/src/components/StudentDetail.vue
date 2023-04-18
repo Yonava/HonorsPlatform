@@ -9,11 +9,14 @@
   >
     <div>
       <DetailHeader 
-        v-if="!item.id"
         v-model="item.name"
+        :id="item.id"
         placeholder="Student Name"
       >
-        <template #id>
+        <template 
+          v-if="!item.id"
+          #id
+        >
           <v-dialog 
             v-model="idDialog"
             width="300"
@@ -62,12 +65,6 @@
           </v-dialog>
         </template>
       </DetailHeader>
-      <DetailHeader 
-        v-else
-        v-model="item.name"
-        :id="item.id"
-        placeholder="Student Name"
-      />
       <v-btn
         v-if="!item.email"
         @click="item.email = getStudentEmail(item.name)"
@@ -257,18 +254,12 @@ const emits = defineEmits([
 const statusOptions = {
   'Active': 'account-check',
   'Inactive': 'account-remove',
-  'Graduated': 'school',
-  'Dropped': 'account-off',
-  'On Hold': 'account-clock',
   'Pending': 'account-question',
 }
 
 enum ActiveStatus {
   ACTIVE = 'Active',
   INACTIVE = 'Inactive',
-  GRADUATED = 'Graduated',
-  DROPPED = 'Dropped',
-  ON_HOLD = 'On Hold',
   PENDING = 'Pending',
 }
 
@@ -277,6 +268,7 @@ const yearOptions = [
   'Sophomore',
   'Junior',
   'Senior',
+  'Other'
 ]
 
 const sm = ref(false)
@@ -284,14 +276,12 @@ const el = ref(null)
 const { width } = useElementSize(el)
 
 watch(props.item, (newItem) => {
-  if (!newItem.points) {
-    newItem.points = 0
-  }
-
   if (!newItem.id && !newItem.activeStatus) {
     newItem.activeStatus = ActiveStatus.PENDING
+  } else if (!newItem.activeStatus) {
+    newItem.activeStatus = ActiveStatus.ACTIVE
   }
-})
+}, { immediate: true })
 
 watch(width, (newWidth) => {
   sm.value = newWidth < 700
@@ -321,7 +311,8 @@ function sendEmail() {
 }
 
 function studentIdRule(studentId: string) {
-  return parseInt(studentId) && studentId.length === 7 || 'Invalid Student ID'          
+  if (/^\d{7}$/.test(studentId)) return true
+  return 'Invalid Student ID'
 }
 
 async function saveId() {

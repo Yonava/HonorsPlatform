@@ -23,12 +23,12 @@ function sanitizeName(name: string) {
 
 export function getStudentEmail(name: string) {
   const [firstName, lastName] = sanitizeName(name);
-  if (!(firstName && lastName)) return 'Invalid Name';
+  if (!(firstName && lastName)) return '';
   return `${firstName}.${lastName}@snhu.edu`;
 }
 
 export function getFacultyEmail(name: string) {
   const [firstName, lastName] = sanitizeName(name);
-  if (!(firstName && lastName)) return 'Invalid Name';
+  if (!(firstName && lastName)) return '';
   return `${firstName[0]}.${lastName}@snhu.edu`;
 }
