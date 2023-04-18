@@ -127,6 +127,8 @@
         :id="item.id"
       />
 
+      <div style="width: 1px; height: 10px"></div>
+      
       <h2>
         Other:
       </h2>
