@@ -24,10 +24,14 @@ export function useUpdateManager(
   provide('syncState', syncState);
 
   let startingItem = '';
+  let blockDeepWatch = false;
   let switchedStudentProfile = false;
-  const panelListRefreshKey = ref(0);
 
   async function updateItem() {
+
+    // for fetch interval
+    if (syncState.value.status) return;
+
     if (syncState.value.processing || !selectedItemRef.value) return;
     syncState.value.processing = true;
     await updateByRow(
@@ -37,7 +41,6 @@ export function useUpdateManager(
         selectedItemRef.value
       ])
     )
-    panelListRefreshKey.value++;
     startingItem = JSON.stringify(selectedItemRef.value);
     syncState.value = {
       status: true,
@@ -65,6 +68,7 @@ export function useUpdateManager(
   });
 
   watch(selectedItemRef, async (newItem, oldItem) => {
+    if (blockDeepWatch) return;
     switchedStudentProfile = newItem !== oldItem;
     syncState.value.status = false;
   }, { deep: true });
@@ -75,9 +79,15 @@ export function useUpdateManager(
   }, 3500);
 
   const fetchInterval = setInterval(async () => {
+
     if (document.hidden) return;
+    if (!syncState.value.status || syncState.value.processing) return;
+
+    blockDeepWatch = true;
     await fetchItems();
-  }, 10000);
+    blockDeepWatch = false;
+
+  }, 12000);
 
   onUnmounted(() => {
     clearInterval(syncInterval);
@@ -85,6 +95,6 @@ export function useUpdateManager(
   });
 
   return {
-    panelListRefreshKey
+    syncState,
   }
 }

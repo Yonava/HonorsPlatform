@@ -80,8 +80,8 @@
           >
             <PanelList
               @select="selectedItem = $event"
-              :key="panelListRefreshKey"
               :items="displayItems"
+              :pin="pinSelectedItem"
               :filterQuery="filterQuery"
               :selected="selectedItem"
               :loading="loadingItems"
@@ -200,6 +200,7 @@ const showAddModal = ref(false)
 const filterQuery = ref('')
 
 const selectedItem = ref<SheetItem>(undefined)
+const pinSelectedItem = ref(false)
 
 // dom element of the panel list
 const panelList = ref(null)
@@ -222,6 +223,10 @@ const changePanel = (panelType: PanelType) => {
 
 watch(panel, async () => {
   await fetchData()
+})
+
+watch(selectedItem, () => {
+  pinSelectedItem.value = false
 })
 
 const showDetailDrawer = computed({
@@ -248,7 +253,7 @@ useKeyBindings({
   '5': () => keyBindToggle(PanelType.THESES),
 })
 
-const { panelListRefreshKey } = useUpdateManager(selectedItem, panel, silentFetch)
+const { syncState } = useUpdateManager(selectedItem, panel, silentFetch)
 
 onMounted(async () => {
   if (route.query.type) {
@@ -278,15 +283,14 @@ async function reqDelete() {
   await fetchData()
 }
 
-async function itemAdded<T extends SheetEntry>(item: T) {
+async function itemAdded(item: SheetItem) {
   await silentFetch()
-  const index = items.value.findIndex(<T>(i: T) => {
+  const index = items.value.findIndex((i) => {
     return panel.value.keys.every(key => i[key] === item[key]);
   })
   if (index === -1) return
   selectedItem.value = items.value[index]
-  items.value.splice(index, 1)
-  items.value.unshift(selectedItem.value)
+  pinSelectedItem.value = true
   if (panelList.value) {
     panelList.value.scrollTop = 0
   }
