@@ -255,6 +255,8 @@ const { syncState } = useUpdateManager(selectedItem, panel, silentFetch)
 onMounted(async () => {
   if (route.query.type) {
     changePanel(route.query.type as PanelType)
+  } else {
+    document.title = panel.value.title.plural + ' - Honors Program'
   }
   panelList.value.addEventListener('scroll', scrollCapture)
   await fetchData()
