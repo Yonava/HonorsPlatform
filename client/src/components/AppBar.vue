@@ -13,26 +13,6 @@
           class="d-flex flex-row"
           style="width: 100%"
         >
-          <div 
-            class="px-3 d-flex flex-row align-center"
-            :style="{
-              background: autoSyncDivColor, 
-              color: 'rgb(240, 240, 240)',
-              borderRadius: '10px',
-              transition: '300ms'
-            }" 
-          >
-            <span class="mr-2">
-              Auto Sync
-            </span>
-            <v-switch
-              v-model="autoSync"
-              color="red-lighten-4" 
-              hide-details
-            ></v-switch>
-          </div>
-          <v-spacer></v-spacer>
-          <Announcements />
           <v-btn 
             icon
             class="ml-3"
@@ -43,6 +23,8 @@
               size="large"
             ></v-icon>
           </v-btn>
+          <v-spacer></v-spacer>
+          <Announcements />
         </div>
         <v-btn
           @click="emit('showAddModal')"

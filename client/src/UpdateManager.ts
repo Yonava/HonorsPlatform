@@ -10,7 +10,11 @@ export type SyncState = {
   lastSynced: Date;
 }
 
-export function useUpdateManager(selectedItemRef: Ref<SheetItem>, panel: Ref<Panel<SheetItem>>) {
+export function useUpdateManager(
+  selectedItemRef: Ref<SheetItem>, 
+  panel: Ref<Panel<SheetItem>>,
+  fetchItems: () => Promise<void>,
+) {
 
   const syncState = ref<SyncState>({
     status: false,
@@ -68,7 +72,13 @@ export function useUpdateManager(selectedItemRef: Ref<SheetItem>, panel: Ref<Pan
     await updateItem();
   }, 3500);
 
+  const fetchInterval = setInterval(async () => {
+    console.log(document.hidden)
+    await fetchItems();
+  }, 10000);
+
   onUnmounted(() => {
     clearInterval(syncInterval);
+    clearInterval(fetchInterval);
   });
 }

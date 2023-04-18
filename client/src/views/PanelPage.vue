@@ -203,7 +203,7 @@ import { useKeyBindings } from '../KeyBindings'
 import { PanelType, Panel, switchPanel } from '../SwitchPanel'
 import { SheetEntry, SheetItem } from '../SheetTypes'
 import { useDisplay } from 'vuetify'
-import { useUpdateManager } from '../SheetItemUpdateManager'
+import { useUpdateManager } from '../UpdateManager'
 
 const route = useRoute()
 const router = useRouter()
@@ -219,17 +219,11 @@ const items = ref<SheetItem[]>([])
 const loadingItems = ref(true)
 const showAddModal = ref(false)
 const filterQuery = ref('')
-const pageVisible = ref(true)
-
-const clone = <T>(obj: T) => JSON.parse(JSON.stringify(obj))
 
 const selectedItem = ref<SheetItem>(undefined)
 
 // dom element of the panel list
 const panelList = ref(null)
-
-const autoSync = ref(false)
-provide('autoSync', autoSync)
 
 const panel = ref(switchPanel(PanelType.STUDENTS))
 provide('activePanel', panel)
@@ -266,7 +260,6 @@ const keyBindToggle = (panelType: PanelType) => {
 }
 
 useKeyBindings({
-  'a': () => autoSync.value = !autoSync.value,
   's': () => showAddModal.value = !showAddModal.value,
   'r': () => fetchData(),
   '1': () => keyBindToggle(PanelType.STUDENTS),
@@ -276,13 +269,11 @@ useKeyBindings({
   '5': () => keyBindToggle(PanelType.THESES),
 })
 
-useUpdateManager(selectedItem, panel)
-
+useUpdateManager(selectedItem, panel, silentFetch)
 onMounted(async () => {
   if (route.query.type) {
     changePanel(route.query.type as PanelType)
   }
-  document.addEventListener('visibilitychange', toggleVisibility)
   panelList.value.addEventListener('scroll', scrollCapture)
   await fetchData()
 })
@@ -292,10 +283,6 @@ function scrollCapture() {
   const percentScrolled = el.scrollTop / (el.scrollHeight - el.clientHeight)
   if (isNaN(percentScrolled)) return
   localStorage.setItem('panelScrollY', percentScrolled.toString())
-}
-
-function toggleVisibility() {
-  pageVisible.value = !document.hidden
 }
 
 async function unselect() {
@@ -363,13 +350,7 @@ async function silentFetch() {
   if (findSelected === -1) selectedItem.value = undefined
 }
 
-const autoSyncInterval = setInterval(() => {
-  if (autoSync.value && pageVisible.value) silentFetch()
-}, 10_000)
-
 onUnmounted(() => {
-  clearInterval(autoSyncInterval)
-  document.removeEventListener('visibilitychange', toggleVisibility)
   if (!panelList.value) return
   panelList.value.removeEventListener('scroll', scrollCapture)
 })
