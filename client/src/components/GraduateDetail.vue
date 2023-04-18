@@ -30,10 +30,7 @@
           class="header-input"
         >
         <v-spacer></v-spacer>
-        <update-button
-          @updated="$emit('update', $event)"
-          :item="item"
-        />
+        <SyncStatus />
       </div>
       <v-divider class="my-2"></v-divider>
 
@@ -155,7 +152,7 @@ import {
 import { useElementSize } from '@vueuse/core'
 import { Graduate, GradEngagement } from '../SheetTypes'
 import EngagementTracking from './EngagementTracking.vue'
-import UpdateButton from './UpdateButton.vue'
+import SyncStatus from './SyncStatus.vue'
 import { emailValidator, phoneValidator } from '../EmailUtilities'
 
 const props = defineProps<{

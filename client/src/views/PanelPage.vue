@@ -80,6 +80,7 @@
           >
             <PanelList
               @select="selectedItem = $event"
+              :key="panelListRefreshKey"
               :items="displayItems"
               :filterQuery="filterQuery"
               :selected="selectedItem"
@@ -113,7 +114,7 @@
           >
             <component
               @delete="reqDelete"
-              @update="updateList($event)"
+              @update="selectedItem = $event"
               @unselect="unselect"
               :is="panel.components.detail" 
               :item="selectedItem"
@@ -153,7 +154,6 @@
       <component
         v-if="selectedItem"
         @delete="reqDelete"
-        @update="updateList($event)"
         @unselect="unselect"
         :is="panel.components.detail" 
         :item="selectedItem"
@@ -248,7 +248,8 @@ useKeyBindings({
   '5': () => keyBindToggle(PanelType.THESES),
 })
 
-useUpdateManager(selectedItem, panel, silentFetch)
+const { panelListRefreshKey } = useUpdateManager(selectedItem, panel, silentFetch)
+
 onMounted(async () => {
   if (route.query.type) {
     changePanel(route.query.type as PanelType)
@@ -275,13 +276,6 @@ async function reqDelete() {
   selectedItem.value = undefined
   await clearByRow(panel.value.sheetRange, row)
   await fetchData()
-}
-
-function updateList<T extends SheetItem>(item: T) {
-  const index = items.value.findIndex(<T extends SheetEntry>(i: T) => i.row === item.row)
-  if (index === -1) return
-  items.value[index] = item
-  selectedItem.value = item
 }
 
 async function itemAdded<T extends SheetEntry>(item: T) {
@@ -323,7 +317,19 @@ async function fetchData() {
 
 async function silentFetch() {
   const data = await getEvery(panel.value.sheetRange)
-  items.value = await panel.value.mappers.map(data)
+  const newItems = await panel.value.mappers.map(data)
+
+  newItems.forEach((newItem, i) => {
+    const oldItem = items.value.find(i => i.row === newItem.row)
+    if (oldItem) {
+      Object.assign(oldItem, newItem)
+      newItems[i] = oldItem
+    }
+  })
+
+  items.value = newItems
+  items.value.sort((a, b) => a.row - b.row)
+
   if (!selectedItem.value) return
   const findSelected = items.value.findIndex(i => i.row === selectedItem.value.row)
   if (findSelected === -1) selectedItem.value = undefined

@@ -8,81 +8,74 @@
     ]"
   >
     <div>
-      <p
-        v-if="item.id"
-        style="font-weight: 200;"
+      <DetailHeader 
+        v-if="!item.id"
+        v-model="item.name"
+        placeholder="Student Name"
       >
-        {{ item.id }}
-      </p>
-      <v-dialog 
-        v-else
-        v-model="dialog"
-        width="300"
-      >
-        <template #activator="{ props }">
-          <v-btn 
-            v-bind="props"
-            size="x-small"
-            color="red"
+        <template #id>
+          <v-dialog 
+            v-model="dialog"
+            width="300"
           >
-            Add Student ID
-          </v-btn>
-        </template>
-        <div class="student-id-dialog pa-4">
-          <div v-if="!updatingStudent">
-            <v-icon color="red">mdi-alert</v-icon>
-            <p 
-              style="color: red"
-              class="mb-2"
-            >
-              Warning: Student IDs are unique and cannot be changed once set!
-            </p>
-            <v-text-field
-              v-model="tempStudentId"
-              :rules="[studentIdRule]"
-              variant="solo"
-              label="Student ID"
-              class="mb-2"
-            ></v-text-field>
-            <div class="d-flex">
-              <v-btn
-                @click="saveId"
-                :disabled="typeof studentIdRule(tempStudentId) === 'string'"
-                color="green"
-              >
-                Save
-              </v-btn>
-              <v-spacer></v-spacer>
-              <v-btn
-                @click="dialog = false"
+            <template #activator="{ props }">
+              <v-btn 
+                v-bind="props"
+                size="x-small"
                 color="red"
               >
-                Cancel
+                Add Student ID
               </v-btn>
+            </template>
+            <div class="student-id-dialog pa-4">
+              <div v-if="!updatingStudent">
+                <v-icon color="red">mdi-alert</v-icon>
+                <p 
+                  style="color: red"
+                  class="mb-2"
+                >
+                  Warning: Student IDs are unique and cannot be changed once set!
+                </p>
+                <v-text-field
+                  v-model="tempStudentId"
+                  :rules="[studentIdRule]"
+                  variant="solo"
+                  label="Student ID"
+                  class="mb-2"
+                ></v-text-field>
+                <div class="d-flex">
+                  <v-btn
+                    @click="saveId"
+                    :disabled="typeof studentIdRule(tempStudentId) === 'string'"
+                    color="green"
+                  >
+                    Save
+                  </v-btn>
+                  <v-spacer></v-spacer>
+                  <v-btn
+                    @click="dialog = false"
+                    color="red"
+                  >
+                    Cancel
+                  </v-btn>
+                </div>
+              </div>
+              <div v-else>
+                <v-progress-circular
+                  indeterminate
+                  color="blue"
+                ></v-progress-circular>
+              </div>
             </div>
-          </div>
-          <div v-else>
-            <v-progress-circular
-              indeterminate
-              color="blue"
-            ></v-progress-circular>
-          </div>
-        </div>
-      </v-dialog>
-      <div class="d-flex flex-row align-center">
-        <input 
-          v-model="item.name"
-          placeholder="Enter Name"
-          type="text" 
-          class="student-name-input"
-        >
-        <v-spacer></v-spacer>
-        <update-button 
-          @updated="$emit('update', $event)" 
-          :item="item"
-        />
-      </div>
-      <v-divider class="my-2"></v-divider>
+          </v-dialog>
+        </template>
+      </DetailHeader>
+      <DetailHeader 
+        v-else
+        v-model="item.name"
+        :id="item.id"
+        placeholder="Student Name"
+      />
       <v-btn
         v-if="!item.email"
         @click="item.email = getStudentEmail(item.name)"
@@ -245,13 +238,12 @@ import {
   ref, 
   watch, 
   computed,
-  toRefs,
-  inject
+  toRefs
 } from 'vue'
 import { useElementSize } from '@vueuse/core'
 import { useDisplay } from 'vuetify'
+import DetailHeader from './DetailHeader.vue'
 import ModuleFetch from './ModuleFetch.vue'
-import UpdateButton from './UpdateButton.vue'
 import AddStudentNote from './AddStudentNote.vue'
 import { updateByRow, moveRowToRange, Range } from '../SheetsAPI'
 import { unmapStudents, unmapGraduates } from '../DataMappers'
@@ -263,12 +255,10 @@ const props = defineProps<{
   item: Student
 }>()
 
-const { item } = toRefs(props)
 const { xs } = useDisplay()
 
 const emits = defineEmits([
   'delete', 
-  'update',
   'unselect'
 ])
 
@@ -301,7 +291,7 @@ const sm = ref(false)
 const el = ref(null)
 const { width } = useElementSize(el)
 
-watch(item, (newItem) => {
+watch(props.item, (newItem) => {
   if (!newItem.points) {
     newItem.points = 0
   }
@@ -336,7 +326,7 @@ const canDelete = computed(() => {
 })
 
 function sendEmail() {
-  const { name, email } = item.value
+  const { name, email } = props.item
   const subject = `Hello ${name.split(' ')[0]}!`
   const body = `Hi ${name.split(' ')[0]},%0D%0A%0D%0A`
   window.open(`mailto:${email}?subject=${subject}&body=${body}`)
@@ -349,7 +339,7 @@ function studentIdRule(studentId: string) {
 async function saveId() {
   if (!studentIdRule(tempStudentId.value)) return
 
-  const { id, ...rest } = item.value
+  const { id, ...rest } = props.item
   updatingStudent.value = true
   const newStudent = {
     ...rest,
@@ -362,7 +352,7 @@ async function saveId() {
 
   await updateByRow(
     Range.STUDENTS, 
-    item.value.row, 
+    props.item.row, 
     await unmapStudents([newStudent])
   )
   emits('update', newStudent)
@@ -375,15 +365,15 @@ async function moveToGraduates() {
   await moveRowToRange(
     Range.STUDENTS, 
     Range.GRADUATES,
-    item.value.row, 
+    props.item.row, 
     unmapGraduates([{
-      row: item.value.row,
-      id: item.value.id,
-      name: item.value.name,
+      row: props.item.row,
+      id: props.item.id,
+      name: props.item.name,
       phone: '',
-      email: item.value.email,
+      email: props.item.email,
       graduationDate: new Date().toLocaleDateString(),
-      note: item.value.note,
+      note: props.item.note,
     }])
   )
   emits('unselect')
@@ -391,8 +381,8 @@ async function moveToGraduates() {
 
 function addStudentNote(event: { initials: string, note: string }) {
   const { initials, note } = event
-  if (item.value.note) item.value.note += '\n\n'
-  item.value.note += `${initials}: ${note}`
+  if (props.item.note) props.item.note += '\n\n'
+  props.item.note += `${initials}: ${note}`
 }
 </script>
 

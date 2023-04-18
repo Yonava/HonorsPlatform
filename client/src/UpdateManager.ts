@@ -25,6 +25,7 @@ export function useUpdateManager(
 
   let startingItem = '';
   let switchedStudentProfile = false;
+  const panelListRefreshKey = ref(0);
 
   async function updateItem() {
     if (syncState.value.processing || !selectedItemRef.value) return;
@@ -36,6 +37,7 @@ export function useUpdateManager(
         selectedItemRef.value
       ])
     )
+    panelListRefreshKey.value++;
     startingItem = JSON.stringify(selectedItemRef.value);
     syncState.value = {
       status: true,
@@ -81,4 +83,8 @@ export function useUpdateManager(
     clearInterval(syncInterval);
     clearInterval(fetchInterval);
   });
+
+  return {
+    panelListRefreshKey
+  }
 }

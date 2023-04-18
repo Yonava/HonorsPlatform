@@ -8,23 +8,13 @@
     ]"
   >
     <div>
-      <p style="font-weight: 200">
-        {{ item.studentId }}
-      </p>
-      <div class="d-flex flex-row align-center">
-        <input 
-          v-model="item.courseCode"
-          placeholder="Course Code"
-          type="text" 
-          class="header-input"
-        >
-        <v-spacer></v-spacer>
-        <update-button
-          @updated="$emit('update', $event)"
-          :item="item"
-        />
-      </div>
-      <v-divider class="my-2"></v-divider>
+
+      <DetailHeader 
+        v-model="item.courseCode"
+        :id="item.studentId"
+        placeholder="Course Code"
+      />
+
       <v-text-field
         v-model="item.completedDate"
         label="Completed Date"
@@ -128,16 +118,14 @@
 </template>
 
 <script setup lang="ts">
+import DetailHeader from './DetailHeader.vue'
 import { watch, ref, toRefs } from 'vue'
 import { useElementSize } from '@vueuse/core'
 import { CompletedModule } from '../SheetTypes'
-import UpdateButton from './UpdateButton.vue'
 
 const props = defineProps<{
   item: CompletedModule
 }>()
-
-const { item } = toRefs(props)
 
 const sm = ref(false)
 const el = ref(null)
@@ -148,8 +136,7 @@ watch(width, (newWidth) => {
 }, { immediate: true })
 
 const emits = defineEmits([
-  'delete', 
-  'update', 
+  'delete',
   'unselect'
 ])
 </script>

@@ -13,10 +13,7 @@
           class="d-flex flex-row"
           style="width: 100%"
         >
-          <v-btn 
-            icon
-            class="ml-3"
-          >
+          <v-btn icon>
             <v-icon 
               @click="$router.push({ name: 'leaderboard' })"
               icon="mdi-podium" 

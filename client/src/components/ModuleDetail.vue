@@ -8,23 +8,11 @@
     ]"
   >
     <div>
-      <p style="font-weight: 200">
-        {{ item.studentId }}
-      </p>
-      <div class="d-flex flex-row align-center">
-        <input 
-          v-model="item.courseCode"
-          placeholder="Course Code"
-          type="text" 
-          class="header-input"
-        >
-        <v-spacer></v-spacer>
-        <update-button
-          @updated="$emit('update', $event)"
-          :item="item"
-        />
-      </div>
-      <v-divider class="my-2"></v-divider>
+      <DetailHeader 
+        v-model="item.courseCode"
+        :id="item.studentId"
+        placeholder="Course Code"
+      />
       <v-text-field
         v-model="item.term"
         :rules="[(v) => termValidator(v) || 'Potentially invalid term']"
@@ -147,7 +135,7 @@ import { ref, watch, toRefs } from 'vue'
 import { useElementSize } from '@vueuse/core'
 import { Module } from '../SheetTypes'
 import { termValidator } from '../TermValidator'
-import UpdateButton from './UpdateButton.vue'
+import DetailHeader from './DetailHeader.vue'
 import FinishModuleModal from './FinishModuleModal.vue'
 
 const props = defineProps<{
@@ -156,7 +144,6 @@ const props = defineProps<{
 
 const emits = defineEmits([
   'delete', 
-  'update',
   'unselect'
 ])
 
@@ -172,16 +159,3 @@ watch(width, (newWidth) => {
 
 const moveModuleDialog = ref(false)
 </script>
-
-<style scoped>
-input.header-input {
-  font-weight: 900; 
-  font-size: 3em; 
-  line-height: 0.9; 
-  width: 100%;
-}
-
-input.header-input:focus {
-  outline: none;
-}
-</style>

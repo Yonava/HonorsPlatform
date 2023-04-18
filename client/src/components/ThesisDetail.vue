@@ -8,24 +8,12 @@
     ]"
   >
     <div>
-      <p style="font-weight: 200">
-        {{ item.studentId }}
-      </p>
-      <div class="d-flex flex-row align-center">
-        <input 
-          v-model="item.title"
-          placeholder="Thesis Title"
-          type="text" 
-          class="header-input"
-        >
-        <v-spacer></v-spacer>
-        <update-button
-          @updated="$emit('update', $event)"
-          :item="item"
-        />
-      </div>
 
-      <v-divider class="my-3"></v-divider>
+      <DetailHeader 
+        v-model="item.title"
+        :id="item.studentId"
+        placeholder="Thesis Title"
+      />
 
       <v-btn
         v-if="item.studentId && !item.name"
@@ -200,7 +188,6 @@ import { watch, ref, toRefs } from 'vue'
 import { getCurrentTerm, termValidator } from '../TermValidator'
 import { useElementSize } from '@vueuse/core'
 import { Thesis } from '../SheetTypes'
-import UpdateButton from './UpdateButton.vue'
 import { getEvery, Range } from '../SheetsAPI'
 import { mapStudents } from '../DataMappers'
 import { 
@@ -230,7 +217,6 @@ watch(width, (newWidth) => {
 
 const emits = defineEmits([
   'delete', 
-  'update', 
   'unselect'
 ])
 
