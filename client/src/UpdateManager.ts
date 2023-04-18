@@ -17,7 +17,7 @@ export function useUpdateManager(
 ) {
 
   const syncState = ref<SyncState>({
-    status: false,
+    status: true,
     processing: false,
     lastSynced: new Date()
   });
@@ -68,21 +68,29 @@ export function useUpdateManager(
   });
 
   watch(selectedItemRef, async (newItem, oldItem) => {
-    console.log(newItem)
     if (blockDeepWatch) return;
     switchedStudentProfile = newItem !== oldItem;
-    syncState.value.status = false;
+    if (switchedStudentProfile) {
+      syncState.value = {
+        status: true,
+        processing: false,
+        lastSynced: new Date()
+      }
+    } else {
+      syncState.value.status = false;
+    }
   }, { deep: true });
 
   const syncInterval = setInterval(async () => {
-    if (syncState.value.status || switchedStudentProfile) return;
+    if (syncState.value.status) return;
     await updateItem();
+    console.log('synced')
   }, 3500);
 
   const fetchInterval = setInterval(async () => {
 
     if (document.hidden) return;
-    if (!syncState.value.status || syncState.value.processing) return;
+    if (syncState.value.processing || !syncState.value.status) return;
 
     blockDeepWatch = true;
     await fetchItems();

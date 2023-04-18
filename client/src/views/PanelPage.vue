@@ -335,6 +335,15 @@ async function silentFetch() {
 
   items.value = newItems
   items.value.sort((a, b) => a.row - b.row)
+
+  // if the selected item is no longer in the list, unselect it
+  if (!selectedItem.value) return
+  const index = items.value.findIndex((i) => {
+    return panel.value.keys.every(key => i[key] === selectedItem.value[key]);
+  })
+  if (index === -1) {
+    selectedItem.value = null
+  }
 }
 
 function getDefaultWidth() {

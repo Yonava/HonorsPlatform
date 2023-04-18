@@ -77,6 +77,7 @@ export function switchSortOptions(panel: PanelType) {
                 'Sophomore': 2,
                 'Junior': 3,
                 'Senior': 4,
+                'Other': 5
               };
               return yearMap[a.year] - yearMap[b.year];
             },
@@ -86,6 +87,7 @@ export function switchSortOptions(panel: PanelType) {
                 'Sophomore': 2,
                 'Junior': 3,
                 'Senior': 4,
+                'Other': 5
               };
               return yearMap[b.year] - yearMap[a.year];
             }
