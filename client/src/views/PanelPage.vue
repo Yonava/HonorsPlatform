@@ -36,54 +36,33 @@
             :panelType="panel.type"
           />
           <v-spacer></v-spacer>
-          <div 
-            class="d-flex flex-column align-center"
-            style="text-align: center;"
-          >
-            <div
-              v-show="autoSync"
-              style="width: 25px; height: 25px; border-radius: 50px; background: #ff0500;"
-            ></div>
-            <span 
-              style="width: 100%; line-height: 1.1em; font-weight: 400; font-size: 0.8em;"
-            >Auto Sync</span>
-            <v-switch
-              v-model="autoSync"
-              :color="`${panel.color}-lighten-4`"
-              hide-details
-              style="transform: translateY(-10px);"
-            ></v-switch>
-            <div 
-              style="transform: translateY(-12px);"
-              class="mb-2"
+          <div class="mb-4 d-flex flex-column align-center">
+            <v-btn 
+              @click="$router.push({ name: 'registrar' })"
+              icon
             >
-              <v-btn 
-                @click="$router.push({ name: 'registrar' })"
-                icon
-              >
-                <v-icon>
-                  mdi-list-box-outline
-                </v-icon>
-                <v-tooltip
-                  activator="parent"
-                  location="end"
-                >Create Registrar List</v-tooltip>
-              </v-btn>
-              <v-btn 
-                @click="$router.push({ name: 'email' })"
-                icon
-                class="mt-3"
-              >
-                <v-icon>
-                  mdi-email-fast-outline
-                </v-icon>
-                <v-tooltip
-                  :disabled="smAndDown"
-                  activator="parent"
-                  location="end"
-                >Compose Mass Email</v-tooltip>
-              </v-btn>
-            </div>
+              <v-icon>
+                mdi-list-box-outline
+              </v-icon>
+              <v-tooltip
+                activator="parent"
+                location="end"
+              >Create Registrar List</v-tooltip>
+            </v-btn>
+            <v-btn 
+              @click="$router.push({ name: 'email' })"
+              icon
+              class="mt-3"
+            >
+              <v-icon>
+                mdi-email-fast-outline
+              </v-icon>
+              <v-tooltip
+                :disabled="smAndDown"
+                activator="parent"
+                location="end"
+              >Compose Mass Email</v-tooltip>
+            </v-btn>
           </div>
         </v-sheet>
         <div

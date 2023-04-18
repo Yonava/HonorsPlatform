@@ -73,7 +73,7 @@ export function useUpdateManager(
   }, 3500);
 
   const fetchInterval = setInterval(async () => {
-    console.log(document.hidden)
+    if (document.hidden) return;
     await fetchItems();
   }, 10000);
 
