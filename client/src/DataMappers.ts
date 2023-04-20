@@ -10,6 +10,8 @@ import {
   ThesisDecision,
 } from "./SheetTypes";
 
+export const instructorCache: string[] = []
+
 function removeEmptyObjects(item: Object) {
   return Object
     .values(item)
@@ -61,6 +63,9 @@ export async function unmapStudents(students: Student[]): Promise<string[][]> {
 export function mapModules(sheetData: string[][]): Module[] {
   return sheetData
     .map((module, index) => {
+      if (module[4] && !instructorCache.includes(module[4])) {
+        instructorCache.push(module[4]);
+      }
       return {
         row: index + 2,
         studentId: module[0] ?? '',

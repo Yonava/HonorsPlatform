@@ -139,6 +139,7 @@ import { Module } from '../SheetTypes'
 import { termValidator } from '../TermValidator'
 import DetailHeader from './DetailHeader.vue'
 import FinishModuleModal from './FinishModuleModal.vue'
+import { useInstructorAutoComplete } from '../InstructorAutoComplete'
 
 const props = defineProps<{
   item: Module
