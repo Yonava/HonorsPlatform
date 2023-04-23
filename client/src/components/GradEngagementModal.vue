@@ -64,6 +64,12 @@
             color="green"
             variant="outlined"
           >update</v-btn>
+          <v-btn
+            v-if="xs"
+            @click="emits('close')"
+            color="red"
+            variant="outlined"
+          >close</v-btn>
           <v-spacer></v-spacer>
           <v-btn
             @click="close"
