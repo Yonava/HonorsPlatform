@@ -24,6 +24,13 @@
           <v-icon>mdi-calendar</v-icon>
         </template>
       </v-text-field>
+      <v-btn
+        @click="item.instructor = instructorAutoComplete(item.instructor)"
+        :disabled="!instructorAutoComplete(item.instructor)"
+        color="orange-darken-2"
+        size="x-small"
+        class="mb-2"
+      >{{ instructorAutoComplete(item.instructor) || 'No Suggestions' }}</v-btn>
       <v-text-field
         v-model="item.instructor"
         label="Instructor"
@@ -139,7 +146,7 @@ import { Module } from '../SheetTypes'
 import { termValidator } from '../TermValidator'
 import DetailHeader from './DetailHeader.vue'
 import FinishModuleModal from './FinishModuleModal.vue'
-import { useInstructorAutoComplete } from '../InstructorAutoComplete'
+import { instructorAutoComplete } from '../InstructorAutoComplete'
 
 const props = defineProps<{
   item: Module

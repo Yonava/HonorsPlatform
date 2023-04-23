@@ -39,6 +39,13 @@
             label="Term"
             variant="outlined"
           ></v-text-field>
+          <v-btn
+            @click="selectedModule.instructor = instructorAutoComplete(selectedModule.instructor)"
+            :disabled="!instructorAutoComplete(selectedModule.instructor)"
+            color="blue"
+            size="x-small"
+            class="mb-3"
+          >{{ instructorAutoComplete(selectedModule.instructor) || 'No Suggestions' }}</v-btn>
           <v-text-field
             v-model="selectedModule.instructor"
             label="Instructor"
@@ -111,6 +118,7 @@ import { useDisplay } from 'vuetify'
 import { termValidator, getCurrentTerm } from '../TermValidator'
 import FinishModuleModal from './FinishModuleModal.vue'
 import ModalContent from './ModalContent.vue'
+import { instructorAutoComplete } from '../InstructorAutoComplete'
 
 const props = defineProps<{
   module: Module

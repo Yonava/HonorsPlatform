@@ -1,18 +1,14 @@
 import { instructorCache } from './DataMappers'
-import { ref } from 'vue'
 
-export function useInstructorAutoComplete() {
+export function instructorAutoComplete(instructorInput: string) {
+  const instructorList = [...instructorCache]
+  const instructorSuggestions = instructorList.filter(instructor => {
+    return instructor.toLowerCase().startsWith(instructorInput.toLowerCase())
+  })
   
-  const placeholder = ref('')
-
-  function completeInstructor(instructor: string) {
-    if (instructorCache.includes(instructor)) {
-      placeholder.value = instructor
-    }
-  }
-
-  return {
-    placeholder,
-    completeInstructor
+  if (instructorSuggestions.length === 0) {
+    return false
+  } else {
+    return instructorSuggestions[0]
   }
 }
