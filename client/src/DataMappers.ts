@@ -92,6 +92,9 @@ export function unmapModules(modules: Module[]): string[][] {
 export function mapCompletedModules(sheetData: string[][]): CompletedModule[] {
   return sheetData
     .map((module, index) => {
+      if (module[4] && !instructorCache.includes(module[4])) {
+        instructorCache.push(module[4]);
+      }
       return {
         row: index + 2,
         studentId: module[0] ?? '',

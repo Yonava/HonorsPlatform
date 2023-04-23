@@ -2,13 +2,12 @@ import { instructorCache } from './DataMappers'
 
 export function instructorAutoComplete(instructorInput: string) {
   const instructorList = [...instructorCache]
-  const instructorSuggestions = instructorList.filter(instructor => {
-    return instructor.toLowerCase().startsWith(instructorInput.toLowerCase())
-  })
-  
-  if (instructorSuggestions.length === 0) {
-    return false
-  } else {
-    return instructorSuggestions[0]
+  for (const i in instructorList) {
+    if (instructorList[i].toLowerCase().startsWith(instructorInput.toLowerCase())) {
+      return instructorList[i]
+    } else if (instructorList[i].toLowerCase().includes(instructorInput.toLowerCase())) {
+      return instructorList[i]
+    }
   }
+  return false
 }
