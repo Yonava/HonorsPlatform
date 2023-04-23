@@ -28,13 +28,24 @@
         </template>
       </DetailHeader>
 
-      <v-text-field
-        v-model="item.email"
-        :rules="[(v) => emailValidator(v) || 'Invalid email']"
-        clearable
-        label="Email"
-        prepend-icon="mdi-email"
-      ></v-text-field>
+      <div class="d-flex align-center">
+        <v-text-field
+          v-model="item.email"
+          :rules="[(v) => emailValidator(v) || 'Invalid email']"
+          clearable
+          label="Email"
+          prepend-icon="mdi-email"
+        ></v-text-field>
+        <v-btn 
+          v-if="item.email"
+          @click="sendEmail"
+          size="small"
+          class="ml-4"
+          color="purple-darken-2"
+        >
+          draft email
+        </v-btn>
+      </div>
 
       <v-text-field
         v-model="item.phone"
@@ -159,6 +170,11 @@ const loadingEngagements = ref(true)
 const canDelete = computed(() => {
   return engagements.value.length === 0 && !loadingEngagements.value
 })
+
+function sendEmail() {
+  const { email } = props.item
+  window.open(`mailto:${email}`)
+}
 
 async function reqGenerateGradId() {
   const newId = 'G' + Math.random().toString().substring(2, 9);

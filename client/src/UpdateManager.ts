@@ -96,7 +96,7 @@ export function useUpdateManager(
     await fetchItems();
     blockDeepWatch = false;
 
-  }, 12000);
+  }, 15000);
 
   onUnmounted(() => {
     clearInterval(syncInterval);

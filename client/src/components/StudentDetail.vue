@@ -76,13 +76,14 @@
         <v-text-field
           v-model="item.email"
           :rules="[(v) => emailValidator(v) || 'Invalid email']"
+          clearable
           label="Email"
           prepend-icon="mdi-email"
-          class="mr-4" 
         ></v-text-field>
         <v-btn 
           v-if="item.email"
           @click="sendEmail"
+          class="ml-4" 
           size="small"
           color="blue-darken-2"
         >
