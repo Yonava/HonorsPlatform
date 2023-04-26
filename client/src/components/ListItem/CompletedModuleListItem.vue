@@ -72,8 +72,8 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useDisplay } from 'vuetify'
-import { CompletedModule } from '../SheetTypes'
-import { termValidator } from '../TermValidator'
+import { CompletedModule } from '../../SheetTypes'
+import { termValidator } from '../../TermValidator'
 
 const props = defineProps<{
   item: CompletedModule

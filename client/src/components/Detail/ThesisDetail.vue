@@ -185,17 +185,17 @@
 
 <script setup lang="ts">
 import { watch, ref, toRefs } from 'vue'
-import { getCurrentTerm, termValidator } from '../TermValidator'
+import { getCurrentTerm, termValidator } from '../../TermValidator'
 import { useElementSize } from '@vueuse/core'
-import { Thesis } from '../SheetTypes'
-import { getEvery, Range } from '../SheetsAPI'
-import { mapStudents } from '../DataMappers'
+import { Thesis } from '../../SheetTypes'
+import { getEvery, Range } from '../../SheetsAPI'
+import { mapStudents } from '../../DataMappers'
 import DetailHeader from './DetailHeader.vue'
 import { 
   emailValidator, 
   getFacultyEmail,
   getStudentEmail 
-} from '../EmailUtilities'
+} from '../../EmailUtilities'
 
 const props = defineProps<{
   item: Thesis

@@ -32,7 +32,7 @@
 </template>
 
 <script setup lang="ts">
-import { GradEngagement } from "../SheetTypes"
+import { GradEngagement } from "../../SheetTypes"
 
 const props = defineProps<{
   engagements: GradEngagement[];

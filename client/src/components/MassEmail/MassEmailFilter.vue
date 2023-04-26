@@ -67,10 +67,10 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import { SheetItem } from '../SheetTypes'
-import { getHeaderRow, getEvery, Range } from "../SheetsAPI";
-import { switchPanel, Panel, PanelType } from "../SwitchPanel";
-import { Student, Graduate, Module, CompletedModule, Thesis } from "../SheetTypes";
+import { SheetItem } from '../../SheetTypes'
+import { getHeaderRow, getEvery, Range } from "../../SheetsAPI";
+import { switchPanel, Panel, PanelType } from "../../SwitchPanel";
+import { Student, Graduate, Module, CompletedModule, Thesis } from "../../SheetTypes";
 import { useDisplay } from "vuetify";
 import { 
   mapStudents,
@@ -78,7 +78,7 @@ import {
   mapModules,
   mapCompletedModules,
   mapTheses
-} from "../DataMappers";
+} from "../../DataMappers";
 
 const emits = defineEmits<{
   (e: 'subset', items: SheetItem[]): void,

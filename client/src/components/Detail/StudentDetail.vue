@@ -237,11 +237,11 @@ import { useDisplay } from 'vuetify'
 import DetailHeader from './DetailHeader.vue'
 import ModuleFetch from './ModuleFetch.vue'
 import AddStudentNote from './AddStudentNote.vue'
-import { moveRowToRange, Range } from '../SheetsAPI'
-import { unmapStudents, unmapGraduates } from '../DataMappers'
-import { Student, Module } from '../SheetTypes'
-import { athleticOptions } from '../Athletics'
-import { emailValidator, getStudentEmail } from '../EmailUtilities'
+import { moveRowToRange, Range } from '../../SheetsAPI'
+import { unmapStudents, unmapGraduates } from '../../DataMappers'
+import { Student, Module } from '../../SheetTypes'
+import { athleticOptions } from '../../Athletics'
+import { emailValidator, getStudentEmail } from '../../EmailUtilities'
 
 const props = defineProps<{
   item: Student

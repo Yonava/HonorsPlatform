@@ -85,8 +85,8 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import { useDisplay } from 'vuetify'
-import ModalContent from './ModalContent.vue'
-import { GradEngagement } from '../SheetTypes'
+import ModalContent from '../ModalContent.vue'
+import { GradEngagement } from '../../SheetTypes'
 
 const props = defineProps<{
   item: GradEngagement | undefined,

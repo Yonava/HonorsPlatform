@@ -1,17 +1,17 @@
-import StudentListItem from '../src/components/StudentListItem.vue';
-import StudentDetail from '../src/components/StudentDetail.vue';
+import StudentListItem from './components/ListItem/StudentListItem.vue';
+import StudentDetail from './components/Detail/StudentDetail.vue';
 
-import ModuleListItem from '../src/components/ModuleListItem.vue';
-import ModuleDetail from '../src/components/ModuleDetail.vue';
+import ModuleListItem from './components/ListItem/ModuleListItem.vue';
+import ModuleDetail from './components/Detail/ModuleDetail.vue';
 
-import CompletedModuleDetail from '../src/components/CompletedModuleDetail.vue';
-import CompletedModuleListItem from '../src/components/CompletedModuleListItem.vue';
+import CompletedModuleDetail from '../src/components/Detail/CompletedModuleDetail.vue';
+import CompletedModuleListItem from './components/ListItem/CompletedModuleListItem.vue';
 
-import GraduateListItem from '../src/components/GraduateListItem.vue';
-import GraduateDetail from '../src/components/GraduateDetail.vue';
+import GraduateListItem from './components/ListItem/GraduateListItem.vue';
+import GraduateDetail from './components/Detail/GraduateDetail.vue';
 
-import ThesisDetail from '../src/components/ThesisDetail.vue';
-import ThesisListItem from '../src/components/ThesisListItem.vue';
+import ThesisDetail from './components/Detail/ThesisDetail.vue';
+import ThesisListItem from './components/ListItem/ThesisListItem.vue';
 
 import { markRaw } from 'vue';
 import { Range } from './SheetsAPI';

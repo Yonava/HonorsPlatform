@@ -62,16 +62,16 @@
 import { ref, computed, watch } from 'vue'
 import EngagementView from './EngagementView.vue'
 import LockArea from './LockArea.vue'
-import { GradEngagement } from '../SheetTypes'
+import { GradEngagement } from '../../SheetTypes'
 import GradEngagementModal from './GradEngagementModal.vue'
-import { mapGradEngagement, unmapGradEngagement } from '../DataMappers'
+import { mapGradEngagement, unmapGradEngagement } from '../../DataMappers'
 import { 
   getEvery, 
   clearByRow, 
   postInRange, 
   Range, 
   updateByRow 
-} from '../SheetsAPI'
+} from '../../SheetsAPI'
 
 const props = defineProps<{
   id: string | undefined

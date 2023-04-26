@@ -74,9 +74,9 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { Graduate } from '../SheetTypes'
+import { Graduate } from '../../SheetTypes'
 import { useDisplay } from 'vuetify'
-import { emailValidator, phoneValidator } from '../EmailUtilities'
+import { emailValidator, phoneValidator } from '../../EmailUtilities'
 
 const props = defineProps<{
   item: Graduate

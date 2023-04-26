@@ -137,13 +137,13 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import { moveRowToRange, Range } from '../SheetsAPI'
-import { unmapStudents } from '../DataMappers'
+import { moveRowToRange, Range } from '../../SheetsAPI'
+import { unmapStudents } from '../../DataMappers'
 import { useElementSize } from '@vueuse/core'
-import { Graduate, GradEngagement } from '../SheetTypes'
+import { Graduate, GradEngagement } from '../../SheetTypes'
 import EngagementTracking from './EngagementTracking.vue'
 import DetailHeader from './DetailHeader.vue'
-import { emailValidator, phoneValidator } from '../EmailUtilities'
+import { emailValidator, phoneValidator } from '../../EmailUtilities'
 
 const props = defineProps<{
   item: Graduate

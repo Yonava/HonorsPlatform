@@ -142,11 +142,11 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { useElementSize } from '@vueuse/core'
-import { Module } from '../SheetTypes'
-import { termValidator } from '../TermValidator'
+import { Module } from '../../SheetTypes'
+import { termValidator } from '../../TermValidator'
 import DetailHeader from './DetailHeader.vue'
 import FinishModuleModal from './FinishModuleModal.vue'
-import { instructorAutoComplete } from '../InstructorAutoComplete'
+import { instructorAutoComplete } from '../../InstructorAutoComplete'
 
 const props = defineProps<{
   item: Module

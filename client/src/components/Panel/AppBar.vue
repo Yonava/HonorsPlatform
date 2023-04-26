@@ -245,12 +245,12 @@
 </template>
 
 <script setup lang="ts">
-import { Panel, switchPanel, PanelType } from '../SwitchPanel'
-import { SheetItem } from '../SheetTypes'
+import { Panel, switchPanel, PanelType } from '../../SwitchPanel'
+import { SheetItem } from '../../SheetTypes'
 import { ref, computed, watch } from 'vue'
 import type { Ref } from 'vue'
 import { useDisplay } from 'vuetify'
-import { useKeyBindings } from '../KeyBindings'
+import { useKeyBindings } from '../../KeyBindings'
 import SortPanel from './SortPanel.vue'
 import Announcements from './AnnouncementMenu.vue'
 

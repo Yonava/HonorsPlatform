@@ -96,9 +96,9 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { Student } from '../SheetTypes'
-import { athleticOptions } from '../Athletics'
-import { emailValidator } from '../EmailUtilities'
+import { Student } from '../../SheetTypes'
+import { athleticOptions } from '../../Athletics'
+import { emailValidator } from '../../EmailUtilities'
 import { useDisplay } from 'vuetify'
 
 const props = defineProps<{

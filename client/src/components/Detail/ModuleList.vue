@@ -39,7 +39,7 @@
 </template>
 
 <script setup lang="ts">
-import { Module } from "../SheetTypes"
+import { Module } from "../../SheetTypes"
 
 const props = defineProps<{
   modules: Module[];

@@ -70,19 +70,19 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import ModuleList from './ModuleList.vue'
-import AddModal from './AddModal.vue'
+import AddModal from '../AddModal.vue'
 import LockArea from './LockArea.vue'
-import { Module } from '../SheetTypes'
-import { PanelType, switchPanel } from '../SwitchPanel'
+import { Module } from '../../SheetTypes'
+import { PanelType, switchPanel } from '../../SwitchPanel'
 import ModuleDetailModal from './ModuleDetailModal.vue'
-import { mapModules, unmapModules } from '../DataMappers'
+import { mapModules, unmapModules } from '../../DataMappers'
 import { 
   getEvery, 
   clearByRow, 
   postInRange, 
   Range, 
   updateByRow 
-} from '../SheetsAPI'
+} from '../../SheetsAPI'
 
 const props = defineProps<{
   id: string | undefined

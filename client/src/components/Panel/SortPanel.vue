@@ -42,9 +42,9 @@ import {
   computed, 
   watch
 } from 'vue'
-import { SortOption, switchSortOptions } from '../SortOptions'
-import { PanelType } from '../SwitchPanel'
-import { SheetItem } from '../SheetTypes'
+import { SortOption, switchSortOptions } from '../../SortOptions'
+import { PanelType } from '../../SwitchPanel'
+import { SheetItem } from '../../SheetTypes'
 
 const props = defineProps<{
   items: SheetItem[],

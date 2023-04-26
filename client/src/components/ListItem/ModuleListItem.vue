@@ -103,9 +103,9 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { Module } from '../SheetTypes'
+import { Module } from '../../SheetTypes'
 import type { ComputedRef } from 'vue'
-import { termValidator } from '../TermValidator'
+import { termValidator } from '../../TermValidator'
 import { useDisplay } from 'vuetify'
 
 const props = defineProps<{

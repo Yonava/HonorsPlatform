@@ -64,8 +64,8 @@ import {
   computed,
   toRefs
 } from 'vue'
-import { SheetItem } from '../SheetTypes'
-import { Panel } from '../SwitchPanel'
+import { SheetItem } from '../../SheetTypes'
+import { Panel } from '../../SwitchPanel'
 
 const props = defineProps<{
   items: SheetItem[],

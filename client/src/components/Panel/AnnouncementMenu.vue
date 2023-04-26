@@ -77,7 +77,7 @@
 
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue'
-import { getEvery, Range } from '../SheetsAPI'
+import { getEvery, Range } from '../../SheetsAPI'
 import { useDisplay } from 'vuetify'
 
 const { mdAndUp, smAndDown } = useDisplay()

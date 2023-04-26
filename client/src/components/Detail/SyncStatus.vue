@@ -35,7 +35,7 @@
 <script setup lang="ts">
 import { inject } from "vue";
 import type { Ref } from "vue";
-import type { SyncState } from "../UpdateManager";
+import type { SyncState } from "../../UpdateManager";
 
 const syncState = inject<Ref<SyncState>>("syncState");
 </script>

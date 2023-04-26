@@ -82,8 +82,8 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { Thesis, ThesisDecision } from '../SheetTypes'
-import { termValidator } from '../TermValidator'
+import { Thesis, ThesisDecision } from '../../SheetTypes'
+import { termValidator } from '../../TermValidator'
 import { useDisplay } from 'vuetify'
 
 const props = defineProps<{

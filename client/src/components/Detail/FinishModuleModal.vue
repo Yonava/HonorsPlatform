@@ -97,9 +97,9 @@
 
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from "vue";
-import { Grade, Module, CompletedModule } from '../SheetTypes'
-import { moveRowToRange, Range } from '../SheetsAPI'
-import { unmapCompletedModules } from '../DataMappers'
+import { Grade, Module, CompletedModule } from '../../SheetTypes'
+import { moveRowToRange, Range } from '../../SheetsAPI'
+import { unmapCompletedModules } from '../../DataMappers'
 
 const props = defineProps<{
   show: boolean;

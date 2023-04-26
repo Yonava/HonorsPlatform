@@ -67,7 +67,7 @@
 </template>
 
 <script setup lang="ts">
-import ModalContent from './ModalContent.vue'
+import ModalContent from '../ModalContent.vue'
 import { useDisplay } from 'vuetify'
 import { computed, onMounted, ref } from 'vue' 
 

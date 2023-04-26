@@ -119,12 +119,12 @@
 
 <script setup lang="ts">
 import { computed, watch, ref } from 'vue'
-import { Module } from '../SheetTypes'
+import { Module } from '../../SheetTypes'
 import { useDisplay } from 'vuetify'
-import { termValidator, getCurrentTerm } from '../TermValidator'
+import { termValidator, getCurrentTerm } from '../../TermValidator'
 import FinishModuleModal from './FinishModuleModal.vue'
-import ModalContent from './ModalContent.vue'
-import { instructorAutoComplete } from '../InstructorAutoComplete'
+import ModalContent from '../ModalContent.vue'
+import { instructorAutoComplete } from '../../InstructorAutoComplete'
 
 const props = defineProps<{
   module: Module

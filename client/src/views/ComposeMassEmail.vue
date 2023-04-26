@@ -161,7 +161,7 @@
 import { all } from "axios";
 import { ref, computed, watch } from "vue";
 import { useDisplay } from "vuetify";
-import MassEmailFilter from "../components/MassEmailFilter.vue";
+import MassEmailFilter from "../components/MassEmail/MassEmailFilter.vue";
 
 const { smAndDown, xs } = useDisplay();
 
