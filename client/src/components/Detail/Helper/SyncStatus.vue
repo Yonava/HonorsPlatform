@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div 
+    <div
       v-if="syncState.processing"
       class="d-flex flex-row align-center"
       style="height: 25px"
@@ -14,19 +14,19 @@
         saving all changes...
       </p>
     </div>
-    <p 
+    <p
       v-else
       style="height: 25px"
     >
       <v-icon>
         mdi-cloud-check-variant-outline
       </v-icon>
-      saved at 
-      {{ 
+      saved at
+      {{
         syncState.lastSynced.toLocaleTimeString([], {
           hour: "2-digit",
           minute: "2-digit",
-        }).toLowerCase() 
+        }).toLowerCase()
       }}
     </p>
   </div>
@@ -35,7 +35,7 @@
 <script setup lang="ts">
 import { inject } from "vue";
 import type { Ref } from "vue";
-import type { SyncState } from "../../UpdateManager";
+import type { SyncState } from "../../../UpdateManager";
 
 const syncState = inject<Ref<SyncState>>("syncState");
 </script>

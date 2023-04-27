@@ -47,16 +47,16 @@
             Add Note
           </v-btn>
         </div>
-        <div 
+        <div
           v-else
           class="d-flex flex-column mb-4"
         >
-          <v-text-field 
+          <v-text-field
             v-model="tempInitials"
             label="Initials"
             variant="outlined"
           ></v-text-field>
-          <v-btn 
+          <v-btn
             @click="setInitials"
             color="blue-darken-2"
           >Set Initials</v-btn>
@@ -67,9 +67,9 @@
 </template>
 
 <script setup lang="ts">
-import ModalContent from '../ModalContent.vue'
+import ModalContent from '../../ModalContent.vue'
 import { useDisplay } from 'vuetify'
-import { computed, onMounted, ref } from 'vue' 
+import { computed, onMounted, ref } from 'vue'
 
 const props = defineProps<{
   show: boolean

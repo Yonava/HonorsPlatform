@@ -1,8 +1,8 @@
 <template>
   <div>
-    <div 
-      v-for="event in engagements" 
-      :key="event.id" 
+    <div
+      v-for="event in engagements"
+      :key="event.id"
       @click="select(event)"
     >
       <v-sheet
@@ -32,14 +32,14 @@
 </template>
 
 <script setup lang="ts">
-import { GradEngagement } from "../../SheetTypes"
+import { GradEngagement } from "../../../SheetTypes"
 
 const props = defineProps<{
   engagements: GradEngagement[];
 }>();
 
 const emits = defineEmits([
-  'selected', 
+  'selected',
   'delete'
 ]);
 

@@ -1,5 +1,5 @@
 <template>
-  <div 
+  <div
     ref="el"
     :class="[
       'pa-5',
@@ -9,7 +9,7 @@
   >
     <div>
 
-      <DetailHeader 
+      <DetailHeader
         v-model="item.courseCode"
         :id="item.studentId"
         placeholder="Course Code"
@@ -61,7 +61,7 @@
           </template>
         </v-text-field>
       </div>
-      <div 
+      <div
         style="transform: translateY(-15px);"
         class="d-flex flex-row"
       >
@@ -86,10 +86,10 @@
         :module="item"
       />
     </div>
-    <div 
+    <div
       :class="[
-        sm ? '' : 'ml-5', 
-        'd-flex', 
+        sm ? '' : 'ml-5',
+        'd-flex',
         'flex-column',
         'align-center'
       ]"
@@ -116,13 +116,13 @@
           color="orange-darken-2"
           size="large"
         >
-          <v-icon 
+          <v-icon
             class="mr-2"
             size="x-large"
           >mdi-check</v-icon>
           Mark Module As Completed
         </v-btn>
-        <v-btn 
+        <v-btn
           @click="$emit('delete')"
           size="large"
           color="red"
@@ -144,8 +144,8 @@ import { ref, watch } from 'vue'
 import { useElementSize } from '@vueuse/core'
 import { Module } from '../../SheetTypes'
 import { termValidator } from '../../TermValidator'
-import DetailHeader from './DetailHeader.vue'
-import FinishModuleModal from './FinishModuleModal.vue'
+import DetailHeader from './Helper/DetailHeader.vue'
+import FinishModuleModal from './Helper/FinishModuleModal.vue'
 import { instructorAutoComplete } from '../../InstructorAutoComplete'
 
 const props = defineProps<{
@@ -153,7 +153,7 @@ const props = defineProps<{
 }>()
 
 const emits = defineEmits([
-  'delete', 
+  'delete',
   'unselect'
 ])
 

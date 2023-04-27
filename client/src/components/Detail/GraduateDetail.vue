@@ -1,5 +1,5 @@
 <template>
-  <div 
+  <div
     ref="el"
     :class="[
       'pa-5',
@@ -8,13 +8,13 @@
     ]"
   >
     <div>
-      
-      <DetailHeader 
+
+      <DetailHeader
         v-model="item.name"
         :id="item.id"
         placeholder="Name"
       >
-        <template 
+        <template
           v-if="!item.id"
           #id
         >
@@ -36,7 +36,7 @@
           label="Email"
           prepend-icon="mdi-email"
         ></v-text-field>
-        <v-btn 
+        <v-btn
           v-if="item.email"
           @click="sendEmail"
           size="small"
@@ -57,7 +57,7 @@
 
       <v-btn
         v-if="!item.graduationDate"
-        @click="item.graduationDate = new Date().toLocaleString().split(',')[0]" 
+        @click="item.graduationDate = new Date().toLocaleString().split(',')[0]"
         size="x-small"
         color="purple-darken-2"
         class="mb-2"
@@ -69,20 +69,20 @@
         prepend-icon="mdi-calendar"
       ></v-text-field>
 
-      <EngagementTracking 
+      <EngagementTracking
         @update="engagements = $event"
         @loading-state="loadingEngagements = $event"
         :id="item.id"
       />
     </div>
-    <v-divider 
+    <v-divider
       v-if="sm"
       class="my-2"
     ></v-divider>
-    <div 
+    <div
       :class="[
-        sm ? '' : 'ml-5', 
-        'd-flex', 
+        sm ? '' : 'ml-5',
+        'd-flex',
         'flex-column',
         'align-center'
       ]"
@@ -117,7 +117,7 @@
           >mdi-account-arrow-right</v-icon>
           Move Back to Students
         </v-btn>
-        <v-btn 
+        <v-btn
           @click="$emit('delete')"
           :disabled="!canDelete"
           size="large"
@@ -141,8 +141,8 @@ import { moveRowToRange, Range } from '../../SheetsAPI'
 import { unmapStudents } from '../../DataMappers'
 import { useElementSize } from '@vueuse/core'
 import { Graduate, GradEngagement } from '../../SheetTypes'
-import EngagementTracking from './EngagementTracking.vue'
-import DetailHeader from './DetailHeader.vue'
+import EngagementTracking from './Helper/EngagementTracking.vue'
+import DetailHeader from './Helper/DetailHeader.vue'
 import { emailValidator, phoneValidator } from '../../EmailUtilities'
 
 const props = defineProps<{
@@ -150,7 +150,7 @@ const props = defineProps<{
 }>()
 
 const emits = defineEmits([
-  'delete', 
+  'delete',
   'unselect'
 ])
 
@@ -206,9 +206,9 @@ async function moveToStudents() {
 
 <style scoped>
 input.header-input {
-  font-weight: 900; 
-  font-size: 3em; 
-  line-height: 0.9; 
+  font-weight: 900;
+  font-size: 3em;
+  line-height: 0.9;
   width: 100%;
 }
 

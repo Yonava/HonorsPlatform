@@ -10,7 +10,7 @@
       <h1>
         Let's Finish It Up!
       </h1>
-      <div 
+      <div
         v-if="!loading"
         style="width: 90%;"
       >
@@ -45,7 +45,7 @@
           </div>
         </div>
       </div>
-      <div 
+      <div
         v-else
         class="mt-7"
       >
@@ -80,8 +80,8 @@
         </h2>
         </div>
         <p>
-          Moved <strong>{{ movedModule.courseCode }}</strong> to completed modules 
-          with a grade of <strong>{{ movedModule.grade || "ungraded" }}</strong>. 
+          Moved <strong>{{ movedModule.courseCode }}</strong> to completed modules
+          with a grade of <strong>{{ movedModule.grade || "ungraded" }}</strong>.
           This module is now accessible through the completed modules tab.
         </p>
       <v-btn
@@ -97,9 +97,9 @@
 
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from "vue";
-import { Grade, Module, CompletedModule } from '../../SheetTypes'
-import { moveRowToRange, Range } from '../../SheetsAPI'
-import { unmapCompletedModules } from '../../DataMappers'
+import { Grade, Module, CompletedModule } from '../../../SheetTypes'
+import { moveRowToRange, Range } from '../../../SheetsAPI'
+import { unmapCompletedModules } from '../../../DataMappers'
 
 const props = defineProps<{
   show: boolean;
@@ -147,9 +147,9 @@ async function moveToCompleted() {
     ...completedModuleData.value
   }
   await moveRowToRange(
-    Range.MODULES, 
-    Range.COMPLETED_MODULES, 
-    props.module.row, 
+    Range.MODULES,
+    Range.COMPLETED_MODULES,
+    props.module.row,
     unmapCompletedModules([movedModule.value])
   )
   loading.value = false

@@ -1,5 +1,5 @@
 <template>
-  <div 
+  <div
     ref="el"
     :class="[
       'pa-5',
@@ -8,21 +8,21 @@
     ]"
   >
     <div>
-      <DetailHeader 
+      <DetailHeader
         v-model="item.name"
         :id="item.id"
         placeholder="Student Name"
       >
-        <template 
+        <template
           v-if="!item.id"
           #id
         >
-          <v-dialog 
+          <v-dialog
             v-model="idDialog"
             width="300"
           >
             <template #activator="{ props }">
-              <v-btn 
+              <v-btn
                 v-bind="props"
                 size="x-small"
                 color="red"
@@ -32,7 +32,7 @@
             </template>
             <div class="student-id-dialog pa-4">
               <v-icon color="red">mdi-alert</v-icon>
-              <p 
+              <p
                 style="color: red"
                 class="mb-2"
               >
@@ -80,10 +80,10 @@
           label="Email"
           prepend-icon="mdi-email"
         ></v-text-field>
-        <v-btn 
+        <v-btn
           v-if="item.email"
           @click="sendEmail"
-          class="ml-4" 
+          class="ml-4"
           size="small"
           color="blue-darken-2"
         >
@@ -121,7 +121,7 @@
         label="Athletics"
         class="mt-2"
       ></v-autocomplete>
-      
+
       <ModuleFetch
         @update="modules = $event"
         @loading-state="loadingModules = $event"
@@ -129,11 +129,11 @@
       />
 
       <div style="width: 1px; height: 10px"></div>
-      
+
       <h2>
         Other:
       </h2>
-      <div 
+      <div
         style="overflow: auto; max-height: 180px;"
         class="d-flex flex-row flex-wrap"
       >
@@ -154,14 +154,14 @@
         </div>
       </div>
     </div>
-    <v-divider 
+    <v-divider
       v-if="sm"
       class="my-2"
     ></v-divider>
-    <div 
+    <div
       :class="[
-        sm ? '' : 'ml-5', 
-        'd-flex', 
+        sm ? '' : 'ml-5',
+        'd-flex',
         'flex-column',
         'align-center'
       ]"
@@ -182,7 +182,7 @@
           label="Meeting notes"
         ></v-textarea>
       </div>
-      <div 
+      <div
         :class="[
           'd-flex',
           'flex-column'
@@ -196,13 +196,13 @@
           size="large"
           color="blue-darken-2"
         >
-          <v-icon 
+          <v-icon
             class="mr-4"
             size="x-large"
           >mdi-school-outline</v-icon>
           Move To Graduates
         </v-btn>
-        <v-btn 
+        <v-btn
           @click="reqDeleteStudent"
           :disabled="!canDelete"
           size="large"
@@ -217,7 +217,7 @@
         </v-btn>
       </div>
     </div>
-    <AddStudentNote 
+    <AddStudentNote
       @success="addStudentNote($event)"
       @close="showAddNote = false"
       :show="showAddNote"
@@ -226,17 +226,17 @@
 </template>
 
 <script setup lang="ts">
-import { 
-  ref, 
-  watch, 
+import {
+  ref,
+  watch,
   computed,
   toRefs
 } from 'vue'
 import { useElementSize } from '@vueuse/core'
 import { useDisplay } from 'vuetify'
-import DetailHeader from './DetailHeader.vue'
-import ModuleFetch from './ModuleFetch.vue'
-import AddStudentNote from './AddStudentNote.vue'
+import DetailHeader from './Helper/DetailHeader.vue'
+import ModuleFetch from './Helper/ModuleFetch.vue'
+import AddStudentNote from './Helper/AddStudentNote.vue'
 import { moveRowToRange, Range } from '../../SheetsAPI'
 import { unmapStudents, unmapGraduates } from '../../DataMappers'
 import { Student, Module } from '../../SheetTypes'
@@ -250,7 +250,7 @@ const props = defineProps<{
 const { xs } = useDisplay()
 
 const emits = defineEmits([
-  'delete', 
+  'delete',
   'unselect'
 ])
 
@@ -326,9 +326,9 @@ async function saveId() {
 async function moveToGraduates() {
   movingStudent.value = true
   await moveRowToRange(
-    Range.STUDENTS, 
+    Range.STUDENTS,
     Range.GRADUATES,
-    props.item.row, 
+    props.item.row,
     unmapGraduates([{
       row: props.item.row,
       id: props.item.id,
@@ -351,8 +351,8 @@ function addStudentNote(event: { initials: string, note: string }) {
 
 <style scoped>
 .student-id-dialog {
-  background: rgb(244, 244, 244); 
-  border-radius: 5px; 
+  background: rgb(244, 244, 244);
+  border-radius: 5px;
   box-shadow: 0 0 10px 0 rgba(0,0,0,0.2);
 }
 </style>

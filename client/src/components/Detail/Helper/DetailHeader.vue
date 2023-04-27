@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="d-flex flex-row align-center"> 
+    <div class="d-flex flex-row align-center">
       <p style="font-weight: 200">
         {{ id }}
       </p>
@@ -9,10 +9,10 @@
       <SyncStatus />
     </div>
     <div class="d-flex flex-row align-center">
-      <input 
+      <input
         v-model="title"
         :placeholder="placeholder"
-        type="text" 
+        type="text"
         class="header-input"
       >
     </div>
@@ -52,9 +52,9 @@ const id = computed(() => {
 
 <style scoped>
 input.header-input {
-  font-weight: 900; 
-  font-size: 3em; 
-  line-height: 0.9; 
+  font-weight: 900;
+  font-size: 3em;
+  line-height: 0.9;
   width: 100%;
 }
 

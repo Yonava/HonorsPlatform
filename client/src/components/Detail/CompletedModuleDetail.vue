@@ -1,5 +1,5 @@
 <template>
-  <div 
+  <div
     ref="el"
     :class="[
       'pa-5',
@@ -9,7 +9,7 @@
   >
     <div>
 
-      <DetailHeader 
+      <DetailHeader
         v-model="item.courseCode"
         :id="item.studentId"
         placeholder="Course Code"
@@ -62,23 +62,23 @@
         <h2>
           Final Grade
         </h2>
-        <input 
+        <input
           v-model="item.grade"
-          type="text" 
-          class="header-input" 
+          type="text"
+          class="header-input"
           placeholder="Grade"
           style="font-size: 5em; text-align: center;"
         >
       </div>
     </div>
-    <v-divider 
+    <v-divider
       v-if="sm"
       class="my-2"
     ></v-divider>
-    <div 
+    <div
       :class="[
-        sm ? '' : 'ml-5', 
-        'd-flex', 
+        sm ? '' : 'ml-5',
+        'd-flex',
         'flex-column',
         'align-center'
       ]"
@@ -100,7 +100,7 @@
         ]"
         style="width: 100%"
       >
-        <v-btn 
+        <v-btn
           @click="$emit('delete')"
           size="large"
           color="red"
@@ -118,7 +118,7 @@
 </template>
 
 <script setup lang="ts">
-import DetailHeader from './DetailHeader.vue'
+import DetailHeader from './Helper/DetailHeader.vue'
 import { watch, ref, toRefs } from 'vue'
 import { useElementSize } from '@vueuse/core'
 import { CompletedModule } from '../SheetTypes'
@@ -143,9 +143,9 @@ const emits = defineEmits([
 
 <style scoped>
 input.header-input {
-  font-weight: 900; 
-  font-size: 3em; 
-  line-height: 0.9; 
+  font-weight: 900;
+  font-size: 3em;
+  line-height: 0.9;
   width: 100%;
 }
 

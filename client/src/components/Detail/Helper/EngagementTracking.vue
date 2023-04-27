@@ -1,6 +1,6 @@
 <template>
   <div>
-    <LockArea 
+    <LockArea
       v-if="!id"
       title="Engagement Tracking"
       condition="grad ID"
@@ -10,13 +10,13 @@
         <h1 class="mb-2">
           Engagement Tracking
         </h1>
-        <v-btn 
-          @click="openModal(getNewEngagement())" 
-          color="green" 
+        <v-btn
+          @click="openModal(getNewEngagement())"
+          color="green"
           size="small"
         >
-          <v-icon 
-          class="mr-2" 
+          <v-icon
+          class="mr-2"
           size="x-large"
         >mdi-plus</v-icon>
           Add Event
@@ -47,7 +47,7 @@
           :engagements="engagements"
         />
       </div>
-      <GradEngagementModal 
+      <GradEngagementModal
         @close="closeModal"
         @add="addEngagementEvent($event)"
         @update="updateEngagementEvent($event)"
@@ -62,16 +62,16 @@
 import { ref, computed, watch } from 'vue'
 import EngagementView from './EngagementView.vue'
 import LockArea from './LockArea.vue'
-import { GradEngagement } from '../../SheetTypes'
+import { GradEngagement } from '../../../SheetTypes'
 import GradEngagementModal from './GradEngagementModal.vue'
-import { mapGradEngagement, unmapGradEngagement } from '../../DataMappers'
-import { 
-  getEvery, 
-  clearByRow, 
-  postInRange, 
-  Range, 
-  updateByRow 
-} from '../../SheetsAPI'
+import { mapGradEngagement, unmapGradEngagement } from '../../../DataMappers'
+import {
+  getEvery,
+  clearByRow,
+  postInRange,
+  Range,
+  updateByRow
+} from '../../../SheetsAPI'
 
 const props = defineProps<{
   id: string | undefined
@@ -80,7 +80,7 @@ const props = defineProps<{
 const clone = <T>(obj: T): T => JSON.parse(JSON.stringify(obj))
 
 const emits = defineEmits([
-  'update', 
+  'update',
   'loading-state'
 ])
 const loading = ref(true)

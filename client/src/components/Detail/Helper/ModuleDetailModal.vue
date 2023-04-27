@@ -1,15 +1,15 @@
 <template>
   <ModalContent v-model="showDialog">
-    <div 
+    <div
       v-if="selectedModule"
       class="d-flex justify-center align-center"
     >
-      <v-card 
+      <v-card
         class="pa-5"
         :width="xs ? '100%' : '550'"
         elevation="0"
       >
-        <v-sheet 
+        <v-sheet
           class="py-2 px-4 d-flex align-center"
           color="blue-darken-2"
           style="font-weight: bold; color: white; border-radius: 20px; width: 120%"
@@ -19,7 +19,7 @@
             Edit Module
           </span>
         </v-sheet>
-        <input 
+        <input
           type="text"
           v-model="selectedModule.courseCode"
           placeholder="Course Code"
@@ -52,14 +52,14 @@
             variant="outlined"
           ></v-text-field>
           <div class="d-flex flex-row mb-3">
-            <v-btn 
+            <v-btn
               v-if="!selectedModule.docuSignCreated"
               @click="selectedModule.docuSignCreated = new Date().toLocaleDateString()"
               color="blue"
               size="x-small"
             >Created Now</v-btn>
             <v-spacer></v-spacer>
-            <v-btn 
+            <v-btn
               v-if="!selectedModule.docuSignCompleted"
               @click="selectedModule.docuSignCompleted = new Date().toLocaleDateString()"
               color="blue"
@@ -119,12 +119,12 @@
 
 <script setup lang="ts">
 import { computed, watch, ref } from 'vue'
-import { Module } from '../../SheetTypes'
+import { Module } from '../../../SheetTypes'
 import { useDisplay } from 'vuetify'
-import { termValidator, getCurrentTerm } from '../../TermValidator'
+import { termValidator, getCurrentTerm } from '../../../TermValidator'
 import FinishModuleModal from './FinishModuleModal.vue'
-import ModalContent from '../ModalContent.vue'
-import { instructorAutoComplete } from '../../InstructorAutoComplete'
+import ModalContent from '../../ModalContent.vue'
+import { instructorAutoComplete } from '../../../InstructorAutoComplete'
 
 const props = defineProps<{
   module: Module
@@ -132,7 +132,7 @@ const props = defineProps<{
 }>()
 
 const emits = defineEmits([
-  'close', 
+  'close',
   'update'
 ])
 
@@ -141,7 +141,7 @@ const startingState = ref<Module>(null)
 const showCompleteModal = ref(false)
 const clone = <T>(obj: T) => JSON.parse(JSON.stringify(obj))
 
-const { xs } = useDisplay() 
+const { xs } = useDisplay()
 
 watch(() => props.show, (val) => {
   if (val) {

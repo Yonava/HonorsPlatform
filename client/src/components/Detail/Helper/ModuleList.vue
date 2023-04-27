@@ -1,32 +1,32 @@
 <template>
   <div style="overflow: auto; max-height: 150px;">
-    <div 
+    <div
       v-for="mod in modules"
       :key="mod.courseCode"
       @click="select(mod)"
       class="module-card pa-2 mt-2 d-flex flex-row align-center"
     >
       <div style="d-flex flex-column align-center">
-        <div 
+        <div
           class="mb-2"
           style="color: white; opacity: 0.75; font-size: 0.75em;"
         >
           {{ mod.term }}
         </div>
         <div class="d-flex flex-row align-center mb-3">
-          <h4 
+          <h4
             class=""
             style="color: rgba(255,255,255,0.9); font-size: 1.25em; line-height: 0.3;"
           >
             {{ mod.courseCode }}
           </h4>
-          <span 
-            class="ml-2" 
+          <span
+            class="ml-2"
             style="color: white; line-height: 0.3; font-weight: 300;"
           >{{ mod.description }}</span>
         </div>
       </div>
-      <v-icon 
+      <v-icon
         @click.stop="remove(mod)"
         color="white"
         style="cursor: pointer; margin-left: auto;"
@@ -39,14 +39,14 @@
 </template>
 
 <script setup lang="ts">
-import { Module } from "../../SheetTypes"
+import { Module } from "../../../SheetTypes"
 
 const props = defineProps<{
   modules: Module[];
 }>();
 
 const emits = defineEmits([
-  'selected', 
+  'selected',
   'delete'
 ]);
 
@@ -64,7 +64,7 @@ const remove = (event: Module) => emits('delete', event);
 }
 
 .module-card:hover {
-  background: #2559b9;  
+  background: #2559b9;
 }
 
 .delete-module {

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <LockArea 
+    <LockArea
       v-if="!id"
       title="Module Tracking"
       condition="student ID"
@@ -46,13 +46,13 @@
           :modules="modules"
         />
       </div>
-      <ModuleDetailModal 
+      <ModuleDetailModal
         @close="closeModal"
         @update="updateModule($event)"
         :module="selectedModule"
         :show="showModal"
       />
-      <AddModal 
+      <AddModal
         @close="showAddModal = false"
         @success="fetch"
         :show="showAddModal"
@@ -70,19 +70,19 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import ModuleList from './ModuleList.vue'
-import AddModal from '../AddModal.vue'
+import AddModal from '../../AddModal.vue'
 import LockArea from './LockArea.vue'
-import { Module } from '../../SheetTypes'
-import { PanelType, switchPanel } from '../../SwitchPanel'
+import { Module } from '../../../SheetTypes'
+import { PanelType, switchPanel } from '../../../SwitchPanel'
 import ModuleDetailModal from './ModuleDetailModal.vue'
-import { mapModules, unmapModules } from '../../DataMappers'
-import { 
-  getEvery, 
-  clearByRow, 
-  postInRange, 
-  Range, 
-  updateByRow 
-} from '../../SheetsAPI'
+import { mapModules, unmapModules } from '../../../DataMappers'
+import {
+  getEvery,
+  clearByRow,
+  postInRange,
+  Range,
+  updateByRow
+} from '../../../SheetsAPI'
 
 const props = defineProps<{
   id: string | undefined
@@ -91,7 +91,7 @@ const props = defineProps<{
 const clone = <T>(obj: T): T => JSON.parse(JSON.stringify(obj))
 
 const emits = defineEmits([
-  'update', 
+  'update',
   'loading-state'
 ])
 const loading = ref(true)

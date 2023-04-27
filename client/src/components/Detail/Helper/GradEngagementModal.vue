@@ -1,6 +1,6 @@
 <template>
   <ModalContent v-model="showDialog">
-    <div 
+    <div
       v-if="item"
       class="d-flex justify-center align-center"
     >
@@ -9,7 +9,7 @@
         :width="xs ? '100%' : '550'"
         elevation="0"
       >
-        <v-sheet 
+        <v-sheet
           class="py-2 px-4 d-flex align-center"
           color="purple-darken-2"
           style="font-weight: bold; color: white; border-radius: 20px; width: 120%"
@@ -22,7 +22,7 @@
         <div class="my-5">
           <div class="d-flex flex-row mb-3">
             <v-spacer></v-spacer>
-            <v-btn 
+            <v-btn
               v-if="!item.dateTime"
               @click="item.dateTime = getNewDate()"
               color="purple"
@@ -85,8 +85,8 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import { useDisplay } from 'vuetify'
-import ModalContent from '../ModalContent.vue'
-import { GradEngagement } from '../../SheetTypes'
+import ModalContent from '../../ModalContent.vue'
+import { GradEngagement } from '../../../SheetTypes'
 
 const props = defineProps<{
   item: GradEngagement | undefined,
@@ -113,7 +113,7 @@ const creating = computed(() => !item.value.gradId)
 const bannerText = computed(() => creating.value ? 'Create Event' : 'Update Event')
 
 const emits = defineEmits([
-  'close', 
+  'close',
   'update',
   'add'
 ])

@@ -1,5 +1,5 @@
 <template>
-  <div 
+  <div
     ref="el"
     :class="[
       'pa-5',
@@ -9,7 +9,7 @@
   >
     <div>
 
-      <DetailHeader 
+      <DetailHeader
         v-model="item.title"
         :id="item.studentId"
         placeholder="Thesis Title"
@@ -30,7 +30,7 @@
         <span v-else>
           {{ studentDataState.error }}
         </span>
-      </v-btn> 
+      </v-btn>
       <v-text-field
         v-model="item.name"
         label="Student Name"
@@ -137,14 +137,14 @@
         </v-text-field>
       </div>
     </div>
-    <v-divider 
+    <v-divider
       v-if="sm"
       class="my-2"
     ></v-divider>
-    <div 
+    <div
       :class="[
-        sm ? '' : 'ml-5', 
-        'd-flex', 
+        sm ? '' : 'ml-5',
+        'd-flex',
         'flex-column',
         'align-center'
       ]"
@@ -166,7 +166,7 @@
         ]"
         style="width: 100%"
       >
-        <v-btn 
+        <v-btn
           @click="$emit('delete')"
           size="large"
           color="red"
@@ -190,11 +190,11 @@ import { useElementSize } from '@vueuse/core'
 import { Thesis } from '../../SheetTypes'
 import { getEvery, Range } from '../../SheetsAPI'
 import { mapStudents } from '../../DataMappers'
-import DetailHeader from './DetailHeader.vue'
-import { 
-  emailValidator, 
+import DetailHeader from './Helper/DetailHeader.vue'
+import {
+  emailValidator,
   getFacultyEmail,
-  getStudentEmail 
+  getStudentEmail
 } from '../../EmailUtilities'
 
 const props = defineProps<{
@@ -216,7 +216,7 @@ watch(width, (newWidth) => {
 }, { immediate: true })
 
 const emits = defineEmits([
-  'delete', 
+  'delete',
   'unselect'
 ])
 
