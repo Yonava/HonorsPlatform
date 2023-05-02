@@ -16,7 +16,7 @@
         >
           <v-icon class="mr-1">mdi-file-document-edit-outline</v-icon>
           <span>
-            Edit Module
+            {{ newModule ? 'Create' : 'Update' }} Module
           </span>
         </v-sheet>
         <input
@@ -89,19 +89,28 @@
             @click="update"
             color="green"
             variant="outlined"
-          >update</v-btn>
+          >
+            {{ newModule ? 'create' : 'update' }}
+          </v-btn>
           <v-btn
-            v-if="xs"
+            v-if="xs && !newModule"
             @click="emits('close')"
             color="red"
             variant="outlined"
           >close</v-btn>
           <v-spacer></v-spacer>
           <v-btn
+            v-if="!newModule"
             @click="showCompleteModal = true"
             variant="outlined"
             color="blue"
           >complete</v-btn>
+          <v-btn
+            v-else
+            @click="emits('close')"
+            variant="outlined"
+            color="red"
+          >discard</v-btn>
         </v-card-actions>
       </v-card>
     </div>
@@ -116,7 +125,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, watch, ref } from 'vue'
+import { watch, ref, computed } from 'vue'
 import { Module } from '../../../SheetTypes'
 import { useDisplay } from 'vuetify'
 import { termValidator, getCurrentTerm } from '../../../TermValidator'
@@ -137,6 +146,8 @@ const emits = defineEmits([
 const selectedModule = ref<Module>(null)
 const startingState = ref<Module>(null)
 const showCompleteModal = ref(false)
+const newModule = ref(false)
+
 const clone = <T>(obj: T) => JSON.parse(JSON.stringify(obj))
 
 const { xs } = useDisplay()
@@ -157,7 +168,12 @@ function update() {
 }
 
 const showDialog = computed({
-  get: () => props.show,
+  get: () => {
+    if (props.show && props.module) {
+      newModule.value = props.module.row === -1
+    }
+    return props.show
+  },
   set: (val) => emits('close')
 })
 </script>

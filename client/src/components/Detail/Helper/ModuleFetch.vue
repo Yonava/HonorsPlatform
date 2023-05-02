@@ -12,7 +12,7 @@
         </h2>
         <v-spacer></v-spacer>
         <v-btn
-          @click="showAddModal = true"
+          @click="addNewModule"
           size="small"
           color="green"
         >
@@ -52,16 +52,6 @@
         :module="selectedModule"
         :show="showModal"
       />
-      <AddModal
-        @close="showAddModal = false"
-        @success="fetch"
-        :show="showAddModal"
-        :panel="switchPanel(PanelType.MODULES)"
-        :override="{
-          color: 'blue',
-          predefineColumnData: [id],
-        }"
-      />
     </div>
   </div>
 
@@ -70,11 +60,9 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import ModuleList from './ModuleList.vue'
-import AddModal from '../../AddModal.vue'
 import LockArea from './LockArea.vue'
-import { Module } from '../../../SheetTypes'
-import { PanelType, switchPanel } from '../../../SwitchPanel'
 import ModuleDetailModal from './ModuleDetailModal.vue'
+import { Module } from '../../../SheetTypes'
 import { mapModules, unmapModules } from '../../../DataMappers'
 import {
   getEvery,
@@ -98,7 +86,6 @@ const loading = ref(true)
 const modules = ref<Module[]>([])
 const selectedModule = ref<Module | undefined>(undefined)
 const showModal = ref(false)
-const showAddModal = ref(false)
 
 watch(loading, (val) => {
   emits('loading-state', val)
@@ -117,12 +104,16 @@ async function fetch() {
   loading.value = false
 }
 
-async function updateModule(event: Module) {
+async function updateModule(newModule: Module) {
   loading.value = true
   closeModal()
-  if (event) {
-    await updateByRow(Range.MODULES, event.row, unmapModules([event]))
+
+  if (newModule && newModule.row === -1) {
+    await postInRange(Range.MODULES, unmapModules([newModule]))
+  } else if (newModule) {
+    await updateByRow(Range.MODULES, newModule.row, unmapModules([newModule]))
   }
+
   await fetch()
 }
 
@@ -140,5 +131,19 @@ function openModal(selected: Module) {
 function closeModal() {
   showModal.value = false
   selectedModule.value = undefined
+}
+
+function addNewModule() {
+  selectedModule.value = {
+    studentId: props.id,
+    courseCode: '',
+    description: '',
+    term: '',
+    instructor: '',
+    docuSignCreated: '',
+    docuSignCompleted: '',
+    row: -1
+  }
+  showModal.value = true
 }
 </script>
