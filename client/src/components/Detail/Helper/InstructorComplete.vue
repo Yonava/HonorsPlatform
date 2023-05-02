@@ -1,7 +1,7 @@
 <template>
   <v-btn
     v-if="instructor !== instructorSuggestion"
-    @click="emits('click', instructorSuggestion)"
+    @click="emits('update', instructorSuggestion)"
     :disabled="!instructorSuggestion"
     :color="color"
     size="x-small"
@@ -17,7 +17,7 @@ import { computed } from 'vue'
 
 const props = defineProps<{
   color?: string,
-  instructor: string,
+  instructor: string | null,
 }>()
 
 const emits = defineEmits<{
@@ -25,7 +25,7 @@ const emits = defineEmits<{
 }>()
 
 const buttonText = computed(() => {
-  return instructorAutoComplete(props.instructor) || 'No Suggestions'
+  return instructorSuggestion.value || 'No Suggestions'
 })
 
 const instructorSuggestion = computed(() => {
