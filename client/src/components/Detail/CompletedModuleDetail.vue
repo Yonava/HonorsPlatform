@@ -87,7 +87,7 @@
         'flex-column',
         'align-center'
       ]"
-      :style="sm ? '' : 'width: 55%'"
+      :style="sm ? '' : 'width: 55%; max-width: 450px'"
     >
       <div style="width: 100%;">
         <v-textarea
