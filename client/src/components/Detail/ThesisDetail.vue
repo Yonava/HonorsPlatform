@@ -33,6 +33,7 @@
       </v-btn>
       <v-text-field
         v-model="item.name"
+        clearable
         label="Student Name"
         prepend-icon="mdi-account"
       ></v-text-field>
@@ -46,6 +47,7 @@
       <v-text-field
         v-model="item.email"
         :rules="[(v) => emailValidator(v) || 'Invalid email address']"
+        clearable
         label="Student Email"
         prepend-icon="mdi-email"
       ></v-text-field>
@@ -62,10 +64,10 @@
         <v-text-field
           v-model="item.term"
           :rules="[(v) => termValidator(v) || 'Potentially invalid term']"
+          clearable
           label="Term"
           prepend-icon="mdi-calendar"
         ></v-text-field>
-
 
       <div class="mb-2 d-flex flex-row ">
         <v-btn
@@ -86,12 +88,14 @@
       <div class="d-flex flex-row">
         <v-text-field
           v-model="item.draftReceived"
+          clearable
           label="Draft Received"
           prepend-icon="mdi-calendar-check"
           class="mr-6"
         ></v-text-field>
         <v-text-field
           v-model="item.proposalReceived"
+          clearable
           label="Proposal Received"
           prepend-icon="mdi-calendar-check"
         ></v-text-field>
@@ -103,8 +107,9 @@
           'Rejected',
           'Pending',
         ]"
-        label="Decision"
+        clearable
         :prepend-icon="item.decision === 'Approved' ? 'mdi-check-circle' : item.decision === 'Rejected' ? 'mdi-close-circle' : 'mdi-alert-circle'"
+        label="Decision"
       ></v-select>
       <div class="d-flex flex-row">
         <v-spacer></v-spacer>
@@ -116,9 +121,14 @@
           class="mb-2"
         >New Faculty Email</v-btn>
       </div>
+      <InstructorComplete
+        @update="item.mentor = $event"
+        :instructor="item.mentor"
+      />
       <div class="d-flex flex-row align-center justify-center">
         <v-text-field
           v-model="item.mentor"
+          clearable
           label="Faculty Mentor"
           class="mr-6"
         >
@@ -129,6 +139,7 @@
         <v-text-field
           v-model="item.mentorEmail"
           :rules="[(v) => emailValidator(v) || 'Invalid email address']"
+          clearable
           label="Faculty Mentor Email"
         >
           <template #prepend>
@@ -191,6 +202,7 @@ import { Thesis } from '../../SheetTypes'
 import { getEvery, Range } from '../../SheetsAPI'
 import { mapStudents } from '../../DataMappers'
 import DetailHeader from './Helper/DetailHeader.vue'
+import InstructorComplete from './Helper/InstructorComplete.vue'
 import {
   emailValidator,
   getFacultyEmail,

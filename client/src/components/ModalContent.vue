@@ -1,14 +1,14 @@
 <template>
   <div>
     <div v-if="!xs">
-      <v-dialog 
+      <v-dialog
         v-model="showDialog"
         width="600"
       >
         <slot></slot>
       </v-dialog>
     </div>
-    <v-sheet 
+    <v-sheet
       v-else-if="showDialog"
       :color="color"
       class="xs-outer-wrapper"
@@ -46,12 +46,12 @@ const showDialog = computed({
 
 <style scoped>
 .xs-outer-wrapper {
-  width: 100vw; 
-  height: 100vh; 
-  position: fixed; 
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
   overflow: auto;
-  top: 0; 
-  left: 0; 
+  top: 0;
+  left: 0;
   z-index: 10000;
 }
 </style>

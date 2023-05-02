@@ -11,7 +11,7 @@ export type SyncState = {
 }
 
 export function useUpdateManager(
-  selectedItemRef: Ref<SheetItem>, 
+  selectedItemRef: Ref<SheetItem>,
   panel: Ref<Panel<SheetItem>>,
   fetchItems: () => Promise<void>,
 ) {
@@ -35,8 +35,8 @@ export function useUpdateManager(
     if (syncState.value.processing || !selectedItemRef.value) return;
     syncState.value.processing = true;
     await updateByRow(
-      panel.value.sheetRange, 
-      selectedItemRef.value.row, 
+      panel.value.sheetRange,
+      selectedItemRef.value.row,
       await panel.value.mappers.unmap([
         selectedItemRef.value
       ])
@@ -56,8 +56,8 @@ export function useUpdateManager(
     };
     if (startingItem !== JSON.stringify(oldItem))  {
       await updateByRow(
-        panel.value.sheetRange, 
-        oldItem.row, 
+        panel.value.sheetRange,
+        oldItem.row,
         await panel.value.mappers.unmap([
           oldItem
         ])
@@ -84,7 +84,6 @@ export function useUpdateManager(
   const syncInterval = setInterval(async () => {
     if (syncState.value.status) return;
     await updateItem();
-    console.log('synced')
   }, 3500);
 
   const fetchInterval = setInterval(async () => {
