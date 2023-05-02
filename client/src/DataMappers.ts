@@ -175,6 +175,9 @@ export function unmapGradEngagement(engagements: GradEngagement[]): string[][] {
 export function mapTheses(sheetData: string[][]): Thesis[] {
   return sheetData
     .map((thesis, index) => {
+      if (thesis[8] && !instructorCache.includes(thesis[8])) {
+        instructorCache.push(thesis[8]);
+      }
       return {
         row: index + 2,
         studentId: thesis[0] ?? '',
