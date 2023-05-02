@@ -24,7 +24,6 @@ export function useUpdateManager(
   provide('syncState', syncState);
 
   let startingItem = '';
-  let blockDeepWatch = false;
   let switchedStudentProfile = false;
 
   async function updateItem() {
@@ -68,7 +67,6 @@ export function useUpdateManager(
   });
 
   watch(selectedItemRef, async (newItem, oldItem) => {
-    if (blockDeepWatch) return;
     switchedStudentProfile = newItem !== oldItem;
     if (switchedStudentProfile) {
       syncState.value = {
@@ -86,20 +84,8 @@ export function useUpdateManager(
     await updateItem();
   }, 3500);
 
-  const fetchInterval = setInterval(async () => {
-
-    if (document.hidden) return;
-    if (syncState.value.processing || !syncState.value.status) return;
-
-    blockDeepWatch = true;
-    await fetchItems();
-    blockDeepWatch = false;
-
-  }, 15000);
-
   onUnmounted(() => {
     clearInterval(syncInterval);
-    clearInterval(fetchInterval);
   });
 
   return {

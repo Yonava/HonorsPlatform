@@ -124,6 +124,7 @@
       <InstructorComplete
         @update="item.mentor = $event"
         :instructor="item.mentor"
+        color="green"
       />
       <div class="d-flex flex-row align-center justify-center">
         <v-text-field
