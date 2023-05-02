@@ -165,7 +165,7 @@
         'flex-column',
         'align-center'
       ]"
-      :style="sm ? '' : 'width: 55%'"
+      :style="sm ? '' : 'width: 55%; max-width: 450px'"
     >
       <div style="width: 100%;">
         <v-btn
@@ -187,7 +187,7 @@
           'd-flex',
           'flex-column'
         ]"
-        style="width: 100%"
+        style="width: 100%;"
       >
         <v-btn
           @click="moveToGraduates"
@@ -213,7 +213,7 @@
             class="mr-4"
             size="x-large"
           >mdi-delete</v-icon>
-          delete {{ item.name.split(' ')[0] }}
+          delete {{ item.name }}
         </v-btn>
       </div>
     </div>

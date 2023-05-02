@@ -117,7 +117,7 @@
           v-if="item.mentor && !item.mentorEmail"
           @click="item.mentorEmail = getFacultyEmail(item.mentor)"
           color="green"
-          size="small"
+          size="x-small"
           class="mb-2"
         >New Faculty Email</v-btn>
       </div>
@@ -129,24 +129,19 @@
       <div class="d-flex flex-row align-center justify-center">
         <v-text-field
           v-model="item.mentor"
-          clearable
+          prepend-icon="mdi-human-male-board"
           label="Faculty Mentor"
           class="mr-6"
-        >
-          <template #prepend>
-            <v-icon>mdi-human-male-board</v-icon>
-          </template>
-        </v-text-field>
+          style="width: 45%"
+        ></v-text-field>
         <v-text-field
           v-model="item.mentorEmail"
           :rules="[(v) => emailValidator(v) || 'Invalid email address']"
           clearable
+          prepend-icon="mdi-email"
           label="Faculty Mentor Email"
-        >
-          <template #prepend>
-            <v-icon>mdi-email</v-icon>
-          </template>
-        </v-text-field>
+          style="width: 45%"
+        ></v-text-field>
       </div>
     </div>
     <v-divider
