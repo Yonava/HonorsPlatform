@@ -31,6 +31,11 @@
           <v-icon>mdi-calendar</v-icon>
         </template>
       </v-text-field>
+      <InstructorComplete
+        @update="item.instructor = $event"
+        :instructor="item.instructor"
+        color="red"
+      />
       <v-text-field
         v-model="item.instructor"
         label="Instructor"
@@ -122,6 +127,7 @@ import DetailHeader from './Helper/DetailHeader.vue'
 import { watch, ref, toRefs } from 'vue'
 import { useElementSize } from '@vueuse/core'
 import { CompletedModule } from '../SheetTypes'
+import InstructorComplete from './Helper/InstructorComplete.vue'
 
 const props = defineProps<{
   item: CompletedModule

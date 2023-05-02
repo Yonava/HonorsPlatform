@@ -24,13 +24,11 @@
           <v-icon>mdi-calendar</v-icon>
         </template>
       </v-text-field>
-      <v-btn
-        @click="item.instructor = instructorAutoComplete(item.instructor)"
-        :disabled="!instructorAutoComplete(item.instructor)"
+      <InstructorComplete
+        @update="item.instructor = $event"
+        :instructor="item.instructor"
         color="orange-darken-2"
-        size="x-small"
-        class="mb-2"
-      >{{ instructorAutoComplete(item.instructor) || 'No Suggestions' }}</v-btn>
+      />
       <v-text-field
         v-model="item.instructor"
         label="Instructor"
@@ -42,42 +40,37 @@
       <h1 class="mb-2">
         Documentation
       </h1>
-      <div class="d-flex flex-row">
-        <v-text-field
-          v-model="item.docuSignCreated"
-          class="mr-6"
-          label="DocuSign Created"
-        >
-          <template #prepend>
-            <v-icon>mdi-calendar-alert</v-icon>
-          </template>
-        </v-text-field>
-        <v-text-field
-          v-model="item.docuSignCompleted"
-          label="DocuSign Completed"
-        >
-          <template #prepend>
-            <v-icon>mdi-calendar-check</v-icon>
-          </template>
-        </v-text-field>
-      </div>
-      <div
-        style="transform: translateY(-15px);"
-        class="d-flex flex-row"
-      >
+      <div class="d-flex flex-row mb-2">
         <v-btn
           v-if="!item.docuSignCreated"
           @click="item.docuSignCreated = new Date().toLocaleDateString()"
           color="orange-darken-2"
-          size="small"
-        >Created Now</v-btn>
+          size="x-small"
+        >Now</v-btn>
         <v-spacer></v-spacer>
         <v-btn
           v-if="!item.docuSignCompleted"
           @click="item.docuSignCompleted = new Date().toLocaleDateString()"
           color="orange-darken-2"
-          size="small"
-        >Completed Now</v-btn>
+          size="x-small"
+        >Now</v-btn>
+      </div>
+      <div class="d-flex flex-row">
+        <v-text-field
+          v-model="item.docuSignCreated"
+          clearable
+          prepend-icon="mdi-calendar-alert"
+          style="width: 45%"
+          class="mr-6"
+          label="DocuSign Created"
+        ></v-text-field>
+        <v-text-field
+          v-model="item.docuSignCompleted"
+          clearable
+          style="width: 45%"
+          prepend-icon="mdi-calendar-check"
+          label="DocuSign Completed"
+        ></v-text-field>
       </div>
       <FinishModuleModal
         @success="emits('unselect')"
@@ -146,7 +139,7 @@ import { Module } from '../../SheetTypes'
 import { termValidator } from '../../TermValidator'
 import DetailHeader from './Helper/DetailHeader.vue'
 import FinishModuleModal from './Helper/FinishModuleModal.vue'
-import { instructorAutoComplete } from '../../InstructorAutoComplete'
+import InstructorComplete from './Helper/InstructorComplete.vue'
 
 const props = defineProps<{
   item: Module

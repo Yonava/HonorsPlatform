@@ -122,7 +122,7 @@
         >New Faculty Email</v-btn>
       </div>
       <InstructorComplete
-        @update="item.mentor = $event"
+        @update="item.mentor = $event; item.mentorEmail = getFacultyEmail($event)"
         :instructor="item.mentor"
         color="green"
       />
