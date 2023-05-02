@@ -53,6 +53,7 @@
         >
           <v-text-field
             v-model="tempInitials"
+            clearable
             label="Initials"
             variant="outlined"
           ></v-text-field>
