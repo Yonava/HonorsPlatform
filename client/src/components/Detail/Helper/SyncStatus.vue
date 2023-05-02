@@ -23,19 +23,31 @@
       </v-icon>
       saved at
       {{
-        syncState.lastSynced.toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        }).toLowerCase()
+        syncTime
       }}
     </p>
   </div>
 </template>
 
 <script setup lang="ts">
-import { inject } from "vue";
+import { inject, computed } from "vue";
 import type { Ref } from "vue";
 import type { SyncState } from "../../../UpdateManager";
 
 const syncState = inject<Ref<SyncState>>("syncState");
+
+const syncTime = computed(() => {
+
+  const time = syncState.value.lastSynced.toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+  }).toLowerCase();
+
+  if (time.startsWith("0")) {
+    return time.slice(1);
+  } else {
+    return time;
+  }
+
+})
 </script>
