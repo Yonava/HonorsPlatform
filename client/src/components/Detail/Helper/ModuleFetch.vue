@@ -38,7 +38,7 @@
       </div>
       <div
         v-else
-        style="max-height: 500px; overflow: auto"
+        style="max-height: 300px; overflow: auto"
       >
         <ModuleList
           @selected="i => openModal(i)"

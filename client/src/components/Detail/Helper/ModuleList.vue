@@ -1,5 +1,5 @@
 <template>
-  <div style="overflow: auto; max-height: 150px;">
+  <div>
     <div
       v-for="mod in modules"
       :key="mod.courseCode"

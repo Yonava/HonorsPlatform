@@ -7,7 +7,7 @@
       sm ? 'flex-column' : 'flex-row'
     ]"
   >
-    <div>
+    <div style="width: 45%">
 
       <DetailHeader
         v-model="item.courseCode"
@@ -63,7 +63,7 @@
           </template>
         </v-text-field>
       </div>
-      <div class="d-flex flex-column align-center justify-center">
+      <div class="d-flex flex-column align-center">
         <h2>
           Final Grade
         </h2>

@@ -186,7 +186,7 @@ export function mapTheses(sheetData: string[][]): Thesis[] {
         title: thesis[3] ?? '',
         proposalReceived: thesis[4] ?? '',
         breakoutRoom: thesis[5] ?? '',
-        decision: (thesis[6] ?? null) as ThesisDecision,
+        decision: (thesis[6] ?? '') as ThesisDecision,
         term: thesis[7] ?? '',
         mentor: thesis[8] ?? '',
         mentorEmail: thesis[9] ?? '',
