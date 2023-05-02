@@ -40,7 +40,7 @@
         v-if="item.name && !item.email"
         @click="item.email = getStudentEmail(item.name)"
         color="green"
-        size="small"
+        size="x-small"
         class="mb-2"
       >New Student Email</v-btn>
       <v-text-field
@@ -57,7 +57,7 @@
           @click="item.term = getCurrentTerm()"
           class="mb-2"
           color="green"
-          size="small"
+          size="x-small"
         >Current Term</v-btn>
         <v-text-field
           v-model="item.term"
@@ -72,14 +72,14 @@
           v-if="!item.draftReceived"
           @click="item.draftReceived = new Date().toLocaleString().split(',')[0]"
           color="green"
-          size="small"
+          size="x-small"
         >Today</v-btn>
         <v-spacer></v-spacer>
         <v-btn
           v-if="!item.proposalReceived"
           @click="item.proposalReceived = new Date().toLocaleString().split(',')[0]"
           color="green"
-          size="small"
+          size="x-small"
         >Today</v-btn>
       </div>
 
@@ -148,7 +148,7 @@
         'flex-column',
         'align-center'
       ]"
-      :style="sm ? '' : 'width: 55%'"
+      :style="sm ? '' : 'width: 55%; max-width: 450px'"
     >
       <div style="width: 100%;">
         <v-textarea
