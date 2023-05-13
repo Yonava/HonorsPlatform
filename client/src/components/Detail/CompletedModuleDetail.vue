@@ -7,7 +7,7 @@
       sm ? 'flex-column' : 'flex-row'
     ]"
   >
-    <div style="width: 45%">
+    <div>
 
       <DetailHeader
         v-model="item.courseCode"

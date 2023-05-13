@@ -5,9 +5,10 @@ import {
   Module,
   CompletedModule,
   Thesis,
+  SheetItem
 } from './SheetTypes';
 
-export type SortOption<T> = {
+export type SortOption<T extends SheetItem> = {
   label: string,
   icon: {
     asc: string,
