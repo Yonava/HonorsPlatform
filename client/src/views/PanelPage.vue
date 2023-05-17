@@ -1,10 +1,10 @@
 <template>
   <div id="panel-parent">
-    <v-sheet 
+    <v-sheet
       class="background-matte"
       :color="`${panel.color}-lighten-4`"
     ></v-sheet>
-    <AppBar 
+    <AppBar
       v-model="filterQuery"
       @fetchData="fetchData"
       @showAddModal="showAddModal = true"
@@ -17,27 +17,27 @@
       :items="items"
     />
     <v-main>
-      <div 
+      <div
         :style="{
           position: 'relative',
           height: smAndUp ? 'calc(100vh - 64px)' : ''
         }"
         class="d-flex flex-row"
       >
-        <v-sheet 
+        <v-sheet
           v-if="smAndUp"
           :color="`${panel.color}-darken-2`"
           class="d-flex align-center flex-column flex-start pt-3"
           style="min-width: 80px; max-width: 80px; height: 100%; background: green"
         >
-          <SortPanel 
+          <SortPanel
             @update="sortUpdate($event)"
             :items="items"
             :panelType="panel.type"
           />
           <v-spacer></v-spacer>
           <div class="mb-4 d-flex flex-column align-center">
-            <v-btn 
+            <v-btn
               @click="$router.push({ name: 'registrar' })"
               icon
             >
@@ -49,7 +49,7 @@
                 location="end"
               >Create Registrar List</v-tooltip>
             </v-btn>
-            <v-btn 
+            <v-btn
               @click="$router.push({ name: 'email' })"
               icon
               class="mt-3"
@@ -74,7 +74,7 @@
           }"
           class="d-flex flex-grow-1 flex-column align-center"
         >
-          <v-sheet 
+          <v-sheet
             :color="`${panel.color}-lighten-4`"
             style="width: 100%;"
           >
@@ -89,7 +89,7 @@
             />
           </v-sheet>
         </div>
-        <v-sheet 
+        <v-sheet
           v-if="mdAndUp"
           @mousedown="resizeStart"
           :color="resizing ? panel.color : 'transparent'"
@@ -102,25 +102,25 @@
             left: `${proposedWidth + sortPanelWidth}px`,
           }"
         ></v-sheet>
-        <v-sheet 
+        <v-sheet
           v-if="mdAndUp"
           :color="`white`"
           style="height: 100%; overflow: auto;"
           class="d-flex flex-grow-1 flex-column align-center"
         >
-          <div 
+          <div
             v-if="selectedItem"
-            style="width: 100%" 
+            style="width: 100%"
           >
             <component
               @delete="reqDelete"
               @update="selectedItem = $event"
               @unselect="unselect"
-              :is="panel.components.detail" 
+              :is="panel.components.detail"
               :item="selectedItem"
             />
           </div>
-          <div 
+          <div
             v-else
             class="d-flex flex-column align-center justify-center"
           >
@@ -130,13 +130,13 @@
           </div>
         </v-sheet>
       </div>
-      <img 
+      <img
         v-if="lgAndUp && !selectedItem"
         src="../assets/honorsLogo.jpeg"
         class="honors-logo"
       >
     </v-main>
-    <AddModal 
+    <AddModal
       @close="showAddModal = false"
       @success="itemAdded($event)"
       :panel="panel"
@@ -155,7 +155,7 @@
         v-if="selectedItem"
         @delete="reqDelete"
         @unselect="unselect"
-        :is="panel.components.detail" 
+        :is="panel.components.detail"
         :item="selectedItem"
       />
     </v-navigation-drawer>
@@ -163,13 +163,13 @@
 </template>
 
 <script setup lang="ts">
-import { 
-  ref, 
-  onMounted, 
-  computed, 
+import {
+  ref,
+  onMounted,
+  computed,
   watch,
   onUnmounted
-} from 'vue' 
+} from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getEvery, clearByRow, updateByRow } from '../SheetsAPI'
 import AddModal from '../components/AddModal.vue'
@@ -186,11 +186,11 @@ import { useUpdateManager } from '../UpdateManager'
 const route = useRoute()
 const router = useRouter()
 
-const { 
-  smAndUp, 
-  mdAndUp, 
-  lgAndUp, 
-  smAndDown 
+const {
+  smAndUp,
+  mdAndUp,
+  lgAndUp,
+  smAndDown
 } = useDisplay()
 
 const items = ref<SheetItem[]>([])
@@ -207,7 +207,7 @@ const panelList = ref(null)
 const panel = ref(switchPanel(PanelType.STUDENTS))
 
 const changePanel = async (panelType: PanelType) => {
-  
+
   panel.value = switchPanel(panelType)
   localStorage.setItem('panelScrollY', '0')
   selectedItem.value = null
@@ -393,12 +393,12 @@ const resizeEnd = (e: MouseEvent) => {
 
 <style scoped>
 img.honors-logo {
-  position: absolute; 
+  position: absolute;
   z-index: 1;
-  bottom: 0; 
-  right: 0; 
+  bottom: 0;
+  right: 0;
   width: 225px;
-  mix-blend-mode: multiply; 
+  mix-blend-mode: multiply;
   margin: 10px;
   margin-right: 20px
 }

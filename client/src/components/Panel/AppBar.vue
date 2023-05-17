@@ -9,14 +9,14 @@
       style="width: 75%; max-width: 350px; height: 120vh; position: fixed; top: 0;"
     >
       <div class="pa-4">
-        <div 
+        <div
           class="d-flex flex-row"
           style="width: 100%"
         >
           <v-btn icon>
-            <v-icon 
+            <v-icon
               @click="$router.push({ name: 'leaderboard' })"
-              icon="mdi-podium" 
+              icon="mdi-podium"
               size="large"
             ></v-icon>
           </v-btn>
@@ -29,8 +29,8 @@
           class="mt-5"
           block
         >
-          <v-icon 
-            icon="mdi-plus" 
+          <v-icon
+            icon="mdi-plus"
             size="large"
             class="mr-2"
           ></v-icon>
@@ -43,8 +43,8 @@
           class="mt-3"
           block
         >
-          <v-icon 
-            icon="mdi-refresh" 
+          <v-icon
+            icon="mdi-refresh"
             size="large"
             class="mr-2"
           ></v-icon>
@@ -56,8 +56,8 @@
           class="mt-3"
           block
         >
-          <v-icon 
-            icon="mdi-list-box-outline" 
+          <v-icon
+            icon="mdi-list-box-outline"
             size="large"
             class="mr-2"
           ></v-icon>
@@ -69,14 +69,29 @@
           class="mt-3"
           block
         >
-          <v-icon 
-            icon="mdi-email-fast-outline" 
+          <v-icon
+            icon="mdi-email-fast-outline"
             size="large"
             class="mr-2"
           ></v-icon>
           Mass Email
         </v-btn>
-        <SortPanel 
+        <AdditionalTools>
+          <v-btn
+            @click="showTools = !showTools"
+            style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240);"
+            class="mt-3"
+            block
+          >
+            <v-icon
+              icon="mdi-hammer"
+              size="large"
+              class="mr-2"
+            ></v-icon>
+            Additional Tools
+          </v-btn>
+        </AdditionalTools>
+        <SortPanel
           class="mt-5"
           @update="$emit('updateItems', $event)"
           :items="items"
@@ -98,18 +113,18 @@
           id="input"
         >
       </div>
-      <div 
+      <div
         v-else
         class="d-flex align-center"
       >
-        <v-icon 
-          :icon="panel.icon" 
-          size="x-large" 
+        <v-icon
+          :icon="panel.icon"
+          size="x-large"
           class="mr-2"
         ></v-icon>
         <v-menu>
           <template v-slot:activator="{ props }">
-            <h1 
+            <h1
               v-bind="props"
               class="title"
             >
@@ -155,73 +170,73 @@
         id="input"
       >
       <v-spacer></v-spacer>
-      <v-btn 
+      <v-btn
         v-if="smAndUp"
         @click="$emit('showAddModal')"
         class="ml-3"
         style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240);"
       >
-        <v-icon 
-          icon="mdi-plus" 
-          size="large" 
+        <v-icon
+          icon="mdi-plus"
+          size="large"
         ></v-icon>
-        <span 
+        <span
           v-if="mdAndUp"
           class="ml-2"
         >
           Add {{ panel.title.singular }}
         </span>
       </v-btn>
-      <v-btn 
+      <v-btn
         v-if="smAndUp"
         @click="$emit('fetchData')"
         :loading="loading"
         class="ml-3"
         style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240);"
       >
-        <v-icon 
-          icon="mdi-refresh" 
-          size="large" 
+        <v-icon
+          icon="mdi-refresh"
+          size="large"
         ></v-icon>
-        <span 
+        <span
           v-if="mdAndUp"
           class="ml-2"
         >
           Refresh Data
         </span>
       </v-btn>
-      <v-btn 
+      <v-btn
         v-if="!mdAndUp"
         class="ml-3"
         icon
       >
-        <v-icon 
+        <v-icon
           v-if="!searchMode"
           @click="searchMode = true"
-          icon="mdi-magnify" 
+          icon="mdi-magnify"
           size="large"
         ></v-icon>
-        <v-icon 
+        <v-icon
           v-else
           @click="searchMode = false"
-          icon="mdi-close" 
+          icon="mdi-close"
           size="large"
         ></v-icon>
       </v-btn>
-      <div 
+      <div
         v-if="smAndUp"
         :class="[
           mdAndUp ? 'ml-3' : '',
-          'd-flex', 
-          'flex-row', 
+          'd-flex',
+          'flex-row',
           'align-center'
         ]"
       >
         <Announcements />
         <v-btn icon>
-          <v-icon 
+          <v-icon
             @click="$router.push({ name: 'leaderboard' })"
-            icon="mdi-podium" 
+            icon="mdi-podium"
             size="large"
           ></v-icon>
           <v-tooltip
@@ -233,9 +248,9 @@
       </div>
       <div v-else>
         <v-btn icon>
-          <v-icon 
+          <v-icon
             @click="navDrawer = true"
-            icon="mdi-menu" 
+            icon="mdi-menu"
             size="large"
           ></v-icon>
         </v-btn>
@@ -253,6 +268,7 @@ import { useDisplay } from 'vuetify'
 import { useKeyBindings } from '../../KeyBindings'
 import SortPanel from './SortPanel.vue'
 import Announcements from './AnnouncementMenu.vue'
+import AdditionalTools from '../../components/Panel/AdditionalTools.vue'
 
 const navDrawer = ref(false)
 const searchMode = ref(false)
@@ -263,7 +279,7 @@ useKeyBindings({
 
 const {
   lgAndUp,
-  mdAndUp, 
+  mdAndUp,
   smAndUp,
   smAndDown,
   xs
@@ -319,9 +335,9 @@ watch(() => props.selectedItem, () => {
 }
 
 h1.title {
-  font-weight: 700; 
-  user-select: none; 
-  cursor: pointer; 
+  font-weight: 700;
+  user-select: none;
+  cursor: pointer;
   white-space: nowrap;
 }
 
@@ -341,32 +357,32 @@ h1.title {
 }
 
 .search-input {
-  background: rgba(0, 0, 0, 0.3); 
-  color: rgb(240, 240, 240); 
-  border-radius: 50px; 
-  padding: 3px; 
+  background: rgba(0, 0, 0, 0.3);
+  color: rgb(240, 240, 240);
+  border-radius: 50px;
+  padding: 3px;
   padding-left: 15px;
-  border: none; 
+  border: none;
   width: 30%;
   max-width: 800px;
-  font-size: 1.4em; 
-  font-weight: 200; 
+  font-size: 1.4em;
+  font-weight: 200;
   box-shadow: 2px 1px 4px rgba(0, 0, 0, 0.5);
   margin-left: 25px;
   transition: 0.3s ease;
 }
 
 .vanilla-search-input {
-  background: rgba(0, 0, 0, 0.3); 
-  color: rgb(240, 240, 240); 
-  border-radius: 50px; 
-  padding: 3px; 
+  background: rgba(0, 0, 0, 0.3);
+  color: rgb(240, 240, 240);
+  border-radius: 50px;
+  padding: 3px;
   padding-left: 15px;
-  border: none; 
+  border: none;
   width: 300px;
   max-width: 70vw;
-  font-size: 1.4em; 
-  font-weight: 200; 
+  font-size: 1.4em;
+  font-weight: 200;
   box-shadow: 2px 1px 4px rgba(0, 0, 0, 0.5);
 }
 
