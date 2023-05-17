@@ -20,12 +20,17 @@
 </template>
 
 <script setup lang="ts">
+import { incrementStudentYear } from '../../StudentTools'
+
+const warn = (callbackFunction: () => void) => {
+  console.log('this is your warning')
+  callbackFunction()
+}
+
 const tools = [
   {
-    name: 'Email',
-    handler: () => {
-      console.log('email')
-    }
+    name: 'Increment Student Year',
+    handler: () => warn(incrementStudentYear)
   }
 ]
 </script>
