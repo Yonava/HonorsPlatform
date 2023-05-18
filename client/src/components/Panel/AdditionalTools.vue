@@ -22,7 +22,7 @@
 <script setup lang="ts">
 import { incrementStudentYear } from '../../StudentTools'
 
-const warn = (callbackFunction: () => void) => {
+const warn = async (callbackFunction: () => void) => {
   console.log('this is your warning')
   callbackFunction()
 }
@@ -30,7 +30,11 @@ const warn = (callbackFunction: () => void) => {
 const tools = [
   {
     name: 'Increment Student Year',
-    handler: () => warn(incrementStudentYear)
+    handler: () => {
+      warn(incrementStudentYear).then(() => {
+        // refresh the data
+      })
+    }
   }
 ]
 </script>

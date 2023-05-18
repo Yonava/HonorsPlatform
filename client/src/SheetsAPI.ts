@@ -86,6 +86,10 @@ export async function getHeaderRow(range: Range): Promise<string[]> {
   }
 }
 
+export async function getHeaderRowCache(range: Range) {
+  return headerRowMemo[range] ?? await getHeaderRow(range);
+}
+
 export async function getNonSensitiveData(endpointExtension: string) {
   try {
     return (await axios.get(`/api/open/${endpointExtension}`, requestHeaders())).data;

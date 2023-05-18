@@ -1,6 +1,7 @@
-import { getHeaderRow, headerRowMemo, Range } from "./SheetsAPI";
+import { Range, getHeaderRowCache } from "./SheetsAPI";
 import {
   Student,
+  StudentYear,
   Graduate,
   Module,
   CompletedModule,
@@ -19,7 +20,7 @@ function removeEmptyObjects(item: Object) {
 }
 
 export async function mapStudents(sheetData: string[][]): Promise<Student[]> {
-  const headerRow = headerRowMemo[Range.STUDENTS] ?? await getHeaderRow(Range.STUDENTS);
+  const headerRow = await getHeaderRowCache(Range.STUDENTS);
   const categories = headerRow.slice(8);
   return sheetData
     .map((student, index) => ({
@@ -29,7 +30,7 @@ export async function mapStudents(sheetData: string[][]): Promise<Student[]> {
       email: student[2] ?? '',
       points: parseInt(student[3]) || 0,
       activeStatus: student[4] ?? '',
-      year: student[5] ?? '',
+      year: (student[5] ?? null) as StudentYear,
       athletics: student[6] ?? '',
       note: student[7] ?? '',
       misc: categories.reduce((acc: { [key in string]: string }, category: string, index: number) => {
@@ -42,7 +43,7 @@ export async function mapStudents(sheetData: string[][]): Promise<Student[]> {
 }
 
 export async function unmapStudents(students: Student[]): Promise<string[][]> {
-  const headerRow = headerRowMemo[Range.STUDENTS] ?? await getHeaderRow(Range.STUDENTS);
+  const headerRow = await getHeaderRowCache(Range.STUDENTS);
   const categories = headerRow.slice(8);
   return students.map((student: Student) => {
     const misc = categories.map((category: string) => student.misc[category] ?? '');
@@ -56,7 +57,7 @@ export async function unmapStudents(students: Student[]): Promise<string[][]> {
       student.athletics,
       student.note,
       ...misc,
-    ];
+    ]
   });
 }
 

@@ -36,13 +36,15 @@ export interface Student extends SheetEntry {
   email: string;
   points: number;
   activeStatus: string;
-  year: string;
+  year: StudentYear;
   athletics: string;
   note: string;
-  misc: { 
-    [key: string]: string 
+  misc: {
+    [key: string]: string
   };
 }
+
+export type StudentYear = 'Freshman' | 'Sophomore' | 'Junior' | 'Senior' | null
 
 export interface GradEngagement extends SheetEntry {
   gradId: string;
