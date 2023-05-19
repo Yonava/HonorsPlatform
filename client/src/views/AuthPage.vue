@@ -1,5 +1,5 @@
 <template>
-  <v-sheet 
+  <v-sheet
     class="d-flex align-center justify-center flex-column"
     height="100vh"
     width="100vw"
@@ -15,7 +15,7 @@
       src="../assets/honorsLogo.jpeg"
       class="logo"
     />
-    <v-sheet 
+    <v-sheet
       v-if="!loading"
       position="absolute"
       class="d-flex align-center justify-center flex-column ma-5"
@@ -25,7 +25,7 @@
           Authorize
         </h1>
       </div>
-      <v-btn 
+      <v-btn
         @click="authorize"
         color="red-darken-2"
         elevation="3"
@@ -37,7 +37,7 @@
       </v-btn>
       <div>
         <v-expansion-panels variant="accordion">
-          <v-expansion-panel 
+          <v-expansion-panel
             elevation="0"
             color="grey-lighten-3"
           >
@@ -58,7 +58,7 @@
                     Your internet connection is unstable
                   </li>
                   <li>
-                    You attempted to perform an operation you are 
+                    You attempted to perform an operation you are
                     not authorized to perform (i.e. generating registrar reports)
                   </li>
                   <li>
@@ -92,7 +92,7 @@ onMounted(async () => {
   }, 1000)
   if (route.query.hold) return
   const code = (route.query.code ?? '') as string
-  
+
   if (!code) return
 
   const res = await axios.get(`/api/auth/${encodeURIComponent(code)}`)
@@ -100,8 +100,8 @@ onMounted(async () => {
   if (!token) throw new Error('No access token')
   localStorage.setItem('token', token)
 
-  router.push({ 
-    name: 'panel' 
+  router.push({
+    name: 'panel'
   })
 })
 

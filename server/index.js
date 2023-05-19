@@ -4,11 +4,12 @@ const openAccessAPI = require("./openAccessAPI.js");
 const { google } = require('googleapis');
 const cors = require("cors");
 
+require('dotenv').config();
+
 const { OAuth2 } = google.auth;
 
-const clientId = '190006346508-fsioaathe0vo6ou4c46dssgq3vnr0kk9.apps.googleusercontent.com';
-const clientSecret = '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';
-const redirectUri =  process.env.NODE_ENV ? 'https://honors.herokuapp.com/auth' : 'http://localhost:5177/auth';
+const { GOOGLE_OAUTH_CLIENT_ID, GOOGLE_OAUTH_CLIENT_SECRET } = process.env;
+const redirectUri =  process.env.NODE_ENV ? 'https://honors.up.railway.app' : 'http://localhost:5177/auth';
 const scope = 'https://www.googleapis.com/auth/spreadsheets';
 
 const app = express();
@@ -19,7 +20,9 @@ let sheetInstances = {};
 app.use("/api/open", openAccessAPI);
 
 function removeTokenFromCache(req) {
-  if (!req.headers.authorization) return;
+  if (!req.headers.authorization) {
+    return;
+  }
   const accessToken = req.headers.authorization.split(' ')[1];
   delete sheetInstances[accessToken];
 }
@@ -29,8 +32,10 @@ async function validateToken(req) {
   if (!accessToken) {
     throw new Error('No bearer token provided');
   }
-  
-  if (sheetInstances[accessToken]) return accessToken;
+
+  if (sheetInstances[accessToken]) {
+    return accessToken;
+  }
 
   try {
     await newSheetInstance(accessToken);
@@ -42,7 +47,7 @@ async function validateToken(req) {
 }
 
 function getAuthUrl() {
-  const auth = new OAuth2(clientId, clientSecret, redirectUri);
+  const auth = new OAuth2(GOOGLE_OAUTH_CLIENT_ID, GOOGLE_OAUTH_CLIENT_SECRET, redirectUri);
   const url = auth.generateAuthUrl({
     access_type: 'offline',
     scope,
@@ -52,7 +57,7 @@ function getAuthUrl() {
 
 async function newSheetInstance(accessToken) {
   try {
-    const auth = new OAuth2(clientId, clientSecret, redirectUri);
+    const auth = new OAuth2(GOOGLE_OAUTH_CLIENT_ID, GOOGLE_OAUTH_CLIENT_SECRET, redirectUri);
     auth.setCredentials({ access_token: accessToken });
     sheetInstances[accessToken] = await new GoogleSheet().init(auth);
   } catch (e) {
@@ -61,11 +66,6 @@ async function newSheetInstance(accessToken) {
   }
 }
 
-app.get('/api', (req, res) => {
-  console.log('api endpoint hit')
-  res.send('API online')
-})
-
 app.get('/api/auth/url', (req, res) => {
   res.json({ url: getAuthUrl() });
 });
@@ -73,13 +73,14 @@ app.get('/api/auth/url', (req, res) => {
 app.get('/api/auth/:authCode', async (req, res) => {
   const { authCode } = req.params;
   try {
-    const auth = new OAuth2(clientId, clientSecret, redirectUri);
+    const auth = new OAuth2(GOOGLE_OAUTH_CLIENT_ID, GOOGLE_OAUTH_CLIENT_SECRET, redirectUri);
     const { tokens } = await auth.getToken(authCode);
     res.json({ accessToken: tokens.access_token });
   } catch (e) {
-    res.json({ 
+    res.json({
       error: 'Invalid token',
-      url: getAuthUrl()
+      url: getAuthUrl(),
+      verbose: e
     });
   }
 })
