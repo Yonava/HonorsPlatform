@@ -115,6 +115,7 @@ const authorize = async () => {
     console.log(error)
   }
 }
+
 </script>
 
 <style scoped>
