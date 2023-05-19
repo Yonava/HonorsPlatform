@@ -1,6 +1,6 @@
 const express = require("express")
 const GoogleSheet = require("./GoogleSheet.js");
-const openAccessAPI = require("./openAccessAPI.js");
+// const openAccessAPI = require("./openAccessAPI.js");
 const { google } = require('googleapis');
 const cors = require("cors");
 
@@ -17,7 +17,7 @@ app.use(express.json());
 app.use(cors());
 let sheetInstances = {};
 
-app.use("/api/open", openAccessAPI);
+// app.use("/api/open", openAccessAPI);
 
 function removeTokenFromCache(req) {
   if (!req.headers.authorization) {
