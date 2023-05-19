@@ -1,8 +1,11 @@
 <template>
-  <v-menu>
+  <v-menu v-model="showing">
     <template v-slot:activator="{ props }">
       <div v-bind="props">
-        <slot></slot>
+        <slot
+          name="showing"
+          v-bind="object"
+        ></slot>
       </div>
     </template>
 
@@ -21,6 +24,15 @@
 
 <script setup lang="ts">
 import { incrementStudentYear } from '../../StudentTools'
+import { ref, computed } from 'vue'
+
+const showing = ref(false)
+
+const object = computed(() => {
+  return {
+    showing: showing.value
+  }
+})
 
 const warn = async (callbackFunction: () => void) => {
   console.log('this is your warning')

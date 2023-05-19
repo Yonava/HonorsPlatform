@@ -6,13 +6,16 @@
       fixed
       location="end"
       :color="`${panel.color}-darken-2`"
-      style="width: 75%; max-width: 350px; height: 120vh; position: fixed; top: 0;"
+      style="
+        width: 75%;
+        max-width: 350px;
+        height: 120vh;
+        position: fixed;
+        top: 0;
+      "
     >
       <div class="pa-4">
-        <div
-          class="d-flex flex-row"
-          style="width: 100%"
-        >
+        <div class="d-flex flex-row" style="width: 100%">
           <v-btn icon>
             <v-icon
               @click="$router.push({ name: 'leaderboard' })"
@@ -25,34 +28,26 @@
         </div>
         <v-btn
           @click="emit('showAddModal')"
-          style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240);"
+          style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240)"
           class="mt-5"
           block
         >
-          <v-icon
-            icon="mdi-plus"
-            size="large"
-            class="mr-2"
-          ></v-icon>
+          <v-icon icon="mdi-plus" size="large" class="mr-2"></v-icon>
           Add {{ panel.title.singular }}
         </v-btn>
         <v-btn
           @click="$emit('fetchData')"
           :loading="loading"
-          style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240);"
+          style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240)"
           class="mt-3"
           block
         >
-          <v-icon
-            icon="mdi-refresh"
-            size="large"
-            class="mr-2"
-          ></v-icon>
+          <v-icon icon="mdi-refresh" size="large" class="mr-2"></v-icon>
           Refresh Data
         </v-btn>
         <v-btn
           @click="$router.push({ name: 'registrar' })"
-          style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240);"
+          style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240)"
           class="mt-3"
           block
         >
@@ -65,7 +60,7 @@
         </v-btn>
         <v-btn
           @click="$router.push({ name: 'email' })"
-          style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240);"
+          style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240)"
           class="mt-3"
           block
         >
@@ -79,15 +74,11 @@
         <AdditionalTools>
           <v-btn
             @click="showTools = !showTools"
-            style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240);"
+            style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240)"
             class="mt-3"
             block
           >
-            <v-icon
-              icon="mdi-hammer"
-              size="large"
-              class="mr-2"
-            ></v-icon>
+            <v-icon icon="mdi-hammer" size="large" class="mr-2"></v-icon>
             Additional Tools
           </v-btn>
         </AdditionalTools>
@@ -99,10 +90,7 @@
         />
       </div>
     </v-navigation-drawer>
-    <v-app-bar
-      :color="`${panel.color}-darken-2`"
-      class="app-bar px-5"
-    >
+    <v-app-bar :color="`${panel.color}-darken-2`" class="app-bar px-5">
       <div v-if="searchMode">
         <input
           @input="updateValue"
@@ -111,23 +99,13 @@
           class="vanilla-search-input"
           type="text"
           id="input"
-        >
+        />
       </div>
-      <div
-        v-else
-        class="d-flex align-center"
-      >
-        <v-icon
-          :icon="panel.icon"
-          size="x-large"
-          class="mr-2"
-        ></v-icon>
+      <div v-else class="d-flex align-center">
+        <v-icon :icon="panel.icon" size="x-large" class="mr-2"></v-icon>
         <v-menu>
           <template v-slot:activator="{ props }">
-            <h1
-              v-bind="props"
-              class="title"
-            >
+            <h1 v-bind="props" class="title">
               {{ panelTitle }}
             </h1>
           </template>
@@ -168,22 +146,16 @@
         class="search-input"
         type="text"
         id="input"
-      >
+      />
       <v-spacer></v-spacer>
       <v-btn
         v-if="smAndUp"
         @click="$emit('showAddModal')"
         class="ml-3"
-        style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240);"
+        style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240)"
       >
-        <v-icon
-          icon="mdi-plus"
-          size="large"
-        ></v-icon>
-        <span
-          v-if="mdAndUp"
-          class="ml-2"
-        >
+        <v-icon icon="mdi-plus" size="large"></v-icon>
+        <span v-if="mdAndUp" class="ml-2">
           Add {{ panel.title.singular }}
         </span>
       </v-btn>
@@ -192,24 +164,12 @@
         @click="$emit('fetchData')"
         :loading="loading"
         class="ml-3"
-        style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240);"
+        style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240)"
       >
-        <v-icon
-          icon="mdi-refresh"
-          size="large"
-        ></v-icon>
-        <span
-          v-if="mdAndUp"
-          class="ml-2"
-        >
-          Refresh Data
-        </span>
+        <v-icon icon="mdi-refresh" size="large"></v-icon>
+        <span v-if="mdAndUp" class="ml-2"> Refresh Data </span>
       </v-btn>
-      <v-btn
-        v-if="!mdAndUp"
-        class="ml-3"
-        icon
-      >
+      <v-btn v-if="!mdAndUp" class="ml-3" icon>
         <v-icon
           v-if="!searchMode"
           @click="searchMode = true"
@@ -225,25 +185,33 @@
       </v-btn>
       <div
         v-if="smAndUp"
-        :class="[
-          mdAndUp ? 'ml-3' : '',
-          'd-flex',
-          'flex-row',
-          'align-center'
-        ]"
+        :class="[mdAndUp ? 'ml-3' : '', 'd-flex', 'flex-row', 'align-center']"
       >
         <Announcements />
+        <AdditionalTools>
+          <template #showing="{ showing }">
+            <v-btn icon>
+              <v-icon
+                icon="mdi-hammer"
+                size="large"
+              ></v-icon>
+              <v-tooltip
+                :disabled="smAndDown || showing"
+                activator="parent"
+                location="bottom"
+              >Additional Tools</v-tooltip>
+            </v-btn>
+          </template>
+        </AdditionalTools>
         <v-btn icon>
           <v-icon
             @click="$router.push({ name: 'leaderboard' })"
             icon="mdi-podium"
             size="large"
           ></v-icon>
-          <v-tooltip
-            :disabled="smAndDown"
-            activator="parent"
-            location="bottom"
-          >View Points Leaderboard</v-tooltip>
+          <v-tooltip :disabled="smAndDown" activator="parent" location="bottom"
+            >View Points Leaderboard</v-tooltip
+          >
         </v-btn>
       </div>
       <div v-else>
@@ -260,73 +228,70 @@
 </template>
 
 <script setup lang="ts">
-import { Panel, switchPanel, PanelType } from '../../SwitchPanel'
-import { SheetItem } from '../../SheetTypes'
-import { ref, computed, watch } from 'vue'
-import type { Ref } from 'vue'
-import { useDisplay } from 'vuetify'
-import { useKeyBindings } from '../../KeyBindings'
-import SortPanel from './SortPanel.vue'
-import Announcements from './AnnouncementMenu.vue'
-import AdditionalTools from '../../components/Panel/AdditionalTools.vue'
+import { Panel, switchPanel, PanelType } from "../../SwitchPanel";
+import { SheetItem } from "../../SheetTypes";
+import { ref, computed, watch } from "vue";
+import type { Ref } from "vue";
+import { useDisplay } from "vuetify";
+import { useKeyBindings } from "../../KeyBindings";
+import SortPanel from "./SortPanel.vue";
+import Announcements from "./AnnouncementMenu.vue";
+import AdditionalTools from "../../components/Panel/AdditionalTools.vue";
 
-const navDrawer = ref(false)
-const searchMode = ref(false)
+const navDrawer = ref(false);
+const searchMode = ref(false);
 
 useKeyBindings({
-  '/': () => document.getElementById('input').focus(),
-})
+  "/": () => document.getElementById("input").focus(),
+});
 
-const {
-  lgAndUp,
-  mdAndUp,
-  smAndUp,
-  smAndDown,
-  xs
-} = useDisplay()
+const { lgAndUp, mdAndUp, smAndUp, smAndDown, xs } = useDisplay();
 
 const props = defineProps<{
-  panel: Panel<SheetItem>,
-  modelValue: string
-  loading: boolean,
-  displayItemsLength: number,
-  items: SheetItem[],
-  selectedItem: SheetItem | null,
+  panel: Panel<SheetItem>;
+  modelValue: string;
+  loading: boolean;
+  displayItemsLength: number;
+  items: SheetItem[];
+  selectedItem: SheetItem | null;
 }>();
 
 const emit = defineEmits([
-  'fetchData',
-  'showAddModal',
-  'changePanel',
-  'updateItems',
-  'update:modelValue'
-])
+  "fetchData",
+  "showAddModal",
+  "changePanel",
+  "updateItems",
+  "update:modelValue",
+]);
 
 const updateValue = (event) => {
-  emit('update:modelValue', event.target.value)
-}
+  emit("update:modelValue", event.target.value);
+};
 
 function typeListStyle(type: PanelType) {
   return {
-    color: type === props.panel.type ? props.panel.color : 'black',
-  }
+    color: type === props.panel.type ? props.panel.color : "black",
+  };
 }
 
 const filterPlaceholder = computed(() => {
-  return `Search ${panelTitle.value.toLowerCase()}...`
-})
+  return `Search ${panelTitle.value.toLowerCase()}...`;
+});
 
 const panelTitle = computed(() => {
-  const title = props.panel.title.plural
-  if (lgAndUp.value || title.split(' ').length <= 1) return title
+  const title = props.panel.title.plural;
+  if (lgAndUp.value || title.split(" ").length <= 1) return title;
   else {
-    return title.split(' ')[1]
+    return title.split(" ")[1];
   }
-})
+});
 
-watch(() => props.selectedItem, () => {
-  navDrawer.value = false
-})
+watch(
+  () => props.selectedItem,
+  () => {
+    navDrawer.value = false;
+  }
+);
 </script>
 
 <style scoped>
