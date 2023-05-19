@@ -116,7 +116,6 @@ const authorize = async () => {
   }
 }
 
-// test comment
 </script>
 
 <style scoped>
