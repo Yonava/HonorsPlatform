@@ -116,6 +116,7 @@
               @delete="reqDelete"
               @update="selectedItem = $event"
               @unselect="unselect"
+              @changePanel="changePanel($event.location, $event.id)"
               :is="panel.components.detail"
               :item="selectedItem"
             />
@@ -198,7 +199,7 @@ const loadingItems = ref(true)
 const showAddModal = ref(false)
 const filterQuery = ref('')
 
-const selectedItem = ref<SheetItem>(undefined)
+const selectedItem = ref<SheetItem | undefined>(undefined)
 const pinnedItem = ref(null)
 
 // dom element of the panel list
@@ -206,23 +207,27 @@ const panelList = ref(null)
 
 const panel = ref(switchPanel(PanelType.STUDENTS))
 
-const changePanel = async (panelType: PanelType) => {
+const changePanel = async (panelType: PanelType, jumpTo = undefined) => {
+
+  selectedItem.value = undefined
 
   panel.value = switchPanel(panelType)
   localStorage.setItem('panelScrollY', '0')
-  selectedItem.value = null
   document.title = panel.value.title.plural + ' - Honors Program'
   filterQuery.value = ''
-
+  
   router.push({
     name: 'panel',
     query: {
       type: panelType
     }
   })
-
+  
   loadingItems.value = true
   items.value = await panel.value.mappers.map(await getEvery(panel.value.sheetRange))
+  if (jumpTo) {
+    selectedItem.value = items.value.find(item => item[jumpTo.key] === jumpTo.value)
+  }
   loadingItems.value = false
 }
 
@@ -230,7 +235,7 @@ const showDetailDrawer = computed({
   get: () => !!selectedItem.value,
   set: (v) => {
     if (!v) {
-      selectedItem.value = null
+      selectedItem.value = undefined
     }
   }
 })

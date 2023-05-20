@@ -190,19 +190,39 @@
         ]"
         style="width: 100%;"
       >
-        <v-btn
-          @click="moveToGraduates"
-          :disabled="!canDelete"
-          :loading="movingStudent"
-          size="large"
-          color="blue-darken-2"
+        <div 
+          class="d-flex flex-row justify-space-between" 
+          style="width: 100%"
         >
-          <v-icon
-            class="mr-4"
-            size="x-large"
-          >mdi-school-outline</v-icon>
-          Move To Graduates
-        </v-btn>
+          <v-btn
+            @click="viewThesis"
+            size="large"
+            :color="switchPanel(PanelType.THESES).color"
+            style="width: 49%"
+
+          >
+            <v-icon
+              class="mr-4"
+              size="x-large"
+            >{{ switchPanel(PanelType.THESES).icon }}</v-icon>
+            View Thesis
+          </v-btn>
+          <v-btn
+            @click="moveToGraduates"
+            :disabled="!canDelete"
+            :loading="movingStudent"
+            size="large"
+            :color="switchPanel(PanelType.GRADUATES).color"
+            style="width: 49%"
+          >
+            <v-icon
+              class="mr-4"
+              size="x-large"
+            >{{ switchPanel(PanelType.GRADUATES).icon }}</v-icon>
+            Graduate
+          </v-btn>
+        
+        </div>
         <v-btn
           @click="reqDeleteStudent"
           :disabled="!canDelete"
@@ -243,6 +263,7 @@ import { unmapStudents, unmapGraduates } from '../../DataMappers'
 import { Student, Module } from '../../SheetTypes'
 import { athleticOptions } from '../../Athletics'
 import { emailValidator, getStudentEmail } from '../../EmailUtilities'
+import { switchPanel, PanelType } from '../../SwitchPanel'
 
 const props = defineProps<{
   item: Student
@@ -252,7 +273,8 @@ const { xs } = useDisplay()
 
 const emits = defineEmits([
   'delete',
-  'unselect'
+  'unselect',
+  'changePanel',
 ])
 
 const statusOptions = {
@@ -322,6 +344,16 @@ function studentIdRule(studentId: string) {
 async function saveId() {
   props.item.id = tempStudentId.value
   idDialog.value = false
+}
+
+function viewThesis() {
+  emits('changePanel', {
+    location: PanelType.THESES, 
+    id: {
+      key: 'studentId',
+      value: props.item.id
+    }
+  })
 }
 
 async function moveToGraduates() {
