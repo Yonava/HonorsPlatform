@@ -349,7 +349,7 @@ async function saveId() {
 function viewThesis() {
   emits('changePanel', {
     location: PanelType.THESES, 
-    id: {
+    jumpTo: {
       key: 'studentId',
       value: props.item.id
     }

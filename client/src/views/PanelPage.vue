@@ -116,7 +116,7 @@
               @delete="reqDelete"
               @update="selectedItem = $event"
               @unselect="unselect"
-              @changePanel="changePanel($event.location, $event.id)"
+              @changePanel="changePanel(...Object.values($event))"
               :is="panel.components.detail"
               :item="selectedItem"
             />
