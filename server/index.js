@@ -72,11 +72,14 @@ app.get('/api/auth/url', (req, res) => {
 
 app.get('/api/auth/:authCode', async (req, res) => {
   const { authCode } = req.params;
+  console.log(authCode)
   try {
     const auth = new OAuth2(GOOGLE_OAUTH_CLIENT_ID, GOOGLE_OAUTH_CLIENT_SECRET, redirectUri);
+    console.log('break', redirectUri)
     const { tokens } = await auth.getToken(authCode);
     res.json({ accessToken: tokens.access_token });
   } catch (e) {
+    console.log(e)
     res.json({
       error: 'Invalid token',
       url: getAuthUrl(),
