@@ -114,6 +114,7 @@
         >
         </v-select>
       </div>
+      <!-- clearable on this auto-complete is incompatible with state syncing to google drive -->
       <v-autocomplete
         v-model="item.athletics"
         :items="Object.keys(athleticOptions)"
