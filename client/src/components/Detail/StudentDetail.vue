@@ -190,8 +190,8 @@
         ]"
         style="width: 100%;"
       >
-        <div 
-          class="d-flex flex-row justify-space-between" 
+        <div
+          class="d-flex flex-row justify-space-between"
           style="width: 100%"
         >
           <v-btn
@@ -221,7 +221,7 @@
             >{{ switchPanel(PanelType.GRADUATES).icon }}</v-icon>
             Graduate
           </v-btn>
-        
+
         </div>
         <v-btn
           @click="reqDeleteStudent"
@@ -328,6 +328,7 @@ const movingStudent = ref(false)
 const showAddNote = ref(false)
 
 const canDelete = computed(() => {
+  if (!props.item.id) return true
   return modules.value.length === 0 && !loadingModules.value
 })
 
@@ -348,7 +349,7 @@ async function saveId() {
 
 function viewThesis() {
   emits('changePanel', {
-    location: PanelType.THESES, 
+    location: PanelType.THESES,
     jumpTo: {
       key: 'studentId',
       value: props.item.id

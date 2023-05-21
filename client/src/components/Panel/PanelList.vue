@@ -112,7 +112,7 @@ watch(items, () => {
       }
       else if (itemsToDisplay.value > items.value.length) itemsToDisplay.value = items.value.length
       else if (itemsToDisplay.value < items.value.length) itemsToDisplay.value = itemsToDisplay.value + 1
-    }, 25)
+    }, 10)
   }
 })
 
