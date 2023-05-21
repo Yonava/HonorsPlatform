@@ -154,8 +154,9 @@
     >
       <component
         v-if="selectedItem"
-        @delete="reqDelete"
+        @update="selectedItem = $event"
         @unselect="unselect"
+        @changePanel="changePanel(...Object.values($event))"
         :is="panel.components.detail"
         :item="selectedItem"
       />
@@ -215,14 +216,14 @@ const changePanel = async (panelType: PanelType, jumpTo = undefined) => {
   localStorage.setItem('panelScrollY', '0')
   document.title = panel.value.title.plural + ' - Honors Program'
   filterQuery.value = ''
-  
+
   router.push({
     name: 'panel',
     query: {
       type: panelType
     }
   })
-  
+
   loadingItems.value = true
   items.value = await panel.value.mappers.map(await getEvery(panel.value.sheetRange))
   if (jumpTo) {
