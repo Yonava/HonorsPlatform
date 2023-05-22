@@ -208,7 +208,7 @@
             View Thesis
           </v-btn>
           <v-btn
-            @click="moveToGraduates"
+            @click="graduate"
             :disabled="!canDelete"
             :loading="movingStudent"
             size="large"
@@ -264,6 +264,7 @@ import { Student, Module } from '../../SheetTypes'
 import { athleticOptions } from '../../Athletics'
 import { emailValidator, getStudentEmail } from '../../EmailUtilities'
 import { switchPanel, PanelType } from '../../SwitchPanel'
+import { moveToGraduates } from '../../StudentTools'
 
 const props = defineProps<{
   item: Student
@@ -357,22 +358,9 @@ function viewThesis() {
   })
 }
 
-async function moveToGraduates() {
+async function graduate() {
   movingStudent.value = true
-  await moveRowToRange(
-    Range.STUDENTS,
-    Range.GRADUATES,
-    props.item.row,
-    unmapGraduates([{
-      row: props.item.row,
-      id: props.item.id,
-      name: props.item.name,
-      phone: '',
-      email: props.item.email,
-      graduationDate: new Date().toLocaleDateString(),
-      note: props.item.note,
-    }])
-  )
+  moveToGraduates(props.item)
   emits('unselect')
 }
 
