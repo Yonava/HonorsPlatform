@@ -1,11 +1,11 @@
 <template>
-  <v-sheet 
+  <v-sheet
     elevation="7"
     class="d-flex flex-column align-center justify-center pt-2 px-2"
     style="width: 100%"
     rounded
   >
-    <v-sheet 
+    <v-sheet
       class="d-flex flex-row"
       style="width: 100%"
     >
@@ -26,7 +26,7 @@
         ></v-select>
       </v-sheet>
       <v-spacer></v-spacer>
-      <v-sheet 
+      <v-sheet
         style="width: 50%"
         class="px-2"
       >
@@ -72,7 +72,7 @@ import { getHeaderRow, getEvery, Range } from "../../SheetsAPI";
 import { switchPanel, Panel, PanelType } from "../../SwitchPanel";
 import { Student, Graduate, Module, CompletedModule, Thesis } from "../../SheetTypes";
 import { useDisplay } from "vuetify";
-import { 
+import {
   mapStudents,
   mapGraduates,
   mapModules,
@@ -107,11 +107,11 @@ watch(selectedRange, async (newVal) => {
   selectedHeader.value = null;
   selectedOperand.value = "I";
   quantity.value = "";
-  
+
   headerRow.value = await getHeaderRow(newVal.sheetRange);
   // removes ability to query for custom student ranges
   if (newVal.sheetRange === Range.STUDENTS) {
-    headerRow.value = headerRow.value.slice(0, 7);
+    headerRow.value = headerRow.value.slice(0, 8);
   }
 
   const rawData = await getEvery(newVal.sheetRange);
@@ -183,25 +183,25 @@ watch(emails, (newVal) => {
 }, { immediate: true });
 
 const operandButtons = [
-  { 
-    text: "Includes", 
+  {
+    text: "Includes",
     shortText: "Includes",
-    value: "I" 
+    value: "I"
   },
-  { 
-    text: "Equals", 
+  {
+    text: "Equals",
     shortText: "=",
-    value: "=" 
+    value: "="
   },
-  { 
-    text: "Greater Than", 
+  {
+    text: "Greater Than",
     shortText: ">",
-    value: ">" 
+    value: ">"
   },
-  { 
-    text: "Less Than", 
+  {
+    text: "Less Than",
     shortText: "<",
-    value: "<" 
+    value: "<"
   },
 ];
 
