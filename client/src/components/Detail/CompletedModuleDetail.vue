@@ -1,13 +1,9 @@
 <template>
-  <div
-    ref="el"
-    :class="[
-      'pa-5',
-      'd-flex',
-      sm ? 'flex-column' : 'flex-row'
-    ]"
+  <DetailFrame
+    v-model="item.description"
+    @delete="$emit('delete')"
   >
-    <div>
+    <template #main>
       <DetailHeader
         v-model="item.courseCode"
         :id="item.studentId"
@@ -69,76 +65,24 @@
         <input
           v-model="item.grade"
           type="text"
-          class="header-input"
+          class="grade-input"
           placeholder="Grade"
           style="font-size: 5em; text-align: center;"
         >
       </div>
-    </div>
-    <v-divider
-      v-if="sm"
-      class="my-2"
-    ></v-divider>
-    <div
-      :class="[
-        sm ? '' : 'ml-5',
-        'd-flex',
-        'flex-column',
-        'align-center'
-      ]"
-      :style="sm ? '' : 'width: 55%; max-width: 450px'"
-    >
-      <div style="width: 100%;">
-        <v-textarea
-          v-model="item.description"
-          auto-grow
-          variant="outlined"
-          clearable
-          label="Module description"
-        ></v-textarea>
-      </div>
-      <div
-        :class="[
-          'd-flex',
-          'flex-column'
-        ]"
-        style="width: 100%"
-      >
-        <v-btn
-          @click="$emit('delete')"
-          size="large"
-          color="red"
-          class="mt-3"
-        >
-          <v-icon
-            class="mr-4"
-            size="x-large"
-          >mdi-delete</v-icon>
-          delete completed module
-        </v-btn>
-      </div>
-    </div>
-  </div>
+    </template>
+  </DetailFrame>
 </template>
 
 <script setup lang="ts">
+import { CompletedModule } from '../../SheetTypes'
 import DetailHeader from './Helper/DetailHeader.vue'
-import { watch, ref, toRefs } from 'vue'
-import { useElementSize } from '@vueuse/core'
-import { CompletedModule } from '../SheetTypes'
 import InstructorComplete from './Helper/InstructorComplete.vue'
+import DetailFrame from './Helper/DetailFrame.vue'
 
 const props = defineProps<{
   item: CompletedModule
 }>()
-
-const sm = ref(false)
-const el = ref(null)
-const { width } = useElementSize(el)
-
-watch(width, (newWidth) => {
-  sm.value = newWidth < 700
-}, { immediate: true })
 
 const emits = defineEmits([
   'delete',
@@ -147,14 +91,14 @@ const emits = defineEmits([
 </script>
 
 <style scoped>
-input.header-input {
+input.grade-input {
   font-weight: 900;
   font-size: 3em;
   line-height: 0.9;
   width: 100%;
 }
 
-input.header-input:focus {
+input.grade-input:focus {
   outline: none;
 }
 </style>
