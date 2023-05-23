@@ -81,7 +81,8 @@ const emits = defineEmits<{
 const notepad = computed({
   get: () => props.modelValue,
   set: (value) => {
-    emits['update:modelValue'](value)
+    // @ts-ignore
+    emits('update:modelValue', value)
   }
 })
 </script>
