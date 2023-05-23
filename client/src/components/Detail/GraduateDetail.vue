@@ -2,7 +2,7 @@
   <DetailFrame
     v-model="item.note"
     @delete="$emit('delete')"
-    :canDelete="canDelete"
+    :disableDelete="!canDelete"
   >
     <template #main>
       <DetailHeader

@@ -73,12 +73,8 @@ watch(width, (newWidth) => {
 
 const props = defineProps<{
   modelValue: string,
-  canDelete?: boolean
+  disableDelete?: boolean
 }>()
-
-const disableDelete = computed(() => {
-  return props.canDelete === false
-})
 
 const emits = defineEmits<{
   'update:modelValue': (value: string) => void,
