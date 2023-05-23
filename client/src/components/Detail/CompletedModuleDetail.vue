@@ -75,7 +75,7 @@
 </template>
 
 <script setup lang="ts">
-import { CompletedModule } from '../../SheetTypes'
+import type { CompletedModule } from '../../SheetTypes'
 import DetailHeader from './Helper/DetailHeader.vue'
 import InstructorComplete from './Helper/InstructorComplete.vue'
 import DetailFrame from './Helper/DetailFrame.vue'
