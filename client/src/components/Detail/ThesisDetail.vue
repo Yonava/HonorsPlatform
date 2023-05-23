@@ -1,14 +1,9 @@
 <template>
-  <div
-    ref="el"
-    :class="[
-      'pa-5',
-      'd-flex',
-      sm ? 'flex-column' : 'flex-row'
-    ]"
+  <DetailFrame
+    v-model="item.note"
+    @delete="$emit('delete')"
   >
-    <div>
-
+    <template #main>
       <DetailHeader
         v-model="item.title"
         :id="item.studentId"
@@ -143,62 +138,19 @@
           style="width: 45%"
         ></v-text-field>
       </div>
-    </div>
-    <v-divider
-      v-if="sm"
-      class="my-2"
-    ></v-divider>
-    <div
-      :class="[
-        sm ? '' : 'ml-5',
-        'd-flex',
-        'flex-column',
-        'align-center'
-      ]"
-      :style="sm ? '' : 'width: 55%; max-width: 450px'"
-    >
-      <div style="width: 100%;">
-        <v-textarea
-          v-model="item.note"
-          auto-grow
-          variant="outlined"
-          clearable
-          label="Thesis Notes"
-        ></v-textarea>
-      </div>
-      <div
-        :class="[
-          'd-flex',
-          'flex-column'
-        ]"
-        style="width: 100%"
-      >
-        <v-btn
-          @click="$emit('delete')"
-          size="large"
-          color="red"
-          class="mt-3"
-        >
-          <v-icon
-            class="mr-4"
-            size="x-large"
-          >mdi-delete</v-icon>
-          delete thesis
-        </v-btn>
-      </div>
-    </div>
-  </div>
+    </template>
+  </DetailFrame>
 </template>
 
 <script setup lang="ts">
-import { watch, ref, toRefs } from 'vue'
+import { ref } from 'vue'
 import { getCurrentTerm, termValidator } from '../../TermValidator'
-import { useElementSize } from '@vueuse/core'
-import { Thesis } from '../../SheetTypes'
+import type { Thesis } from '../../SheetTypes'
 import { getEvery, Range } from '../../SheetsAPI'
 import { mapStudents } from '../../DataMappers'
 import DetailHeader from './Helper/DetailHeader.vue'
 import InstructorComplete from './Helper/InstructorComplete.vue'
+import DetailFrame from './Helper/DetailFrame.vue'
 import {
   emailValidator,
   getFacultyEmail,
@@ -209,24 +161,15 @@ const props = defineProps<{
   item: Thesis
 }>()
 
+const emits = defineEmits<{
+  delete: () => void
+}>()
+
 const studentDataState = ref({
   loading: false,
   error: '',
   color: 'blue-darken-2',
 })
-
-const sm = ref(false)
-const el = ref(null)
-const { width } = useElementSize(el)
-
-watch(width, (newWidth) => {
-  sm.value = newWidth < 700
-}, { immediate: true })
-
-const emits = defineEmits([
-  'delete',
-  'unselect'
-])
 
 async function setStudentData() {
   studentDataState.value.loading = true
