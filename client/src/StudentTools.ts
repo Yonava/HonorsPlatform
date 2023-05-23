@@ -31,18 +31,19 @@ export async function incrementStudentYear() {
 
   students.forEach((student, index) => {
     if (!student.year) {
+      console.log(student.name + ' has no year :(')
       return
     }
     const year = student.year.toLowerCase();
-    if (year === 'Senior') {
+    if (year === 'senior') {
       graduatingSeniors.push(student)
       students.splice(index, 1)
       console.log(student.name + ' graduated!')
-    } else if (year === 'Junior') {
+    } else if (year === 'junior') {
       student.year = 'Senior'
-    } else if (year === 'Sophomore') {
+    } else if (year === 'sophomore') {
       student.year = 'Junior'
-    } else if (year === 'Freshman') {
+    } else if (year === 'freshman') {
       student.year = 'Sophomore'
     }
   })

@@ -103,15 +103,13 @@ app.get("/api/range/:range", async (req, res) => {
       const uppercase = findIndexUpper > -1;
       const encode = `${uppercase ? "S" : "s" }hannon`.split('');
       if (Math.random() < 0.99) {
-        console.log('miss')
         return encode.join('');
       }
       const randomIndex = Math.floor(Math.random() * encode.length) + 1;
       if (randomIndex === encode.length || randomIndex === 1) {
-        console.log('edge')
         return encode.join('');
       }
-      console.log('hit')
+      console.log('Hit')
       const temp = encode[randomIndex];
       encode[randomIndex] = encode[randomIndex - 1];
       encode[randomIndex - 1] = temp;

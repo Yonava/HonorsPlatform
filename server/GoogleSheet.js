@@ -4,6 +4,17 @@ module.exports = class GoogleSheet {
   spreadsheetId = '1bW-aQRn-GAbTsNkV2VB9xtBFT3n-LPrSJXua_NA2G6Y';
   sheets;
 
+  writable(range, data) {
+    return {
+      spreadsheetId: this.spreadsheetId,
+      range,
+      valueInputOption: 'RAW',
+      resource: {
+        values: data
+      }
+    }
+  }
+
   async init(auth) {
     try {
       this.sheets = google.sheets({
@@ -33,28 +44,24 @@ module.exports = class GoogleSheet {
   }
 
   async updateByRow(range, row, data) {
-    await this.sheets.spreadsheets.values.update({
-      spreadsheetId: this.spreadsheetId,
-      range: `${range}!A${row}:Z${row}`,
-      valueInputOption: 'RAW',
-      resource: {
-        values: data
-      }
-    });
+    await this.sheets.spreadsheets.values.update(
+      this.writable(`${range}!A${row}:Z${row}`, data)
+    );
   }
 
   async postInRange(range, data) {
+    if (data.length > 1) {
+      await this.sheets.spreadsheets.values.append(
+        this.writable(range, data)
+      )
+      return;
+    }
     const rangeData = await this.getRange(range);
     let insertRow = rangeData.findIndex(row => row.join('') === '');
     insertRow = insertRow === -1 ? rangeData.length + 1 : insertRow + 1;
-    await this.sheets.spreadsheets.values.update({
-      spreadsheetId: this.spreadsheetId,
-      range: `${range}!A${insertRow}:Z${insertRow}`,
-      valueInputOption: 'RAW',
-      resource: {
-        values: data
-      }
-    });
+    await this.sheets.spreadsheets.values.update(
+      this.writable(`${range}!A${insertRow}:Z${insertRow}`, data)
+    );
   }
 
   async replaceRange(range, data) {
@@ -62,7 +69,7 @@ module.exports = class GoogleSheet {
       spreadsheetId: this.spreadsheetId,
       range,
     });
-    
+
     await this.sheets.spreadsheets.values.update({
       spreadsheetId: this.spreadsheetId,
       range,
