@@ -13,33 +13,33 @@
         </span>
       </div>
     </div>
-    <div 
+    <div
       class="d-flex flex-column mt-5"
       style="font-size: 0.9em;"
     >
       <div class="d-flex flex-row">
         <div class="d-flex flex-row align-center">
-          <v-icon 
+          <v-icon
             class="mr-1"
             style="opacity: 0.75"
           >
             mdi-email
           </v-icon>
-          <p 
+          <p
             :style="{
               'text-decoration': emailValidator(item.email) ? '' : 'line-through',
               'color': emailValidator(item.email) ? '' : 'red',
               'font-weight': emailValidator(item.email) ? '' : '900'
             }"
           >
-            {{ item.email || '(No Email)' }} 
+            {{ item.email || '(No Email)' }}
           </p>
           <v-tooltip
-            :disabled="smAndDown"
+            :disabled="smAndDown || emailValidator(item.email)"
             activator="parent"
             location="bottom"
           >
-            Email{{ emailValidator(item.email) ? '' : ' Invalid' }}
+            Email is invalid
           </v-tooltip>
         </div>
         <v-spacer></v-spacer>
@@ -53,18 +53,18 @@
           >
             {{ item.phone || '(No Phone)' }}
           </p>
-          <v-icon 
+          <v-icon
             class="ml-1"
             style="opacity: 0.75"
           >
             mdi-phone
           </v-icon>
           <v-tooltip
-            :disabled="smAndDown"
+            :disabled="smAndDown || phoneValidator(item.phone)"
             activator="parent"
             location="bottom"
           >
-            Phone Number{{ phoneValidator(item.phone) ? '' : ' Invalid' }}
+            Phone number is invalid
           </v-tooltip>
         </div>
       </div>

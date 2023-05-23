@@ -1,195 +1,167 @@
 <template>
-  <div
-    ref="el"
-    :class="[
-      'pa-5',
-      'd-flex',
-      sm ? 'flex-column' : 'flex-row'
-    ]"
-  >
-    <div>
-      <DetailHeader
-        v-model="item.name"
-        :id="item.id"
-        placeholder="Student Name"
-      >
-        <template
-          v-if="!item.id"
-          #id
+  <div>
+    <DetailFrame
+      v-model="item.note"
+      @delete="reqDeleteStudent"
+      :canDelete="canDelete"
+    >
+      <template #main>
+        <DetailHeader
+          v-model="item.name"
+          :id="item.id"
+          placeholder="Student Name"
         >
-          <v-dialog
-            v-model="idDialog"
-            width="300"
+          <template
+            v-if="!item.id"
+            #id
           >
-            <template #activator="{ props }">
-              <v-btn
-                v-bind="props"
-                size="x-small"
-                color="red"
-              >
-                Add Student ID
-              </v-btn>
-            </template>
-            <div class="student-id-dialog pa-4">
-              <v-icon color="red">mdi-alert</v-icon>
-              <p
-                style="color: red"
-                class="mb-2"
-              >
-                Warning: Student IDs are unique and cannot be changed once set!
-              </p>
-              <v-text-field
-                v-model="tempStudentId"
-                :rules="[studentIdRule]"
-                variant="solo"
-                label="Student ID"
-                class="mb-2"
-              ></v-text-field>
-              <div class="d-flex">
+            <v-dialog
+              v-model="idDialog"
+              width="300"
+            >
+              <template #activator="{ props }">
                 <v-btn
-                  @click="saveId"
-                  :disabled="typeof studentIdRule(tempStudentId) === 'string'"
-                  color="green"
-                >
-                  Save
-                </v-btn>
-                <v-spacer></v-spacer>
-                <v-btn
-                  @click="idDialog = false"
+                  v-bind="props"
+                  size="x-small"
                   color="red"
                 >
-                  Cancel
+                  Add Student ID
                 </v-btn>
+              </template>
+              <div class="student-id-dialog pa-4">
+                <v-icon color="red">mdi-alert</v-icon>
+                <p
+                  style="color: red"
+                  class="mb-2"
+                >
+                  Warning: Student IDs are unique and cannot be changed once set!
+                </p>
+                <v-text-field
+                  v-model="tempStudentId"
+                  :rules="[studentIdRule]"
+                  variant="solo"
+                  label="Student ID"
+                  class="mb-2"
+                ></v-text-field>
+                <div class="d-flex">
+                  <v-btn
+                    @click="saveId"
+                    :disabled="typeof studentIdRule(tempStudentId) === 'string'"
+                    color="green"
+                  >
+                    Save
+                  </v-btn>
+                  <v-spacer></v-spacer>
+                  <v-btn
+                    @click="idDialog = false"
+                    color="red"
+                  >
+                    Cancel
+                  </v-btn>
+                </div>
               </div>
-            </div>
-          </v-dialog>
-        </template>
-      </DetailHeader>
-      <v-btn
-        v-if="!item.email"
-        @click="item.email = getStudentEmail(item.name)"
-        size="x-small"
-        color="blue-darken-2"
-        class="mb-3"
-      >new student email</v-btn>
-      <div class="d-flex align-center">
-        <v-text-field
-          v-model="item.email"
-          :rules="[(v) => emailValidator(v) || 'Invalid email']"
-          clearable
-          label="Email"
-          prepend-icon="mdi-email"
-        ></v-text-field>
+            </v-dialog>
+          </template>
+        </DetailHeader>
         <v-btn
-          v-if="item.email"
-          @click="sendEmail"
-          class="ml-4"
-          size="small"
+          v-if="!item.email"
+          @click="item.email = getStudentEmail(item.name)"
+          size="x-small"
           color="blue-darken-2"
-        >
-          draft email
-        </v-btn>
-      </div>
-      <v-text-field
-        v-model.number="item.points"
-        label="Points"
-        type="number"
-        prepend-icon="mdi-ticket"
-      ></v-text-field>
-      <div class="d-flex flex-row">
-        <v-select
-          v-model="item.activeStatus"
-          :items="Object.keys(statusOptions)"
-          :prepend-icon="`mdi-${statusOptions[item.activeStatus]}`"
-          label="Active Status"
-          style="width: 15%;"
-          class="mr-4"
-        ></v-select>
-        <v-select
-          v-model="item.year"
-          :items="yearOptions"
-          label="Year"
-          style="width: 15%;"
-          prepend-icon="mdi-calendar"
-        >
-        </v-select>
-      </div>
-      <!-- clearable on this auto-complete is incompatible with state syncing to google drive -->
-      <v-autocomplete
-        v-model="item.athletics"
-        :items="Object.keys(athleticOptions)"
-        :prepend-icon="`mdi-${athleticOptions[item.athletics]}`"
-        label="Athletics"
-        class="mt-2"
-      ></v-autocomplete>
-
-      <ModuleFetch
-        @update="modules = $event"
-        @loading-state="loadingModules = $event"
-        :id="item.id"
-      />
-
-      <div style="width: 1px; height: 10px"></div>
-
-      <h2>
-        Other:
-      </h2>
-      <div
-        style="overflow: auto; max-height: 180px;"
-        class="d-flex flex-row flex-wrap"
-      >
-        <div
-          v-for="(value, key) in item.misc"
-          :key="key"
-          style="width: 30%;"
-          class="mx-1"
-        >
+          class="mb-3"
+        >new student email</v-btn>
+        <div class="d-flex align-center">
           <v-text-field
-            v-model="item.misc[key]"
-            :label="key"
-            outlined
+            v-model="item.email"
+            :rules="[(v) => emailValidator(v) || 'Invalid email']"
+            clearable
+            label="Email"
+            prepend-icon="mdi-email"
           ></v-text-field>
+          <v-btn
+            v-if="item.email"
+            @click="sendEmail(item.email)"
+            class="ml-4"
+            size="small"
+            color="blue-darken-2"
+          >
+            email
+          </v-btn>
         </div>
-        <div v-if="Object.keys(item.misc).length === 0">
-          No additional information. Allocate custom data tracking on google sheets.
+        <v-text-field
+          v-model.number="item.points"
+          label="Points"
+          type="number"
+          prepend-icon="mdi-ticket"
+        ></v-text-field>
+        <div class="d-flex flex-row">
+          <v-select
+            v-model="item.activeStatus"
+            :items="Object.keys(statusOptions)"
+            :prepend-icon="`mdi-${statusOptions[item.activeStatus]}`"
+            label="Active Status"
+            style="width: 15%;"
+            class="mr-4"
+          ></v-select>
+          <v-select
+            v-model="item.year"
+            :items="yearOptions"
+            label="Year"
+            style="width: 15%;"
+            prepend-icon="mdi-calendar"
+          >
+          </v-select>
         </div>
-      </div>
-    </div>
-    <v-divider
-      v-if="sm"
-      class="my-2"
-    ></v-divider>
-    <div
-      :class="[
-        sm ? '' : 'ml-5',
-        'd-flex',
-        'flex-column',
-        'align-center'
-      ]"
-      :style="sm ? '' : 'width: 55%; max-width: 450px'"
-    >
-      <div style="width: 100%;">
+        <!-- clearable on this auto-complete is incompatible with state syncing to google drive -->
+        <v-autocomplete
+          v-model="item.athletics"
+          :items="Object.keys(athleticOptions)"
+          :prepend-icon="`mdi-${athleticOptions[item.athletics]}`"
+          label="Athletics"
+          class="mt-2"
+        ></v-autocomplete>
+
+        <ModuleFetch
+          @update="modules = $event"
+          @loading-state="loadingModules = $event"
+          :id="item.id"
+        />
+
+        <div style="width: 1px; height: 10px"></div>
+
+        <h2>
+          Other:
+        </h2>
+        <div
+          style="overflow: auto; max-height: 180px;"
+          class="d-flex flex-row flex-wrap"
+        >
+          <div
+            v-for="(value, key) in item.misc"
+            :key="key"
+            style="width: 30%;"
+            class="mx-1"
+          >
+            <v-text-field
+              v-model="item.misc[key]"
+              :label="key"
+              outlined
+            ></v-text-field>
+          </div>
+          <div v-if="Object.keys(item.misc).length === 0">
+            No additional information. Allocate custom data tracking on google sheets.
+          </div>
+        </div>
+      </template>
+      <template #notes-button>
         <v-btn
           @click="showAddNote = true"
           size="x-small"
           color="blue-darken-2"
           class="mb-3"
         >Add Meeting Note</v-btn>
-        <v-textarea
-          v-model="item.note"
-          auto-grow
-          variant="outlined"
-          clearable
-          label="Meeting notes"
-        ></v-textarea>
-      </div>
-      <div
-        :class="[
-          'd-flex',
-          'flex-column'
-        ]"
-        style="width: 100%;"
-      >
+      </template>
+      <template #buttons>
         <div
           class="d-flex flex-row justify-space-between"
           style="width: 100%"
@@ -221,56 +193,38 @@
             >{{ switchPanel(PanelType.GRADUATES).icon }}</v-icon>
             Graduate
           </v-btn>
-
         </div>
-        <v-btn
-          @click="reqDeleteStudent"
-          :disabled="!canDelete"
-          size="large"
-          color="red"
-          class="mt-3"
-        >
-          <v-icon
-            class="mr-4"
-            size="x-large"
-          >mdi-delete</v-icon>
-          delete {{ item.name }}
-        </v-btn>
-      </div>
-    </div>
+      </template>
+    </DetailFrame>
     <AddStudentNote
       @success="addStudentNote($event)"
       @close="showAddNote = false"
-      :show="showAddNote"
+      :show="
+      showAddNote"
     />
   </div>
 </template>
+
 
 <script setup lang="ts">
 import {
   ref,
   watch,
   computed,
-  toRefs
 } from 'vue'
-import { useElementSize } from '@vueuse/core'
-import { useDisplay } from 'vuetify'
+import DetailFrame from './Helper/DetailFrame.vue'
 import DetailHeader from './Helper/DetailHeader.vue'
 import ModuleFetch from './Helper/ModuleFetch.vue'
 import AddStudentNote from './Helper/AddStudentNote.vue'
-import { moveRowToRange, Range } from '../../SheetsAPI'
-import { unmapStudents, unmapGraduates } from '../../DataMappers'
-import { Student, Module } from '../../SheetTypes'
+import type { Student, Module } from '../../SheetTypes'
 import { athleticOptions } from '../../Athletics'
-import { emailValidator, getStudentEmail } from '../../EmailUtilities'
+import { emailValidator, getStudentEmail, sendEmail } from '../../EmailUtilities'
 import { switchPanel, PanelType } from '../../SwitchPanel'
 import { moveToGraduates } from '../../StudentTools'
 
 const props = defineProps<{
   item: Student
 }>()
-
-const { xs } = useDisplay()
 
 const emits = defineEmits([
   'delete',
@@ -284,12 +238,6 @@ const statusOptions = {
   'Pending': 'account-question',
 }
 
-enum ActiveStatus {
-  ACTIVE = 'Active',
-  INACTIVE = 'Inactive',
-  PENDING = 'Pending',
-}
-
 const yearOptions = [
   'Freshman',
   'Sophomore',
@@ -298,20 +246,12 @@ const yearOptions = [
   'Other'
 ]
 
-const sm = ref(false)
-const el = ref(null)
-const { width } = useElementSize(el)
-
 watch(props.item, (newItem) => {
   if (!newItem.id && !newItem.activeStatus) {
-    newItem.activeStatus = ActiveStatus.PENDING
+    newItem.activeStatus = 'Pending'
   } else if (!newItem.activeStatus) {
-    newItem.activeStatus = ActiveStatus.ACTIVE
+    newItem.activeStatus = 'Active'
   }
-}, { immediate: true })
-
-watch(width, (newWidth) => {
-  sm.value = newWidth < 700
 }, { immediate: true })
 
 function reqDeleteStudent() {
@@ -332,11 +272,6 @@ const canDelete = computed(() => {
   if (!props.item.id) return true
   return modules.value.length === 0 && !loadingModules.value
 })
-
-function sendEmail() {
-  const { email } = props.item
-  window.open(`mailto:${email}`)
-}
 
 function studentIdRule(studentId: string) {
   if (/^\d{7}$/.test(studentId)) return true

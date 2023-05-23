@@ -16,7 +16,7 @@
       </div>
       <div style="font-weight: 900; font-size: 1.5em; line-height: 1">
         {{ item.name || '(No Name)' }}
-        <span 
+        <span
           class="mr-1"
           style="font-weight: 300; font-size: 0.6em"
         >
@@ -29,7 +29,7 @@
         </span>
       </div>
       <v-spacer></v-spacer>
-      <v-sheet 
+      <v-sheet
         :color="color"
         :style="{
           height: '25px',
@@ -49,27 +49,27 @@
         >Status</v-tooltip>
       </v-sheet>
     </div>
-    <div 
+    <div
       class="d-flex flex-column mt-5"
       style="font-size: 0.9em;"
     >
       <div class="d-flex flex-row">
         <div class="email d-flex flex-row">
-          <v-icon 
+          <v-icon
             class="mr-1"
             style="opacity: 0.75"
           >
             mdi-email
           </v-icon>
           <p :style="emailTextStyles">
-            {{ item.email || '(No Email)' }} 
+            {{ item.email || '(No Email)' }}
           </p>
           <v-tooltip
-            :disabled="smAndDown"
+            :disabled="smAndDown || emailValid"
             activator="parent"
             location="bottom"
           >
-            Email{{ emailValid ? '' : ' Invalid' }}
+            Email is invalid
           </v-tooltip>
         </div>
         <v-spacer></v-spacer>
@@ -77,7 +77,7 @@
           <p>
             {{ points }}
           </p>
-          <v-icon 
+          <v-icon
             class="ml-1"
             style="opacity: 0.75"
           >

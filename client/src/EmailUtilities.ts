@@ -1,5 +1,5 @@
 /*
-  This file contains utility functions for 
+  This file contains utility functions for
   generating and validating SNHU email addresses.
 */
 export function emailValidator(email: string) {
@@ -31,4 +31,8 @@ export function getFacultyEmail(name: string) {
   const [firstName, lastName] = sanitizeName(name);
   if (!(firstName && lastName)) return '';
   return `${firstName[0]}.${lastName}@snhu.edu`;
+}
+
+export function sendEmail(email: string) {
+  window.open(`mailto:${email}`)
 }

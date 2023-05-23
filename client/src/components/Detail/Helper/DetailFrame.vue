@@ -24,6 +24,7 @@
       :style="sm ? '' : 'width: 55%; max-width: 450px'"
     >
       <div style="width: 100%;">
+        <slot name="notes-button"></slot>
         <v-textarea
           v-model="notepad"
           auto-grow
@@ -42,6 +43,7 @@
         <slot name="buttons"></slot>
         <v-btn
           @click="$emit('delete')"
+          :disabled="disableDelete"
           size="large"
           color="red"
           class="mt-3"
@@ -70,8 +72,13 @@ watch(width, (newWidth) => {
 }, { immediate: true })
 
 const props = defineProps<{
-  modelValue: string
+  modelValue: string,
+  canDelete?: boolean
 }>()
+
+const disableDelete = computed(() => {
+  return props.canDelete === false
+})
 
 const emits = defineEmits<{
   'update:modelValue': (value: string) => void,

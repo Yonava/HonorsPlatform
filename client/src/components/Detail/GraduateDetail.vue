@@ -34,12 +34,12 @@
         ></v-text-field>
         <v-btn
           v-if="item.email"
-          @click="sendEmail"
+          @click="sendEmail(item.email)"
           size="small"
           class="ml-4"
           color="purple-darken-2"
         >
-          draft email
+          email
         </v-btn>
       </div>
 
@@ -97,7 +97,7 @@ import { unmapStudents } from '../../DataMappers'
 import type { Graduate, GradEngagement } from '../../SheetTypes'
 import EngagementTracking from './Helper/EngagementTracking.vue'
 import DetailHeader from './Helper/DetailHeader.vue'
-import { emailValidator, phoneValidator } from '../../EmailUtilities'
+import { emailValidator, phoneValidator, sendEmail } from '../../EmailUtilities'
 
 const props = defineProps<{
   item: Graduate
@@ -116,11 +116,6 @@ const loadingEngagements = ref(true)
 const canDelete = computed(() => {
   return engagements.value.length === 0 && !loadingEngagements.value
 })
-
-function sendEmail() {
-  const { email } = props.item
-  window.open(`mailto:${email}`)
-}
 
 async function generateGradId() {
   const newId = 'G' + Math.random().toString().substring(2, 9);
