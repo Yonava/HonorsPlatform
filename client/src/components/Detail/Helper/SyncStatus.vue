@@ -21,7 +21,7 @@
       <v-icon>
         mdi-cloud-check-variant-outline
       </v-icon>
-      saved at
+      saved
       {{
         syncTime
       }}

@@ -23,7 +23,7 @@
           <span
             class="ml-2"
             style="color: white; line-height: 0.3; font-weight: 300;"
-          >{{ mod.description }}</span>
+          >{{ mod.instructor }}</span>
         </div>
       </div>
       <v-icon

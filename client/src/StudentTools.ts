@@ -1,52 +1,58 @@
-import { Student } from './SheetTypes'
+import { Student, Graduate } from './SheetTypes'
 import { unmapGraduates } from './DataMappers'
-import { getEvery, Range, replaceRange, getHeaderRowCache, moveRowToRange } from './SheetsAPI'
+import { getEvery, Range, replaceRange, getHeaderRowCache, moveRowToRange, postInRange } from './SheetsAPI'
 import { switchPanel, PanelType, Panel } from './SwitchPanel'
+
+export function studentToGraduate(student: Student): Graduate {
+  return {
+    row: student.row,
+    id: student.id,
+    name: student.name,
+    phone: '',
+    email: student.email,
+    graduationDate: new Date().toLocaleDateString(),
+    note: student.note,
+  }
+}
 
 export async function moveToGraduates(student: Student) {
   await moveRowToRange(
     Range.STUDENTS,
     Range.GRADUATES,
     student.row,
-    unmapGraduates([{
-      row: student.row,
-      id: student.id,
-      name: student.name,
-      phone: '',
-      email: student.email,
-      graduationDate: new Date().toLocaleDateString(),
-      note: student.note,
-    }])
+    unmapGraduates([studentToGraduate(student)])
   )
 }
 
 export async function incrementStudentYear() {
   const { map, unmap } = switchPanel(PanelType.STUDENTS).mappers as Panel<Student>['mappers']
   const students = await map(await getEvery(Range.STUDENTS))
+  const graduatingSeniors: Student[] = []
 
-  for await (const student of students) {
+  students.forEach((student, index) => {
     if (!student.year) {
-      continue
+      return
     }
     const year = student.year.toLowerCase();
-    switch (year) {
-      case 'freshman':
-        student.year = 'Sophomore'
-        break
-      case 'sophomore':
-        student.year = 'Junior'
-        break
-      case 'junior':
-        student.year = 'Senior'
-        break
-      case 'senior':
-        await moveToGraduates(student)
-        console.log(student.name + ' graduated!')
-        break
+    if (year === 'Senior') {
+      graduatingSeniors.push(student)
+      students.splice(index, 1)
+      console.log(student.name + ' graduated!')
+    } else if (year === 'Junior') {
+      student.year = 'Senior'
+    } else if (year === 'Sophomore') {
+      student.year = 'Junior'
+    } else if (year === 'Freshman') {
+      student.year = 'Sophomore'
     }
+  })
+
+  if (graduatingSeniors.length > 0) {
+    await postInRange(Range.GRADUATES, unmapGraduates(graduatingSeniors.map(studentToGraduate)))
   }
 
   const data = await unmap(students)
   const headerRow = await getHeaderRowCache(Range.STUDENTS)
   await replaceRange(Range.STUDENTS, [headerRow, ...data])
+  console.log('Batch job "incrementStudentYear" complete!')
 }

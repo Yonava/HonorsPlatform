@@ -8,7 +8,6 @@
     ]"
   >
     <div>
-
       <DetailHeader
         v-model="item.courseCode"
         :id="item.studentId"
