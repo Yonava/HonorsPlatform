@@ -151,20 +151,15 @@
 <script setup lang="ts">
 import {
   ref,
-  onMounted,
   computed,
-  watch,
-  onUnmounted
 } from 'vue'
 import { useRoute } from 'vue-router'
-import { getEvery, clearByRow, updateByRow } from '../SheetsAPI'
 import AddModal from '../components/AddModal.vue'
 import PanelList from '../components/Panel/PanelList.vue'
 import StudentDetail from '../components/Detail/StudentDetail.vue'
 import SortPanel from '../components/Panel/SortPanel.vue'
 import AppBar from '../components/Panel/AppBar.vue'
 import { useKeyBindings } from '../KeyBindings'
-import { SheetEntry, SheetItem } from '../SheetTypes'
 import { useDisplay } from 'vuetify'
 import { useUpdateManager } from '../UpdateManager'
 
@@ -179,32 +174,16 @@ const {
   smAndDown
 } = useDisplay()
 
-const loadingItems = ref(true)
 const showAddModal = ref(false)
-const filterQuery = ref('')
-
-const pinnedItem = ref(null)
-
-// dom element of the panel list
-const panelList = ref(null)
-
-const changePanel = async (panelType: PanelType) => {
-  filterQuery.value = ''
-}
 
 const showDetailDrawer = computed({
   get: () => !!selectedItem.value,
   set: (v) => {
     if (!v) {
-      selectedItem.value = undefined
+      selectedItem.value = null
     }
   }
 })
-
-const keyBindToggle = (panelType: PanelType) => {
-  if (panel.value.type === panelType) return
-  changePanel(panelType)
-}
 
 useKeyBindings({
   's': () => showAddModal.value = !showAddModal.value,
@@ -216,55 +195,6 @@ useKeyBindings({
   '5': () => keyBindToggle(PanelType.THESES),
 })
 
-onMounted(async () => {
-  if (route.query.type) {
-    changePanel(route.query.type as PanelType)
-  } else {
-    document.title = panel.value.title.plural + ' - Honors Program'
-  }
-  panelList.value.addEventListener('scroll', scrollCapture)
-  await fetchData()
-})
-
-onUnmounted(() => {
-  if (!panelList.value) return
-  panelList.value.removeEventListener('scroll', scrollCapture)
-})
-
-async function itemAdded(item: SheetItem) {
-  await silentFetch()
-  const index = items.value.findIndex((i) => {
-    return panel.value.keys.every(key => i[key] === item[key]);
-  })
-  if (index === -1) return
-  selectedItem.value = items.value[index]
-  pinnedItem.value = items.value[index]
-  if (panelList.value) {
-    panelList.value.scrollTop = 0
-  }
-}
-
-const displayItems = computed(() => {
-  if (filterQuery.value === '') return items.value
-  return items.value.filter(<T extends SheetEntry>(item: T) => {
-    const query = filterQuery.value.toLowerCase();
-    const values = Object.values(item).join(' ').toLowerCase();
-    return values.includes(query)
-  })
-})
-
-async function fetchData() {
-  const panelScrollY = localStorage.getItem('panelScrollY')
-  if (panelScrollY) {
-    setTimeout(() => {
-      const el = panelList.value
-      const height = parseFloat(panelScrollY) * (el.scrollHeight - el.clientHeight)
-      panelList.value.scrollTop = height
-    }, 1)
-  }
-}
-
-
 function getDefaultWidth() {
   const local = localStorage.getItem('panelListWidth')
   if (local) return parseInt(local)
@@ -275,13 +205,6 @@ const resizing = ref(false)
 const panelListWidth = ref(getDefaultWidth())
 const proposedWidth = ref(panelListWidth.value)
 const sortPanelWidth = 80
-
-function scrollCapture() {
-  const el = panelList.value
-  const percentScrolled = el.scrollTop / (el.scrollHeight - el.clientHeight)
-  if (isNaN(percentScrolled)) return
-  localStorage.setItem('panelScrollY', percentScrolled.toString())
-}
 
 const resizeStart = (e: MouseEvent) => {
   resizing.value = true

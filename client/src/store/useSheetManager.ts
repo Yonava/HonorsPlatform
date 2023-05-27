@@ -26,10 +26,12 @@ export const useSheetManager = defineStore('sheetManager', {
   },
   actions: {
     async setPanel(panel: Panel, jumpTo?: number) {
+      if (this.panel === panel) {
+        return;
+      }
       this.selectedItem = null;
       this.panel = panel;
       this.searchFilter = '';
-      localStorage.setItem('panelScrollY', '0');
       document.title = panel.title.plural + ' - Honors Program';
       router.push({
         name: 'panel',
