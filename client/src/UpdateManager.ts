@@ -4,12 +4,6 @@ import type { SheetItem } from "./SheetTypes";
 import type { Panel } from "./SwitchPanel";
 import { watch, provide, ref, onUnmounted } from "vue";
 
-export type SyncState = {
-  status: boolean;
-  processing: boolean;
-  lastSynced: Date;
-}
-
 export function useUpdateManager(
   selectedItemRef: Ref<SheetItem>,
   panel: Ref<Panel<SheetItem>>,
@@ -26,12 +20,16 @@ export function useUpdateManager(
   let startingItem = '';
   let switchedStudentProfile = false;
 
-  async function updateItem() {
+  const updateItem = async () => {
 
     // for fetch interval
-    if (syncState.value.status) return;
+    if (syncState.value.status) {
+      return;
+    }
 
-    if (syncState.value.processing || !selectedItemRef.value) return;
+    if (syncState.value.processing || !selectedItemRef.value) {
+      return;
+    }
     syncState.value.processing = true;
     await updateByRow(
       panel.value.sheetRange,
@@ -62,7 +60,9 @@ export function useUpdateManager(
         ])
       )
     }
-    if (!newItem) return;
+    if (!newItem) {
+      return;
+    }
     startingItem = JSON.stringify(newItem);
   });
 
@@ -80,7 +80,9 @@ export function useUpdateManager(
   }, { deep: true });
 
   const syncInterval = setInterval(async () => {
-    if (syncState.value.status) return;
+    if (syncState.value.status) {
+      return;
+    }
     await updateItem();
   }, 3500);
 
