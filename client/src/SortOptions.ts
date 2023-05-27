@@ -1,7 +1,7 @@
 import { PanelType } from './SwitchPanel';
-import { 
+import {
   Student,
-  Graduate,  
+  Graduate,
   Module,
   CompletedModule,
   Thesis,
@@ -14,56 +14,40 @@ export type SortOption<T extends SheetItem> = {
     asc: string,
     desc: string
   },
-  func: {
-    asc: (a: T, b: T) => number,
-    desc: (a: T, b: T) => number
-  }
+  func: (a: T, b: T) => number
 }
 
 export function switchSortOptions(panel: PanelType) {
   switch (panel) {
     case PanelType.STUDENTS:
       return [
-        { 
-          label: 'Name', 
+        {
+          label: 'Name',
           icon: {
             asc: 'mdi-sort-alphabetical-ascending',
             desc: 'mdi-sort-alphabetical-descending'
           },
-          func: {
-            asc: (a: Student, b: Student) => a.name.localeCompare(b.name),
-            desc: (a: Student, b: Student) => b.name.localeCompare(a.name)
-          }
+          func: (a: Student, b: Student) => a.name.localeCompare(b.name)
         },
-        { 
+        {
           label: 'Points',
           icon: {
             asc: 'mdi-sort-numeric-ascending',
             desc: 'mdi-sort-numeric-descending'
           },
-          func: {
-            asc: (a: Student, b: Student) => {
-              const A = a.points || 0;
-              const B = b.points || 0;
-              return A - B;
-            },
-            desc: (a: Student, b: Student) => {
-              const A = a.points || 0;
-              const B = b.points || 0;
-              return B - A;
-            }
+          func: (a: Student, b: Student) => {
+            const A = a.points || 0;
+            const B = b.points || 0;
+            return B - A;
           }
         },
-        { 
-          label: 'Active Status', 
+        {
+          label: 'Active Status',
           icon: {
             asc: 'mdi-sort-ascending',
             desc: 'mdi-sort-descending'
           },
-          func: {
-            asc: (a: Student, b: Student) => a.activeStatus.localeCompare(b.activeStatus),
-            desc: (a: Student, b: Student) => b.activeStatus.localeCompare(a.activeStatus)
-          }
+          func: (a: Student, b: Student) => a.activeStatus.localeCompare(b.activeStatus)
         },
         {
           label: 'Year',
@@ -71,27 +55,15 @@ export function switchSortOptions(panel: PanelType) {
             asc: 'mdi-calendar-star',
             desc: 'mdi-calendar-remove'
           },
-          func: {
-            asc: (a: Student, b: Student) => {
-              const yearMap: { [key: string]: number } = {
-                'Freshman': 1,
-                'Sophomore': 2,
-                'Junior': 3,
-                'Senior': 4,
-                'Other': 5
-              };
-              return yearMap[a.year] - yearMap[b.year];
-            },
-            desc: (a: Student, b: Student) => {
-              const yearMap: { [key: string]: number } = {
-                'Freshman': 1,
-                'Sophomore': 2,
-                'Junior': 3,
-                'Senior': 4,
-                'Other': 5
-              };
-              return yearMap[b.year] - yearMap[a.year];
-            }
+          func: (a: Student, b: Student) => {
+            const yearMap: { [key: string]: number } = {
+              'Freshman': 1,
+              'Sophomore': 2,
+              'Junior': 3,
+              'Senior': 4,
+              'Other': 5
+            };
+            return yearMap[a.year] - yearMap[b.year];
           },
         },
       ];
@@ -103,10 +75,7 @@ export function switchSortOptions(panel: PanelType) {
             asc: 'mdi-sort-alphabetical-ascending',
             desc: 'mdi-sort-alphabetical-descending'
           },
-          func: {
-            asc: (a: Graduate, b: Graduate) => a.name.localeCompare(b.name),
-            desc: (a: Graduate, b: Graduate) => b.name.localeCompare(a.name)
-          }
+          func: (a: Graduate, b: Graduate) => a.name.localeCompare(b.name)
         },
         {
           label: 'Phone Number',
@@ -114,10 +83,7 @@ export function switchSortOptions(panel: PanelType) {
             asc: 'mdi-sort-numeric-ascending',
             desc: 'mdi-sort-numeric-descending'
           },
-          func: {
-            asc: (a: Graduate, b: Graduate) => a.phone.localeCompare(b.phone),
-            desc: (a: Graduate, b: Graduate) => b.phone.localeCompare(a.phone)
-          }
+          func: (a: Graduate, b: Graduate) => a.phone.localeCompare(b.phone)
         },
         {
           label: 'Grad Date',
@@ -125,17 +91,10 @@ export function switchSortOptions(panel: PanelType) {
             asc: 'mdi-calendar-star',
             desc: 'mdi-calendar-remove'
           },
-          func: {
-            asc: (a: Graduate, b: Graduate) => {
-              const dateA = new Date(a.graduationDate);
-              const dateB = new Date(b.graduationDate);
-              return dateA.getTime() - dateB.getTime();
-            },
-            desc: (a: Graduate, b: Graduate) => {
-              const dateA = new Date(a.graduationDate);
-              const dateB = new Date(b.graduationDate);
-              return dateB.getTime() - dateA.getTime();
-            }
+          func: (a: Graduate, b: Graduate) => {
+            const dateA = new Date(a.graduationDate);
+            const dateB = new Date(b.graduationDate);
+            return dateA.getTime() - dateB.getTime();
           }
         }
       ]
@@ -147,10 +106,7 @@ export function switchSortOptions(panel: PanelType) {
             asc: 'mdi-sort-numeric-ascending',
             desc: 'mdi-sort-numeric-descending'
           },
-          func: {
-            asc: (a: Module, b: Module) => a.courseCode.localeCompare(b.courseCode),
-            desc: (a: Module, b: Module) => b.courseCode.localeCompare(a.courseCode)
-          }
+          func: (a: Module, b: Module) => a.courseCode.localeCompare(b.courseCode)
         },
         {
           label: 'Term',
@@ -158,10 +114,7 @@ export function switchSortOptions(panel: PanelType) {
             asc: 'mdi-sort-alphabetical-ascending',
             desc: 'mdi-sort-alphabetical-descending'
           },
-          func: {
-            asc: (a: Module, b: Module) => a.term.localeCompare(b.term),
-            desc: (a: Module, b: Module) => b.term.localeCompare(a.term)
-          }
+          func: (a: Module, b: Module) => a.term.localeCompare(b.term)
         },
         {
           label: 'Instructor',
@@ -169,10 +122,7 @@ export function switchSortOptions(panel: PanelType) {
             asc: 'mdi-human-male-board',
             desc: 'mdi-human-male-board',
           },
-          func: {
-            asc: (a: Module, b: Module) => a.instructor.localeCompare(b.instructor),
-            desc: (a: Module, b: Module) => b.instructor.localeCompare(a.instructor)
-          }
+          func: (a: Module, b: Module) => a.instructor.localeCompare(b.instructor)
         },
         {
           label: 'DocuSign',
@@ -180,21 +130,12 @@ export function switchSortOptions(panel: PanelType) {
             asc: 'mdi-file-document-outline',
             desc: 'mdi-file-document',
           },
-          func: {
-            asc: (a: Module, b: Module) => {
-              if (!a.docuSignCreated && !a.docuSignCompleted) return 1;
-              if (!b.docuSignCreated && !b.docuSignCompleted) return -1;
-              if (a.docuSignCompleted === '') return 1;
-              if (b.docuSignCompleted === '') return -1;
-              return b.docuSignCompleted.localeCompare(a.docuSignCompleted);
-            },
-            desc: (a: Module, b: Module) => {
-              if (!a.docuSignCreated && !a.docuSignCompleted) return -1;
-              if (!b.docuSignCreated && !b.docuSignCompleted) return 1;
-              if (a.docuSignCompleted === '') return -1;
-              if (b.docuSignCompleted === '') return 1;
-              return b.docuSignCompleted.localeCompare(a.docuSignCompleted);
-            }
+          func: (a: Module, b: Module) => {
+            if (!a.docuSignCreated && !a.docuSignCompleted) return 1;
+            if (!b.docuSignCreated && !b.docuSignCompleted) return -1;
+            if (a.docuSignCompleted === '') return 1;
+            if (b.docuSignCompleted === '') return -1;
+            return b.docuSignCompleted.localeCompare(a.docuSignCompleted);
           }
         }
       ]
@@ -206,23 +147,13 @@ export function switchSortOptions(panel: PanelType) {
             asc: 'mdi-calendar-check',
             desc: 'mdi-calendar-remove'
           },
-          func: {
-            asc: (a: CompletedModule, b: CompletedModule) => {
-              // put empty strings last
-              if (a.completedDate === '') return 1;
-              if (b.completedDate === '') return -1;
-              const aDate = new Date(a.completedDate);
-              const bDate = new Date(b.completedDate);
-              return aDate.getTime() - bDate.getTime();
-            },
-            desc: (a: CompletedModule, b: CompletedModule) => {
-              // put empty strings first
-              if (a.completedDate === '') return -1;
-              if (b.completedDate === '') return 1;
-              const aDate = new Date(a.completedDate);
-              const bDate = new Date(b.completedDate);
-              return bDate.getTime() - aDate.getTime();
-            }
+          func: (a: CompletedModule, b: CompletedModule) => {
+            // put empty strings last
+            if (a.completedDate === '') return 1;
+            if (b.completedDate === '') return -1;
+            const aDate = new Date(a.completedDate);
+            const bDate = new Date(b.completedDate);
+            return aDate.getTime() - bDate.getTime();
           }
         },
         {
@@ -231,10 +162,7 @@ export function switchSortOptions(panel: PanelType) {
             asc: 'mdi-human-male-board',
             desc: 'mdi-human-male-board',
           },
-          func: {
-            asc: (a: CompletedModule, b: CompletedModule) => a.instructor.localeCompare(b.instructor),
-            desc: (a: CompletedModule, b: CompletedModule) => b.instructor.localeCompare(a.instructor)
-          }
+          func: (a: CompletedModule, b: CompletedModule) => a.instructor.localeCompare(b.instructor)
         },
         {
           label: 'Course Code',
@@ -242,10 +170,7 @@ export function switchSortOptions(panel: PanelType) {
             asc: 'mdi-sort-numeric-ascending',
             desc: 'mdi-sort-numeric-descending'
           },
-          func: {
-            asc: (a: CompletedModule, b: CompletedModule) => a.courseCode.localeCompare(b.courseCode),
-            desc: (a: CompletedModule, b: CompletedModule) => b.courseCode.localeCompare(a.courseCode)
-          }
+          func: (a: CompletedModule, b: CompletedModule) => a.courseCode.localeCompare(b.courseCode)
         }
       ]
     case PanelType.THESES:
@@ -256,10 +181,7 @@ export function switchSortOptions(panel: PanelType) {
             asc: 'mdi-check',
             desc: 'mdi-close'
           },
-          func: {
-            asc: (a: Thesis, b: Thesis) => a.decision.localeCompare(b.decision),
-            desc: (a: Thesis, b: Thesis) => b.decision.localeCompare(a.decision)
-          }
+          func: (a: Thesis, b: Thesis) => a.decision.localeCompare(b.decision)
         },
         {
           label: 'Term',
@@ -267,10 +189,7 @@ export function switchSortOptions(panel: PanelType) {
             asc: 'mdi-sort-alphabetical-ascending',
             desc: 'mdi-sort-alphabetical-descending'
           },
-          func: {
-            asc: (a: Thesis, b: Thesis) => a.term.localeCompare(b.term),
-            desc: (a: Thesis, b: Thesis) => b.term.localeCompare(a.term)
-          }
+          func: (a: Thesis, b: Thesis) => a.term.localeCompare(b.term)
         },
         {
           label: 'Student Name',
@@ -278,10 +197,7 @@ export function switchSortOptions(panel: PanelType) {
             asc: 'mdi-sort-alphabetical-ascending',
             desc: 'mdi-sort-alphabetical-descending'
           },
-          func: {
-            asc: (a: Thesis, b: Thesis) => a.name.localeCompare(b.name),
-            desc: (a: Thesis, b: Thesis) => b.name.localeCompare(a.name)
-          }
+          func: (a: Thesis, b: Thesis) => a.name.localeCompare(b.name)
         },
         {
           label: 'Faculty Mentor',
@@ -289,10 +205,7 @@ export function switchSortOptions(panel: PanelType) {
             asc: 'mdi-human-male-board',
             desc: 'mdi-human-male-board',
           },
-          func: {
-            asc: (a: Thesis, b: Thesis) => a.mentor.localeCompare(b.mentor),
-            desc: (a: Thesis, b: Thesis) => b.mentor.localeCompare(a.mentor)
-          }
+          func: (a: Thesis, b: Thesis) => a.mentor.localeCompare(b.mentor)
         }
       ];
     default:

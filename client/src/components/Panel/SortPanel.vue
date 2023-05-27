@@ -1,12 +1,12 @@
 <template>
-  <div 
+  <div
     v-if="sortOptions.length > 0"
     class="pa-2"
     style="width: 100%"
   >
     <div class="d-flex flex-column align-center">
-      <v-icon 
-        icon="mdi-sort"  
+      <v-icon
+        icon="mdi-sort"
       ></v-icon>
       <b style="font-size: 0.9rem;">
         Sort By
@@ -17,34 +17,38 @@
       ></div>
     </div>
     <div
-      v-for="(sort, index) in sortOptions"
-      :key="sort"
-      @click="sortItems(sort, index)"
-      class="mt-1 sort-box d-flex justify-center align-center flex-column px-2"
+      v-for="sortOption in sortOptions"
+      :key="sortOption.label"
+      @click="setKey(sortOption.label)"
       :style="{
-        background: activeSort === sort ? 'rgba(255, 255, 255, 0.2)' : '',
+        background: activeSortKey === sortOption.label ? 'rgba(255, 255, 255, 0.2)' : '',
         borderRadius: '10px'
       }"
+      class="mt-1 sort-box d-flex justify-center align-center flex-column px-2"
     >
-      <v-icon>
-        {{ activeIcons[index] }}
+      <v-icon v-if="activeSortKey === sortOption.label">
+        {{ ascending ? sortOption.icon.asc : sortOption.icon.desc }}
+      </v-icon>
+      <v-icon v-else>
+        {{ sortOption.icon.asc }}
       </v-icon>
       <p style="font-size: 0.9rem; line-height: 1.1; user-select: none">
-        {{ sort.label }}
+        {{ sortOption.label }}
       </p>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { 
-  ref, 
-  computed, 
+import {
+  ref,
+  computed,
   watch
 } from 'vue'
 import { SortOption, switchSortOptions } from '../../SortOptions'
 import { PanelType } from '../../SwitchPanel'
-import { SheetItem } from '../../SheetTypes'
+import { SheetItem, Student } from '../../SheetTypes'
+import { useSortItems, SortOptions } from '../../SortItems'
 
 const props = defineProps<{
   items: SheetItem[],
@@ -53,47 +57,33 @@ const props = defineProps<{
 
 const emit = defineEmits(['update'])
 
-const activeSort = ref(undefined)
-const ascending = ref(true)
-
 const itemList = computed({
   get: () => props.items,
   set: val => emit('update', val)
 })
 
-function sortItems(sort: SortOption<SheetItem>, index: number) {
-  if (activeSort.value === sort) {
-    ascending.value = !ascending.value
-  } else {
-    activeSort.value = sort
-  }
-  itemList.value = [...itemList.value].sort(sort.func[ascending.value ? 'asc' : 'desc'])
-  activeIcons.value[index] = sort.icon[ascending.value ? 'asc' : 'desc']
-}
-
 const sortOptions = ref<SortOption<SheetItem>[]>([])
-const activeIcons = ref<string[]>([])
+const sortOptionsObject = ref<SortOptions<SheetItem>>({})
+
+const { setKey, activeSortKey, ascending } = useSortItems<SheetItem>(itemList, sortOptionsObject)
 
 watch(() => props.panelType, newVal => {
-  activeSort.value = undefined
+  setKey(null)
   sortOptions.value = switchSortOptions(newVal)
-  activeIcons.value = sortOptions.value.map(sort => sort.icon.asc)
-}, { immediate: true })
 
-watch(() => props.items, () => {
-  if (activeSort.value) {
-    console.log('actively sorting')
-    itemList.value.sort(activeSort.value.func[ascending.value ? 'asc' : 'desc'])
-  }
-})
+  sortOptionsObject.value = {}
+  sortOptions.value.forEach(sort => {
+    sortOptionsObject.value[sort.label] = sort.func
+  })
+}, { immediate: true })
 </script>
 
 <style scoped>
 .sort-box {
-  width: 100%; 
-  height: 65px; 
-  cursor: pointer; 
-  text-align: center; 
+  width: 100%;
+  height: 65px;
+  cursor: pointer;
+  text-align: center;
 }
 
 .sort-box:hover {
