@@ -1,7 +1,7 @@
 <template>
   <div>
     <div
-      v-if="syncState.processing"
+      v-if="processing"
       class="d-flex flex-row align-center"
       style="height: 25px"
     >
@@ -21,33 +21,15 @@
       <v-icon>
         mdi-cloud-check-variant-outline
       </v-icon>
-      saved
-      {{
-        syncTime
-      }}
+      saved {{ syncTime }}
     </p>
   </div>
 </template>
 
 <script setup lang="ts">
-import { inject, computed } from "vue";
-import type { Ref } from "vue";
-import type { SyncState } from "../../../UpdateManager";
+import { useSyncState } from '../../../store/useSyncState'
+import { storeToRefs } from 'pinia'
 
-const syncState = inject<Ref<SyncState>>("syncState");
-
-const syncTime = computed(() => {
-
-  const time = syncState.value.lastSynced.toLocaleTimeString([], {
-    hour: "2-digit",
-    minute: "2-digit",
-  }).toLowerCase();
-
-  if (time.startsWith("0")) {
-    return time.slice(1);
-  } else {
-    return time;
-  }
-
-})
+const syncState = useSyncState()
+const { syncTime, processing } = storeToRefs(syncState)
 </script>

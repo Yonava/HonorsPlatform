@@ -4,12 +4,7 @@
       class="background-matte"
       :color="`${panel.color}-lighten-4`"
     ></v-sheet>
-    <AppBar
-      v-model="filterQuery"
-      @showAddModal="showAddModal = true"
-      :loading="loadingItems"
-      :displayItemsLength="displayItems.length"
-    />
+    <AppBar @showAddModal="showAddModal = true" />
     <v-main>
       <div
         :style="{
@@ -68,12 +63,7 @@
             :color="`${panel.color}-lighten-4`"
             style="width: 100%;"
           >
-            <PanelList
-              :items="displayItems"
-              :pinnedItem="pinnedItem"
-              :filterQuery="filterQuery"
-              :loading="loadingItems"
-            />
+            <PanelList />
           </v-sheet>
         </div>
         <v-sheet
@@ -99,14 +89,7 @@
             v-if="selectedItem"
             style="width: 100%"
           >
-            <component
-              @delete="reqDelete"
-              @update="selectedItem = $event"
-              @unselect="unselect"
-              @changePanel="changePanel(...Object.values($event))"
-              :is="panel.components.detail"
-              :item="selectedItem"
-            />
+            <component :is="panel.components.detail" />
           </div>
           <div
             v-else
@@ -142,7 +125,6 @@
       <component
         v-if="selectedItem"
         :is="panel.components.detail"
-        :item="selectedItem"
       />
     </v-navigation-drawer>
   </div>
@@ -161,16 +143,14 @@ import SortPanel from '../components/Panel/SortPanel.vue'
 import AppBar from '../components/Panel/AppBar.vue'
 import { useKeyBindings } from '../KeyBindings'
 import { useDisplay } from 'vuetify'
-import { useUpdateManager } from '../UpdateManager'
 
 import { useSheetManager } from '../store/useSheetManager'
 import { storeToRefs, mapActions } from 'pinia'
 import { panel } from '../Panels'
 
 const sheetManager = useSheetManager()
-
 const { selectedItem } = storeToRefs(sheetManager)
-const { setPanel, fetchItems } = mapActions(useSheetManager, ['setPanel'])
+const { setPanel, fetchItems } = mapActions(useSheetManager, ['setPanel', 'fetchItems'])
 
 const route = useRoute()
 

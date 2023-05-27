@@ -14,6 +14,18 @@ export const useSyncState = defineStore('syncState', {
   }),
   getters: {
     inSync: (state) => state.status && !state.processing,
+    syncTime: (state) => {
+      const time = state.lastSynced.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      }).toLowerCase();
+
+      if (time.startsWith("0")) {
+        return time.slice(1);
+      } else {
+        return time;
+      }
+    }
   },
   actions: {
     setProcessing(processing: boolean) {
