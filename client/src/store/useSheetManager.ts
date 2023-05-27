@@ -1,8 +1,11 @@
 import { defineStore } from 'pinia'
-import { getEvery, clearByRow, postInRange } from '../SheetsAPI';
+import { getEvery, clearByRow, postInRange, updateByRow } from '../SheetsAPI';
 import { SheetItem } from '../SheetTypes';
 import { panels, Panel } from '../Panels';
 import router from '../router';
+import { useSyncState } from './useSyncState';
+
+const syncState = useSyncState()
 
 export const useSheetManager = defineStore('sheetManager', {
   state: () => ({
@@ -61,14 +64,19 @@ export const useSheetManager = defineStore('sheetManager', {
     setItem(item: SheetItem | null) {
       this.selectedItem = item;
     },
-    async deleteSelectedItem() {
-      this.loadingItems = true
-      if (!this.selectedItem) {
-        console.error('useStateManager: No item selected');
-        return;
+    async deleteItem(item?: SheetItem) {
+      if (!item) {
+        if (!this.selectedItem) {
+          console.error('useStateManager: No item selected for update');
+          return;
+        }
+        item = this.selectedItem;
       }
-      const { row } = this.selectedItem
-      this.selectedItem = null
+      this.loadingItems = true
+      const { row } = item
+      if (item === this.selectedItem) {
+        this.selectedItem = null
+      }
       await clearByRow(this.panel.sheetRange, row)
       await this.fetchItems()
     },
@@ -76,6 +84,18 @@ export const useSheetManager = defineStore('sheetManager', {
       this.loadingItems = true
       await postInRange(this.panel.sheetRange, [itemDataArray])
       await this.fetchItems()
+    },
+    async updateItem(item?: SheetItem) {
+      if (!item) {
+        if (!this.selectedItem) {
+          console.error('useStateManager: No item selected for update');
+          return;
+        }
+        item = this.selectedItem;
+      }
+      syncState.setProcessing(true)
+      await updateByRow(this.panel.sheetRange, item.row, await this.panel.mappers.unmap(item))
+      syncState.$reset()
     }
   }
 })

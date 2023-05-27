@@ -1,4 +1,4 @@
-import { defineStore } from 'pinia'
+import { defineStore } from 'pinia';
 
 export type SyncState = {
   status: boolean;
@@ -12,8 +12,18 @@ export const useSyncState = defineStore('syncState', {
     processing: false,
     lastSynced: new Date()
   }),
-  getters:{
+  getters: {
     inSync: (state) => state.status && !state.processing,
   },
-  actions: {}
+  actions: {
+    setProcessing(processing: boolean) {
+      this.processing = processing;
+    },
+    setStatus(status: boolean) {
+      this.status = status;
+    },
+    setLastSynced(date: Date = new Date()) {
+      this.lastSynced = date;
+    }
+  }
 })
