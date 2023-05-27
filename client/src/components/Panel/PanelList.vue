@@ -1,14 +1,14 @@
 <template>
   <div style="width: 100%">
-    <div v-if="!loading">
+    <div v-if="!loadingItems">
       <div
         style="position: relative; width: 100%"
         class="d-flex flex-column align-center"
       >
         <div
-          v-for="item in items.slice(0, itemsToDisplay)"
+          v-for="item in filteredItems.slice(0, itemsToDisplay)"
           :key="item"
-          @click="selectedItem = item"
+          @click="setItem(item)"
           :class="[
             'item-card',
             'pa-3',
@@ -22,7 +22,7 @@
         </div>
       </div>
       <v-sheet
-        v-if="items.length === 0"
+        v-if="filteredItems.length === 0"
         class="mt-2"
         style="width: 90%; border-radius: 10px; margin: 0 auto;"
         :color="`${panel.color}-darken-1`"
@@ -38,8 +38,8 @@
             </v-icon>
             no {{ panel.title.plural.toLowerCase() }} in system
           </h3>
-          <span v-if="filterQuery">
-            try clearing "{{ filterQuery }}" from the search filter
+          <span v-if="searchFilter">
+            try clearing "{{ searchFilter }}" from the search filter
             to view all {{ panel.title.plural.toLowerCase() }}
           </span>
         </div>
@@ -62,56 +62,29 @@
 import {
   ref,
   computed,
-  toRefs,
   watch
 } from 'vue'
-import { SheetItem } from '../../SheetTypes'
-import { Panel } from '../../SwitchPanel'
 
-const props = defineProps<{
-  items: SheetItem[],
-  selected: SheetItem,
-  loading: boolean,
-  panel: Panel<SheetItem>,
-  filterQuery: string,
-  pinnedItem: SheetItem | null
-}>()
+import { useSheetManager } from '../../store/useSheetManager'
+import { mapActions, storeToRefs } from 'pinia'
 
-const emits = defineEmits(['select'])
+const sheetManager = useSheetManager()
+const { filteredItems, selectedItem, loadingItems, panel, searchFilter } = storeToRefs(sheetManager)
+const { setItem } = mapActions(useSheetManager, [])
 
-const selectedItem = computed({
-  get: () => props.selected,
-  set: item => emits('select', item)
-})
-
-const items = computed(() => {
-  if (!props.pinnedItem) return props.items
-  else {
-    const index = props.items.findIndex((i) => {
-      return props.panel.keys.every(key => i[key] === props.pinnedItem[key]);
-    })
-    if (index === -1) return props.items
-    const pinnedItem = props.items[index]
-    const items = [...props.items]
-    items.splice(index, 1)
-    items.unshift(pinnedItem)
-    return items
-  }
-})
-
-const itemsToDisplay = ref(items.value.length)
+const itemsToDisplay = ref(filteredItems.value.length)
 
 let updateInterval;
-watch(items, () => {
-  if (itemsToDisplay.value !== items.value.length) {
+watch(filteredItems, () => {
+  if (itemsToDisplay.value !== filteredItems.value.length) {
     clearInterval(updateInterval)
     updateInterval = setInterval(() => {
-      if (itemsToDisplay.value === items.value.length) {
+      if (itemsToDisplay.value === filteredItems.value.length) {
         clearInterval(updateInterval)
         return
       }
-      else if (itemsToDisplay.value > items.value.length) itemsToDisplay.value = items.value.length
-      else if (itemsToDisplay.value < items.value.length) itemsToDisplay.value = itemsToDisplay.value + 1
+      else if (itemsToDisplay.value > filteredItems.value.length) itemsToDisplay.value = filteredItems.value.length
+      else if (itemsToDisplay.value < filteredItems.value.length) itemsToDisplay.value = itemsToDisplay.value + 1
     }, 10)
   }
 })
