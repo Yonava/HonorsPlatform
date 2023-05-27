@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { getEvery, clearByRow, postInRange, updateByRow } from '../SheetsAPI';
 import { SheetItem } from '../SheetTypes';
-import { panels, Panel } from '../Panels';
+import { panel, Panel } from '../Panels';
 import router from '../router';
 import { useSyncState } from './useSyncState';
 
@@ -10,7 +10,7 @@ const syncState = useSyncState()
 export const useSheetManager = defineStore('sheetManager', {
   state: () => ({
     selectedItem: null as SheetItem | null,
-    panel: panels['STUDENTS'] as Panel,
+    panel: panel('STUDENTS'),
     items: [] as SheetItem[],
     searchFilter: '',
     loadingItems: false

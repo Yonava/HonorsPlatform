@@ -164,6 +164,13 @@ import { useDisplay } from 'vuetify'
 import { useUpdateManager } from '../UpdateManager'
 
 import { useSheetManager } from '../store/useSheetManager'
+import { storeToRefs, mapActions } from 'pinia'
+import { panel } from '../Panels'
+
+const sheetManager = useSheetManager()
+
+const { selectedItem } = storeToRefs(sheetManager)
+const { setPanel, fetchItems } = mapActions(useSheetManager, ['setPanel'])
 
 const route = useRoute()
 
@@ -187,12 +194,12 @@ const showDetailDrawer = computed({
 
 useKeyBindings({
   's': () => showAddModal.value = !showAddModal.value,
-  'r': () => fetchData(),
-  '1': () => keyBindToggle(PanelType.STUDENTS),
-  '2': () => keyBindToggle(PanelType.GRADUATES),
-  '3': () => keyBindToggle(PanelType.MODULES),
-  '4': () => keyBindToggle(PanelType.COMPLETED_MODULES),
-  '5': () => keyBindToggle(PanelType.THESES),
+  'r': () => fetchItems(),
+  '1': () => setPanel(panel('STUDENTS')),
+  '2': () => setPanel(panel('GRADUATES')),
+  '3': () => setPanel(panel('MODULES')),
+  '4': () => setPanel(panel('COMPLETED_MODULES')),
+  '5': () => setPanel(panel('THESES')),
 })
 
 function getDefaultWidth() {
