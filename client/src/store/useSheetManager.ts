@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { getEvery, clearByRow } from '../SheetsAPI';
+import { getEvery, clearByRow, postInRange } from '../SheetsAPI';
 import { SheetItem } from '../SheetTypes';
 import { panels, Panel } from '../Panels';
 import router from '../router';
@@ -9,12 +9,26 @@ export const useSheetManager = defineStore('sheetManager', {
     selectedItem: null as SheetItem | null,
     panel: panels['STUDENTS'] as Panel,
     items: [] as SheetItem[],
+    searchFilter: '',
     loadingItems: false
   }),
+  getters: {
+    filteredItems(state) {
+      if (state.searchFilter === '') {
+        return state.items;
+      }
+      return state.items.filter(item => {
+        const query = state.searchFilter.toLowerCase();
+        const values = Object.values(item).join(' ').toLowerCase();
+        return values.includes(query)
+      })
+    }
+  },
   actions: {
     async setPanel(panel: Panel, jumpTo?: number) {
       this.selectedItem = null;
       this.panel = panel;
+      this.searchFilter = '';
       localStorage.setItem('panelScrollY', '0');
       document.title = panel.title.plural + ' - Honors Program';
       router.push({
@@ -54,6 +68,11 @@ export const useSheetManager = defineStore('sheetManager', {
       const { row } = this.selectedItem
       this.selectedItem = null
       await clearByRow(this.panel.sheetRange, row)
+      await this.fetchItems()
+    },
+    async postItem(itemDataArray: string[]) {
+      this.loadingItems = true
+      await postInRange(this.panel.sheetRange, [itemDataArray])
       await this.fetchItems()
     }
   }

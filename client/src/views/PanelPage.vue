@@ -190,9 +190,6 @@ const panelList = ref(null)
 
 const changePanel = async (panelType: PanelType) => {
   filterQuery.value = ''
-  loadingItems.value = true
-
-  loadingItems.value = false
 }
 
 const showDetailDrawer = computed({
@@ -219,8 +216,6 @@ useKeyBindings({
   '5': () => keyBindToggle(PanelType.THESES),
 })
 
-const { syncState } = useUpdateManager(selectedItem, panel, silentFetch)
-
 onMounted(async () => {
   if (route.query.type) {
     changePanel(route.query.type as PanelType)
@@ -235,14 +230,6 @@ onUnmounted(() => {
   if (!panelList.value) return
   panelList.value.removeEventListener('scroll', scrollCapture)
 })
-
-async function reqDelete() {
-  loadingItems.value = true
-  const row = selectedItem.value.row
-  selectedItem.value = null
-  await clearByRow(panel.value.sheetRange, row)
-  await fetchData()
-}
 
 async function itemAdded(item: SheetItem) {
   await silentFetch()
@@ -267,8 +254,6 @@ const displayItems = computed(() => {
 })
 
 async function fetchData() {
-  loadingItems.value = true
-  await silentFetch()
   const panelScrollY = localStorage.getItem('panelScrollY')
   if (panelScrollY) {
     setTimeout(() => {
@@ -277,33 +262,8 @@ async function fetchData() {
       panelList.value.scrollTop = height
     }, 1)
   }
-  loadingItems.value = false
 }
 
-async function silentFetch() {
-  const data = await getEvery(panel.value.sheetRange)
-  const newItems = await panel.value.mappers.map(data)
-
-  newItems.forEach((newItem, i) => {
-    const oldItem = items.value.find(i => i.row === newItem.row)
-    if (oldItem) {
-      Object.assign(oldItem, newItem)
-      newItems[i] = oldItem
-    }
-  })
-
-  items.value = newItems
-  items.value.sort((a, b) => a.row - b.row)
-
-  // if the selected item is no longer in the list, unselect it
-  if (!selectedItem.value) return
-  const index = items.value.findIndex((i) => {
-    return panel.value.keys.every(key => i[key] === selectedItem.value[key]);
-  })
-  if (index === -1) {
-    selectedItem.value = null
-  }
-}
 
 function getDefaultWidth() {
   const local = localStorage.getItem('panelListWidth')
