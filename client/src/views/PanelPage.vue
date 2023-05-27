@@ -134,6 +134,7 @@
 import {
   ref,
   computed,
+  onMounted
 } from 'vue'
 import { useRoute } from 'vue-router'
 import AddModal from '../components/AddModal.vue'
@@ -145,12 +146,13 @@ import { useKeyBindings } from '../KeyBindings'
 import { useDisplay } from 'vuetify'
 
 import { useSheetManager } from '../store/useSheetManager'
-import { storeToRefs, mapActions } from 'pinia'
-import { panel } from '../Panels'
+import { storeToRefs } from 'pinia'
+import { getPanel } from '../Panels'
 
 const sheetManager = useSheetManager()
-const { selectedItem } = storeToRefs(sheetManager)
-const { setPanel, fetchItems } = mapActions(useSheetManager, ['setPanel', 'fetchItems'])
+const { selectedItem, panel } = storeToRefs(sheetManager)
+
+sheetManager.fetchItems()
 
 const route = useRoute()
 
@@ -160,6 +162,8 @@ const {
   lgAndUp,
   smAndDown
 } = useDisplay()
+
+// setPanel(getPanel('GRADUATES'))
 
 const showAddModal = ref(false)
 
@@ -174,12 +178,12 @@ const showDetailDrawer = computed({
 
 useKeyBindings({
   's': () => showAddModal.value = !showAddModal.value,
-  'r': () => fetchItems(),
-  '1': () => setPanel(panel('STUDENTS')),
-  '2': () => setPanel(panel('GRADUATES')),
-  '3': () => setPanel(panel('MODULES')),
-  '4': () => setPanel(panel('COMPLETED_MODULES')),
-  '5': () => setPanel(panel('THESES')),
+  'r': () => sheetManager.fetchItems(),
+  '1': () => sheetManager.setPanel(getPanel('STUDENTS')),
+  '2': () => sheetManager.setPanel(getPanel('GRADUATES')),
+  '3': () => sheetManager.setPanel(getPanel('MODULES')),
+  '4': () => sheetManager.setPanel(getPanel('COMPLETED_MODULES')),
+  '5': () => sheetManager.setPanel(getPanel('THESES')),
 })
 
 function getDefaultWidth() {

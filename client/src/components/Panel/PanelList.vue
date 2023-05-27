@@ -70,7 +70,7 @@ import { mapActions, storeToRefs } from 'pinia'
 
 const sheetManager = useSheetManager()
 const { filteredItems, selectedItem, loadingItems, panel, searchFilter } = storeToRefs(sheetManager)
-const { setItem } = mapActions(useSheetManager, [])
+const { setItem } = mapActions(useSheetManager, ['setItem'])
 
 const itemsToDisplay = ref(filteredItems.value.length)
 

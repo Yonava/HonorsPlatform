@@ -1,14 +1,14 @@
-<template> 
-  <v-sheet 
+<template>
+  <v-sheet
     :color="smAndDown ? 'blue-darken-4' : 'blue-darken-1'"
     style="height: 100vh; width: 100vw;"
     class="d-flex flex-column align-center justify-center"
   >
-    <div 
+    <div
       v-if="xs"
       class="mt-10"
     ></div>
-    <v-sheet 
+    <v-sheet
       class="d-flex flex-column align-center justify-center"
       :elevation="smAndDown ? 0 : 7"
       :style="{
@@ -19,7 +19,7 @@
       }"
       color="blue-darken-4"
     >
-      <v-btn 
+      <v-btn
         @click="back"
         variant="text"
         style="position: absolute; left: 0; top: 0"
@@ -27,7 +27,7 @@
         <v-icon class="mr-1">mdi-arrow-left</v-icon>
         Back to Dashboard
       </v-btn>
-      <h1 
+      <h1
         v-if="!xs"
         class="mt-10"
       >
@@ -36,11 +36,11 @@
         </v-icon>
         Compose Mass Email
       </h1>
-      <div 
+      <div
         class="d-flex flex-column align-center justify-center"
         style="width: 96%"
       >
-        <div 
+        <div
           class="d-flex flex-row mt-5 mb-2"
           style="width: 100%"
         >
@@ -95,12 +95,12 @@
           v-show="aFilter.id === filter.selected"
           style="width: 100%"
         >
-          <MassEmailFilter 
+          <MassEmailFilter
             @subset="aFilter.data = $event"
             @loading="loading = $event"
           />
         </div>
-        <v-icon 
+        <v-icon
           class="my-3"
           size="x-large"
         >mdi-arrow-down</v-icon>
@@ -131,7 +131,7 @@
               >mdi-close</v-icon>
             </v-chip>
             <div v-if="emails.length === 0 && !loading">
-              <h3 
+              <h3
                 style="opacity: 0.5; color: #000"
                 class="text-center mt-5"
               >
@@ -148,7 +148,7 @@
             size="large"
             class="my-3"
           >
-            Send Email To {{ emails.length }} 
+            Send Email To {{ emails.length }}
             recipient{{ emails.length === 1 ? '' : 's' }}
           </v-btn>
         </div>
@@ -158,7 +158,6 @@
 </template>
 
 <script setup lang="ts">
-import { all } from "axios";
 import { ref, computed, watch } from "vue";
 import { useDisplay } from "vuetify";
 import MassEmailFilter from "../components/MassEmail/MassEmailFilter.vue";
@@ -232,9 +231,9 @@ const back = () => history.back();
 
 <style scoped>
 .email-box {
-  height: 200px; 
-  overflow-y: scroll; 
-  border: 1px solid rgb(0, 0, 0); 
+  height: 200px;
+  overflow-y: scroll;
+  border: 1px solid rgb(0, 0, 0);
   background: rgb(238, 238, 238);
   border-radius: 5px;
 }

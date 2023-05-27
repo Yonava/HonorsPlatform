@@ -1,16 +1,14 @@
 import { defineStore } from 'pinia'
 import { getEvery, clearByRow, postInRange, updateByRow } from '../SheetsAPI';
 import { SheetItem } from '../SheetTypes';
-import { panel, Panel } from '../Panels';
+import { getPanel, Panel } from '../Panels';
 import router from '../router';
 import { useSyncState } from './useSyncState';
-
-const syncState = useSyncState()
 
 export const useSheetManager = defineStore('sheetManager', {
   state: () => ({
     selectedItem: null as SheetItem | null,
-    panel: panel('STUDENTS'),
+    panel: getPanel('STUDENTS'),
     items: [] as SheetItem[],
     searchFilter: '',
     loadingItems: false
@@ -39,6 +37,7 @@ export const useSheetManager = defineStore('sheetManager', {
         return;
       }
       this.selectedItem = null;
+      this.items = [];
       this.panel = panel;
       this.searchFilter = '';
       document.title = panel.title.plural + ' - Honors Program';
@@ -54,10 +53,14 @@ export const useSheetManager = defineStore('sheetManager', {
       }
     },
     async fetchItems() {
+      this.loadingItems = true;
+      this.items = [];
       const range = this.panel.sheetRange;
       const data = await getEvery(range);
       const items = await this.panel.mappers.map(data);
       this.items = items;
+      this.selectedItem = this.items.find(item => item.row === this.selectedItem?.row) ?? null;
+      this.loadingItems = false;
     },
     jumpToItem({ key, value }: { key: string, value: string }) {
       const item = this.items.find(item => item[key] === value);
@@ -99,9 +102,9 @@ export const useSheetManager = defineStore('sheetManager', {
         }
         item = this.selectedItem;
       }
-      syncState.setProcessing(true)
-      await updateByRow(this.panel.sheetRange, item.row, await this.panel.mappers.unmap(item))
-      syncState.$reset()
+      useSyncState().processing = true
+      await updateByRow(this.panel.sheetRange, item.row, await this.panel.mappers.unmap([item]))
+      useSyncState().$reset()
     }
   }
 })

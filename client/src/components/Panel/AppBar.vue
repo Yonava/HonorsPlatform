@@ -36,8 +36,8 @@
           Add {{ panel.title.singular }}
         </v-btn>
         <v-btn
-          @click="fetchItems"
-          :loading="loading"
+          @click="sheetManager.fetchItems"
+          :loading="loadingItems"
           style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240)"
           class="mt-3"
           block
@@ -88,7 +88,7 @@
     <v-app-bar :color="`${panel.color}-darken-2`" class="app-bar px-5">
       <div v-if="searchMode">
         <input
-          v-model="searchFilter"
+          v-model="searchText"
           :placeholder="filterPlaceholder"
           class="vanilla-search-input"
           type="text"
@@ -108,7 +108,7 @@
             <v-list-item
               v-for="listPanel in panels"
               :key="listPanel.title.singular"
-              @click="setPanel(listPanel)"
+              @click="sheetManager.setPanel(listPanel)"
               class="type-list-item"
             >
               <v-list-item-title
@@ -134,7 +134,7 @@
       </div>
       <input
         v-if="mdAndUp"
-        v-model="searchFilter"
+        v-model="searchText"
         :placeholder="filterPlaceholder"
         class="search-input"
         type="text"
@@ -154,7 +154,7 @@
       </v-btn>
       <v-btn
         v-if="smAndUp"
-        @click="fetchItems"
+        @click="sheetManager.fetchItems"
         :loading="loadingItems"
         class="ml-3"
         style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240)"
@@ -232,16 +232,11 @@ import { useSheetManager } from "../../store/useSheetManager";
 import { mapActions, storeToRefs } from "pinia";
 
 const sheetManager = useSheetManager();
-const { setSearchFilter, setPanel, fetchItems } = mapActions(useSheetManager, [
-  "setSearchFilter",
-  "setPanel",
-  "fetchItems",
-]);
 const { searchFilter, panel, selectedItem, loadingItems, filteredItems } = storeToRefs(sheetManager);
 
 const searchText = computed({
   get: () => searchFilter.value,
-  set: (value) => setSearchFilter(value),
+  set: v => sheetManager.setSearchFilter(v)
 });
 
 const navDrawer = ref(false);

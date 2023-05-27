@@ -1,18 +1,18 @@
 <template>
   <div>
     <DetailFrame
-      v-model="item.note"
+      v-model="student.note"
       @delete="reqDeleteStudent"
       :disableDelete="!canDelete"
     >
       <template #main>
         <DetailHeader
-          v-model="item.name"
-          :id="item.id"
+          v-model="student.name"
+          :id="student.id"
           placeholder="Student Name"
         >
           <template
-            v-if="!item.id"
+            v-if="!student.id"
             #id
           >
             <v-dialog
@@ -64,23 +64,23 @@
           </template>
         </DetailHeader>
         <v-btn
-          v-if="!item.email"
-          @click="item.email = getStudentEmail(item.name)"
+          v-if="!student.email"
+          @click="student.email = getStudentEmail(student.name)"
           size="x-small"
           color="blue-darken-2"
           class="mb-3"
         >new student email</v-btn>
         <div class="d-flex align-center">
           <v-text-field
-            v-model="item.email"
+            v-model="student.email"
             :rules="[(v) => emailValidator(v) || 'Invalid email']"
             clearable
             label="Email"
             prepend-icon="mdi-email"
           ></v-text-field>
           <v-btn
-            v-if="item.email"
-            @click="sendEmail(item.email)"
+            v-if="student.email"
+            @click="sendEmail(student.email)"
             class="ml-4"
             size="small"
             color="blue-darken-2"
@@ -89,23 +89,23 @@
           </v-btn>
         </div>
         <v-text-field
-          v-model.number="item.points"
+          v-model.number="student.points"
           label="Points"
           type="number"
           prepend-icon="mdi-ticket"
         ></v-text-field>
         <div class="d-flex flex-row">
           <v-select
-            v-model="item.activeStatus"
-            :items="Object.keys(statusOptions)"
-            :prepend-icon="`mdi-${statusOptions[item.activeStatus]}`"
+            v-model="student.activeStatus"
+            :students="Object.keys(statusOptions)"
+            :prepend-icon="`mdi-${statusOptions[student.activeStatus]}`"
             label="Active Status"
             style="width: 15%;"
             class="mr-4"
           ></v-select>
           <v-select
-            v-model="item.year"
-            :items="yearOptions"
+            v-model="student.year"
+            :students="yearOptions"
             label="Year"
             style="width: 15%;"
             prepend-icon="mdi-calendar"
@@ -114,9 +114,9 @@
         </div>
         <!-- clearable on this auto-complete is incompatible with state syncing to google drive -->
         <v-autocomplete
-          v-model="item.athletics"
-          :items="Object.keys(athleticOptions)"
-          :prepend-icon="`mdi-${athleticOptions[item.athletics]}`"
+          v-model="student.athletics"
+          :students="Object.keys(athleticOptions)"
+          :prepend-icon="`mdi-${athleticOptions[student.athletics]}`"
           label="Athletics"
           class="mt-2"
         ></v-autocomplete>
@@ -124,7 +124,7 @@
         <ModuleFetch
           @update="modules = $event"
           @loading-state="loadingModules = $event"
-          :id="item.id"
+          :id="student.id"
         />
 
         <div style="width: 1px; height: 10px"></div>
@@ -137,18 +137,18 @@
           class="d-flex flex-row flex-wrap"
         >
           <div
-            v-for="(value, key) in item.misc"
+            v-for="(value, key) in student.misc"
             :key="key"
             style="width: 30%;"
             class="mx-1"
           >
             <v-text-field
-              v-model="item.misc[key]"
+              v-model="student.misc[key]"
               :label="key"
               outlined
             ></v-text-field>
           </div>
-          <div v-if="Object.keys(item.misc).length === 0">
+          <div v-if="Object.keys(student.misc).length === 0">
             No additional information. Allocate custom data tracking on google sheets.
           </div>
         </div>
@@ -168,15 +168,15 @@
         >
           <v-btn
             @click="viewThesis"
+            :color="getPanel('THESES').color"
             size="large"
-            :color="switchPanel(PanelType.THESES).color"
             style="width: 49%"
 
           >
             <v-icon
               class="mr-4"
               size="x-large"
-            >{{ switchPanel(PanelType.THESES).icon }}</v-icon>
+            >{{ getPanel('THESES').icon }}</v-icon>
             View Thesis
           </v-btn>
           <v-btn
@@ -184,13 +184,13 @@
             :disabled="!canDelete"
             :loading="movingStudent"
             size="large"
-            :color="switchPanel(PanelType.GRADUATES).color"
+            :color="getPanel('GRADUATES').color"
             style="width: 49%"
           >
             <v-icon
               class="mr-4"
               size="x-large"
-            >{{ switchPanel(PanelType.GRADUATES).icon }}</v-icon>
+            >{{ getPanel('GRADUATES').icon }}</v-icon>
             Graduate
           </v-btn>
         </div>
@@ -215,23 +215,21 @@ import DetailFrame from './Helper/DetailFrame.vue'
 import DetailHeader from './Helper/DetailHeader.vue'
 import ModuleFetch from './Helper/ModuleFetch.vue'
 import AddStudentNote from './Helper/AddStudentNote.vue'
-import type { Module } from '../../SheetTypes'
+import type { Module, Student } from '../../SheetTypes'
 import { athleticOptions } from '../../Athletics'
 import { emailValidator, getStudentEmail, sendEmail } from '../../EmailUtilities'
-import { panel } from '../../Panels'
+import { getPanel } from '../../Panels'
 import { moveToGraduates } from '../../StudentTools'
 
 import { useSheetManager } from '../../store/useSheetManager'
 import { mapActions, storeToRefs } from 'pinia'
+import { useUpdateItem } from '../../TrackItemForUpdate'
 
 const sheetManager = useSheetManager()
-const {
-  updateItem,
-  deleteItem,
-  setPanel,
-  setItem
-} = mapActions(useSheetManager, ['updateItem', 'deleteItem', 'setPanel', 'setItem'])
-const { selectedItem } = storeToRefs(sheetManager)
+const { selectedItem: student } = storeToRefs(sheetManager)
+
+useUpdateItem(student)
+
 
 const statusOptions = {
   'Active': 'account-check',
@@ -249,7 +247,7 @@ const yearOptions = [
 
 function reqDeleteStudent() {
   if (!canDelete.value) return
-  deleteItem()
+  sheetManager.deleteItem()
 }
 
 const modules = ref<Module[]>([])
@@ -262,7 +260,7 @@ const movingStudent = ref(false)
 const showAddNote = ref(false)
 
 const canDelete = computed(() => {
-  if (!selectedItem.value.id) return true
+  if (!student.value.id) return true
   return modules.value.length === 0 && !loadingModules.value
 })
 
@@ -272,26 +270,26 @@ function studentIdRule(studentId: string) {
 }
 
 async function saveId() {
-  selectedItem.value.id = tempStudentId.value
+  student.value.id = tempStudentId.value
   idDialog.value = false
 }
 
 function viewThesis() {
-  setPanel(panel('THESES'), {
+  setPanel(getPanel('THESES'), {
     key: 'studentId',
-    value: selectedItem.value.id,
+    value: student.value.id,
   })
 }
 
 async function graduate() {
   movingStudent.value = true
-  moveToGraduates(selectedItem.value)
-  setItem(null)
+  moveToGraduates(student.value)
+  sheetManager.setItem(null)
 }
 
 function addStudentNote(event: { initials: string, note: string }) {
   const { initials, note } = event
-  let studentNote = selectedItem.value.note
+  let studentNote = student.value.note
   if (studentNote) studentNote += '\n\n'
   studentNote += `${initials}: ${note}`
 }

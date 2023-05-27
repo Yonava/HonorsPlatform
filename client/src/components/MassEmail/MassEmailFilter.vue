@@ -18,7 +18,7 @@
         </h3>
         <v-select
           v-model="selectedRange"
-          :items="panels"
+          :items="Object.values(panels)"
           item-title="title.plural"
           return-object
           variant="outlined"
@@ -69,7 +69,7 @@
 import { ref, computed, watch } from 'vue'
 import { SheetItem } from '../../SheetTypes'
 import { getHeaderRow, getEvery, Range } from "../../SheetsAPI";
-import { switchPanel, Panel, PanelType } from "../../SwitchPanel";
+import { panels, getPanel } from "../../Panels";
 import { Student, Graduate, Module, CompletedModule, Thesis } from "../../SheetTypes";
 import { useDisplay } from "vuetify";
 import {
@@ -86,8 +86,6 @@ const emits = defineEmits<{
 }>()
 
 const { xs } = useDisplay();
-
-const panels = Object.values(PanelType).map((panel) => switchPanel(panel));
 
 const selectedRange = ref(null);
 const selectedHeader = ref(null)
@@ -117,7 +115,7 @@ watch(selectedRange, async (newVal) => {
   const rawData = await getEvery(newVal.sheetRange);
   sheetItems.value = await newVal.mappers.map(rawData);
 
-  if (newVal.type === PanelType.MODULES || newVal.type === PanelType.COMPLETED_MODULES) {
+  if (newVal === getPanel('MODULES') || newVal === getPanel('COMPLETED_MODULES')) {
     const students = await mapStudents(await getEvery(Range.STUDENTS));
     sheetItems.value.forEach((module) => {
       const student = students.find((student: Student) => student.id === module.studentId);
