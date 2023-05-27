@@ -26,16 +26,6 @@ export function useSortItems<T>(items: Ref<T[]>, sortOptions: Ref<SortOptions<T>
     activeSortKey.value = newKey
   }
 
-  // if item is added or removed, sort the list: useful in case of auto-synchronization with live sheet
-  watch(items, () => {
-    if (activeSortKey.value) {
-      items.value.sort(sortOptions.value[activeSortKey.value])
-      if (ascending.value) {
-        items.value.reverse()
-      }
-    }
-  })
-
   return {
     setKey,
     activeSortKey,

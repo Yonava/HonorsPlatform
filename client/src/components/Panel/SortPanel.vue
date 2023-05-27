@@ -45,31 +45,29 @@ import {
   computed,
   watch
 } from 'vue'
-import { SortOption, switchSortOptions } from '../../SortOptions'
-import { PanelType } from '../../SwitchPanel'
-import { SheetItem, Student } from '../../SheetTypes'
+import { SheetItem } from '../../SheetTypes'
 import { useSortItems, SortOptions } from '../../SortItems'
 
-const props = defineProps<{
-  items: SheetItem[],
-  panelType: PanelType
-}>()
+import { useSheetManager } from '../../store/useSheetManager'
+import { storeToRefs, mapActions } from 'pinia'
 
-const emit = defineEmits(['update'])
+const sheetManager = useSheetManager()
+const { items, panel } = storeToRefs(sheetManager)
+const { setItems } = mapActions(useSheetManager, [])
 
 const itemList = computed({
-  get: () => props.items,
-  set: val => emit('update', val)
+  get: () => items.value,
+  set: val => setItems(val)
 })
 
-const sortOptions = ref<SortOption<SheetItem>[]>([])
+const sortOptions = ref()
 const sortOptionsObject = ref<SortOptions<SheetItem>>({})
 
 const { setKey, activeSortKey, ascending } = useSortItems<SheetItem>(itemList, sortOptionsObject)
 
-watch(() => props.panelType, newVal => {
+watch(panel, () => {
   setKey(null)
-  sortOptions.value = switchSortOptions(newVal)
+  sortOptions.value = panel.value.sortOptions
 
   sortOptionsObject.value = {}
   sortOptions.value.forEach(sort => {

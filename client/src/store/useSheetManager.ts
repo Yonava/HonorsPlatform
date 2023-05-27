@@ -31,6 +31,9 @@ export const useSheetManager = defineStore('sheetManager', {
     setSearchFilter(filter: string) {
       this.searchFilter = filter;
     },
+    setItems(items: SheetItem[]) {
+      this.items = items;
+    },
     async setPanel(panel: Panel, jumpTo?: { key: string, value: string }) {
       if (this.panel === panel) {
         return;

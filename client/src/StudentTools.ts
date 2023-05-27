@@ -1,7 +1,7 @@
 import { Student, Graduate } from './SheetTypes'
 import { unmapGraduates } from './DataMappers'
 import { getEvery, Range, replaceRange, getHeaderRowCache, moveRowToRange, postInRange } from './SheetsAPI'
-import { switchPanel, PanelType, Panel } from './Panels'
+import { panels } from './Panels'
 
 export function studentToGraduate(student: Student): Graduate {
   return {
@@ -25,7 +25,7 @@ export async function moveToGraduates(student: Student) {
 }
 
 export async function incrementStudentYear() {
-  const { map, unmap } = switchPanel(PanelType.STUDENTS).mappers as Panel<Student>['mappers']
+  const { map, unmap } = panels['STUDENTS'].mappers
   const students = await map(await getEvery(Range.STUDENTS))
   const graduatingSeniors: Student[] = []
 
