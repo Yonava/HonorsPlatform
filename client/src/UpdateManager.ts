@@ -1,7 +1,7 @@
 import { updateByRow } from "./SheetsAPI";
 import type { Ref } from "vue";
 import type { SheetItem } from "./SheetTypes";
-import type { Panel } from "./SwitchPanel";
+import type { Panel } from "./Panels";
 import { watch, provide, ref, onUnmounted } from "vue";
 
 export function useUpdateManager(

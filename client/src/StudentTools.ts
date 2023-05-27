@@ -1,7 +1,7 @@
 import { Student, Graduate } from './SheetTypes'
 import { unmapGraduates } from './DataMappers'
 import { getEvery, Range, replaceRange, getHeaderRowCache, moveRowToRange, postInRange } from './SheetsAPI'
-import { switchPanel, PanelType, Panel } from './SwitchPanel'
+import { switchPanel, PanelType, Panel } from './Panels'
 
 export function studentToGraduate(student: Student): Graduate {
   return {

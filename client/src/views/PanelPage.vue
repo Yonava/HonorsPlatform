@@ -6,15 +6,9 @@
     ></v-sheet>
     <AppBar
       v-model="filterQuery"
-      @fetchData="fetchData"
       @showAddModal="showAddModal = true"
-      @changePanel="changePanel($event)"
-      @updateItems="items = $event"
-      :selectedItem="selectedItem"
-      :panel="panel"
       :loading="loadingItems"
       :displayItemsLength="displayItems.length"
-      :items="items"
     />
     <v-main>
       <div
@@ -30,11 +24,7 @@
           class="d-flex align-center flex-column flex-start pt-3"
           style="min-width: 80px; max-width: 80px; height: 100%; background: green"
         >
-          <SortPanel
-            @update="sortUpdate($event)"
-            :items="items"
-            :panelType="panel.type"
-          />
+          <SortPanel />
           <v-spacer></v-spacer>
           <div class="mb-4 d-flex flex-column align-center">
             <v-btn
@@ -79,13 +69,10 @@
             style="width: 100%;"
           >
             <PanelList
-              @select="selectedItem = $event"
               :items="displayItems"
               :pinnedItem="pinnedItem"
               :filterQuery="filterQuery"
-              :selected="selectedItem"
               :loading="loadingItems"
-              :panel="panel"
             />
           </v-sheet>
         </div>
@@ -154,9 +141,6 @@
     >
       <component
         v-if="selectedItem"
-        @update="selectedItem = $event"
-        @unselect="unselect"
-        @changePanel="changePanel(...Object.values($event))"
         :is="panel.components.detail"
         :item="selectedItem"
       />
@@ -172,7 +156,7 @@ import {
   watch,
   onUnmounted
 } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { getEvery, clearByRow, updateByRow } from '../SheetsAPI'
 import AddModal from '../components/AddModal.vue'
 import PanelList from '../components/Panel/PanelList.vue'
@@ -180,13 +164,13 @@ import StudentDetail from '../components/Detail/StudentDetail.vue'
 import SortPanel from '../components/Panel/SortPanel.vue'
 import AppBar from '../components/Panel/AppBar.vue'
 import { useKeyBindings } from '../KeyBindings'
-import { PanelType, Panel, switchPanel } from '../SwitchPanel'
 import { SheetEntry, SheetItem } from '../SheetTypes'
 import { useDisplay } from 'vuetify'
 import { useUpdateManager } from '../UpdateManager'
 
+import { useSheetManager } from '../store/useSheetManager'
+
 const route = useRoute()
-const router = useRouter()
 
 const {
   smAndUp,
@@ -195,40 +179,19 @@ const {
   smAndDown
 } = useDisplay()
 
-const items = ref<SheetItem[]>([])
 const loadingItems = ref(true)
 const showAddModal = ref(false)
 const filterQuery = ref('')
 
-const selectedItem = ref<SheetItem | undefined>(undefined)
 const pinnedItem = ref(null)
 
 // dom element of the panel list
 const panelList = ref(null)
 
-const panel = ref(switchPanel(PanelType.STUDENTS))
-
-const changePanel = async (panelType: PanelType, jumpTo = undefined) => {
-
-  selectedItem.value = undefined
-
-  panel.value = switchPanel(panelType)
-  localStorage.setItem('panelScrollY', '0')
-  document.title = panel.value.title.plural + ' - Honors Program'
+const changePanel = async (panelType: PanelType) => {
   filterQuery.value = ''
-
-  router.push({
-    name: 'panel',
-    query: {
-      type: panelType
-    }
-  })
-
   loadingItems.value = true
-  items.value = await panel.value.mappers.map(await getEvery(panel.value.sheetRange))
-  if (jumpTo) {
-    selectedItem.value = items.value.find(item => item[jumpTo.key] === jumpTo.value)
-  }
+
   loadingItems.value = false
 }
 
@@ -272,16 +235,6 @@ onUnmounted(() => {
   if (!panelList.value) return
   panelList.value.removeEventListener('scroll', scrollCapture)
 })
-
-function sortUpdate(sortedItems: SheetItem[]) {
-  items.value = sortedItems
-  pinnedItem.value = null
-}
-
-async function unselect() {
-  selectedItem.value = null
-  await fetchData()
-}
 
 async function reqDelete() {
   loadingItems.value = true

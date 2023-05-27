@@ -15,6 +15,7 @@ import ThesisListItem from './components/ListItem/ThesisListItem.vue';
 
 import { markRaw } from 'vue';
 import { Range } from './SheetsAPI';
+
 import {
   mapStudents,
   unmapStudents,
@@ -120,3 +121,6 @@ export const panels = {
     },
   }
 } as const;
+
+export type PanelName = keyof typeof panels;
+export type Panel = typeof panels[PanelName];

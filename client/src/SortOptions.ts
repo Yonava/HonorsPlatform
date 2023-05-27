@@ -1,4 +1,4 @@
-import { PanelType } from './SwitchPanel';
+import { PanelType } from './Panels';
 import {
   Student,
   Graduate,
