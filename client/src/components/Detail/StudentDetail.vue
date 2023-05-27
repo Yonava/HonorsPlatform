@@ -209,28 +209,29 @@
 <script setup lang="ts">
 import {
   ref,
-  watch,
   computed,
 } from 'vue'
 import DetailFrame from './Helper/DetailFrame.vue'
 import DetailHeader from './Helper/DetailHeader.vue'
 import ModuleFetch from './Helper/ModuleFetch.vue'
 import AddStudentNote from './Helper/AddStudentNote.vue'
-import type { Student, Module } from '../../SheetTypes'
+import type { Module } from '../../SheetTypes'
 import { athleticOptions } from '../../Athletics'
 import { emailValidator, getStudentEmail, sendEmail } from '../../EmailUtilities'
-import { switchPanel, PanelType } from '../../SwitchPanel'
+import { panel } from '../../Panels'
 import { moveToGraduates } from '../../StudentTools'
 
-const props = defineProps<{
-  item: Student
-}>()
+import { useSheetManager } from '../../store/useSheetManager'
+import { mapActions, storeToRefs } from 'pinia'
 
-const emits = defineEmits([
-  'delete',
-  'unselect',
-  'changePanel',
-])
+const sheetManager = useSheetManager()
+const {
+  updateItem,
+  deleteItem,
+  setPanel,
+  setItem
+} = mapActions(useSheetManager, ['updateItem', 'deleteItem', 'setPanel', 'setItem'])
+const { selectedItem } = storeToRefs(sheetManager)
 
 const statusOptions = {
   'Active': 'account-check',
@@ -246,17 +247,9 @@ const yearOptions = [
   'Other'
 ]
 
-watch(props.item, (newItem) => {
-  if (!newItem.id && !newItem.activeStatus) {
-    newItem.activeStatus = 'Pending'
-  } else if (!newItem.activeStatus) {
-    newItem.activeStatus = 'Active'
-  }
-}, { immediate: true })
-
 function reqDeleteStudent() {
   if (!canDelete.value) return
-  emits('delete')
+  deleteItem()
 }
 
 const modules = ref<Module[]>([])
@@ -269,7 +262,7 @@ const movingStudent = ref(false)
 const showAddNote = ref(false)
 
 const canDelete = computed(() => {
-  if (!props.item.id) return true
+  if (!selectedItem.value.id) return true
   return modules.value.length === 0 && !loadingModules.value
 })
 
@@ -279,30 +272,28 @@ function studentIdRule(studentId: string) {
 }
 
 async function saveId() {
-  props.item.id = tempStudentId.value
+  selectedItem.value.id = tempStudentId.value
   idDialog.value = false
 }
 
 function viewThesis() {
-  emits('changePanel', {
-    location: PanelType.THESES,
-    jumpTo: {
-      key: 'studentId',
-      value: props.item.id
-    }
+  setPanel(panel('THESES'), {
+    key: 'studentId',
+    value: selectedItem.value.id,
   })
 }
 
 async function graduate() {
   movingStudent.value = true
-  moveToGraduates(props.item)
-  emits('unselect')
+  moveToGraduates(selectedItem.value)
+  setItem(null)
 }
 
 function addStudentNote(event: { initials: string, note: string }) {
   const { initials, note } = event
-  if (props.item.note) props.item.note += '\n\n'
-  props.item.note += `${initials}: ${note}`
+  let studentNote = selectedItem.value.note
+  if (studentNote) studentNote += '\n\n'
+  studentNote += `${initials}: ${note}`
 }
 </script>
 

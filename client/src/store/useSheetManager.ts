@@ -28,7 +28,10 @@ export const useSheetManager = defineStore('sheetManager', {
     }
   },
   actions: {
-    async setPanel(panel: Panel, jumpTo?: number) {
+    setSearchFilter(filter: string) {
+      this.searchFilter = filter;
+    },
+    async setPanel(panel: Panel, jumpTo?: { key: string, value: string }) {
       if (this.panel === panel) {
         return;
       }
@@ -53,8 +56,8 @@ export const useSheetManager = defineStore('sheetManager', {
       const items = await this.panel.mappers.map(data);
       this.items = items;
     },
-    jumpToItem(row: number) {
-      const item = this.items.find(item => item.row === row);
+    jumpToItem({ key, value }: { key: string, value: string }) {
+      const item = this.items.find(item => item[key] === value);
       if (!item) {
         console.error('useStateManager: Could not find item to select');
         return;

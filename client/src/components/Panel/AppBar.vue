@@ -36,7 +36,7 @@
           Add {{ panel.title.singular }}
         </v-btn>
         <v-btn
-          @click="$emit('fetchData')"
+          @click="fetchItems"
           :loading="loading"
           style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240)"
           class="mt-3"
@@ -82,19 +82,13 @@
             Additional Tools
           </v-btn>
         </AdditionalTools>
-        <SortPanel
-          class="mt-5"
-          @update="$emit('updateItems', $event)"
-          :items="items"
-          :panelType="panel.type"
-        />
+        <SortPanel class="mt-5" />
       </div>
     </v-navigation-drawer>
     <v-app-bar :color="`${panel.color}-darken-2`" class="app-bar px-5">
       <div v-if="searchMode">
         <input
-          @input="updateValue"
-          :value="modelValue"
+          v-model="searchFilter"
           :placeholder="filterPlaceholder"
           class="vanilla-search-input"
           type="text"
@@ -112,36 +106,35 @@
 
           <v-list>
             <v-list-item
-              v-for="type in PanelType"
-              :key="type"
-              @click="$emit('changePanel', type)"
+              v-for="listPanel in panels"
+              :key="listPanel.title.singular"
+              @click="setPanel(listPanel)"
               class="type-list-item"
             >
               <v-list-item-title
-                :style="typeListStyle(type)"
+                :style="panelItemColor(listPanel)"
                 class="type-list-text"
               >
                 <v-icon>
-                  {{ switchPanel(type).icon }}
+                  {{ listPanel.icon }}
                 </v-icon>
-                {{ switchPanel(type).title.plural }}
+                {{ listPanel.title.plural }}
               </v-list-item-title>
             </v-list-item>
           </v-list>
         </v-menu>
         <p
           :style="{
-            opacity: loading ? 0 : 1,
+            opacity: loadingItems ? 0 : 1,
           }"
           class="ml-2"
         >
-          ({{ displayItemsLength }})
+          ({{ filteredItems.length }})
         </p>
       </div>
       <input
         v-if="mdAndUp"
-        @input="updateValue"
-        :value="modelValue"
+        v-model="searchFilter"
         :placeholder="filterPlaceholder"
         class="search-input"
         type="text"
@@ -161,8 +154,8 @@
       </v-btn>
       <v-btn
         v-if="smAndUp"
-        @click="$emit('fetchData')"
-        :loading="loading"
+        @click="fetchItems"
+        :loading="loadingItems"
         class="ml-3"
         style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240)"
       >
@@ -191,15 +184,13 @@
         <AdditionalTools>
           <template #showing="{ showing }">
             <v-btn icon>
-              <v-icon
-                icon="mdi-hammer"
-                size="large"
-              ></v-icon>
+              <v-icon icon="mdi-hammer" size="large"></v-icon>
               <v-tooltip
                 :disabled="smAndDown || showing"
                 activator="parent"
                 location="bottom"
-              >Additional Tools</v-tooltip>
+                >Additional Tools</v-tooltip
+              >
             </v-btn>
           </template>
         </AdditionalTools>
@@ -228,15 +219,30 @@
 </template>
 
 <script setup lang="ts">
-import { Panel, switchPanel, PanelType } from "../../SwitchPanel";
-import { SheetItem } from "../../SheetTypes";
-import { ref, computed, watch } from "vue";
-import type { Ref } from "vue";
-import { useDisplay } from "vuetify";
-import { useKeyBindings } from "../../KeyBindings";
 import SortPanel from "./SortPanel.vue";
 import Announcements from "./AnnouncementMenu.vue";
 import AdditionalTools from "../../components/Panel/AdditionalTools.vue";
+
+import { ref, computed, watch } from "vue";
+import { useDisplay } from "vuetify";
+import { useKeyBindings } from "../../KeyBindings";
+
+import { panels, Panel } from "../../Panels";
+import { useSheetManager } from "../../store/useSheetManager";
+import { mapActions, storeToRefs } from "pinia";
+
+const sheetManager = useSheetManager();
+const { setSearchFilter, setPanel, fetchItems } = mapActions(useSheetManager, [
+  "setSearchFilter",
+  "setPanel",
+  "fetchItems",
+]);
+const { searchFilter, panel, selectedItem, loadingItems, filteredItems } = storeToRefs(sheetManager);
+
+const searchText = computed({
+  get: () => searchFilter.value,
+  set: (value) => setSearchFilter(value),
+});
 
 const navDrawer = ref(false);
 const searchMode = ref(false);
@@ -247,30 +253,14 @@ useKeyBindings({
 
 const { lgAndUp, mdAndUp, smAndUp, smAndDown, xs } = useDisplay();
 
-const props = defineProps<{
-  panel: Panel<SheetItem>;
-  modelValue: string;
-  loading: boolean;
-  displayItemsLength: number;
-  items: SheetItem[];
-  selectedItem: SheetItem | null;
-}>();
+const emit = defineEmits(["showAddModal"]);
 
-const emit = defineEmits([
-  "fetchData",
-  "showAddModal",
-  "changePanel",
-  "updateItems",
-  "update:modelValue",
-]);
-
-const updateValue = (event) => {
-  emit("update:modelValue", event.target.value);
-};
-
-function typeListStyle(type: PanelType) {
+function panelItemColor(panelParam: Panel) {
   return {
-    color: type === props.panel.type ? props.panel.color : "black",
+    color:
+      panel.value.title.singular === panelParam.title.singular
+        ? panel.value.color
+        : "black",
   };
 }
 
@@ -279,19 +269,16 @@ const filterPlaceholder = computed(() => {
 });
 
 const panelTitle = computed(() => {
-  const title = props.panel.title.plural;
+  const title = panel.value.title.plural;
   if (lgAndUp.value || title.split(" ").length <= 1) return title;
   else {
     return title.split(" ")[1];
   }
 });
 
-watch(
-  () => props.selectedItem,
-  () => {
-    navDrawer.value = false;
-  }
-);
+watch(selectedItem, () => {
+  navDrawer.value = false;
+});
 </script>
 
 <style scoped>
