@@ -43,7 +43,6 @@ export const panels = {
     },
     color: 'blue',
     icon: 'mdi-account-group',
-    keys: ['id', 'name'],
     sheetRange: Range.STUDENTS,
     mappers: {
       map: mapStudents,
@@ -113,7 +112,6 @@ export const panels = {
       map: mapGraduates,
       unmap: unmapGraduates
     },
-    keys: ['name', 'phone'],
     sortOptions: [
       {
         label: 'Name',
@@ -156,7 +154,6 @@ export const panels = {
     },
     color: 'orange',
     icon: 'mdi-book-open-variant',
-    keys: ['studentId', 'courseCode'],
     sheetRange: Range.MODULES,
     mappers: {
       map: mapModules,
@@ -213,7 +210,6 @@ export const panels = {
     color: 'red',
     icon: 'mdi-book',
     sheetRange: Range.COMPLETED_MODULES,
-    keys: ['studentId', 'courseCode'],
     mappers: {
       map: mapCompletedModules,
       unmap: unmapCompletedModules
@@ -262,7 +258,6 @@ export const panels = {
     color: 'green',
     icon: 'mdi-application-edit-outline',
     sheetRange: Range.THESES,
-    keys: ['studentId'],
     mappers: {
       map: mapTheses,
       unmap: unmapTheses

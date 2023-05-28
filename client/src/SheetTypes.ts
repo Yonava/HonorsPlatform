@@ -4,6 +4,7 @@ export type Grade = "High Pass" | "Pass" | "Low Pass" | "Fail" | null;
 
 export interface SheetEntry {
   row: number;
+  sysId: string;
 }
 
 export interface Module extends SheetEntry {
@@ -44,7 +45,7 @@ export interface Student extends SheetEntry {
   };
 }
 
-export type StudentYear = 'Freshman' | 'Sophomore' | 'Junior' | 'Senior' | null
+export type StudentYear = 'Freshman' | 'Sophomore' | 'Junior' | 'Senior' | ''
 
 export interface GradEngagement extends SheetEntry {
   gradId: string;

@@ -115,9 +115,11 @@ async function reqAdd() {
     return
   }
   loading.value = true
-  await postInRange(panel.value.sheetRange, [item.value])
-  const newItem = (await panel.value.mappers.map([item.value]))[0]
-  sheetManager.addItem(newItem)
+  const newSysId = Math.random().toString(36).substring(2, 12)
+  const newItemArray = [newSysId, ...item.value]
+  await postInRange(panel.value.sheetRange, [newItemArray])
+  const newItemObject = (await panel.value.mappers.map([newItemArray]))[0]
+  sheetManager.addItem(newItemObject)
   emits('close')
   loading.value = false
 }

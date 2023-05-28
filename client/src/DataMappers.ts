@@ -21,22 +21,25 @@ function removeEmptyObjects(item: Object) {
 
 export async function mapStudents(sheetData: string[][]): Promise<Student[]> {
   const headerRow = await getHeaderRowCache(Range.STUDENTS);
-  const categories = headerRow.slice(8);
+  const categories = headerRow.slice(9);
   return sheetData
     .map((student, index) => ({
       row: index + 2, // + 1 for header row, + 1 for 0-indexing
-      id: student[0] ?? '',
-      name: student[1] ?? '',
-      email: student[2] ?? '',
-      points: parseInt(student[3]) || 0,
-      activeStatus: student[4] ?? '',
-      year: (student[5] ?? null) as StudentYear,
-      athletics: student[6] ?? '',
-      note: student[7] ?? '',
+      sysId: student[0] ?? '',
+      id: student[1] ?? '',
+      name: student[2] ?? '',
+      email: student[3] ?? '',
+      points: parseInt(student[4]) || 0,
+      activeStatus: student[5] ?? '',
+      year: (student[6] ?? null) as StudentYear,
+      athletics: student[7] ?? '',
+      note: student[8] ?? '',
       misc: categories.reduce((acc: { [key in string]: string }, category: string, index: number) => {
-        if (category === '') return acc
-        acc[category] = student[index + 8] ?? ''
-        return acc
+        if (category === '') {
+          return acc;
+        }
+        acc[category] = student[index + 9] ?? ''
+        return acc;
       }, {})
     }))
     .filter(removeEmptyObjects);
@@ -45,9 +48,11 @@ export async function mapStudents(sheetData: string[][]): Promise<Student[]> {
 export async function unmapStudents(students: Student[]): Promise<string[][]> {
   const headerRow = await getHeaderRowCache(Range.STUDENTS);
   const categories = headerRow.slice(8);
+  // create 10 char id using base64 encoding
   return students.map((student: Student) => {
     const misc = categories.map((category: string) => student.misc[category] ?? '');
     return [
+      student.sysId,
       student.id,
       student.name,
       student.email,
@@ -64,18 +69,19 @@ export async function unmapStudents(students: Student[]): Promise<string[][]> {
 export function mapModules(sheetData: string[][]): Module[] {
   return sheetData
     .map((module, index) => {
-      if (module[4] && !instructorCache.includes(module[4])) {
-        instructorCache.push(module[4]);
+      if (module[5] && !instructorCache.includes(module[5])) {
+        instructorCache.push(module[5]);
       }
       return {
         row: index + 2,
-        studentId: module[0] ?? '',
-        courseCode: module[1] ?? '',
-        description: module[2] ?? '',
-        term: module[3] ?? '',
-        instructor: module[4] ?? '',
-        docuSignCreated: module[5] ?? '',
-        docuSignCompleted: module[6] ?? '',
+        sysId: module[0] ?? '',
+        studentId: module[1] ?? '',
+        courseCode: module[2] ?? '',
+        description: module[3] ?? '',
+        term: module[4] ?? '',
+        instructor: module[5] ?? '',
+        docuSignCreated: module[6] ?? '',
+        docuSignCompleted: module[7] ?? '',
       };
     })
     .filter(removeEmptyObjects);
@@ -93,20 +99,21 @@ export function unmapModules(modules: Module[]): string[][] {
 export function mapCompletedModules(sheetData: string[][]): CompletedModule[] {
   return sheetData
     .map((module, index) => {
-      if (module[4] && !instructorCache.includes(module[4])) {
-        instructorCache.push(module[4]);
+      if (module[5] && !instructorCache.includes(module[5])) {
+        instructorCache.push(module[5]);
       }
       return {
         row: index + 2,
-        studentId: module[0] ?? '',
-        courseCode: module[1] ?? '',
-        description: module[2] ?? '',
-        term: module[3] ?? '',
-        instructor: module[4] ?? '',
-        docuSignCreated: module[5] ?? '',
-        docuSignCompleted: module[6] ?? '',
-        completedDate: module[7] ?? '',
-        grade: (module[8] ?? null) as Grade,
+        sysId: module[0] ?? '',
+        studentId: module[1] ?? '',
+        courseCode: module[2] ?? '',
+        description: module[3] ?? '',
+        term: module[4] ?? '',
+        instructor: module[5] ?? '',
+        docuSignCreated: module[6] ?? '',
+        docuSignCompleted: module[7] ?? '',
+        completedDate: module[8] ?? '',
+        grade: (module[9] ?? null) as Grade,
       };
     })
     .filter(removeEmptyObjects);
@@ -128,12 +135,13 @@ export function mapGraduates(sheetData: string[][]): Graduate[] {
     .map((graduate, index) => {
       return {
         row: index + 2,
-        id: graduate[0] ?? '',
-        name: graduate[1] ?? '',
-        phone: graduate[2] ?? '',
-        email: graduate[3] ?? '',
-        graduationDate: graduate[4] ?? '',
-        note: graduate[5] ?? '',
+        sysId: graduate[0] ?? '',
+        id: graduate[1] ?? '',
+        name: graduate[2] ?? '',
+        phone: graduate[3] ?? '',
+        email: graduate[4] ?? '',
+        graduationDate: graduate[5] ?? '',
+        note: graduate[6] ?? '',
       };
     })
     .filter(removeEmptyObjects);
@@ -153,10 +161,11 @@ export function mapGradEngagement(sheetData: string[][]): GradEngagement[] {
     .map((engagement, index) => {
       return {
         row: index + 2,
-        gradId: engagement[0] ?? '',
-        event: engagement[1] ?? '',
-        dateTime: engagement[2] ?? '',
-        note: engagement[3] ?? '',
+        sysId: engagement[0] ?? '',
+        gradId: engagement[1] ?? '',
+        event: engagement[2] ?? '',
+        dateTime: engagement[3] ?? '',
+        note: engagement[4] ?? '',
       };
     })
     .filter(removeEmptyObjects);
@@ -165,6 +174,7 @@ export function mapGradEngagement(sheetData: string[][]): GradEngagement[] {
 export function unmapGradEngagement(engagements: GradEngagement[]): string[][] {
   return engagements.map((engagement) => {
     return [
+      engagement.sysId,
       engagement.gradId,
       engagement.event,
       engagement.dateTime,
@@ -176,23 +186,24 @@ export function unmapGradEngagement(engagements: GradEngagement[]): string[][] {
 export function mapTheses(sheetData: string[][]): Thesis[] {
   return sheetData
     .map((thesis, index) => {
-      if (thesis[8] && !instructorCache.includes(thesis[8])) {
-        instructorCache.push(thesis[8]);
+      if (thesis[9] && !instructorCache.includes(thesis[9])) {
+        instructorCache.push(thesis[9]);
       }
       return {
         row: index + 2,
-        studentId: thesis[0] ?? '',
-        name: thesis[1] ?? '',
-        email: thesis[2] ?? '',
-        title: thesis[3] ?? '',
-        proposalReceived: thesis[4] ?? '',
-        breakoutRoom: thesis[5] ?? '',
-        decision: (thesis[6] ?? '') as ThesisDecision,
-        term: thesis[7] ?? '',
-        mentor: thesis[8] ?? '',
-        mentorEmail: thesis[9] ?? '',
-        draftReceived: thesis[10] ?? '',
-        note: thesis[11] ?? '',
+        sysId: thesis[0] ?? '',
+        studentId: thesis[1] ?? '',
+        name: thesis[2] ?? '',
+        email: thesis[3] ?? '',
+        title: thesis[4] ?? '',
+        proposalReceived: thesis[5] ?? '',
+        breakoutRoom: thesis[6] ?? '',
+        decision: (thesis[7] ?? '') as ThesisDecision,
+        term: thesis[8] ?? '',
+        mentor: thesis[9] ?? '',
+        mentorEmail: thesis[10] ?? '',
+        draftReceived: thesis[11] ?? '',
+        note: thesis[12] ?? '',
       };
     })
     .filter(removeEmptyObjects);

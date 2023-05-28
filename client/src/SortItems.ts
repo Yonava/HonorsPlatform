@@ -1,11 +1,14 @@
-import { ref, watch } from 'vue'
+import { ref } from 'vue'
 import type { Ref } from 'vue'
+import { useSheetManager } from './store/useSheetManager'
 
 export type SortOptions<T> = {
   [key: string]: (a: T, b: T) => number
 }
 
 export function useSortItems<T>(items: Ref<T[]>, sortOptions: Ref<SortOptions<T>>) {
+
+  const { setPinnedItem } = useSheetManager()
 
   type SortKey = keyof typeof sortOptions | null
   const ascending = ref(false)
@@ -21,8 +24,8 @@ export function useSortItems<T>(items: Ref<T[]>, sortOptions: Ref<SortOptions<T>
       ascending.value = !ascending.value
       return
     }
-    console.log('sorting')
     items.value.sort(sortOptions.value[newKey])
+    setPinnedItem(null)
     activeSortKey.value = newKey
   }
 

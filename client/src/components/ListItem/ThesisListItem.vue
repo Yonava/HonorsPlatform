@@ -13,7 +13,7 @@
         </span>
       </div>
       <v-spacer></v-spacer>
-      <v-sheet 
+      <v-sheet
         :color="decisionStatus.color"
         :style="{
           height: '25px',
@@ -37,24 +37,24 @@
         >Thesis Proposal {{ decisionStatus.text }}</v-tooltip>
       </v-sheet>
     </div>
-    <div 
+    <div
       class="d-flex flex-column mt-5"
       style="font-size: 0.9em;"
     >
       <div class="d-flex flex-row">
         <div class="d-flex flex-row align-center">
-          <v-icon 
+          <v-icon
             class="mr-1"
             style="opacity: 0.75"
           >
             mdi-human-male-board
           </v-icon>
           <p>
-            {{ item.mentor || '(No Mentor)' }} 
+            {{ item.mentor || '(No Mentor)' }}
           </p>
           <v-tooltip
             :disabled="smAndDown"
-            activator="parent" 
+            activator="parent"
             location="bottom"
           >Faculty Mentor</v-tooltip>
         </div>
@@ -68,7 +68,7 @@
               location="bottom"
             >{{ termTooltip }}</v-tooltip>
           </span>
-          <v-icon 
+          <v-icon
             class="ml-1"
             style="opacity: 0.75"
           >
@@ -135,7 +135,6 @@ const decisionStatus = computed(() => {
       text: 'Pending'
     }
   } else {
-    console.warn('Unknown decision: ' + decision)
     return {
       color: 'grey',
       icon: 'mdi-minus',

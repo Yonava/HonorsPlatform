@@ -109,7 +109,7 @@ watch(selectedRange, async (newVal) => {
   headerRow.value = await getHeaderRow(newVal.sheetRange);
   // removes ability to query for custom student ranges
   if (newVal.sheetRange === Range.STUDENTS) {
-    headerRow.value = headerRow.value.slice(0, 8);
+    headerRow.value = headerRow.value.slice(0, 9);
   }
 
   const rawData = await getEvery(newVal.sheetRange);

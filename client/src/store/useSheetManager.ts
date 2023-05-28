@@ -11,14 +11,20 @@ export const useSheetManager = defineStore('sheetManager', {
     panel: getPanel('STUDENTS'),
     items: [] as SheetItem[],
     searchFilter: '',
+    pinnedItem: null as SheetItem | null,
     loadingItems: false
   }),
   getters: {
     filteredItems(state) {
-      if (state.searchFilter === '') {
-        return state.items;
+      const outputArray = [...state.items];
+      if (state.pinnedItem) {
+        outputArray.splice(outputArray.findIndex(item => item.sysId === state.pinnedItem?.sysId), 1);
+        outputArray.unshift(state.pinnedItem);
       }
-      return state.items.filter(item => {
+      if (state.searchFilter === '') {
+        return outputArray;
+      }
+      return outputArray.filter(item => {
         const query = state.searchFilter.toLowerCase();
         const values = Object.values(item).join(' ').toLowerCase();
         return values.includes(query)
@@ -30,13 +36,15 @@ export const useSheetManager = defineStore('sheetManager', {
       this.searchFilter = filter;
     },
     setItems(items: SheetItem[]) {
+      this.pinnedItem = null;
       this.items = items;
     },
     async setPanel(panel: Panel, jumpTo?: { key: string, value: string }) {
-      if (this.panel === panel) {
+      if (this.panel.title.plural === panel.title.plural) {
         return;
       }
       this.selectedItem = null;
+      this.pinnedItem = null;
       this.items = [];
       this.panel = panel;
       this.searchFilter = '';
@@ -60,6 +68,7 @@ export const useSheetManager = defineStore('sheetManager', {
       const items = await this.panel.mappers.map(data);
       this.items = items;
       this.selectedItem = this.items.find(item => item.row === this.selectedItem?.row) ?? null;
+      this.pinnedItem = this.items.find(item => item.row === this.pinnedItem?.row) ?? null;
       this.loadingItems = false;
     },
     jumpToItem({ key, value }: { key: string, value: string }) {
@@ -72,6 +81,9 @@ export const useSheetManager = defineStore('sheetManager', {
     },
     setItem(item: SheetItem | null) {
       this.selectedItem = item;
+    },
+    setPinnedItem(item: SheetItem | null) {
+      this.pinnedItem = item;
     },
     async deleteItem(item?: SheetItem) {
       if (!item?.row) {
@@ -89,10 +101,14 @@ export const useSheetManager = defineStore('sheetManager', {
       await clearByRow(this.panel.sheetRange, row)
       await this.fetchItems()
     },
-    async addItem(item: SheetItem) {
+    async addItem(item: SheetItem, pin: boolean = true) {
       this.loadingItems = true
       await this.fetchItems()
-      // TODO: Select and pin item when sysId is added
+      const addedItem = this.items.find(i => i.sysId === item.sysId) ?? null
+      this.selectedItem = addedItem
+      if (pin) {
+        this.pinnedItem = addedItem
+      }
     },
     async updateItem(item?: SheetItem) {
       if (!item) {
