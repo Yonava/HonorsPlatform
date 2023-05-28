@@ -40,6 +40,12 @@ const object = computed(() => {
   }
 })
 
+const test = () => {
+  setTimeout(() => {
+    fetchItems()
+  }, 5000)
+}
+
 const tools = [
   {
     name: 'Increment Student Year',
@@ -48,15 +54,15 @@ const tools = [
         open({
           component: IncrementStudentYearDialog,
         })
-      }).catch(() => {
-        console.log('User cancelled warn dialog')
+      }).catch(err => {
+        console.log('motherfucker cancelled!')
       })
     }
   },
   {
     name: 'Test',
     handler: () => {
-      open({
+      warn(test, [{
         body: {
           title: 'Test',
           description: 'This is a test',
@@ -69,7 +75,7 @@ const tools = [
             }
           ]
         }
-      })
+      }])
     }
   }
 ]

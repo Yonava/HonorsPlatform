@@ -42,8 +42,7 @@ export async function getEvery(range: Range, addResponseDelay = true): Promise<s
       await new Promise(resolve => setTimeout(resolve, responseDelay));
     }
     const { data } = (await axios.get(`/api/range/${range}`, requestHeaders()));
-    // remove header row and store it in memo without the sysId
-    headerRowMemo[range] = data.shift().slice(1);
+    headerRowMemo[range] = data.shift();
     return data;
   } catch {
     catchAction();
@@ -78,9 +77,8 @@ export async function postInRange(range: Range, data: string[][]) {
 export async function getHeaderRow(range: Range): Promise<string[]> {
   try {
     const headerRow = (await axios.get(`/api/range/${range}!A1:Z1`, requestHeaders())).data;
-    const [sysId, ...rest] = headerRow[0];
-    headerRowMemo[range] = rest;
-    return rest;
+    headerRowMemo[range] = headerRow[0];
+    return headerRow[0];
   } catch {
     catchAction();
     throw new Error("Access denied");

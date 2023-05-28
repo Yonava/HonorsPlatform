@@ -1,10 +1,18 @@
 import { useDialog } from './store/useDialog'
+import { watch } from 'vue'
 
 const defaultDescription = 'You are about to perform an action that cannot be undone. Are you sure you want to continue?'
 
-export const warn = (callback?: () => Promise<void> | void, description: string = defaultDescription): Promise<string> => {
+export const warn = (callback?: (...args: any[]) => Promise<void> | void, callbackArgs: any[] = [], description: string = defaultDescription): Promise<string> => {
   const { open, close } = useDialog()
+
   return new Promise((resolve, reject) => {
+    const dismissWatcher = watch(() => useDialog().show, v => {
+      if (!v) {
+        reject('warn: dialog closed background')
+        dismissWatcher()
+      }
+    })
     open({
       body: {
         title: 'Warning',
@@ -14,6 +22,7 @@ export const warn = (callback?: () => Promise<void> | void, description: string 
             text: 'Cancel',
             color: 'red',
             onClick: () => {
+              dismissWatcher()
               reject('warn: cancelled by user')
               close()
             }
@@ -22,9 +31,10 @@ export const warn = (callback?: () => Promise<void> | void, description: string 
             text: 'Continue',
             color: 'green',
             onClick: async () => {
+              dismissWatcher()
               try {
                 if (callback) {
-                  await callback()
+                  await callback(...callbackArgs)
                 }
                 resolve('warn: callback executed successfully')
               } catch {
