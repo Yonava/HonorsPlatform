@@ -10,9 +10,13 @@ export function useKeyBindings(bindings: KeyBindings, caseSensitive = false) {
 }
 
 function keyBindings(e: KeyboardEvent, bindings: KeyBindings, caseSensitive: boolean) {
-  if (document.activeElement !== document.body) return
+  if (document.activeElement !== document.body) {
+    return
+  }
   const key = caseSensitive ? e.key : e.key.toLowerCase()
-  if (!bindings[key]) return
+  if (!bindings[key]) {
+    return
+  }
   e.preventDefault()
   bindings[key]()
 }

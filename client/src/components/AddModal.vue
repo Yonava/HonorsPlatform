@@ -1,16 +1,16 @@
 <template>
-  <ModalContent 
+  <ModalContent
     v-model="showDialog"
-    :bgColor="`${color}-lighten-5`"
+    :bgColor="`${panel.color}-lighten-5`"
   >
     <v-sheet
-      :color="`${color}-lighten-5`"
+      :color="`${panel.color}-lighten-5`"
       :style="{
-        border: xs ? '' : `5px solid ${color}`,
+        border: xs ? '' : `5px solid ${panel.color}`,
       }"
       class="pa-5 parent"
     >
-      <h1 
+      <h1
         style="white-space: nowrap"
         :class="[
           'mb-3',
@@ -19,7 +19,7 @@
           'align-center'
         ]"
       >
-        <v-icon 
+        <v-icon
           class="mr-2"
           style="font-size: 2.5rem;"
         >{{ panel.icon }}</v-icon>
@@ -27,7 +27,7 @@
           Add {{ panel.title.singular }}
         </span>
       </h1>
-      <div 
+      <div
         v-if="!loading"
         @keyup.enter="reqAdd"
         class="d-flex flex-wrap justify-center align-center"
@@ -45,21 +45,21 @@
           ></v-text-field>
         </div>
       </div>
-      <div 
+      <div
         v-else
         class="d-flex justify-center align-center mb-12"
       >
         <v-progress-circular
-          :color="`${color}-darken-1`"
+          :color="`${panel.color}-darken-1`"
           indeterminate
         ></v-progress-circular>
       </div>
       <v-btn
         @click="reqAdd"
         :loading="loading"
-        :color="`${color}-darken-1`"
+        :color="`${panel.color}-darken-1`"
       >add {{ panel.title.singular }}</v-btn>
-      <v-icon 
+      <v-icon
         @click="showDialog = false"
         class="close-dialog ma-4"
       >mdi-close</v-icon>
@@ -68,32 +68,28 @@
 </template>
 
 <script setup lang="ts">
-import { Panel } from '../SwitchPanel'
 import { SheetItem } from '../SheetTypes'
 import { postInRange, getHeaderRow, headerRowMemo } from '../SheetsAPI'
 import { useDisplay } from 'vuetify'
-import { 
-  ref, 
+import {
+  ref,
   toRef,
   computed,
   watch
 } from 'vue'
 import ModalContent from './ModalContent.vue'
+import { useSheetManager } from "../store/useSheetManager"
+import { storeToRefs } from 'pinia'
 
-export type OverrideOptions = {
-  color?: string,
-  predefineColumnData?: string[]
-}
+const sheetManager = useSheetManager()
+const { panel } = storeToRefs(sheetManager)
 
 const props = defineProps<{
-  show: boolean,
-  panel: Panel<SheetItem>,
-  override?: OverrideOptions
+  show: boolean
 }>()
 
 const emits = defineEmits([
-  'close',
-  'success'
+  'close'
 ])
 
 const showDialog = computed({
@@ -119,26 +115,19 @@ async function reqAdd() {
     return
   }
   loading.value = true
-  await postInRange(props.panel.sheetRange, [item.value])
-  const newItem = (await props.panel.mappers.map([item.value]))[0]
-  emits('success', newItem)
+  await postInRange(panel.value.sheetRange, [item.value])
+  const newItem = (await panel.value.mappers.map([item.value]))[0]
+  sheetManager.addItem(newItem)
   emits('close')
   loading.value = false
 }
 
 async function initItem() {
   loading.value = true
-  const range = props.panel.sheetRange
+  const range = panel.value.sheetRange
   attrs.value = headerRowMemo[range] ?? await getHeaderRow(range)
   loading.value = false
-  item.value = attrs.value.map((attr, index) => {
-    return props?.override?.predefineColumnData[index] ?? ''
-  })
 }
-
-const color = computed(() => {
-  return props?.override?.color ?? props.panel.color
-})
 </script>
 
 <style scoped>
@@ -151,9 +140,9 @@ const color = computed(() => {
 }
 
 .close-dialog {
-  position: absolute; 
-  left: 0; 
-  top: 0; 
+  position: absolute;
+  left: 0;
+  top: 0;
   cursor: pointer;
 }
 </style>

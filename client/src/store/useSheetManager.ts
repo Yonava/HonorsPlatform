@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { getEvery, clearByRow, postInRange, updateByRow } from '../SheetsAPI';
+import { getEvery, clearByRow, updateByRow } from '../SheetsAPI';
 import { SheetItem } from '../SheetTypes';
 import { getPanel, Panel } from '../Panels';
 import router from '../router';
@@ -89,10 +89,10 @@ export const useSheetManager = defineStore('sheetManager', {
       await clearByRow(this.panel.sheetRange, row)
       await this.fetchItems()
     },
-    async postItem(itemDataArray: string[]) {
+    async addItem(item: SheetItem) {
       this.loadingItems = true
-      await postInRange(this.panel.sheetRange, [itemDataArray])
       await this.fetchItems()
+      // TODO: Select and pin item when sysId is added
     },
     async updateItem(item?: SheetItem) {
       if (!item) {

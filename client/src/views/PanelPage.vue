@@ -109,8 +109,6 @@
     </v-main>
     <AddModal
       @close="showAddModal = false"
-      @success="itemAdded($event)"
-      :panel="panel"
       :show="showAddModal"
     />
     <v-navigation-drawer
@@ -147,14 +145,18 @@ import { useDisplay } from 'vuetify'
 
 import { useSheetManager } from '../store/useSheetManager'
 import { storeToRefs } from 'pinia'
-import { getPanel } from '../Panels'
+import { getPanel, panels } from '../Panels'
 
 const sheetManager = useSheetManager()
 const { selectedItem, panel } = storeToRefs(sheetManager)
 
-sheetManager.fetchItems()
-
 const route = useRoute()
+if (route.query.type) {
+  const newPanel = Object.values(panels).find((p) => p.title.plural.toLowerCase() === route.query.type)
+  if (newPanel) sheetManager.setPanel(newPanel)
+}
+
+sheetManager.fetchItems()
 
 const {
   smAndUp,
