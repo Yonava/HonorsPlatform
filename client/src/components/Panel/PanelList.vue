@@ -66,11 +66,11 @@ import {
 } from 'vue'
 
 import { useSheetManager } from '../../store/useSheetManager'
-import { mapActions, storeToRefs } from 'pinia'
+import { storeToRefs } from 'pinia'
 
 const sheetManager = useSheetManager()
 const { filteredItems, selectedItem, loadingItems, panel, searchFilter } = storeToRefs(sheetManager)
-const { setItem } = mapActions(useSheetManager, ['setItem'])
+const { setItem } = sheetManager
 
 const itemsToDisplay = ref(filteredItems.value.length)
 
