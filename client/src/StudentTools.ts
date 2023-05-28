@@ -6,6 +6,7 @@ import { panels } from './Panels'
 export function studentToGraduate(student: Student): Graduate {
   return {
     row: student.row,
+    sysId: student.sysId,
     id: student.id,
     name: student.name,
     phone: '',
@@ -28,23 +29,25 @@ export async function incrementStudentYear() {
   const { map, unmap } = panels['STUDENTS'].mappers
   const students = await map(await getEvery(Range.STUDENTS))
   const graduatingSeniors: Student[] = []
+  const failedToIncrement: Student[] = []
 
   students.forEach((student, index) => {
     if (!student.year) {
-      console.log(student.name + ' has no year :(')
+      failedToIncrement.push(student)
       return
     }
     const year = student.year.toLowerCase();
     if (year === 'senior') {
       graduatingSeniors.push(student)
       students.splice(index, 1)
-      console.log(student.name + ' graduated!')
     } else if (year === 'junior') {
       student.year = 'Senior'
     } else if (year === 'sophomore') {
       student.year = 'Junior'
     } else if (year === 'freshman') {
       student.year = 'Sophomore'
+    } else {
+      failedToIncrement.push(student)
     }
   })
 
@@ -55,5 +58,11 @@ export async function incrementStudentYear() {
   const data = await unmap(students)
   const headerRow = await getHeaderRowCache(Range.STUDENTS)
   await replaceRange(Range.STUDENTS, [headerRow, ...data])
+
   console.log('Batch job "incrementStudentYear" complete!')
+
+  return {
+    graduatingSeniors,
+    failedToIncrement
+  }
 }

@@ -23,10 +23,16 @@
 </template>
 
 <script setup lang="ts">
-import { incrementStudentYear } from '../../StudentTools'
+import IncrementStudentYearDialog from '../IncrementStudentYear.vue'
+
+import { useSheetManager } from '../../store/useSheetManager'
+import { useDialog } from '../../store/useDialog'
 import { ref, computed } from 'vue'
+import { warn } from '../../Warn'
 
 const showing = ref(false)
+const { open } = useDialog()
+const { fetchItems } = useSheetManager()
 
 const object = computed(() => {
   return {
@@ -34,17 +40,35 @@ const object = computed(() => {
   }
 })
 
-const warn = async (callbackFunction: () => void) => {
-  console.log('this is your warning')
-  callbackFunction()
-}
-
 const tools = [
   {
     name: 'Increment Student Year',
     handler: () => {
-      warn(incrementStudentYear).then(() => {
-        // refresh the data
+      warn().then(() => {
+        open({
+          component: IncrementStudentYearDialog,
+        })
+      }).catch(() => {
+        console.log('User cancelled warn dialog')
+      })
+    }
+  },
+  {
+    name: 'Test',
+    handler: () => {
+      open({
+        body: {
+          title: 'Test',
+          description: 'This is a test',
+          buttons: [
+            {
+              text: 'Test',
+              onClick: () => {
+                fetchItems()
+              }
+            }
+          ]
+        }
       })
     }
   }

@@ -111,6 +111,7 @@
       @close="showAddModal = false"
       :show="showAddModal"
     />
+    <ServeDialog />
     <v-navigation-drawer
       v-if="smAndDown"
       v-model="showDetailDrawer"
@@ -140,6 +141,7 @@ import PanelList from '../components/Panel/PanelList.vue'
 import StudentDetail from '../components/Detail/StudentDetail.vue'
 import SortPanel from '../components/Panel/SortPanel.vue'
 import AppBar from '../components/Panel/AppBar.vue'
+import ServeDialog from '../components/Panel/ServeDialog.vue'
 import { useKeyBindings } from '../KeyBindings'
 import { useDisplay } from 'vuetify'
 
