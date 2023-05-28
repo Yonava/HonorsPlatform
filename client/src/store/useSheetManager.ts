@@ -74,7 +74,7 @@ export const useSheetManager = defineStore('sheetManager', {
       this.selectedItem = item;
     },
     async deleteItem(item?: SheetItem) {
-      if (!item) {
+      if (!item?.row) {
         if (!this.selectedItem) {
           console.error('useStateManager: No item selected for update');
           return;

@@ -2,7 +2,6 @@
   <div>
     <DetailFrame
       v-model="student.note"
-      @delete="reqDeleteStudent"
       :disableDelete="!canDelete"
     >
       <template #main>
@@ -215,21 +214,19 @@ import DetailFrame from './Helper/DetailFrame.vue'
 import DetailHeader from './Helper/DetailHeader.vue'
 import ModuleFetch from './Helper/ModuleFetch.vue'
 import AddStudentNote from './Helper/AddStudentNote.vue'
-import type { Module, Student } from '../../SheetTypes'
+import type { Module } from '../../SheetTypes'
 import { athleticOptions } from '../../Athletics'
 import { emailValidator, getStudentEmail, sendEmail } from '../../EmailUtilities'
 import { getPanel } from '../../Panels'
 import { moveToGraduates } from '../../StudentTools'
 
 import { useSheetManager } from '../../store/useSheetManager'
-import { mapActions, storeToRefs } from 'pinia'
+import { storeToRefs } from 'pinia'
 import { useUpdateItem } from '../../TrackItemForUpdate'
 
 const sheetManager = useSheetManager()
 const { selectedItem: student } = storeToRefs(sheetManager)
-
 useUpdateItem(student)
-
 
 const statusOptions = {
   'Active': 'account-check',
@@ -244,11 +241,6 @@ const yearOptions = [
   'Senior',
   'Other'
 ]
-
-function reqDeleteStudent() {
-  if (!canDelete.value) return
-  sheetManager.deleteItem()
-}
 
 const modules = ref<Module[]>([])
 const loadingModules = ref(false)
@@ -275,7 +267,7 @@ async function saveId() {
 }
 
 function viewThesis() {
-  setPanel(getPanel('THESES'), {
+  sheetManager.setPanel(getPanel('THESES'), {
     key: 'studentId',
     value: student.value.id,
   })

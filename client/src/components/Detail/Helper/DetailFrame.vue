@@ -42,7 +42,7 @@
       >
         <slot name="buttons"></slot>
         <v-btn
-          @click="$emit('delete')"
+          @click="deleteItem()"
           :disabled="disableDelete"
           size="large"
           color="red"
@@ -62,6 +62,9 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
 import { useElementSize } from '@vueuse/core'
+import { useSheetManager } from '../../../store/useSheetManager'
+
+const { deleteItem } = useSheetManager()
 
 const sm = ref(false)
 const el = ref(null)
@@ -78,7 +81,6 @@ const props = defineProps<{
 
 const emits = defineEmits<{
   'update:modelValue': (value: string) => void,
-  delete: () => void
 }>()
 
 const notepad = computed({

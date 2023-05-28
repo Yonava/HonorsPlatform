@@ -163,8 +163,6 @@ const {
   smAndDown
 } = useDisplay()
 
-// setPanel(getPanel('GRADUATES'))
-
 const showAddModal = ref(false)
 
 const showDetailDrawer = computed({

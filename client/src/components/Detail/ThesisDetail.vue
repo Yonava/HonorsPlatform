@@ -1,17 +1,14 @@
 <template>
-  <DetailFrame
-    v-model="item.note"
-    @delete="$emit('delete')"
-  >
+  <DetailFrame v-model="thesis.note">
     <template #main>
       <DetailHeader
-        v-model="item.title"
-        :id="item.studentId"
+        v-model="thesis.title"
+        :id="thesis.studentId"
         placeholder="Thesis Title"
       />
 
       <v-btn
-        v-if="item.studentId && !item.name"
+        v-if="thesis.studentId && !thesis.name"
         @click="setStudentData"
         :loading="studentDataState.loading"
         :color="studentDataState.color"
@@ -20,27 +17,27 @@
       >
         <v-icon class="mr-2">mdi-account-group</v-icon>
         <span v-if="!studentDataState.error">
-          Fill With Data From Students ({{ item.studentId }})
+          Fill With Data From Students ({{ thesis.studentId }})
         </span>
         <span v-else>
           {{ studentDataState.error }}
         </span>
       </v-btn>
       <v-text-field
-        v-model="item.name"
+        v-model="thesis.name"
         clearable
         label="Student Name"
         prepend-icon="mdi-account"
       ></v-text-field>
       <v-btn
-        v-if="item.name && !item.email"
-        @click="item.email = getStudentEmail(item.name)"
+        v-if="thesis.name && !thesis.email"
+        @click="thesis.email = getStudentEmail(thesis.name)"
         color="green"
         size="x-small"
         class="mb-2"
       >New Student Email</v-btn>
       <v-text-field
-        v-model="item.email"
+        v-model="thesis.email"
         :rules="[(v) => emailValidator(v) || 'Invalid email address']"
         clearable
         label="Student Email"
@@ -50,14 +47,14 @@
       <v-divider class="mb-5"></v-divider>
 
         <v-btn
-          v-if="!item.term"
-          @click="item.term = getCurrentTerm()"
+          v-if="!thesis.term"
+          @click="thesis.term = getCurrentTerm()"
           class="mb-2"
           color="green"
           size="x-small"
         >Current Term</v-btn>
         <v-text-field
-          v-model="item.term"
+          v-model="thesis.term"
           :rules="[(v) => termValidator(v) || 'Potentially invalid term']"
           clearable
           label="Term"
@@ -66,15 +63,15 @@
 
       <div class="mb-2 d-flex flex-row ">
         <v-btn
-          v-if="!item.draftReceived"
-          @click="item.draftReceived = new Date().toLocaleString().split(',')[0]"
+          v-if="!thesis.draftReceived"
+          @click="thesis.draftReceived = new Date().toLocaleString().split(',')[0]"
           color="green"
           size="x-small"
         >Today</v-btn>
         <v-spacer></v-spacer>
         <v-btn
-          v-if="!item.proposalReceived"
-          @click="item.proposalReceived = new Date().toLocaleString().split(',')[0]"
+          v-if="!thesis.proposalReceived"
+          @click="thesis.proposalReceived = new Date().toLocaleString().split(',')[0]"
           color="green"
           size="x-small"
         >Today</v-btn>
@@ -82,55 +79,55 @@
 
       <div class="d-flex flex-row">
         <v-text-field
-          v-model="item.draftReceived"
+          v-model="thesis.draftReceived"
           clearable
           label="Draft Received"
           prepend-icon="mdi-calendar-check"
           class="mr-6"
         ></v-text-field>
         <v-text-field
-          v-model="item.proposalReceived"
+          v-model="thesis.proposalReceived"
           clearable
           label="Proposal Received"
           prepend-icon="mdi-calendar-check"
         ></v-text-field>
       </div>
       <v-select
-        v-model="item.decision"
+        v-model="thesis.decision"
         :items="[
           'Approved',
           'Rejected',
           'Pending',
         ]"
         clearable
-        :prepend-icon="item.decision === 'Approved' ? 'mdi-check-circle' : item.decision === 'Rejected' ? 'mdi-close-circle' : 'mdi-alert-circle'"
+        :prepend-icon="thesis.decision === 'Approved' ? 'mdi-check-circle' : thesis.decision === 'Rejected' ? 'mdi-close-circle' : 'mdi-alert-circle'"
         label="Decision"
       ></v-select>
       <div class="d-flex flex-row">
         <v-spacer></v-spacer>
         <v-btn
-          v-if="item.mentor && !item.mentorEmail"
-          @click="item.mentorEmail = getFacultyEmail(item.mentor)"
+          v-if="thesis.mentor && !thesis.mentorEmail"
+          @click="thesis.mentorEmail = getFacultyEmail(thesis.mentor)"
           color="green"
           size="x-small"
           class="mb-2"
         >New Faculty Email</v-btn>
       </div>
       <InstructorComplete
-        @update="item.mentor = $event; item.mentorEmail = getFacultyEmail($event)"
-        :instructor="item.mentor"
+        @update="thesis.mentor = $event; thesis.mentorEmail = getFacultyEmail($event)"
+        :instructor="thesis.mentor"
         color="green"
       />
       <div class="d-flex flex-row align-center justify-center">
         <v-text-field
-          v-model="item.mentor"
+          v-model="thesis.mentor"
           prepend-icon="mdi-human-male-board"
           label="Faculty Mentor"
           class="mr-6"
           style="width: 45%"
         ></v-text-field>
         <v-text-field
-          v-model="item.mentorEmail"
+          v-model="thesis.mentorEmail"
           :rules="[(v) => emailValidator(v) || 'Invalid email address']"
           clearable
           prepend-icon="mdi-email"
@@ -143,27 +140,28 @@
 </template>
 
 <script setup lang="ts">
+import DetailHeader from './Helper/DetailHeader.vue'
+import InstructorComplete from './Helper/InstructorComplete.vue'
+import DetailFrame from './Helper/DetailFrame.vue'
+
 import { ref } from 'vue'
 import { getCurrentTerm, termValidator } from '../../TermValidator'
 import type { Thesis } from '../../SheetTypes'
 import { getEvery, Range } from '../../SheetsAPI'
 import { mapStudents } from '../../DataMappers'
-import DetailHeader from './Helper/DetailHeader.vue'
-import InstructorComplete from './Helper/InstructorComplete.vue'
-import DetailFrame from './Helper/DetailFrame.vue'
 import {
   emailValidator,
   getFacultyEmail,
   getStudentEmail
 } from '../../EmailUtilities'
 
-const props = defineProps<{
-  item: Thesis
-}>()
+import { useSheetManager } from '../../store/useSheetManager'
+import { storeToRefs } from 'pinia'
+import { useUpdateItem } from '../../TrackItemForUpdate'
 
-const emits = defineEmits<{
-  delete: () => void
-}>()
+const sheetManager = useSheetManager()
+const { selectedItem: thesis } = storeToRefs(sheetManager)
+useUpdateItem(thesis)
 
 const studentDataState = ref({
   loading: false,
@@ -175,15 +173,15 @@ async function setStudentData() {
   studentDataState.value.loading = true
   const students = await getEvery(Range.STUDENTS)
   const mappedStudents = await mapStudents(students)
-  const student = mappedStudents.find(s => s.id === props.item.studentId)
+  const student = mappedStudents.find(s => s.id === thesis.value.studentId)
   if (!student) {
     studentDataState.value.error = 'Student not found'
     studentDataState.value.color = 'red'
     studentDataState.value.loading = false
     return
   }
-  props.item.name = student.name
-  props.item.email = student.email
+  thesis.value.name = student.name
+  thesis.value.email = student.email
   studentDataState.value.loading = false
   studentDataState.value.color = 'blue-darken-2'
 }

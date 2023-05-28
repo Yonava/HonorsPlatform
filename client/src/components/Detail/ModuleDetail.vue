@@ -1,28 +1,25 @@
 <template>
-  <DetailFrame
-    v-model="item.description"
-    @delete="$emit('delete')"
-  >
+  <DetailFrame v-model="module.description">
     <template #main>
       <DetailHeader
-        v-model="item.courseCode"
-        :id="item.studentId"
+        v-model="module.courseCode"
+        :id="module.studentId"
         placeholder="Course Code"
       />
 
       <v-text-field
-        v-model="item.term"
+        v-model="module.term"
         :rules="[(v) => termValidator(v) || 'Potentially invalid term']"
         prepend-icon="mdi-calendar"
         label="Term"
       ></v-text-field>
       <InstructorComplete
-        @update="item.instructor = $event"
-        :instructor="item.instructor"
+        @update="module.instructor = $event"
+        :instructor="module.instructor"
         color="orange-darken-2"
       />
       <v-text-field
-        v-model="item.instructor"
+        v-model="module.instructor"
         label="Instructor"
         prepend-icon="mdi-human-male-board"
       ></v-text-field>
@@ -33,15 +30,15 @@
 
       <div class="d-flex flex-row mb-2">
         <v-btn
-          v-if="!item.docuSignCreated"
-          @click="item.docuSignCreated = new Date().toLocaleDateString()"
+          v-if="!module.docuSignCreated"
+          @click="module.docuSignCreated = new Date().toLocaleDateString()"
           color="orange-darken-2"
           size="x-small"
         >Now</v-btn>
         <v-spacer></v-spacer>
         <v-btn
-          v-if="!item.docuSignCompleted"
-          @click="item.docuSignCompleted = new Date().toLocaleDateString()"
+          v-if="!module.docuSignCompleted"
+          @click="module.docuSignCompleted = new Date().toLocaleDateString()"
           color="orange-darken-2"
           size="x-small"
         >Now</v-btn>
@@ -49,7 +46,7 @@
 
       <div class="d-flex flex-row">
         <v-text-field
-          v-model="item.docuSignCreated"
+          v-model="module.docuSignCreated"
           clearable
           prepend-icon="mdi-calendar-alert"
           style="width: 45%"
@@ -57,7 +54,7 @@
           label="DocuSign Created"
         ></v-text-field>
         <v-text-field
-          v-model="item.docuSignCompleted"
+          v-model="module.docuSignCompleted"
           clearable
           style="width: 45%"
           prepend-icon="mdi-calendar-check"
@@ -69,7 +66,7 @@
         @success="emits('unselect')"
         @close="moveModuleDialog = false"
         :show="moveModuleDialog"
-        :module="item"
+        :module="module"
       />
     </template>
     <template #buttons>
@@ -89,22 +86,22 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { termValidator } from '../../TermValidator'
-import type { Module } from '../../SheetTypes'
 import DetailHeader from './Helper/DetailHeader.vue'
 import FinishModuleModal from './Helper/FinishModuleModal.vue'
 import InstructorComplete from './Helper/InstructorComplete.vue'
 import DetailFrame from './Helper/DetailFrame.vue'
 
-const props = defineProps<{
-  item: Module
-}>()
+import { ref } from 'vue'
+import { termValidator } from '../../TermValidator'
+import type { Module } from '../../SheetTypes'
 
-const emits = defineEmits([
-  'delete',
-  'unselect'
-])
+import { useSheetManager } from '../../store/useSheetManager'
+import { storeToRefs } from 'pinia'
+import { useUpdateItem } from '../../TrackItemForUpdate'
+
+const sheetManager = useSheetManager()
+const { selectedItem: module } = storeToRefs(sheetManager)
+useUpdateItem(module)
 
 const moveModuleDialog = ref(false)
 </script>

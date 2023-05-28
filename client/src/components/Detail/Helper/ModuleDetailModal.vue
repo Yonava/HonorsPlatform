@@ -134,7 +134,7 @@ import ModalContent from '../../ModalContent.vue'
 import InstructorComplete from './InstructorComplete.vue'
 
 const props = defineProps<{
-  module: Module
+  module: Module | undefined
   show: boolean
 }>()
 

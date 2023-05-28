@@ -1,17 +1,14 @@
 <template>
-  <DetailFrame
-    v-model="item.description"
-    @delete="$emit('delete')"
-  >
+  <DetailFrame v-model="completedModule.description">
     <template #main>
       <DetailHeader
-        v-model="item.courseCode"
-        :id="item.studentId"
+        v-model="completedModule.courseCode"
+        :id="completedModule.studentId"
         placeholder="Course Code"
       />
 
       <v-text-field
-        v-model="item.completedDate"
+        v-model="completedModule.completedDate"
         label="Completed Date"
       >
         <template #prepend>
@@ -19,7 +16,7 @@
         </template>
       </v-text-field>
       <v-text-field
-        v-model="item.term"
+        v-model="completedModule.term"
         label="Term"
       >
         <template #prepend>
@@ -27,12 +24,12 @@
         </template>
       </v-text-field>
       <InstructorComplete
-        @update="item.instructor = $event"
-        :instructor="item.instructor"
+        @update="completedModule.instructor = $event"
+        :instructor="completedModule.instructor"
         color="red"
       />
       <v-text-field
-        v-model="item.instructor"
+        v-model="completedModule.instructor"
         label="Instructor"
       >
         <template #prepend>
@@ -41,7 +38,7 @@
       </v-text-field>
       <div class="d-flex flex-row">
         <v-text-field
-          v-model="item.docuSignCreated"
+          v-model="completedModule.docuSignCreated"
           class="mr-6"
           label="DocuSign Created"
         >
@@ -50,7 +47,7 @@
           </template>
         </v-text-field>
         <v-text-field
-          v-model="item.docuSignCompleted"
+          v-model="completedModule.docuSignCompleted"
           label="DocuSign Completed"
         >
           <template #prepend>
@@ -63,7 +60,7 @@
           Final Grade
         </h2>
         <input
-          v-model="item.grade"
+          v-model="completedModule.grade"
           type="text"
           class="grade-input"
           placeholder="Grade"
@@ -80,14 +77,13 @@ import DetailHeader from './Helper/DetailHeader.vue'
 import InstructorComplete from './Helper/InstructorComplete.vue'
 import DetailFrame from './Helper/DetailFrame.vue'
 
-const props = defineProps<{
-  item: CompletedModule
-}>()
+import { useSheetManager } from '../../store/useSheetManager'
+import { storeToRefs } from 'pinia'
+import { useUpdateItem } from '../../TrackItemForUpdate'
 
-const emits = defineEmits([
-  'delete',
-  'unselect'
-])
+const sheetManager = useSheetManager()
+const { selectedItem: completedModule } = storeToRefs(sheetManager)
+useUpdateItem(completedModule)
 </script>
 
 <style scoped>
