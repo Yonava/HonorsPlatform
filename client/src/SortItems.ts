@@ -1,5 +1,4 @@
 import { ref, computed } from 'vue'
-import type { Ref } from 'vue'
 import { useSheetManager } from './store/useSheetManager'
 import { storeToRefs } from 'pinia'
 
@@ -35,7 +34,6 @@ export function useSortItems() {
 
   const activeSortKey = ref<SortKey>(null)
   const setKey = (newKey: SortKey) => {
-    console.log(sortOptions.value)
     if (!newKey) {
       activeSortKey.value = null
       return

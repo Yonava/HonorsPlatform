@@ -31,27 +31,48 @@ export async function incrementStudentYear() {
   const graduatingSeniors: Student[] = []
   const failedToIncrement: Student[] = []
 
-  students.forEach((student, index) => {
+  const years = ['Freshman', 'Sophomore', 'Junior', 'Senior']
+
+  const newStudentYear = (year: string) => {
+    let prefix = ''
+    let yearText = ''
+    const yearArr = year.split(' ')
+    if (yearArr.length > 1) {
+      prefix = yearArr[0] + ' '
+      yearText = yearArr[1]
+    } else {
+      yearText = yearArr[0]
+    }
+    const index = years.indexOf(yearText)
+    return prefix + (years[index + 1] || 'Graduate')
+  }
+
+  const hasValidYear = (student: Student) => {
     if (!student.year) {
+      return false
+    }
+    return years.some(year => student.year.includes(year))
+  }
+
+  students.forEach(student => {
+    if (!hasValidYear(student)) {
       failedToIncrement.push(student)
       return
     }
-    const year = student.year.toLowerCase();
-    if (year === 'senior') {
+    // @ts-ignore
+    // TODO: fix type system for StudentYear in SheetTypes
+    student.year = newStudentYear(student.year)
+
+    if (student.year.includes('Graduate')) {
       graduatingSeniors.push(student)
-      students.splice(index, 1)
-    } else if (year === 'junior') {
-      student.year = 'Senior'
-    } else if (year === 'sophomore') {
-      student.year = 'Junior'
-    } else if (year === 'freshman') {
-      student.year = 'Sophomore'
-    } else {
-      failedToIncrement.push(student)
     }
   })
 
   if (graduatingSeniors.length > 0) {
+    graduatingSeniors.forEach(student => {
+      const indexOfGrad = students.findIndex(s => s.sysId === student.sysId)
+      students.splice(indexOfGrad, 1)
+    })
     await postInRange(Range.GRADUATES, unmapGraduates(graduatingSeniors.map(studentToGraduate)))
   }
 

@@ -96,7 +96,7 @@
         <div class="d-flex flex-row">
           <v-select
             v-model="student.activeStatus"
-            :students="Object.keys(statusOptions)"
+            :items="Object.keys(statusOptions)"
             :prepend-icon="`mdi-${statusOptions[student.activeStatus]}`"
             label="Active Status"
             style="width: 15%;"
@@ -104,7 +104,7 @@
           ></v-select>
           <v-select
             v-model="student.year"
-            :students="yearOptions"
+            :items="yearOptions"
             label="Year"
             style="width: 15%;"
             prepend-icon="mdi-calendar"
@@ -114,7 +114,7 @@
         <!-- clearable on this auto-complete is incompatible with state syncing to google drive -->
         <v-autocomplete
           v-model="student.athletics"
-          :students="Object.keys(athleticOptions)"
+          :items="Object.keys(athleticOptions)"
           :prepend-icon="`mdi-${athleticOptions[student.athletics]}`"
           label="Athletics"
           class="mt-2"

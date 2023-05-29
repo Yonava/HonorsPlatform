@@ -116,7 +116,7 @@ async function reqAdd() {
   }
   loading.value = true
   const newSysId = Math.random().toString(36).substring(2, 12)
-  const newItemArray = [newSysId, ...item.value]
+  const newItemArray = [newSysId, ...item.value.slice(1)]
   await postInRange(panel.value.sheetRange, [newItemArray])
   const newItemObject = (await panel.value.mappers.map([newItemArray]))[0]
   sheetManager.addItem(newItemObject)

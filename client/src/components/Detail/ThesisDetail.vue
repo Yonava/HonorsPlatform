@@ -99,7 +99,6 @@
           'Rejected',
           'Pending',
         ]"
-        clearable
         :prepend-icon="thesis.decision === 'Approved' ? 'mdi-check-circle' : thesis.decision === 'Rejected' ? 'mdi-close-circle' : 'mdi-alert-circle'"
         label="Decision"
       ></v-select>
