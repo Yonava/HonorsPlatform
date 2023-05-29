@@ -91,7 +91,7 @@ watch(filteredItems, () => {
 
 const isSelected = item => {
   if (!selectedItem.value) return false
-  return selectedItem.value.row === item.row
+  return selectedItem.value.sysId === item.sysId
 }
 </script>
 

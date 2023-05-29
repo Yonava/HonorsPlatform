@@ -21,13 +21,15 @@ export const useDialog = defineStore("dialog", {
       description: "",
       buttons: []
     } as DialogBody,
-    component: null
+    component: null,
+    contentTimeout: null as any
   }),
   getters: {
 
   },
   actions: {
     open(options?: { body?: DialogBody; component?: any }) {
+      clearTimeout(this.contentTimeout);
       if (options?.component) {
         this.component = markRaw(options.component);
       } else if (options?.body) {
@@ -37,6 +39,10 @@ export const useDialog = defineStore("dialog", {
     },
     close() {
       this.show = false;
+      clearInterval(this.contentTimeout);
+      this.contentTimeout = setTimeout(() => {
+        this.$reset();
+      }, 300);
     }
   }
 });

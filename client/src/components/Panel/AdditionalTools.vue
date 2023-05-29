@@ -40,42 +40,21 @@ const object = computed(() => {
   }
 })
 
-const test = () => {
-  setTimeout(() => {
-    fetchItems()
-  }, 5000)
-}
-
 const tools = [
   {
     name: 'Increment Student Year',
-    handler: () => {
-      warn().then(() => {
-        open({
-          component: IncrementStudentYearDialog,
-        })
-      }).catch(err => {
-        console.log('motherfucker cancelled!')
+    handler: async () => {
+      await warn()
+      open({
+        component: IncrementStudentYearDialog
       })
     }
   },
   {
-    name: 'Test',
-    handler: () => {
-      warn(test, [{
-        body: {
-          title: 'Test',
-          description: 'This is a test',
-          buttons: [
-            {
-              text: 'Test',
-              onClick: () => {
-                fetchItems()
-              }
-            }
-          ]
-        }
-      }])
+    name: 'Fetch Items',
+    handler: async () => {
+      await warn()
+      await fetchItems()
     }
   }
 ]
