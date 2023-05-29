@@ -27,7 +27,7 @@
           <Announcements />
         </div>
         <v-btn
-          @click="toggleAddDialog"
+          @click="panel.add"
           style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240)"
           class="mt-5"
           block
@@ -145,7 +145,7 @@
       <v-spacer></v-spacer>
       <v-btn
         v-if="smAndUp"
-        @click="toggleAddDialog"
+        @click="panel.add"
         class="ml-3"
         style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240)"
       >
@@ -243,18 +243,12 @@ const searchText = computed({
   set: (v) => sheetManager.setSearchFilter(v),
 });
 
-const toggleAddDialog = () => {
-  useDialog().toggle({
-    component: panel.value.components.add
-  })
-};
-
 const navDrawer = ref(false);
 const searchMode = ref(false);
 
 useKeyBindings({
   "/": () => document.getElementById("input").focus(),
-  "a": () => toggleAddDialog(),
+  "a": () => panel.value.add(),
 });
 
 const { lgAndUp, mdAndUp, smAndUp, smAndDown, xs } = useDisplay();

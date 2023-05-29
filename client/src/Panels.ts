@@ -23,6 +23,7 @@ import { Range } from './SheetsAPI';
 
 import { tools } from './AdditionalTools';
 import { sortOptions } from './SortOptions'
+import { addActions } from './AddActions';
 
 import {
   mapStudents,
@@ -39,11 +40,11 @@ import {
 
 export const panels = {
   STUDENTS: {
+    add: addActions.STUDENTS,
     tools: tools.STUDENTS,
     components: {
       detail: markRaw(StudentDetail),
       list: markRaw(StudentListItem),
-      add: markRaw(AddStudent)
     },
     title: {
       singular: 'Student',
@@ -59,11 +60,11 @@ export const panels = {
     sortOptions: sortOptions.STUDENTS
   },
   GRADUATES: {
+    add: addActions.GRADUATES,
     tools: tools.GRADUATES,
     components: {
       detail: markRaw(GraduateDetail),
       list: markRaw(GraduateListItem),
-      add: markRaw(AddGraduate)
     },
     title: {
       singular: 'Graduate',
@@ -79,11 +80,11 @@ export const panels = {
     sortOptions: sortOptions.GRADUATES
   },
   MODULES: {
+    add: addActions.MODULES,
     tools: tools.MODULES,
     components: {
       detail: markRaw(ModuleDetail),
-      list: markRaw(ModuleListItem),
-      add: markRaw(AddModule)
+      list: markRaw(ModuleListItem)
     },
     title: {
       singular: 'Module',
@@ -99,11 +100,11 @@ export const panels = {
     sortOptions: sortOptions.MODULES
   },
   COMPLETED_MODULES: {
+    add: addActions.COMPLETED_MODULES,
     tools: tools.COMPLETED_MODULES,
     components: {
       detail: markRaw(CompletedModuleDetail),
       list: markRaw(CompletedModuleListItem),
-      add: markRaw(AddCompletedModule)
     },
     title: {
       singular: 'Completed Module',
@@ -119,11 +120,11 @@ export const panels = {
     sortOptions: sortOptions.COMPLETED_MODULES,
   },
   THESES: {
+    add: addActions.THESES,
     tools: tools.THESES,
     components: {
       detail: markRaw(ThesisDetail),
       list: markRaw(ThesisListItem),
-      add: markRaw(AddThesis)
     },
     title: {
       singular: 'Thesis',
