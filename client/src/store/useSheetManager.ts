@@ -40,9 +40,6 @@ export const useSheetManager = defineStore('sheetManager', {
       this.items = items;
     },
     async setPanel(panel: Panel, jumpTo?: { key: string, value: string }) {
-      if (this.panel.title.plural === panel.title.plural) {
-        return;
-      }
       this.selectedItem = null;
       this.pinnedItem = null;
       this.items = [];

@@ -218,7 +218,7 @@ import type { Module } from '../../SheetTypes'
 import { athleticOptions } from '../../Athletics'
 import { emailValidator, getStudentEmail, sendEmail } from '../../EmailUtilities'
 import { getPanel } from '../../Panels'
-import { moveToGraduates } from '../../StudentTools'
+import { moveToGraduates, yearOptions, statusOptions } from '../../StudentTools'
 
 import { useSheetManager } from '../../store/useSheetManager'
 import { storeToRefs } from 'pinia'
@@ -227,20 +227,6 @@ import { useUpdateItem } from '../../TrackItemForUpdate'
 const sheetManager = useSheetManager()
 const { selectedItem: student } = storeToRefs(sheetManager)
 useUpdateItem(student)
-
-const statusOptions = {
-  'Active': 'account-check',
-  'Inactive': 'account-remove',
-  'Pending': 'account-question',
-}
-
-const yearOptions = [
-  'Freshman',
-  'Sophomore',
-  'Junior',
-  'Senior',
-  'Other'
-]
 
 const modules = ref<Module[]>([])
 const loadingModules = ref(false)

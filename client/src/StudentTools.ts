@@ -3,6 +3,23 @@ import { unmapGraduates } from './DataMappers'
 import { getEvery, Range, replaceRange, getHeaderRowCache, moveRowToRange, postInRange } from './SheetsAPI'
 import { panels } from './Panels'
 
+export const statusOptions = {
+  'Active': 'account-check',
+  'Inactive': 'account-remove',
+  'Pending': 'account-question',
+}
+
+export const yearOptions = [
+  'Freshman',
+  'Sophomore',
+  'Junior',
+  'Senior',
+  'Associate Freshman',
+  'Associate Sophomore',
+  'Associate Junior',
+  'Associate Senior',
+]
+
 export function studentToGraduate(student: Student): Graduate {
   return {
     row: student.row,
@@ -31,27 +48,19 @@ export async function incrementStudentYear() {
   const graduatingSeniors: Student[] = []
   const failedToIncrement: Student[] = []
 
-  const years = ['Freshman', 'Sophomore', 'Junior', 'Senior']
-
   const newStudentYear = (year: string) => {
-    let prefix = ''
-    let yearText = ''
-    const yearArr = year.split(' ')
-    if (yearArr.length > 1) {
-      prefix = yearArr[0] + ' '
-      yearText = yearArr[1]
-    } else {
-      yearText = yearArr[0]
+    if (year.includes('Senior')) {
+      return 'Graduate'
     }
-    const index = years.indexOf(yearText)
-    return prefix + (years[index + 1] || 'Graduate')
+    const index = yearOptions.indexOf(year)
+    return yearOptions[index + 1]
   }
 
   const hasValidYear = (student: Student) => {
     if (!student.year) {
       return false
     }
-    return years.some(year => student.year.includes(year))
+    return yearOptions.some(year => student.year === year)
   }
 
   students.forEach(student => {
