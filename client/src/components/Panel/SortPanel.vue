@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="sortOptions.length > 0"
+    v-if="panel.sortOptions.length > 0"
     class="pa-2"
     style="width: 100%"
   >
@@ -17,7 +17,7 @@
       ></div>
     </div>
     <div
-      v-for="sortOption in sortOptions"
+      v-for="sortOption in panel.sortOptions"
       :key="sortOption.label"
       @click="setKey(sortOption.label)"
       :style="{
@@ -40,40 +40,14 @@
 </template>
 
 <script setup lang="ts">
-import {
-  ref,
-  computed,
-  watch
-} from 'vue'
-import { SheetItem } from '../../SheetTypes'
-import { useSortItems, SortOptions } from '../../SortItems'
-
+import { useSortItems } from '../../SortItems'
 import { useSheetManager } from '../../store/useSheetManager'
-import { storeToRefs, mapActions } from 'pinia'
+import { storeToRefs } from 'pinia'
 
 const sheetManager = useSheetManager()
-const { items, panel } = storeToRefs(sheetManager)
-const { setItems } = mapActions(useSheetManager, [])
+const { panel } = storeToRefs(sheetManager)
 
-const itemList = computed({
-  get: () => items.value,
-  set: val => setItems(val)
-})
-
-const sortOptions = ref()
-const sortOptionsObject = ref<SortOptions<SheetItem>>({})
-
-const { setKey, activeSortKey, ascending } = useSortItems<SheetItem>(itemList, sortOptionsObject)
-
-watch(panel, () => {
-  setKey(null)
-  sortOptions.value = panel.value.sortOptions
-
-  sortOptionsObject.value = {}
-  sortOptions.value.forEach(sort => {
-    sortOptionsObject.value[sort.label] = sort.func
-  })
-}, { immediate: true })
+const { setKey, activeSortKey, ascending } = useSortItems()
 </script>
 
 <style scoped>
