@@ -27,7 +27,7 @@
           <Announcements />
         </div>
         <v-btn
-          @click="emit('showAddModal')"
+          @click="showAddModal"
           style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240)"
           class="mt-5"
           block
