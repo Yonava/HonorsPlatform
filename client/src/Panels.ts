@@ -1,17 +1,22 @@
 import StudentListItem from './components/ListItem/StudentListItem.vue';
 import StudentDetail from './components/Detail/StudentDetail.vue';
+import AddStudent from './components/Add/AddStudent.vue';
 
 import ModuleListItem from './components/ListItem/ModuleListItem.vue';
 import ModuleDetail from './components/Detail/ModuleDetail.vue';
+import AddModule from './components/Add/AddModule.vue';
 
 import CompletedModuleDetail from '../src/components/Detail/CompletedModuleDetail.vue';
 import CompletedModuleListItem from './components/ListItem/CompletedModuleListItem.vue';
+import AddCompletedModule from './components/Add/AddCompletedModule.vue';
 
 import GraduateListItem from './components/ListItem/GraduateListItem.vue';
 import GraduateDetail from './components/Detail/GraduateDetail.vue';
+import AddGraduate from './components/Add/AddGraduate.vue';
 
 import ThesisDetail from './components/Detail/ThesisDetail.vue';
 import ThesisListItem from './components/ListItem/ThesisListItem.vue';
+import AddThesis from './components/Add/AddThesis.vue';
 
 import { markRaw } from 'vue';
 import { Range } from './SheetsAPI';
@@ -37,7 +42,8 @@ export const panels = {
     tools: tools.STUDENTS,
     components: {
       detail: markRaw(StudentDetail),
-      list: markRaw(StudentListItem)
+      list: markRaw(StudentListItem),
+      add: markRaw(AddStudent)
     },
     title: {
       singular: 'Student',
@@ -56,7 +62,8 @@ export const panels = {
     tools: tools.GRADUATES,
     components: {
       detail: markRaw(GraduateDetail),
-      list: markRaw(GraduateListItem)
+      list: markRaw(GraduateListItem),
+      add: markRaw(AddGraduate)
     },
     title: {
       singular: 'Graduate',
@@ -75,7 +82,8 @@ export const panels = {
     tools: tools.MODULES,
     components: {
       detail: markRaw(ModuleDetail),
-      list: markRaw(ModuleListItem)
+      list: markRaw(ModuleListItem),
+      add: markRaw(AddModule)
     },
     title: {
       singular: 'Module',
@@ -94,7 +102,8 @@ export const panels = {
     tools: tools.COMPLETED_MODULES,
     components: {
       detail: markRaw(CompletedModuleDetail),
-      list: markRaw(CompletedModuleListItem)
+      list: markRaw(CompletedModuleListItem),
+      add: markRaw(AddCompletedModule)
     },
     title: {
       singular: 'Completed Module',
@@ -113,7 +122,8 @@ export const panels = {
     tools: tools.THESES,
     components: {
       detail: markRaw(ThesisDetail),
-      list: markRaw(ThesisListItem)
+      list: markRaw(ThesisListItem),
+      add: markRaw(AddThesis)
     },
     title: {
       singular: 'Thesis',

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="background: white">
     Completed Module
   </div>
 </template>

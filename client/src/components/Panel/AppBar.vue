@@ -27,7 +27,7 @@
           <Announcements />
         </div>
         <v-btn
-          @click="showAddModal"
+          @click="toggleAddDialog"
           style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240)"
           class="mt-5"
           block
@@ -145,7 +145,7 @@
       <v-spacer></v-spacer>
       <v-btn
         v-if="smAndUp"
-        @click="showAddModal"
+        @click="toggleAddDialog"
         class="ml-3"
         style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240)"
       >
@@ -228,10 +228,11 @@ import AdditionalTools from "../../components/Panel/AdditionalTools.vue";
 import { ref, computed, watch } from "vue";
 import { useDisplay } from "vuetify";
 import { useKeyBindings } from "../../KeyBindings";
+import { useDialog } from '../../store/useDialog'
 
 import { panels, Panel } from "../../Panels";
 import { useSheetManager } from "../../store/useSheetManager";
-import { mapActions, storeToRefs } from "pinia";
+import { storeToRefs } from "pinia";
 
 const sheetManager = useSheetManager();
 const { searchFilter, panel, selectedItem, loadingItems, filteredItems } =
@@ -242,8 +243,10 @@ const searchText = computed({
   set: (v) => sheetManager.setSearchFilter(v),
 });
 
-const showAddModal = () => {
-  console.log('showAddModal')
+const toggleAddDialog = () => {
+  useDialog().toggle({
+    component: panel.value.components.add
+  })
 };
 
 const navDrawer = ref(false);
@@ -251,7 +254,7 @@ const searchMode = ref(false);
 
 useKeyBindings({
   "/": () => document.getElementById("input").focus(),
-  "a": () => showAddModal(),
+  "a": () => toggleAddDialog(),
 });
 
 const { lgAndUp, mdAndUp, smAndUp, smAndDown, xs } = useDisplay();
