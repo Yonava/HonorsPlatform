@@ -63,7 +63,7 @@
       </div>
 
       <FinishModuleModal
-        @success="emits('unselect')"
+        @success="fetchItems"
         @close="moveModuleDialog = false"
         :show="moveModuleDialog"
         :module="module"
@@ -100,6 +100,7 @@ import { storeToRefs } from 'pinia'
 import { useUpdateItem } from '../../TrackItemForUpdate'
 
 const sheetManager = useSheetManager()
+const { fetchItems } = sheetManager
 const { selectedItem: module } = storeToRefs(sheetManager)
 useUpdateItem(module)
 

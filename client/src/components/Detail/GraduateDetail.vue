@@ -118,7 +118,7 @@ const canDelete = computed(() => {
 
 async function generateGradId() {
   const newId = 'G' + Math.random().toString().substring(2, 9);
-  grad.id = newId
+  grad.value.id = newId
 }
 
 async function moveToStudents() {
@@ -126,17 +126,18 @@ async function moveToStudents() {
   await moveRowToRange(
     Range.GRADUATES,
     Range.STUDENTS,
-    grad.row,
+    grad.value.row,
     await unmapStudents([{
-      row: grad.row,
-      id: grad.id.startsWith('G') ? '' : grad.id,
-      name: grad.name,
-      email: grad.email,
+      row: grad.value.row,
+      sysId: grad.value.sysId,
+      id: grad.value.id.startsWith('G') ? '' : grad.value.id,
+      name: grad.value.name,
+      email: grad.value.email,
       points: 0,
       activeStatus: 'Active',
       year: null,
       athletics: '',
-      note: grad.note,
+      note: grad.value.note,
       misc: {}
     }])
   )

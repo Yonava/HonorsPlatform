@@ -18,7 +18,9 @@
             <v-sheet
               v-for="senior in graduatingSeniors"
               :key="senior.sysId"
-              class="px-3 py-1"
+              @click="selectGrad(senior.sysId)"
+              class="px-3 py-1 hoverable"
+              style="cursor: pointer;"
               color="blue"
             >
               {{ senior.name }}
@@ -42,7 +44,9 @@
             <v-sheet
               v-for="failure in failedToIncrement"
               :key="failure.sysId"
-              class="px-3 py-1"
+              @click="selectStudent(failure)"
+              class="px-3 py-1 hoverable"
+              style="cursor: pointer;"
               color="red lighten-2"
             >
               {{ failure.name }}
@@ -69,8 +73,9 @@ import type { Student } from "../SheetTypes";
 import { useDialog } from "../store/useDialog";
 import { useSheetManager } from "../store/useSheetManager";
 import { ref } from "vue";
+import { getPanel } from '../Panels'
 
-const { fetchItems } = useSheetManager();
+const { fetchItems, setItem, setPanel } = useSheetManager();
 const { close } = useDialog();
 
 const loading = ref(true);
@@ -85,4 +90,28 @@ incrementStudentYear().then(
     loading.value = false;
   }
 );
+
+const selectStudent = (student: Student) => {
+  setItem(student);
+  close();
+};
+
+const selectGrad = (sysId: string) => {
+  setPanel(getPanel('GRADUATES'), {
+    key: 'sysId',
+    value: sysId
+  })
+  close();
+};
 </script>
+
+<style scoped>
+.hoverable {
+  transition: 0.2s;
+  border: 2px solid transparent;
+}
+
+.hoverable:hover {
+  border: 2px solid black;
+}
+</style>
