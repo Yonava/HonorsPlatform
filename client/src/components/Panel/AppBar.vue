@@ -72,15 +72,17 @@
           Mass Email
         </v-btn>
         <AdditionalTools>
-          <v-btn
-            @click="showTools = !showTools"
-            style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240)"
-            class="mt-3"
-            block
-          >
-            <v-icon icon="mdi-hammer" size="large" class="mr-2"></v-icon>
-            Additional Tools
-          </v-btn>
+          <template #showing="{ toolsAvailable }">
+            <v-btn
+              v-if="toolsAvailable"
+              style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240)"
+              class="mt-3"
+              block
+            >
+              <v-icon icon="mdi-hammer" size="large" class="mr-2"></v-icon>
+              Additional Tools
+            </v-btn>
+          </template>
         </AdditionalTools>
         <SortPanel class="mt-5" />
       </div>
@@ -182,8 +184,8 @@
       >
         <Announcements />
         <AdditionalTools>
-          <template #showing="{ showing }">
-            <v-btn icon>
+          <template #showing="{ showing, toolsAvailable }">
+            <v-btn v-if="toolsAvailable" icon>
               <v-icon icon="mdi-hammer" size="large"></v-icon>
               <v-tooltip
                 :disabled="smAndDown || showing"
@@ -232,11 +234,12 @@ import { useSheetManager } from "../../store/useSheetManager";
 import { mapActions, storeToRefs } from "pinia";
 
 const sheetManager = useSheetManager();
-const { searchFilter, panel, selectedItem, loadingItems, filteredItems } = storeToRefs(sheetManager);
+const { searchFilter, panel, selectedItem, loadingItems, filteredItems } =
+  storeToRefs(sheetManager);
 
 const searchText = computed({
   get: () => searchFilter.value,
-  set: v => sheetManager.setSearchFilter(v)
+  set: (v) => sheetManager.setSearchFilter(v),
 });
 
 const navDrawer = ref(false);

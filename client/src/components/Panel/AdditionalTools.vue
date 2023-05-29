@@ -19,6 +19,7 @@
         {{ tool.name }}
       </v-list-item>
     </v-list>
+
   </v-menu>
 </template>
 
@@ -34,12 +35,6 @@ const showing = ref(false)
 const { open } = useDialog()
 const { fetchItems } = useSheetManager()
 
-const object = computed(() => {
-  return {
-    showing: showing.value
-  }
-})
-
 const tools = [
   {
     name: 'Increment Student Year',
@@ -49,15 +44,15 @@ const tools = [
         component: IncrementStudentYearDialog
       })
     }
-  },
-  {
-    name: 'Fetch Items',
-    handler: async () => {
-      await warn()
-      await fetchItems()
-    }
   }
 ]
+
+const object = computed(() => {
+  return {
+    showing: showing.value,
+    toolsAvailable: tools.length > 0
+  }
+})
 </script>
 
 <style scoped>
