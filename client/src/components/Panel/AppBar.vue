@@ -27,7 +27,8 @@
           <Announcements />
         </div>
         <v-btn
-          @click="panel.add"
+          @click="fireAddAction"
+          :loading="loadingAdd"
           style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240)"
           class="mt-5"
           block
@@ -145,7 +146,8 @@
       <v-spacer></v-spacer>
       <v-btn
         v-if="smAndUp"
-        @click="panel.add"
+        @click="fireAddAction"
+        :loading="loadingAdd"
         class="ml-3"
         style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240)"
       >
@@ -244,11 +246,19 @@ const searchText = computed({
 });
 
 const navDrawer = ref(false);
+const loadingAdd = ref(false);
 const searchMode = ref(false);
+
+const fireAddAction = async () => {
+  if (loadingAdd.value) return;
+  loadingAdd.value = true;
+  await panel.value.add();
+  loadingAdd.value = false;
+};
 
 useKeyBindings({
   "/": () => document.getElementById("input").focus(),
-  "a": () => panel.value.add(),
+  "a": () => fireAddAction(),
 });
 
 const { lgAndUp, mdAndUp, smAndUp, smAndDown, xs } = useDisplay();
