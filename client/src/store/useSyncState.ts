@@ -20,7 +20,7 @@ export const useSyncState = defineStore('syncState', {
         minute: "2-digit",
       }).toLowerCase();
 
-      if (time.startsWith("0")) {
+      if (time.startsWith("0") && !time.startsWith("00")) {
         return time.slice(1);
       } else {
         return time;

@@ -4,6 +4,7 @@ import { SheetItem } from '../SheetTypes';
 import { getPanel, Panel } from '../Panels';
 import router from '../router';
 import { useSyncState } from './useSyncState';
+import { warn } from '../Warn'
 
 export type JumpObject = {
   key: string,
@@ -73,6 +74,7 @@ export const useSheetManager = defineStore('sheetManager', {
       this.selectedItem = this.items.find(item => item.row === this.selectedItem?.row) ?? null;
       this.pinnedItem = this.items.find(item => item.row === this.pinnedItem?.row) ?? null;
       this.loadingItems = false;
+      useSyncState().$reset()
     },
     jumpToItem(jumpObject: JumpObject) {
       const item = this.items.find(item => item[jumpObject.key] === jumpObject.value);
@@ -91,14 +93,26 @@ export const useSheetManager = defineStore('sheetManager', {
     setPinnedItem(item: SheetItem | null) {
       this.pinnedItem = item;
     },
-    async deleteItem(item?: SheetItem) {
-      if (!item?.row) {
+    async deleteItem(options: { item?: SheetItem, showWarning?: boolean }) {
+
+      let { item, showWarning } = options ?? { showWarning: true, item: null }
+
+      if (!item) {
         if (!this.selectedItem) {
           console.error('useStateManager: No item selected for update');
           return;
         }
         item = this.selectedItem;
       }
+
+      if (showWarning) {
+        try {
+          await warn()
+        } catch {
+          return
+        }
+      }
+
       this.loadingItems = true
       const { row } = item
       if (item === this.selectedItem) {
