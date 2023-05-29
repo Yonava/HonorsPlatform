@@ -5,6 +5,12 @@ import { getPanel, Panel } from '../Panels';
 import router from '../router';
 import { useSyncState } from './useSyncState';
 
+export type JumpObject = {
+  key: string,
+  value: string,
+  fallbackFn?: () => void // If the item you are jumping to is not found, this function will be called
+};
+
 export const useSheetManager = defineStore('sheetManager', {
   state: () => ({
     selectedItem: null as SheetItem | null,
@@ -39,7 +45,7 @@ export const useSheetManager = defineStore('sheetManager', {
       this.pinnedItem = null;
       this.items = items;
     },
-    async setPanel(panel: Panel, jumpTo?: { key: string, value: string }) {
+    async setPanel(panel: Panel, jumpTo?: JumpObject) {
       this.selectedItem = null;
       this.pinnedItem = null;
       this.items = [];
@@ -68,10 +74,13 @@ export const useSheetManager = defineStore('sheetManager', {
       this.pinnedItem = this.items.find(item => item.row === this.pinnedItem?.row) ?? null;
       this.loadingItems = false;
     },
-    jumpToItem({ key, value }: { key: string, value: string }) {
-      const item = this.items.find(item => item[key] === value);
+    jumpToItem(jumpObject: JumpObject) {
+      const item = this.items.find(item => item[jumpObject.key] === jumpObject.value);
       if (!item) {
         console.error('useStateManager: Could not find item to select');
+        if (jumpObject.fallbackFn) {
+          jumpObject.fallbackFn();
+        }
         return;
       }
       this.selectedItem = item;
@@ -118,6 +127,9 @@ export const useSheetManager = defineStore('sheetManager', {
       useSyncState().processing = true
       await updateByRow(this.panel.sheetRange, item.row, await this.panel.mappers.unmap([item]))
       useSyncState().$reset()
+    },
+    newSysId() {
+      return Math.random().toString(36).substring(2, 15);
     }
   }
 })

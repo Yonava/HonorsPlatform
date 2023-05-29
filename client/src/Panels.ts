@@ -80,7 +80,6 @@ export const panels = {
     sortOptions: sortOptions.GRADUATES
   },
   MODULES: {
-    add: addActions.MODULES,
     tools: tools.MODULES,
     components: {
       detail: markRaw(ModuleDetail),
@@ -100,7 +99,6 @@ export const panels = {
     sortOptions: sortOptions.MODULES
   },
   COMPLETED_MODULES: {
-    add: addActions.COMPLETED_MODULES,
     tools: tools.COMPLETED_MODULES,
     components: {
       detail: markRaw(CompletedModuleDetail),
@@ -120,7 +118,6 @@ export const panels = {
     sortOptions: sortOptions.COMPLETED_MODULES,
   },
   THESES: {
-    add: addActions.THESES,
     tools: tools.THESES,
     components: {
       detail: markRaw(ThesisDetail),

@@ -27,6 +27,7 @@
           <Announcements />
         </div>
         <v-btn
+          v-if="panel.add"
           @click="fireAddAction"
           :loading="loadingAdd"
           style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240)"
@@ -145,7 +146,7 @@
       />
       <v-spacer></v-spacer>
       <v-btn
-        v-if="smAndUp"
+        v-if="smAndUp && panel.add"
         @click="fireAddAction"
         :loading="loadingAdd"
         class="ml-3"
@@ -250,7 +251,7 @@ const loadingAdd = ref(false);
 const searchMode = ref(false);
 
 const fireAddAction = async () => {
-  if (loadingAdd.value) return;
+  if (loadingAdd.value || !panel.value.add) return;
   loadingAdd.value = true;
   await panel.value.add();
   loadingAdd.value = false;
