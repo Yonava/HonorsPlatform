@@ -135,6 +135,20 @@
         ></v-text-field>
       </div>
     </template>
+    <template #buttons>
+      <v-btn
+          @click="jumpToStudent"
+          :color="studentPanel.color"
+          size="large"
+          class="mt-3"
+        >
+          <v-icon
+            class="mr-4"
+            size="x-large"
+          >mdi-account</v-icon>
+          View Student
+        </v-btn>
+    </template>
   </DetailFrame>
 </template>
 
@@ -147,7 +161,7 @@ import { ref } from 'vue'
 import { getCurrentTerm, termValidator } from '../../TermValidator'
 import type { Thesis } from '../../SheetTypes'
 import { getEvery, Range } from '../../SheetsAPI'
-import { mapStudents } from '../../DataMappers'
+import { getPanel } from '../../Panels'
 import {
   emailValidator,
   getFacultyEmail,
@@ -155,23 +169,27 @@ import {
 } from '../../EmailUtilities'
 
 import { useSheetManager } from '../../store/useSheetManager'
+import { useDialog } from '../../store/useDialog'
 import { storeToRefs } from 'pinia'
 import { useUpdateItem } from '../../TrackItemForUpdate'
 
 const sheetManager = useSheetManager()
+const { setPanel } = sheetManager
 const { selectedItem: thesis } = storeToRefs(sheetManager)
 useUpdateItem(thesis)
+
+const studentPanel = getPanel('STUDENTS')
 
 const studentDataState = ref({
   loading: false,
   error: '',
-  color: 'blue-darken-2',
+  color: getPanel('STUDENTS').color,
 })
 
 async function setStudentData() {
   studentDataState.value.loading = true
   const students = await getEvery(Range.STUDENTS)
-  const mappedStudents = await mapStudents(students)
+  const mappedStudents = await getPanel('STUDENTS').mappers.map(students)
   const student = mappedStudents.find(s => s.id === thesis.value.studentId)
   if (!student) {
     studentDataState.value.error = 'Student not found'
@@ -182,6 +200,30 @@ async function setStudentData() {
   thesis.value.name = student.name
   thesis.value.email = student.email
   studentDataState.value.loading = false
-  studentDataState.value.color = 'blue-darken-2'
+  studentDataState.value.color = getPanel('STUDENTS').color
+}
+
+const jumpToStudent = () => {
+  const _thesis = JSON.parse(JSON.stringify(thesis.value)) as Thesis
+  const { open, close } = useDialog()
+  setPanel(studentPanel, {
+    key: 'id',
+    value: _thesis.studentId,
+    fallbackFn: () => {
+      open({
+        body: {
+          title: 'Student not found',
+          description: `Could not find student with id ${_thesis.studentId}`,
+          buttons: [
+            {
+              text: 'Close',
+              color: 'red',
+              onClick: () => close(),
+            },
+          ]
+        }
+      })
+    }
+  })
 }
 </script>
