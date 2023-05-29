@@ -18,6 +18,8 @@ import { Module, CompletedModule, Thesis, Student, Graduate } from './SheetTypes
 import { markRaw } from 'vue';
 import { Range } from './SheetsAPI';
 
+import { tools } from './AdditionalTools';
+
 import {
   mapStudents,
   unmapStudents,
@@ -33,6 +35,7 @@ import {
 
 export const panels = {
   STUDENTS: {
+    tools: tools.STUDENTS,
     components: {
       detail: markRaw(StudentDetail),
       list: markRaw(StudentListItem)
@@ -97,6 +100,7 @@ export const panels = {
     ]
   },
   GRADUATES: {
+    tools: tools.GRADUATES,
     components: {
       detail: markRaw(GraduateDetail),
       list: markRaw(GraduateListItem)
@@ -144,6 +148,7 @@ export const panels = {
     ]
   },
   MODULES: {
+    tools: tools.MODULES,
     components: {
       detail: markRaw(ModuleDetail),
       list: markRaw(ModuleListItem)
@@ -199,6 +204,7 @@ export const panels = {
     }]
   },
   COMPLETED_MODULES: {
+    tools: tools.COMPLETED_MODULES,
     components: {
       detail: markRaw(CompletedModuleDetail),
       list: markRaw(CompletedModuleListItem)
@@ -247,6 +253,7 @@ export const panels = {
     }],
   },
   THESES: {
+    tools: tools.THESES,
     components: {
       detail: markRaw(ThesisDetail),
       list: markRaw(ThesisListItem)

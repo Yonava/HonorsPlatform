@@ -11,7 +11,7 @@
 
     <v-list>
       <v-list-item
-        v-for="tool in tools"
+        v-for="tool in panel.tools"
         :key="tool.name"
         @click="tool.handler"
         class="type-list-item"
@@ -24,33 +24,19 @@
 </template>
 
 <script setup lang="ts">
-import IncrementStudentYearDialog from '../IncrementStudentYear.vue'
-
 import { useSheetManager } from '../../store/useSheetManager'
-import { useDialog } from '../../store/useDialog'
+import { storeToRefs } from 'pinia'
 import { ref, computed } from 'vue'
-import { warn } from '../../Warn'
 
 const showing = ref(false)
-const { open } = useDialog()
-const { fetchItems } = useSheetManager()
 
-const tools = [
-  {
-    name: 'Increment Student Year',
-    handler: async () => {
-      await warn()
-      open({
-        component: IncrementStudentYearDialog
-      })
-    }
-  }
-]
+const sheetManager = useSheetManager()
+const { panel } = storeToRefs(sheetManager)
 
 const object = computed(() => {
   return {
     showing: showing.value,
-    toolsAvailable: tools.length > 0
+    toolsAvailable: panel.value.tools.length > 0
   }
 })
 </script>
