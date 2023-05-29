@@ -145,7 +145,7 @@
       <v-spacer></v-spacer>
       <v-btn
         v-if="smAndUp"
-        @click="$emit('showAddModal')"
+        @click="showAddModal"
         class="ml-3"
         style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240)"
       >
@@ -242,16 +242,19 @@ const searchText = computed({
   set: (v) => sheetManager.setSearchFilter(v),
 });
 
+const showAddModal = () => {
+  console.log('showAddModal')
+};
+
 const navDrawer = ref(false);
 const searchMode = ref(false);
 
 useKeyBindings({
   "/": () => document.getElementById("input").focus(),
+  "a": () => showAddModal(),
 });
 
 const { lgAndUp, mdAndUp, smAndUp, smAndDown, xs } = useDisplay();
-
-const emit = defineEmits(["showAddModal"]);
 
 function panelItemColor(panelParam: Panel) {
   return {

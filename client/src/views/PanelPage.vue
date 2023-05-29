@@ -4,7 +4,7 @@
       class="background-matte"
       :color="`${panel.color}-lighten-4`"
     ></v-sheet>
-    <AppBar @showAddModal="showAddModal = true" />
+    <AppBar />
     <v-main>
       <div
         :style="{
@@ -107,10 +107,6 @@
         class="honors-logo"
       >
     </v-main>
-    <AddModal
-      @close="showAddModal = false"
-      :show="showAddModal"
-    />
     <ServeDialog />
     <v-navigation-drawer
       v-if="smAndDown"
@@ -136,7 +132,6 @@ import {
   onMounted
 } from 'vue'
 import { useRoute } from 'vue-router'
-import AddModal from '../components/AddModal.vue'
 import PanelList from '../components/Panel/PanelList.vue'
 import StudentDetail from '../components/Detail/StudentDetail.vue'
 import SortPanel from '../components/Panel/SortPanel.vue'
@@ -156,9 +151,10 @@ const route = useRoute()
 if (route.query.type) {
   const newPanel = Object.values(panels).find((p) => p.title.plural.toLowerCase() === route.query.type)
   if (newPanel) sheetManager.setPanel(newPanel)
+} else {
+  sheetManager.fetchItems()
 }
 
-sheetManager.fetchItems()
 
 const {
   smAndUp,
@@ -166,8 +162,6 @@ const {
   lgAndUp,
   smAndDown
 } = useDisplay()
-
-const showAddModal = ref(false)
 
 const showDetailDrawer = computed({
   get: () => !!selectedItem.value,
@@ -179,7 +173,6 @@ const showDetailDrawer = computed({
 })
 
 useKeyBindings({
-  's': () => showAddModal.value = !showAddModal.value,
   'r': () => sheetManager.fetchItems(),
   '1': () => sheetManager.setPanel(getPanel('STUDENTS')),
   '2': () => sheetManager.setPanel(getPanel('GRADUATES')),
