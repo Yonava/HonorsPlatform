@@ -63,6 +63,7 @@ import ModuleList from './ModuleList.vue'
 import LockArea from './LockArea.vue'
 import ModuleDetailModal from './ModuleDetailModal.vue'
 import { Module } from '../../../SheetTypes'
+import { useSheetManager } from '../../../store/useSheetManager'
 import { mapModules, unmapModules } from '../../../DataMappers'
 import {
   getEvery,
@@ -71,6 +72,8 @@ import {
   Range,
   updateByRow
 } from '../../../SheetsAPI'
+
+const { newSysId } = useSheetManager()
 
 const props = defineProps<{
   id: string | undefined
@@ -135,6 +138,7 @@ function closeModal() {
 
 function addNewModule() {
   selectedModule.value = {
+    sysId: newSysId(),
     studentId: props.id,
     courseCode: '',
     description: '',

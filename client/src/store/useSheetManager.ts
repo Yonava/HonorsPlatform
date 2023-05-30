@@ -28,7 +28,7 @@ export const useSheetManager = defineStore('sheetManager', {
     sort: {
       func: null as ((a: SheetItem, b: SheetItem) => number) | null,
       ascending: true
-    }
+    } as SortOption
   }),
   getters: {
     filteredItems(state) {
@@ -45,6 +45,9 @@ export const useSheetManager = defineStore('sheetManager', {
         const values = Object.values(item).join(' ').toLowerCase();
         return values.includes(query)
       })
+    },
+    activeSort(state) {
+      return state.sort;
     }
   },
   actions: {
@@ -84,12 +87,7 @@ export const useSheetManager = defineStore('sheetManager', {
       const data = await getEvery(range);
       const items = await this.panel.mappers.map(data);
       this.items = items;
-      if (this.sort.func) {
-        this.items.sort(this.sort.func);
-        if (!this.sort.ascending) {
-          this.items.reverse();
-        }
-      }
+      this.setSort()
       this.selectedItem = this.items.find(item => item.row === this.selectedItem?.row) ?? null;
       this.pinnedItem = this.items.find(item => item.row === this.pinnedItem?.row) ?? null;
       this.loadingItems = false;
@@ -164,8 +162,19 @@ export const useSheetManager = defineStore('sheetManager', {
     newSysId() {
       return Math.random().toString(36).substring(2, 15);
     },
-    setSort(sortObject: SortOption) {
+    setSort(sortObject?: SortOption) {
+      if (!sortObject) {
+        sortObject = this.sort;
+      }
+      if (!sortObject.func) {
+        console.warn('useStateManager (setSort): No sort function provided')
+        return;
+      }
       this.sort = sortObject;
+      this.items.sort(sortObject.func);
+      if (!sortObject.ascending) {
+        this.items.reverse();
+      }
     }
   }
 })

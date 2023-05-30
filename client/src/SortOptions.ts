@@ -47,8 +47,12 @@ export const sortOptions = {
           'Senior': 7,
           'Associate Senior': 8,
         };
-        return yearMap[a.year] - yearMap[b.year];
-      },
+
+        const yearA = yearMap[a.year] || Infinity;
+        const yearB = yearMap[b.year] || Infinity;
+
+        return yearA - yearB;
+      }
     },
   ],
   GRADUATES: [
@@ -124,6 +128,9 @@ export const sortOptions = {
         }
         if (b.docuSignCompleted === '') {
           return -1;
+        }
+        if (a.docuSignCreated === '') {
+          return 1;
         }
         return b.docuSignCompleted.localeCompare(a.docuSignCompleted);
       }

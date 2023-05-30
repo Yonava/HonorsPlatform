@@ -146,7 +146,6 @@
           <v-btn
             @click="viewThesis"
             :color="getPanel('THESES').color"
-            :disabled="!student.id"
             size="large"
             style="width: 49%"
           >
@@ -205,10 +204,12 @@ import { useDialog } from "../../store/useDialog";
 import { storeToRefs } from "pinia";
 import { useUpdateItem } from "../../TrackItemForUpdate";
 import { add } from "../../AddActions";
+import { warn } from '../../Warn'
 
 const sheetManager = useSheetManager();
 const { selectedItem: student } = storeToRefs(sheetManager);
 useUpdateItem(student);
+const { open, close } = useDialog();
 
 const modules = ref<Module[]>([]);
 const loadingModules = ref(false);
@@ -235,7 +236,30 @@ async function saveId() {
 }
 
 function viewThesis() {
-  const { open, close } = useDialog();
+  if (!student.value.id) {
+    open({
+      body: {
+        title: "Student Must Have ID",
+        description: "A thesis is connected to each student using their Student ID number. Please add a student ID to this student before viewing their thesis.",
+        buttons: [
+          {
+            text: "Dismiss",
+            color: "blue",
+            onClick: () => close(),
+          },
+          {
+            text: "Add ID",
+            color: "green",
+            onClick: () => {
+              idDialog.value = true;
+              close();
+            },
+          }
+        ]
+      }
+    })
+    return;
+  }
   const _student = JSON.parse(JSON.stringify(student.value));
   sheetManager.setPanel(getPanel("THESES"), {
     key: "studentId",
@@ -283,9 +307,40 @@ function viewThesis() {
 }
 
 async function graduate() {
+  const _student = JSON.parse(JSON.stringify(student.value));
   movingStudent.value = true;
-  moveToGraduates(student.value);
+  try {
+    await warn(null, null, `Are you sure you want to graduate ${_student.name}? Graduating a student will remove them from the student list and add them to the graduates list. This action will permanently erase data such as ${_student.name}s student email address, points, athletic affiliation, and more.`)
+  } catch {
+    movingStudent.value = false;
+    return;
+  }
+  await moveToGraduates(_student);
   sheetManager.setItem(null);
+  open({
+    body: {
+      title: "Student Graduated",
+      description: `${_student.name} has been successfully graduated.`,
+      buttons: [
+        {
+          text: "Dismiss",
+          color: "blue",
+          onClick: () => close(),
+        },
+        {
+          text: `View ${_student.name}s new graduate profile`,
+          color: getPanel("GRADUATES").color,
+          onClick: () => {
+            sheetManager.setPanel(getPanel("GRADUATES"), {
+              key: "sysId",
+              value: _student.sysId
+            });
+            close();
+          },
+        },
+      ],
+    },
+  });
 }
 
 function addStudentNote(event: { initials: string; note: string }) {
