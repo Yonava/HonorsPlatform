@@ -54,14 +54,18 @@
       style="font-size: 0.9em;"
     >
       <div class="d-flex flex-row">
-        <div class="email d-flex flex-row">
+        <div class="d-flex flex-row">
           <v-icon
             class="mr-1"
             style="opacity: 0.75"
           >
             mdi-email
           </v-icon>
-          <p :style="emailTextStyles">
+          <p :style="{
+            color: emailValid ? 'black' : 'red',
+            textDecoration: emailValid ? 'none' : 'line-through',
+            fontWeight: emailValid ? 'normal' : 'bold',
+          }">
             {{ item.email || '(No Email)' }}
           </p>
           <v-tooltip
@@ -108,8 +112,9 @@ const props = defineProps<{
 const { smAndDown } = useDisplay()
 
 const color = computed(() => {
-  if (props.item.activeStatus.toLowerCase() === 'active') return 'green'
-  if (props.item.activeStatus.toLowerCase() === 'inactive') return 'red'
+  const activeStatus = props.item.activeStatus?.toLowerCase() ?? ''
+  if (activeStatus === 'active') return 'green'
+  if (activeStatus === 'inactive') return 'red'
   return 'grey'
 })
 
@@ -119,13 +124,4 @@ const points = computed(() => {
 })
 
 const emailValid = computed(() => emailValidator(props.item.email))
-
-const emailTextStyles = computed(() => {
-  if (emailValid) return {}
-  return {
-    color: 'red',
-    fontWeight: 'bold',
-    textDecoration: 'line-through',
-  }
-})
 </script>
