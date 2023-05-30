@@ -1,5 +1,9 @@
 <template>
-  <DetailFrame v-model="grad.note" :disableDelete="!canDelete">
+  <DetailFrame
+    v-model="grad.note"
+    :disableDelete="!canDelete"
+    disableReason="All engagements must be removed before deleting a graduate"
+  >
     <template #main>
       <DetailHeader v-model="grad.name" :id="grad.id" placeholder="Name">
         <template v-if="!grad.id" #id>

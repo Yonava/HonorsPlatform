@@ -42,8 +42,7 @@
       >
         <slot name="buttons"></slot>
         <v-btn
-          @click="deleteItem()"
-          :disabled="disableDelete"
+          @click="attemptDelete"
           size="large"
           color="red"
           class="mt-3"
@@ -63,8 +62,10 @@
 import { computed, ref, watch } from 'vue'
 import { useElementSize } from '@vueuse/core'
 import { useSheetManager } from '../../../store/useSheetManager'
+import { useDialog } from '../../../store/useDialog'
 
-const { deleteItem } = useSheetManager()
+const { open, close } = useDialog()
+const { deleteItem, panel } = useSheetManager()
 
 const sm = ref(false)
 const el = ref(null)
@@ -76,7 +77,8 @@ watch(width, (newWidth) => {
 
 const props = defineProps<{
   modelValue: string,
-  disableDelete?: boolean
+  disableDelete?: boolean,
+  disableReason?: string,
 }>()
 
 const emits = defineEmits<{
@@ -90,4 +92,24 @@ const notepad = computed({
     emits('update:modelValue', value)
   }
 })
+
+const attemptDelete = () => {
+  if (props.disableDelete) {
+    open({
+      body: {
+        title: 'Cannot Delete',
+        description: props.disableReason,
+        buttons: [
+          {
+            text: 'ok',
+            color: `${panel.color}-darken-2`,
+            onClick: close
+          }
+        ]
+      }
+    })
+    return
+  }
+  deleteItem()
+}
 </script>

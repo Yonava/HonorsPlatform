@@ -1,6 +1,10 @@
 <template>
   <div>
-    <DetailFrame v-model="student.note" :disableDelete="!canDelete">
+    <DetailFrame
+      v-model="student.note"
+      :disableDelete="!canDelete"
+      disableReason="Cannot delete student with active modules, delete or mark modules as completed first."
+    >
       <template #main>
         <DetailHeader
           v-model="student.name"

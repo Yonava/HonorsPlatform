@@ -110,7 +110,7 @@ export const useSheetManager = defineStore('sheetManager', {
     setPinnedItem(item: SheetItem | null) {
       this.pinnedItem = item;
     },
-    async deleteItem(options: { item?: SheetItem, showWarning?: boolean }) {
+    async deleteItem(options?: { item?: SheetItem, showWarning?: boolean }) {
 
       let { item, showWarning } = options ?? { showWarning: true, item: null }
 
