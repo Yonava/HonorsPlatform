@@ -155,9 +155,6 @@ if (route.query.type) {
   sheetManager.fetchItems()
 }
 
-console.log('running panel')
-
-
 const {
   smAndUp,
   mdAndUp,

@@ -310,7 +310,7 @@ async function graduate() {
   const _student = JSON.parse(JSON.stringify(student.value));
   movingStudent.value = true;
   try {
-    await warn(null, null, `Are you sure you want to graduate ${_student.name}? Graduating a student will remove them from the student list and add them to the graduates list. This action will permanently erase data such as ${_student.name}s student email address, points, athletic affiliation, and more.`)
+    await warn(null, null, `Are you sure you want to graduate ${_student.name}? Graduating a student will remove them from the student list and add them to the graduates list. This action will permanently erase data such as ${_student.name}s student email address (${_student.email || 'no email'}), points (${_student.points || 'no points'}), athletic affiliation (${_student.athletics || 'no athletics'}), and more.`)
   } catch {
     movingStudent.value = false;
     return;
@@ -325,10 +325,10 @@ async function graduate() {
         {
           text: "Dismiss",
           color: "blue",
-          onClick: () => close(),
+          onClick: close,
         },
         {
-          text: `View ${_student.name}s new graduate profile`,
+          text: `View new graduate profile`,
           color: getPanel("GRADUATES").color,
           onClick: () => {
             sheetManager.setPanel(getPanel("GRADUATES"), {
