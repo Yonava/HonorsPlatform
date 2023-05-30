@@ -1,16 +1,8 @@
 <template>
-  <div
-    v-if="panel.sortOptions.length > 0"
-    class="pa-2"
-    style="width: 100%"
-  >
+  <div v-if="panel.sortOptions.length > 0" class="pa-2" style="width: 100%">
     <div class="d-flex flex-column align-center">
-      <v-icon
-        icon="mdi-sort"
-      ></v-icon>
-      <b style="font-size: 0.9rem;">
-        Sort By
-      </b>
+      <v-icon icon="mdi-sort"></v-icon>
+      <b style="font-size: 0.9rem"> Sort By </b>
       <div
         class="mt-2"
         style="background: white; width: 75%; height: 1px"
@@ -21,8 +13,9 @@
       :key="sortOption.label"
       @click="setKey(sortOption.label)"
       :style="{
-        background: activeSortKey === sortOption.label ? 'rgba(255, 255, 255, 0.2)' : '',
-        borderRadius: '10px'
+        background:
+          activeSortKey === sortOption.label ? 'rgba(255, 255, 255, 0.2)' : '',
+        borderRadius: '10px',
       }"
       class="mt-1 sort-box d-flex justify-center align-center flex-column px-2"
     >
@@ -40,14 +33,14 @@
 </template>
 
 <script setup lang="ts">
-import { useSortItems } from '../../SortItems'
-import { useSheetManager } from '../../store/useSheetManager'
-import { storeToRefs } from 'pinia'
+import { useSortItems } from "../../SortItems";
+import { useSheetManager } from "../../store/useSheetManager";
+import { storeToRefs } from "pinia";
 
-const sheetManager = useSheetManager()
-const { panel } = storeToRefs(sheetManager)
+const sheetManager = useSheetManager();
+const { panel, items } = storeToRefs(sheetManager);
 
-const { setKey, activeSortKey, ascending } = useSortItems()
+const { setKey, activeSortKey, ascending } = useSortItems();
 </script>
 
 <style scoped>

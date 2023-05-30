@@ -17,7 +17,7 @@ export type PanelSortOption = {
 
 export function useSortItems() {
 
-  const { setItems } = useSheetManager()
+  const { setItems, setSort } = useSheetManager()
   const { items, panel } = storeToRefs(useSheetManager())
 
   // convert PanelSortOption[] to SortOptions
@@ -30,21 +30,34 @@ export function useSortItems() {
   })
 
   type SortKey = keyof typeof sortOptions | null
-  const ascending = ref(false)
+  const ascending = ref(true)
 
   const activeSortKey = ref<SortKey>(null)
   const setKey = (newKey: SortKey) => {
+
     if (!newKey) {
       activeSortKey.value = null
+      setSort({
+        func: sortOptions.value[newKey],
+        ascending: ascending.value
+      })
       return
     }
     if (newKey === activeSortKey.value) {
       setItems([...items.value.reverse()])
       ascending.value = !ascending.value
+      setSort({
+        func: sortOptions.value[newKey],
+        ascending: ascending.value
+      })
       return
     }
     setItems([...items.value.sort(sortOptions.value[newKey])])
     activeSortKey.value = newKey
+    setSort({
+      func: sortOptions.value[newKey],
+      ascending: ascending.value
+    })
   }
 
   return {

@@ -39,10 +39,13 @@ export const sortOptions = {
       func: (a: Student, b: Student) => {
         const yearMap: { [key: string]: number } = {
           'Freshman': 1,
-          'Sophomore': 2,
-          'Junior': 3,
-          'Senior': 4,
-          'Other': 5
+          'Associate Freshman': 2,
+          'Sophomore': 3,
+          'Associate Sophomore': 4,
+          'Junior': 5,
+          'Associate Junior': 6,
+          'Senior': 7,
+          'Associate Senior': 8,
         };
         return yearMap[a.year] - yearMap[b.year];
       },

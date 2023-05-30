@@ -20,8 +20,9 @@
           color: 'white',
           borderRadius: '25px',
           textTransform: 'capitalize',
+          whiteSpace: 'nowrap',
         }"
-        class="px-2 py-1 d-flex flex-row align-center"
+        class="px-2 py-1 d-flex flex-row align-center ml-1"
         elevation="1"
       >
         <v-icon class="mr-1">

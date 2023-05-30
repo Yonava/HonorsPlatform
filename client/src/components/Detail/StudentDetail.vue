@@ -146,6 +146,7 @@
           <v-btn
             @click="viewThesis"
             :color="getPanel('THESES').color"
+            :disabled="!student.id"
             size="large"
             style="width: 49%"
           >

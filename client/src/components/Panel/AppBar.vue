@@ -1,6 +1,7 @@
 <template>
   <div>
     <v-navigation-drawer
+      v-if="xs"
       v-model="navDrawer"
       temporary
       fixed

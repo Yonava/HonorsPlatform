@@ -12,6 +12,11 @@ export type JumpObject = {
   fallbackFn?: () => void // If the item you are jumping to is not found, this function will be called
 };
 
+export type SortOption = {
+  func: (a: SheetItem, b: SheetItem) => number,
+  ascending: boolean
+}
+
 export const useSheetManager = defineStore('sheetManager', {
   state: () => ({
     selectedItem: null as SheetItem | null,
@@ -19,7 +24,11 @@ export const useSheetManager = defineStore('sheetManager', {
     items: [] as SheetItem[],
     searchFilter: '',
     pinnedItem: null as SheetItem | null,
-    loadingItems: false
+    loadingItems: false,
+    sort: {
+      func: null as ((a: SheetItem, b: SheetItem) => number) | null,
+      ascending: true
+    }
   }),
   getters: {
     filteredItems(state) {
@@ -49,6 +58,10 @@ export const useSheetManager = defineStore('sheetManager', {
     async setPanel(panel: Panel, jumpTo?: JumpObject) {
       this.selectedItem = null;
       this.pinnedItem = null;
+      this.sort = {
+        func: null,
+        ascending: true
+      };
       this.items = [];
       this.panel = panel;
       this.searchFilter = '';
@@ -71,6 +84,12 @@ export const useSheetManager = defineStore('sheetManager', {
       const data = await getEvery(range);
       const items = await this.panel.mappers.map(data);
       this.items = items;
+      if (this.sort.func) {
+        this.items.sort(this.sort.func);
+        if (!this.sort.ascending) {
+          this.items.reverse();
+        }
+      }
       this.selectedItem = this.items.find(item => item.row === this.selectedItem?.row) ?? null;
       this.pinnedItem = this.items.find(item => item.row === this.pinnedItem?.row) ?? null;
       this.loadingItems = false;
@@ -144,6 +163,9 @@ export const useSheetManager = defineStore('sheetManager', {
     },
     newSysId() {
       return Math.random().toString(36).substring(2, 15);
+    },
+    setSort(sortObject: SortOption) {
+      this.sort = sortObject;
     }
   }
 })
