@@ -160,10 +160,9 @@
           </v-btn>
           <v-btn
             @click="graduate"
-            :disabled="!canDelete"
             :loading="movingStudent"
-            size="large"
             :color="getPanel('GRADUATES').color"
+            size="large"
             style="width: 49%"
           >
             <v-icon class="mr-4" size="x-large">{{
@@ -211,7 +210,7 @@ import { add } from "../../AddActions";
 import { warn } from '../../Warn'
 
 const sheetManager = useSheetManager();
-const { selectedItem: student } = storeToRefs(sheetManager);
+const { selectedItem: student, items } = storeToRefs(sheetManager);
 useUpdateItem(student);
 const { open, close } = useDialog();
 
@@ -230,6 +229,11 @@ const canDelete = computed(() => {
 });
 
 function studentIdRule(studentId: string) {
+  if (!studentId) return "Enter Student ID";
+  const existingStudent = items.value.find(
+    (item) => item.id === studentId
+  );
+  if (existingStudent) return `Student ID already occupied by ${existingStudent.name || "(no name)"}`;
   if (/^\d{7}$/.test(studentId)) return true;
   return "Invalid Student ID";
 }
@@ -311,6 +315,22 @@ function viewThesis() {
 }
 
 async function graduate() {
+  if (modules.value.length > 0) {
+    open({
+      body: {
+        title: "Student Still Has Modules",
+        description: "This student still has modules. Please remove all modules from this student before graduating them.",
+        buttons: [
+          {
+            text: "Resolve",
+            color: getPanel("STUDENTS").color,
+            onClick: close,
+          }
+        ]
+      }
+    })
+    return;
+  }
   const _student = JSON.parse(JSON.stringify(student.value));
   movingStudent.value = true;
   try {
