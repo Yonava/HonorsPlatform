@@ -16,5 +16,5 @@ export const addActions = {
   GRADUATES: async () => await add('GRADUATES'),
   MODULES: async () => null,
   COMPLETED_MODULES: async () => null,
-  THESES: async () => {}
+  THESES: async () => null,
 } as const;

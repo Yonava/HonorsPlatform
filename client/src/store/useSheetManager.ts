@@ -142,6 +142,7 @@ export const useSheetManager = defineStore('sheetManager', {
       this.loadingItems = true
       await this.fetchItems()
       const addedItem = this.items.find(i => i.sysId === item.sysId) ?? null
+      this.searchFilter = ''
       this.selectedItem = addedItem
       if (pin) {
         this.pinnedItem = addedItem
@@ -171,6 +172,7 @@ export const useSheetManager = defineStore('sheetManager', {
         return;
       }
       this.sort = sortObject;
+      this.pinnedItem = null;
       this.items.sort(sortObject.func);
       if (!sortObject.ascending) {
         this.items.reverse();

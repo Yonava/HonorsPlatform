@@ -315,7 +315,7 @@ function viewThesis() {
 }
 
 async function graduate() {
-  if (modules.value.length > 0) {
+  if (!canDelete.value) {
     open({
       body: {
         title: "Student Still Has Modules",
