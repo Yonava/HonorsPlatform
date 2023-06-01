@@ -3,12 +3,16 @@
   generating and validating SNHU email addresses.
 */
 export function emailValidator(email: string) {
-  if (email === "") return true;
+  if (email === "") {
+    return true;
+  }
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
 }
 
 export function phoneValidator(phone: string) {
-  if (phone === "") return true;
+  if (phone === "") {
+    return true;
+  }
   return /^(\+?1\s?)?(\(\d{3}\)|\d{3})[\s.-]?\d{3}[\s.-]?\d{4}$/.test(phone)
 }
 
@@ -23,13 +27,17 @@ function sanitizeName(name: string) {
 
 export function getStudentEmail(name: string) {
   const [firstName, lastName] = sanitizeName(name);
-  if (!(firstName && lastName)) return '';
+  if (!(firstName && lastName)) {
+    return '';
+  }
   return `${firstName}.${lastName}@snhu.edu`;
 }
 
 export function getFacultyEmail(name: string) {
   const [firstName, lastName] = sanitizeName(name);
-  if (!(firstName && lastName)) return '';
+  if (!(firstName && lastName)) {
+    return '';
+  }
   return `${firstName[0]}.${lastName}@snhu.edu`;
 }
 

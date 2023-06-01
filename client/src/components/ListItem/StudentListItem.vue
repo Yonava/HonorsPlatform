@@ -101,7 +101,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { Student } from '../../SheetTypes'
-import { athleticOptions } from '../../Athletics'
+import { athleticOptions } from '../../StudentTools'
 import { emailValidator } from '../../EmailUtilities'
 import { useDisplay } from 'vuetify'
 

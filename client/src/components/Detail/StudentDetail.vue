@@ -189,7 +189,6 @@ import DetailHeader from "./Helper/DetailHeader.vue";
 import ModuleFetch from "./Helper/ModuleFetch.vue";
 import AddStudentNote from "./Helper/AddStudentNote.vue";
 import type { Module } from "../../SheetTypes";
-import { athleticOptions } from "../../Athletics";
 import {
   emailValidator,
   getStudentEmail,
@@ -200,6 +199,7 @@ import {
   moveToGraduates,
   yearOptions,
   statusOptions,
+  athleticOptions,
 } from "../../StudentTools";
 
 import { useSheetManager } from "../../store/useSheetManager";
