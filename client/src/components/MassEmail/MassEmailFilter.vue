@@ -115,7 +115,7 @@ watch(selectedRange, async (newVal) => {
   const rawData = await getEvery(newVal.sheetRange);
   sheetItems.value = await newVal.mappers.map(rawData);
 
-  if (newVal === getPanel('MODULES') || newVal === getPanel('COMPLETED_MODULES')) {
+  if (newVal.title.plural === getPanel('MODULES').title.plural || newVal.title.plural === getPanel('COMPLETED_MODULES').title.plural) {
     const students = await mapStudents(await getEvery(Range.STUDENTS));
     sheetItems.value.forEach((module) => {
       const student = students.find((student: Student) => student.id === module.studentId);

@@ -4,7 +4,7 @@
     style="height: 100%; width: 100%;"
     class="d-flex flex-column align-center justify-center"
   >
-    <v-sheet 
+    <v-sheet
       class="pa-5"
       style="border-radius: 20px;"
       elevation="7"
@@ -44,7 +44,7 @@
       >
         view new registrar list
       </v-btn>
-      <div class="mt-5 d-flex flex-column jusify-center align-center">
+      <div class="mt-5 d-flex flex-column justify-center align-center">
         <v-btn
           @click="goBack"
           color="red"
@@ -73,25 +73,25 @@ async function generateRegistrarList() {
   loading.value = true;
   const students = await getEvery(Range.STUDENTS);
   const completedModules = await getEvery(Range.COMPLETED_MODULES)
-  const termColumn = 3;
+  const termColumn = 4;
   const modulesInTerm = completedModules.filter((module) => {
     if (!module[termColumn]) return false
     return module[termColumn].toLowerCase() === term.value.toLowerCase();
   });
   const output = modulesInTerm.map(module => {
-    let student = students.find(student => student[0] === module[0]);
+    let student = students.find(student => student[1] === module[1]);
     student ??= ["", "", ""];
     return [
-      student[0],
       student[1],
       student[2],
-      module[1],
+      student[3],
+      module[2],
     ]
   })
   output.unshift([
-    "Student ID", 
-    "Name", 
-    "Email", 
+    "Student ID",
+    "Name",
+    "Email",
     "Course Code",
     `Generated on ${new Date().toLocaleString()} for ${term.value.toUpperCase()}`
   ]);
