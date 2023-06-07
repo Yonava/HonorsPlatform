@@ -101,11 +101,16 @@
           </div>
         </v-sheet>
       </div>
-      <img
-        v-if="lgAndUp && !selectedItem"
-        src="../assets/honorsLogo.jpeg"
-        class="honors-logo"
-      >
+      <!-- <div v-if="lgAndUp && !selectedItem"> -->
+        <img
+          src="../assets/honorsLogo.jpeg"
+          class="honors-logo"
+        >
+        <span class="software-version">
+          prerelease v0.75 (beta)
+        </span>
+      <!-- </div> -->
+
     </v-main>
     <ServeDialog />
     <v-navigation-drawer
@@ -220,14 +225,21 @@ const resizeEnd = (e: MouseEvent) => {
 
 <style scoped>
 img.honors-logo {
-  position: absolute;
+  width: 225px;
+  mix-blend-mode: multiply;
   z-index: 1;
   bottom: 0;
   right: 0;
-  width: 225px;
-  mix-blend-mode: multiply;
   margin: 10px;
-  margin-right: 20px
+  margin-right: 20px;
+  position: absolute;
+}
+
+.software-version {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  margin: 5px;
 }
 
 .background-matte {
