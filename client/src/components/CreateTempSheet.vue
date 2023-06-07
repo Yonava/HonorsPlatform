@@ -33,6 +33,7 @@ import { ref } from 'vue'
 import { headerRowMemo, getEvery, replaceRange, Range } from '../SheetsAPI'
 import { getPanel } from '../Panels'
 import { useDialog } from '../store/useDialog'
+import { useSheetManager } from '../store/useSheetManager'
 
 const studentPanel = getPanel('STUDENTS')
 
@@ -42,12 +43,13 @@ const creatingTempSheet = ref(false)
 
 const createTempSheet = async () => {
   creatingTempSheet.value = true
-  const students = await getEvery(studentPanel.sheetRange)
+  const students = await studentPanel.mappers.unmap(useSheetManager().filteredItems as any[]);
   const selectedIndices = headerRow.map((header, i) => selectedHeaders.value.includes(header) ? i : -1).filter(i => i !== -1)
+
   await replaceRange(
     Range.TEMPORARY_DATA,
     [
-      selectedHeaders.value,
+      headerRow.filter((_, i) => selectedIndices.includes(i)),
       ...students.map(student => selectedIndices.map(i => student[i]))
     ],
   )
@@ -58,10 +60,18 @@ const createTempSheet = async () => {
       description: 'Temporary sheet created successfully.',
       buttons: [
         {
-          text: 'Yay!',
-          color: 'success',
+          text: 'Done',
+          color: studentPanel.color,
           onClick: () => {
             useDialog().close()
+          }
+        },
+        {
+          text: 'Open New Sheet',
+          color: 'success',
+          onClick: () => {
+            const url = 'https://docs.google.com/spreadsheets/d/1bW-aQRn-GAbTsNkV2VB9xtBFT3n-LPrSJXua_NA2G6Y/edit#gid=1991464373'
+            window.open(url, '_blank')
           }
         }
       ]
