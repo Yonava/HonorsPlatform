@@ -8,7 +8,7 @@
         v-for="header in headerRow"
         :key="header"
         @click="toggleHeader(header)"
-        :color="selectedHeaders.includes(header) ? studentPanel.color : 'grey'"
+        :color="selectedHeaders.includes(header) ? activePanel.color : 'grey'"
         rounded
       >
         {{ header }}
@@ -19,7 +19,7 @@
     <v-btn
       @click="createTempSheet"
       :disabled="selectedHeaders.length === 0"
-      :color="studentPanel.color"
+      :color="activePanel.color"
       :loading="creatingTempSheet"
       block
     >
@@ -35,22 +35,22 @@ import { getPanel } from '../Panels'
 import { useDialog } from '../store/useDialog'
 import { useSheetManager } from '../store/useSheetManager'
 
-const studentPanel = getPanel('STUDENTS')
+const activePanel = useSheetManager().panel
 
-const headerRow = headerRowMemo[studentPanel.sheetRange]
+const headerRow = headerRowMemo[activePanel.sheetRange]
 const selectedHeaders = ref([])
 const creatingTempSheet = ref(false)
 
 const createTempSheet = async () => {
   creatingTempSheet.value = true
-  const students = await studentPanel.mappers.unmap(useSheetManager().filteredItems as any[]);
+  const items = await activePanel.mappers.unmap(useSheetManager().filteredItems as any[]);
   const selectedIndices = headerRow.map((header, i) => selectedHeaders.value.includes(header) ? i : -1).filter(i => i !== -1)
 
-  await replaceRange(
+    await replaceRange(
     Range.TEMPORARY_DATA,
     [
       headerRow.filter((_, i) => selectedIndices.includes(i)),
-      ...students.map(student => selectedIndices.map(i => student[i]))
+      ...items.map(student => selectedIndices.map(i => student[i]))
     ],
   )
 
@@ -61,7 +61,7 @@ const createTempSheet = async () => {
       buttons: [
         {
           text: 'Done',
-          color: studentPanel.color,
+          color: activePanel.color,
           onClick: () => {
             useDialog().close()
           }

@@ -23,8 +23,44 @@ export const tools = {
       }
     }
   ],
-  GRADUATES: [],
-  MODULES: [],
-  COMPLETED_MODULES: [],
-  THESES: [],
+  GRADUATES: [
+    {
+      name: 'Create Temporary Sheet',
+      handler: async () => {
+        useDialog().open({
+          component: CreateTempSheet
+        })
+      }
+    }
+  ],
+  MODULES: [
+    {
+      name: 'Create Temporary Sheet',
+      handler: async () => {
+        useDialog().open({
+          component: CreateTempSheet
+        })
+      }
+    }
+  ],
+  COMPLETED_MODULES: [
+    {
+      name: 'Create Temporary Sheet',
+      handler: async () => {
+        useDialog().open({
+          component: CreateTempSheet
+        })
+      }
+    }
+  ],
+  THESES: [
+    {
+      name: 'Create Temporary Sheet',
+      handler: async () => {
+        useDialog().open({
+          component: CreateTempSheet
+        })
+      }
+    }
+  ],
 }
