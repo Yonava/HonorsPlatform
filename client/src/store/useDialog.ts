@@ -1,3 +1,4 @@
+import { set } from "@vueuse/core";
 import { defineStore } from "pinia";
 import { markRaw } from "vue";
 
@@ -29,6 +30,13 @@ export const useDialog = defineStore("dialog", {
   },
   actions: {
     open(options?: { body?: DialogBody; component?: any }) {
+      if (this.show) {
+        this.close();
+        setTimeout(() => {
+          this.open(options);
+        }, 500)
+        return;
+      }
       clearTimeout(this.contentTimeout);
       if (options?.component) {
         this.component = markRaw(options.component);

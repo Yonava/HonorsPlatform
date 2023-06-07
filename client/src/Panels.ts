@@ -1,22 +1,17 @@
 import StudentListItem from './components/ListItem/StudentListItem.vue';
 import StudentDetail from './components/Detail/StudentDetail.vue';
-import AddStudent from './components/Add/AddStudent.vue';
 
 import ModuleListItem from './components/ListItem/ModuleListItem.vue';
 import ModuleDetail from './components/Detail/ModuleDetail.vue';
-import AddModule from './components/Add/AddModule.vue';
 
 import CompletedModuleDetail from '../src/components/Detail/CompletedModuleDetail.vue';
 import CompletedModuleListItem from './components/ListItem/CompletedModuleListItem.vue';
-import AddCompletedModule from './components/Add/AddCompletedModule.vue';
 
 import GraduateListItem from './components/ListItem/GraduateListItem.vue';
 import GraduateDetail from './components/Detail/GraduateDetail.vue';
-import AddGraduate from './components/Add/AddGraduate.vue';
 
 import ThesisDetail from './components/Detail/ThesisDetail.vue';
 import ThesisListItem from './components/ListItem/ThesisListItem.vue';
-import AddThesis from './components/Add/AddThesis.vue';
 
 import { markRaw } from 'vue';
 import { Range } from './SheetsAPI';

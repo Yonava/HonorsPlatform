@@ -10,6 +10,7 @@ export enum Range {
   GRAD_ENGAGEMENT = "Grad Engagement",
   REGISTRAR_LIST = "Registrar List",
   THESES = "Theses",
+  TEMPORARY_DATA = "Temporary Data",
 }
 
 // response delay to allow for Google Sheets API to update
