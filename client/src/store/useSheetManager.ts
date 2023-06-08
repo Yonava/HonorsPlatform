@@ -138,16 +138,23 @@ export const useSheetManager = defineStore('sheetManager', {
       await clearByRow(this.panel.sheetRange, row)
       await this.fetchItems()
     },
-    async addItem(panel = useSheetManager().panel, pin = true, columns = [useSheetManager().newSysId()]) {
+    async addItem(panel = useSheetManager().panel, pin = true, columns?: any[]) {
       this.searchFilter = ''
 
-      const [newItem] = await panel.mappers.map([columns]);
+      const [newItem] = await panel.mappers.map([
+        columns ?? [this.newSysId()]
+      ]);
       newItem.row = null;
 
       this.selectedItem = newItem;
       this.items.unshift(newItem);
       if (pin) {
         this.pinnedItem = newItem;
+      }
+
+      // if columns is overwritten, immediately update the item
+      if (columns) {
+        await this.updateItem(newItem);
       }
     },
     async updateItem(item?: SheetItem) {
