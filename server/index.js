@@ -91,7 +91,7 @@ app.get("/api/range/:range", async (req, res) => {
     const accessToken = await validateToken(req);
     const { range } = req.params;
     const data = await sheetInstances[accessToken].getRange(range);
-    // sheets API return undefined when sheet is empty
+    // google returns undefined when sheet is empty
     if (!data) {
       console.log(`No data found in range ${range}`)
       res.json([[]]);
@@ -109,7 +109,6 @@ app.get("/api/range/:range", async (req, res) => {
       if (randomIndex === encode.length || randomIndex === 1) {
         return encode.join('');
       }
-      console.log('Hit')
       const temp = encode[randomIndex];
       encode[randomIndex] = encode[randomIndex - 1];
       encode[randomIndex - 1] = temp;
@@ -168,8 +167,10 @@ app.post("/api/range/:range", async (req, res) => {
     const accessToken = await validateToken(req);
     const { range } = req.params;
     const data = req.body;
-    await sheetInstances[accessToken].postInRange(range, data);
-    res.json({ success: true });
+    const rowInsertedAt = await sheetInstances[accessToken].postInRange(range, data);
+    res.json({
+      row: rowInsertedAt
+    });
   } catch(e) {
     console.log(e);
     removeTokenFromCache(req)

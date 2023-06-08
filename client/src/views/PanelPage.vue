@@ -101,7 +101,7 @@
           </div>
         </v-sheet>
       </div>
-      <!-- <div v-if="lgAndUp && !selectedItem"> -->
+      <div v-if="lgAndUp && !selectedItem">
         <img
           src="../assets/honorsLogo.jpeg"
           class="honors-logo"
@@ -109,8 +109,7 @@
         <span class="software-version">
           prerelease v0.75 (beta)
         </span>
-      <!-- </div> -->
-
+      </div>
     </v-main>
     <ServeDialog />
     <v-navigation-drawer

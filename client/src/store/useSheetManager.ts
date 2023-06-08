@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { getEvery, clearByRow, updateByRow } from '../SheetsAPI';
+import { getEvery, clearByRow, updateByRow, postInRange } from '../SheetsAPI';
 import { SheetItem } from '../SheetTypes';
 import { getPanel, Panel } from '../Panels';
 import router from '../router';
@@ -138,14 +138,16 @@ export const useSheetManager = defineStore('sheetManager', {
       await clearByRow(this.panel.sheetRange, row)
       await this.fetchItems()
     },
-    async addItem(item: SheetItem, pin: boolean = true) {
-      this.loadingItems = true
-      await this.fetchItems()
-      const addedItem = this.items.find(i => i.sysId === item.sysId) ?? null
+    async addItem(panel = useSheetManager().panel, pin = true, columns = [useSheetManager().newSysId()]) {
       this.searchFilter = ''
-      this.selectedItem = addedItem
+
+      const [newItem] = await panel.mappers.map([columns]);
+      newItem.row = null;
+
+      this.selectedItem = newItem;
+      this.items.unshift(newItem);
       if (pin) {
-        this.pinnedItem = addedItem
+        this.pinnedItem = newItem;
       }
     },
     async updateItem(item?: SheetItem) {
@@ -157,7 +159,13 @@ export const useSheetManager = defineStore('sheetManager', {
         item = this.selectedItem;
       }
       useSyncState().processing = true
-      await updateByRow(this.panel.sheetRange, item.row, await this.panel.mappers.unmap([item]))
+      // row is null when the item has never been saved to the sheet
+      if (item.row === null || item.row === undefined) {
+        const row = await postInRange(this.panel.sheetRange, await this.panel.mappers.unmap([item]))
+        item.row = row
+      } else {
+        await updateByRow(this.panel.sheetRange, item.row, await this.panel.mappers.unmap([item]))
+      }
       useSyncState().$reset()
     },
     newSysId() {

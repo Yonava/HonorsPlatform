@@ -3,7 +3,7 @@ export type SheetItem = Module | Graduate | Student | CompletedModule | Thesis;
 export type Grade = "High Pass" | "Pass" | "Low Pass" | "Fail" | null;
 
 export interface SheetEntry {
-  row: number;
+  row: number | null | undefined;
   sysId: string;
 }
 

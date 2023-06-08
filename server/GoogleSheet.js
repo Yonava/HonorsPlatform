@@ -62,6 +62,8 @@ module.exports = class GoogleSheet {
     await this.sheets.spreadsheets.values.update(
       this.writable(`${range}!A${insertRow}:Z${insertRow}`, data)
     );
+
+    return insertRow;
   }
 
   async replaceRange(range, data) {

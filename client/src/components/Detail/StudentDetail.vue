@@ -206,7 +206,6 @@ import { useSheetManager } from "../../store/useSheetManager";
 import { useDialog } from "../../store/useDialog";
 import { storeToRefs } from "pinia";
 import { useUpdateItem } from "../../TrackItemForUpdate";
-import { add } from "../../AddActions";
 import { warn } from '../../Warn'
 
 const sheetManager = useSheetManager();
@@ -282,12 +281,16 @@ function viewThesis() {
               text: "Create",
               color: "green",
               onClick: () => {
-                add("THESES", [
-                  sheetManager.newSysId(),
-                  _student.id,
-                  _student.name,
-                  _student.email,
-                ]);
+                sheetManager.addItem(
+                  getPanel("THESES"),
+                  true,
+                  [
+                    sheetManager.newSysId(),
+                    _student.id,
+                    _student.name,
+                    _student.email,
+                  ]
+                );
                 close();
               },
             },

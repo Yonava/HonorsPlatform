@@ -31,7 +31,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { headerRowMemo, getEvery, replaceRange, Range } from '../SheetsAPI'
-import { getPanel } from '../Panels'
 import { useDialog } from '../store/useDialog'
 import { useSheetManager } from '../store/useSheetManager'
 
