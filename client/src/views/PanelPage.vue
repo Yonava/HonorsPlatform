@@ -107,7 +107,7 @@
           class="honors-logo"
         >
         <span class="software-version">
-          prerelease v0.75 (beta)
+          prerelease v0.76 (beta)
         </span>
       </div>
     </v-main>

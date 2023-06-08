@@ -150,6 +150,7 @@
           <v-btn
             @click="viewThesis"
             :color="getPanel('THESES').color"
+            :loading="unlockingThesis"
             size="large"
             style="width: 49%"
           >
@@ -203,6 +204,7 @@ import {
 } from "../../StudentTools";
 
 import { useSheetManager } from "../../store/useSheetManager";
+import { useSyncState } from "../../store/useSyncState";
 import { useDialog } from "../../store/useDialog";
 import { storeToRefs } from "pinia";
 import { useUpdateItem } from "../../TrackItemForUpdate";
@@ -211,12 +213,15 @@ import { warn } from '../../Warn'
 const sheetManager = useSheetManager();
 const { selectedItem: student, items } = storeToRefs(sheetManager);
 useUpdateItem(student);
+const { processing } = storeToRefs(useSyncState());
 const { open, close } = useDialog();
 
 const modules = ref<Module[]>([]);
 const loadingModules = ref(false);
 
 const tempStudentId = ref("");
+const unlockingThesis = ref(false);
+
 const idDialog = ref(false);
 const movingStudent = ref(false);
 
@@ -238,8 +243,12 @@ function studentIdRule(studentId: string) {
 }
 
 async function saveId() {
+  unlockingThesis.value = true;
   student.value.id = tempStudentId.value;
   idDialog.value = false;
+  // buffers to allow id changes to persist before unlocking thesis
+  await new Promise((resolve) => setTimeout(resolve, 3000))
+  unlockingThesis.value = false;
 }
 
 function viewThesis() {
