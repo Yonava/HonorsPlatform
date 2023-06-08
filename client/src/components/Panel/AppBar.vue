@@ -29,13 +29,13 @@
         </div>
         <v-btn
           v-if="panel.add"
-          @click="fireAddAction"
-          :loading="loadingAdd"
+          @click="add.fire"
+          :loading="add.loading"
           style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240)"
           class="mt-5"
           block
         >
-          <v-icon icon="mdi-plus" size="large" class="mr-2"></v-icon>
+          <v-icon :icon="add.success ? 'mdi-check' : 'mdi-plus'" size="large" class="mr-2"></v-icon>
           Add {{ panel.title.singular }}
         </v-btn>
         <v-btn
@@ -87,7 +87,9 @@
             </v-btn>
           </template>
         </AdditionalTools>
-        <SortPanel class="mt-5" />
+        <div style="overflow: auto; height: 50vh">
+          <SortPanel class="mt-5" />
+        </div>
       </div>
     </v-navigation-drawer>
     <v-app-bar :color="`${panel.color}-darken-2`" class="app-bar px-5">
@@ -148,12 +150,15 @@
       <v-spacer></v-spacer>
       <v-btn
         v-if="smAndUp && panel.add"
-        @click="fireAddAction"
-        :loading="loadingAdd"
+        @click="add.fire"
+        :loading="add.loading"
+        :style="{
+          background: add.success ? 'rgb(34, 159, 34)' : 'rgba(0, 0, 0, 0.4)',
+          color: 'rgb(240, 240, 240)'
+        }"
         class="ml-3"
-        style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240)"
       >
-        <v-icon icon="mdi-plus" size="large"></v-icon>
+        <v-icon :icon="add.success ? 'mdi-check' : 'mdi-plus'" size="large"></v-icon>
         <span v-if="mdAndUp" class="ml-2">
           Add {{ panel.title.singular }}
         </span>
@@ -248,19 +253,26 @@ const searchText = computed({
 });
 
 const navDrawer = ref(false);
-const loadingAdd = ref(false);
 const searchMode = ref(false);
 
-const fireAddAction = async () => {
-  if (loadingAdd.value || !panel.value.add) return;
-  loadingAdd.value = true;
-  await panel.value.add();
-  loadingAdd.value = false;
-};
+const add = ref({
+  loading: false,
+  success: false,
+  fire: async () => {
+    if (add.value.loading || add.value.success) return;
+    add.value.loading = true;
+    await panel.value.add();
+    add.value.success = true;
+    setTimeout(() => {
+      add.value.success = false;
+    }, 5000);
+    add.value.loading = false;
+  },
+});
 
 useKeyBindings({
   "/": () => document.getElementById("input").focus(),
-  "a": () => fireAddAction(),
+  "a": () => add.value.fire(),
 });
 
 const { lgAndUp, mdAndUp, smAndUp, smAndDown, xs } = useDisplay();

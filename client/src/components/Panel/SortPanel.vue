@@ -12,25 +12,27 @@
         style="background: white; width: 75%; height: 1px"
       ></div>
     </div>
-    <div
-      v-for="sortOption in panel.sortOptions"
-      :key="sortOption.label"
-      @click="setSort(sortOption.func)"
-      :style="{
-        background: isSelected(sortOption) ? 'rgba(255, 255, 255, 0.2)' : '',
-        borderRadius: '10px',
-      }"
-      class="mt-1 sort-box d-flex justify-center align-center flex-column px-2"
-    >
-      <v-icon v-if="isSelected(sortOption)">
-        {{ activeSort.ascending ? sortOption.icon.asc : sortOption.icon.desc }}
-      </v-icon>
-      <v-icon v-else>
-        {{ sortOption.icon.asc }}
-      </v-icon>
-      <p style="font-size: 0.9rem; line-height: 1.1; user-select: none">
-        {{ sortOption.label }}
-      </p>
+    <div>
+      <div
+        v-for="sortOption in panel.sortOptions"
+        :key="sortOption.label"
+        @click="setSort(sortOption.func)"
+        :style="{
+          background: isSelected(sortOption) ? 'rgba(255, 255, 255, 0.2)' : '',
+          borderRadius: '10px',
+        }"
+        class="mt-1 sort-box d-flex justify-center align-center flex-column px-2"
+      >
+        <v-icon v-if="isSelected(sortOption)">
+          {{ activeSort.ascending ? sortOption.icon.asc : sortOption.icon.desc }}
+        </v-icon>
+        <v-icon v-else>
+          {{ sortOption.icon.asc }}
+        </v-icon>
+        <p style="font-size: 0.9rem; line-height: 1.1; user-select: none">
+          {{ sortOption.label }}
+        </p>
+      </div>
     </div>
   </div>
 </template>
