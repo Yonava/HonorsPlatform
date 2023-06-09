@@ -8,9 +8,9 @@ export type DialogButton = {
 };
 
 export type DialogBody = {
-  title: string;
-  description: string;
-  buttons: DialogButton[];
+  title?: string;
+  description?: string;
+  buttons?: DialogButton[];
 };
 
 export const useDialog = defineStore("dialog", {
