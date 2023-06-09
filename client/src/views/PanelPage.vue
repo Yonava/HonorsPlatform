@@ -107,7 +107,7 @@
           class="honors-logo"
         >
         <span class="software-version">
-          prerelease v0.76 (beta)
+          prerelease v0.77 (beta)
         </span>
       </div>
     </v-main>
@@ -156,6 +156,7 @@ if (route.query.type) {
   const newPanel = Object.values(panels).find((p) => p.title.plural.toLowerCase() === route.query.type)
   if (newPanel) sheetManager.setPanel(newPanel)
 } else {
+  document.title = panel.value.title.plural + ' - Honors Program'
   sheetManager.fetchItems()
 }
 

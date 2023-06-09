@@ -5,11 +5,15 @@ import { useDialog } from "./useDialog";
 
 export const useAuth = defineStore('auth', {
   state: () => ({
-    pendingAuthorization: null as Promise<any> | null
+    pendingAuthorization: null as Promise<string> | null,
+    authTimeoutInSeconds: 3,
   }),
   actions: {
     getToken() {
       return localStorage.getItem('token')
+    },
+    setAuthTimeout(timeout: number) {
+      this.authTimeoutInSeconds = timeout
     },
     setToken(token: string | null) {
       if (!token) {
@@ -65,18 +69,21 @@ export const useAuth = defineStore('auth', {
             clearInterval(interval)
             resolve('token received')
             useDialog().close()
+            this.pendingAuthorization = null
           }
         }, 1000)
 
-        const giveUpTimeInMinutes = 2
         setTimeout(() => {
+          if (!this.pendingAuthorization) {
+            return
+          }
           clearInterval(interval)
           reject('token not received')
           console.error('Token not received. Request timed out. User redirected to auth page')
           router.push({
             name: 'auth'
           })
-        }, giveUpTimeInMinutes * 60 * 1000)
+        }, this.authTimeoutInSeconds * 1000)
       })
 
       return this.pendingAuthorization
