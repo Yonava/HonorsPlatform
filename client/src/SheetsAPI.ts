@@ -1,5 +1,6 @@
 import axios from "axios";
 import router from "./router";
+import { useAuth } from "./store/useAuth";
 
 export enum Range {
   STUDENTS = "Students",
@@ -22,17 +23,14 @@ export const headerRowMemo: HeaderRows = {}
 
 function catchAction() {
   router.push({
-    name: "auth",
-    query: {
-      hold: "true",
-    }
+    name: "auth"
   })
 }
 
 function requestHeaders() {
   return {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
+      Authorization: `Bearer ${useAuth().getToken()}`,
     }
   }
 }
@@ -46,8 +44,9 @@ export async function getEvery(range: Range, addResponseDelay = true): Promise<s
     headerRowMemo[range] = data.shift();
     return data;
   } catch {
-    catchAction();
-    throw new Error("Access denied");
+    console.log(range)
+    await useAuth().authorize();
+    return getEvery(range, addResponseDelay);
   }
 }
 
@@ -55,7 +54,8 @@ export async function clearByRow(range: Range, row: number) {
   try {
     await axios.delete(`/api/range/${range}/${row}`, requestHeaders());
   } catch {
-    catchAction();
+    await useAuth().authorize();
+    await clearByRow(range, row);
   }
 }
 
@@ -63,7 +63,8 @@ export async function updateByRow(range: Range, row: number, data: string[][]) {
   try {
     await axios.put(`/api/range/${range}/${row}`, data, requestHeaders());
   } catch {
-    catchAction();
+    await useAuth().authorize();
+    await updateByRow(range, row, data);
   }
 }
 
@@ -72,7 +73,8 @@ export async function postInRange(range: Range, data: string[][]) {
     const { data: res } = await axios.post(`/api/range/${range}`, data, requestHeaders());
     return res.row;
   } catch {
-    catchAction();
+    await useAuth().authorize();
+    await postInRange(range, data);
   }
 }
 
@@ -82,8 +84,8 @@ export async function getHeaderRow(range: Range): Promise<string[]> {
     headerRowMemo[range] = headerRow[0];
     return headerRow[0];
   } catch {
-    catchAction();
-    throw new Error("Access denied");
+    await useAuth().authorize();
+    return getHeaderRow(range);
   }
 }
 
@@ -95,7 +97,8 @@ export async function getNonSensitiveData(endpointExtension: string) {
   try {
     return (await axios.get(`/api/open/${endpointExtension}`, requestHeaders())).data;
   } catch {
-    throw new Error("Access denied");
+    catchAction();
+    return [];
   }
 }
 
@@ -104,7 +107,8 @@ export async function moveRowToRange(fromRange: Range, toRange: Range, row: numb
     await postInRange(toRange, data);
     await clearByRow(fromRange, row);
   } catch {
-    catchAction();
+    await useAuth().authorize();
+    await moveRowToRange(fromRange, toRange, row, data);
   }
 }
 
@@ -112,7 +116,7 @@ export async function replaceRange(range: Range, data: string[][]) {
   try {
     await axios.put(`/api/range/${range}`, data, requestHeaders());
   } catch {
-    catchAction();
-    throw new Error("Access denied");
+    await useAuth().authorize();
+    await replaceRange(range, data);
   }
 }

@@ -26,7 +26,7 @@
         </h1>
       </div>
       <v-btn
-        @click="authorize"
+        @click="authorize('replace')"
         color="red-darken-2"
         elevation="3"
         class="mb-12"
@@ -76,6 +76,7 @@
 
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router'
+import { useAuth } from '../store/useAuth'
 import { onMounted, ref } from 'vue'
 import axios from 'axios'
 import { useDisplay } from 'vuetify'
@@ -86,36 +87,32 @@ const route = useRoute()
 const router = useRouter()
 const loading = ref(true)
 
+const { authorize, setToken } = useAuth()
+
 onMounted(async () => {
-  setTimeout(() => {
-    loading.value = false
-  }, 1000)
-  if (route.query.hold) return
+  // check if google servers has redirected with a code
   const code = (route.query.code ?? '') as string
+  if (!code) {
+    loading.value = false
+    return
+  }
 
-  if (!code) return
-
+  // if so, exchange code for access token and store it (useAuth will pick up on it)
   const res = await axios.get(`/api/auth/${encodeURIComponent(code)}`)
   const token = res.data.accessToken
   if (!token) throw new Error('No access token')
-  localStorage.setItem('token', token)
+  setToken(token)
+  window.close()
 
-  router.push({
-    name: 'panel'
-  })
+  // in case page doesn't close
+  loading.value = true
+
+  setTimeout(() => {
+   router.push({
+      name: 'panel'
+    })
+  }, 1000)
 })
-
-const authorize = async () => {
-  try {
-    const response = await axios.get('/api/auth/url')
-    if (!response.data.url) throw new Error('No URL')
-    const url = response.data.url
-    location.replace(url)
-  } catch (error) {
-    console.log(error)
-  }
-}
-
 </script>
 
 <style scoped>
