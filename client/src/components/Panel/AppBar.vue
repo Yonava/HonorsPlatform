@@ -90,6 +90,9 @@
         <div style="overflow: auto; height: 50vh">
           <SortPanel class="mt-5" />
         </div>
+        <span style="font-size: 10px">
+          prerelease v0.77 (beta)
+        </span>
       </div>
     </v-navigation-drawer>
     <v-app-bar :color="`${panel.color}-darken-2`" class="app-bar px-5">
