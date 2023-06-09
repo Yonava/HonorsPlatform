@@ -22,30 +22,31 @@ export const useAuth = defineStore('auth', {
       }
       localStorage.setItem('token', token)
     },
-    async forceAuthorize() {
+    async getURL(): Promise<string> {
       const response = await axios.get('/api/auth/url')
       if (!response.data.url) {
-        console.error('No url returned from server')
-        return
+        throw new Error('No URL received')
       }
       const { url } = response.data
+      return url
+    },
+    async forceAuthorize(url?: string) {
+      url ??= await this.getURL();
       window.location.replace(url)
     },
     async authorize() {
-
-      const response = await axios.get('/api/auth/url')
-
-      if (!response.data.url) {
-        console.error('No url returned from server')
-        return
-      }
-      const { url } = response.data
-
       if (this.pendingAuthorization) {
         await this.pendingAuthorization
         return
       }
-      window.open(url, '_blank')
+
+      const url = await this.getURL()
+
+      // handles phones that don't support popups
+      if (!window.open(url, '_blank')) {
+        await this.forceAuthorize(url)
+        return
+      }
 
       this.setToken(null)
 
@@ -67,7 +68,6 @@ export const useAuth = defineStore('auth', {
 
       this.pendingAuthorization = new Promise((resolve, reject) => {
         const interval = setInterval(() => {
-          console.log('trying to get token')
           if (this.getToken()) {
             clearInterval(interval)
             resolve('token received')
