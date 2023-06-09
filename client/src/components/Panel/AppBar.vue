@@ -91,7 +91,7 @@
           <SortPanel class="mt-5" />
         </div>
         <span style="font-size: 10px">
-          prerelease v0.77 (beta)
+          prerelease v0.77.1 (beta)
         </span>
       </div>
     </v-navigation-drawer>

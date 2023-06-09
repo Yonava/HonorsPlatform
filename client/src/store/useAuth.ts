@@ -30,9 +30,28 @@ export const useAuth = defineStore('auth', {
       const { url } = response.data
       return url
     },
-    async forceAuthorize(url?: string) {
+    async forceAuthorize(url?: string): Promise<string> {
       url ??= await this.getURL();
       window.location.replace(url)
+      return new Promise((resolve, reject) => {
+        const interval = setInterval(() => {
+          if (this.getToken()) {
+            clearInterval(interval)
+            resolve('token received')
+            this.pendingAuthorization = null
+            useDialog().close()
+          }
+        }, 1000)
+
+        setTimeout(() => {
+          clearInterval(interval)
+          reject('token not received')
+          console.error('Token not received. Request timed out. User redirected to auth page')
+          router.push({
+            name: 'auth'
+          })
+        }, this.authTimeoutInSeconds * 1000)
+      })
     },
     async authorize() {
       if (this.pendingAuthorization) {
@@ -44,8 +63,8 @@ export const useAuth = defineStore('auth', {
 
       // handles phones that don't support popups
       if (!window.open(url, '_blank')) {
-        await this.forceAuthorize(url)
-        return
+        this.pendingAuthorization = this.forceAuthorize(url)
+        return this.pendingAuthorization
       }
 
       this.setToken(null)
