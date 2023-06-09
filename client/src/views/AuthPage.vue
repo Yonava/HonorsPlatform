@@ -26,7 +26,7 @@
         </h1>
       </div>
       <v-btn
-        @click="authorize('replace')"
+        @click="forceAuthorize"
         color="red-darken-2"
         elevation="3"
         class="mb-12"
@@ -87,7 +87,7 @@ const route = useRoute()
 const router = useRouter()
 const loading = ref(true)
 
-const { authorize, setToken } = useAuth()
+const { forceAuthorize, setToken } = useAuth()
 
 onMounted(async () => {
   // check if google servers has redirected with a code
@@ -108,7 +108,7 @@ onMounted(async () => {
   loading.value = true
 
   setTimeout(() => {
-   router.push({
+    router.push({
       name: 'panel'
     })
   }, 1000)

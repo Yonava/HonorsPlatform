@@ -44,7 +44,6 @@ export async function getEvery(range: Range, addResponseDelay = true): Promise<s
     headerRowMemo[range] = data.shift();
     return data;
   } catch {
-    console.log(range)
     await useAuth().authorize();
     return getEvery(range, addResponseDelay);
   }

@@ -17,14 +17,14 @@
     >
       <div class="pa-4">
         <div class="d-flex flex-row" style="width: 100%">
-          <v-btn icon>
+          <!-- <v-btn icon>
             <v-icon
               @click="$router.push({ name: 'leaderboard' })"
               icon="mdi-podium"
               size="large"
             ></v-icon>
           </v-btn>
-          <v-spacer></v-spacer>
+          <v-spacer></v-spacer> -->
           <Announcements />
         </div>
         <v-btn
@@ -205,7 +205,7 @@
             </v-btn>
           </template>
         </AdditionalTools>
-        <v-btn icon>
+        <!-- <v-btn icon>
           <v-icon
             @click="$router.push({ name: 'leaderboard' })"
             icon="mdi-podium"
@@ -214,7 +214,7 @@
           <v-tooltip :disabled="smAndDown" activator="parent" location="bottom"
             >View Points Leaderboard</v-tooltip
           >
-        </v-btn>
+        </v-btn> -->
       </div>
       <div v-else>
         <v-btn icon>

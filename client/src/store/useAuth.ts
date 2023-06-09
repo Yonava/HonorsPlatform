@@ -6,7 +6,7 @@ import { useDialog } from "./useDialog";
 export const useAuth = defineStore('auth', {
   state: () => ({
     pendingAuthorization: null as Promise<string> | null,
-    authTimeoutInSeconds: 3,
+    authTimeoutInSeconds: 60
   }),
   actions: {
     getToken() {
@@ -22,27 +22,30 @@ export const useAuth = defineStore('auth', {
       }
       localStorage.setItem('token', token)
     },
-    async authorize(location: 'replace' | 'new_tab' = 'new_tab') {
-      try {
-        const response = await axios.get('/api/auth/url')
-        if (!response.data.url) {
-          console.error('No url returned from server')
-          return
-        }
-        const { url } = response.data
-        if (location === 'replace') {
-          window.location.replace(url)
-          return
-        }
-        if (this.pendingAuthorization) {
-          console.log('awaiting pending promise')
-          await this.pendingAuthorization
-          return
-        }
-        window.open(url, '_blank')
-      } catch (error) {
-        console.log(error)
+    async forceAuthorize() {
+      const response = await axios.get('/api/auth/url')
+      if (!response.data.url) {
+        console.error('No url returned from server')
+        return
       }
+      const { url } = response.data
+      window.location.replace(url)
+    },
+    async authorize() {
+
+      const response = await axios.get('/api/auth/url')
+
+      if (!response.data.url) {
+        console.error('No url returned from server')
+        return
+      }
+      const { url } = response.data
+
+      if (this.pendingAuthorization) {
+        await this.pendingAuthorization
+        return
+      }
+      window.open(url, '_blank')
 
       this.setToken(null)
 
