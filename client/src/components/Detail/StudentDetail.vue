@@ -379,11 +379,10 @@ async function graduate() {
   });
 }
 
-function addStudentNote(event: { initials: string; note: string }) {
-  const { initials, note } = event;
-  let studentNote = student.value.note;
-  if (studentNote) studentNote += "\n\n";
-  studentNote += `${initials}: ${note}`;
+function addStudentNote(event: { initials: string; note: string, date: string }) {
+  const { initials, note, date } = event;
+  if (student.value.note) student.value.note += "\n\n";
+  student.value.note += `${initials} (${date}): ${note}`;
 }
 </script>
 

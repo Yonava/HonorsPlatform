@@ -136,6 +136,11 @@ function focus() {
 
 function addNote() {
   emits('success', {
+    date: new Date().toLocaleDateString('en-US', {
+      month: '2-digit',
+      day: '2-digit',
+      year: '2-digit'
+    }),
     initials: initials.value,
     note: note.value
   })
