@@ -14,7 +14,7 @@
         </strong>
       </v-card-title>
       <div class="px-4">
-        <div v-if="initials">
+        <div v-if="!inputInitials">
           <div class="d-flex flex-row">
             <p class="mb-3">
               Initials set as
@@ -23,7 +23,7 @@
               </strong>
             </p>
             <v-btn
-              @click="initials = ''"
+              @click="clearInitials"
               class="ml-5"
               color="red"
               size="x-small"
@@ -33,6 +33,7 @@
             v-model="note"
             clearable
             no-resize
+            ref="noteBox"
             variant="outlined"
             label="Note"
           ></v-textarea>
@@ -52,9 +53,11 @@
           class="d-flex flex-column mb-4"
         >
           <v-text-field
-            v-model="tempInitials"
+            v-model="initials"
+            @keyup.enter="setInitials"
             clearable
             label="Initials"
+            ref="initialsBox"
             variant="outlined"
           ></v-text-field>
           <v-btn
@@ -82,7 +85,16 @@ const emits = defineEmits([
 ])
 
 const show = computed({
-  get: () => props.show,
+  get: () => {
+    if (props.show) {
+      focus()
+      if (inputInitials.value) {
+        return props.show
+      }
+      inputInitials.value = !initials.value
+    }
+    return props.show
+  },
   set: (v) => {
     if (!v) {
       emits('close')
@@ -93,13 +105,33 @@ const show = computed({
 
 const { xs } = useDisplay()
 
+const inputInitials = ref(false)
 const initials = ref('')
-const tempInitials = ref('')
 const note = ref('')
 
 function setInitials() {
-  initials.value = tempInitials.value
+  inputInitials.value = false
   localStorage.setItem('initials', initials.value)
+  focus()
+}
+
+function clearInitials() {
+  initials.value = ''
+  inputInitials.value = true
+  localStorage.removeItem('initials')
+  focus()
+}
+
+const noteBox = ref(null)
+const initialsBox = ref(null)
+function focus() {
+  setTimeout(() => {
+    if (noteBox.value) {
+      noteBox.value.focus()
+    } else if (initialsBox.value) {
+      initialsBox.value.focus()
+    }
+  }, 50)
 }
 
 function addNote() {
