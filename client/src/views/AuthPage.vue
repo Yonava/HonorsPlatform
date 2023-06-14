@@ -100,18 +100,15 @@ onMounted(async () => {
   // if so, exchange code for access token and store it (useAuth will pick up on it)
   const res = await axios.get(`/api/auth/${encodeURIComponent(code)}`)
   const token = res.data.accessToken
-  if (!token) throw new Error('No access token')
+  if (!token) {
+    loading.value = false
+    throw new Error('No access token received')
+  }
   setToken(token)
   window.close()
-
-  // in case page doesn't close
-  loading.value = true
-
-  setTimeout(() => {
-    router.push({
-      name: 'panel'
-    })
-  }, 1000)
+  router.push({
+    name: 'panel'
+  })
 })
 </script>
 

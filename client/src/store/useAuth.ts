@@ -6,7 +6,8 @@ import { useDialog } from "./useDialog";
 export const useAuth = defineStore('auth', {
   state: () => ({
     pendingAuthorization: null as Promise<string> | null,
-    authTimeoutInSeconds: 60
+    authTimeoutInSeconds: 60,
+    authTimedOut: false
   }),
   actions: {
     getToken() {
@@ -30,28 +31,9 @@ export const useAuth = defineStore('auth', {
       const { url } = response.data
       return url
     },
-    async forceAuthorize(url?: string): Promise<string> {
+    async forceAuthorize(url?: string) {
       url ??= await this.getURL();
       window.location.replace(url)
-      return new Promise((resolve, reject) => {
-        const interval = setInterval(() => {
-          if (this.getToken()) {
-            clearInterval(interval)
-            resolve('token received')
-            this.pendingAuthorization = null
-            useDialog().close()
-          }
-        }, 1000)
-
-        setTimeout(() => {
-          clearInterval(interval)
-          reject('token not received')
-          console.error('Token not received. Request timed out. User redirected to auth page')
-          router.push({
-            name: 'auth'
-          })
-        }, this.authTimeoutInSeconds * 1000)
-      })
     },
     async authorize() {
       if (this.pendingAuthorization) {
@@ -63,35 +45,41 @@ export const useAuth = defineStore('auth', {
 
       // handles phones that don't support popups
       if (!window.open(url, '_blank')) {
-        this.pendingAuthorization = this.forceAuthorize(url)
-        return this.pendingAuthorization
+        this.forceAuthorize(url)
       }
+
+      // give time for user to be redirected before opening dialog
+      await new Promise((resolve) => setTimeout(resolve, 1000))
 
       this.setToken(null)
 
       useDialog().open({
         body: {
           title: 'Please Authorize',
-          description: 'Please confirm authorization in the new tab that opened. Once completed, your session will automatically resume without any further action required.',
+          description: 'Please confirm your identity before continuing. Once completed, your session will automatically resume without any further action required.',
           buttons: [
             {
-              text: 'Sounds good!',
-              color: 'primary',
-              onClick: () => {
-                useDialog().close()
-              }
+              text: 'Sign In With Google',
+              color: 'red',
+              onClick: () => this.forceAuthorize(url)
             }
           ]
         }
       })
 
-      this.pendingAuthorization = new Promise((resolve, reject) => {
+      this.pendingAuthorization = new Promise((resolve) => {
         const interval = setInterval(() => {
           if (this.getToken()) {
             clearInterval(interval)
             resolve('token received')
             useDialog().close()
             this.pendingAuthorization = null
+            if (this.authTimedOut) {
+              router.push({
+                name: 'panel'
+              })
+              this.authTimedOut = false
+            }
           }
         }, 1000)
 
@@ -99,8 +87,7 @@ export const useAuth = defineStore('auth', {
           if (!this.pendingAuthorization) {
             return
           }
-          clearInterval(interval)
-          reject('token not received')
+          this.authTimedOut = true
           console.error('Token not received. Request timed out. User redirected to auth page')
           router.push({
             name: 'auth'

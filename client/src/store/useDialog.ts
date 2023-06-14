@@ -24,9 +24,6 @@ export const useDialog = defineStore("dialog", {
     component: null,
     contentTimeout: null as any
   }),
-  getters: {
-
-  },
   actions: {
     open(options?: { body?: DialogBody; component?: any }) {
       if (this.show) {
