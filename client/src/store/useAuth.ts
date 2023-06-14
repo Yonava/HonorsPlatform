@@ -48,9 +48,6 @@ export const useAuth = defineStore('auth', {
         this.forceAuthorize(url)
       }
 
-      // give time for user to be redirected before opening dialog
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-
       this.setToken(null)
 
       useDialog().open({
