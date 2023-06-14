@@ -8,14 +8,24 @@
         <slot></slot>
       </v-dialog>
     </div>
-    <v-sheet
-      v-else-if="showDialog"
-      :color="color"
-      class="xs-outer-wrapper"
+    <div v-else>
+    <v-navigation-drawer
+      v-model="showDialog"
+      temporary
+      touchless
+      rounded
+      location="bottom"
+      style="width: 100%; height: 75%;"
     >
-      <slot></slot>
-      <div style="margin-bottom: 18vh"></div>
-    </v-sheet>
+      <v-sheet
+        :color="color"
+        class="xs-outer-wrapper"
+      >
+        <slot></slot>
+        <div style="margin-bottom: 18vh"></div>
+      </v-sheet>
+    </v-navigation-drawer>
+    </div>
   </div>
 </template>
 

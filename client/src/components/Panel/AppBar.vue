@@ -237,7 +237,7 @@ import SortPanel from "./SortPanel.vue";
 import Announcements from "./AnnouncementMenu.vue";
 import AdditionalTools from "../../components/Panel/AdditionalTools.vue";
 
-import { ref, computed, watch } from "vue";
+import { ref, computed, watchEffect } from "vue";
 import { useDisplay } from "vuetify";
 import { useKeyBindings } from "../../KeyBindings";
 import { useDialog } from '../../store/useDialog'
@@ -246,6 +246,7 @@ import { panels, Panel } from "../../Panels";
 import { useSheetManager } from "../../store/useSheetManager";
 import { storeToRefs } from "pinia";
 
+const { show: dialogOpen } = storeToRefs(useDialog())
 const sheetManager = useSheetManager();
 const { searchFilter, panel, selectedItem, loadingItems, filteredItems } =
   storeToRefs(sheetManager);
@@ -301,8 +302,10 @@ const panelTitle = computed(() => {
   }
 });
 
-watch(selectedItem, () => {
-  navDrawer.value = false;
+watchEffect(() => {
+  if (dialogOpen.value || selectedItem.value) {
+    navDrawer.value = false;
+  }
 });
 </script>
 
