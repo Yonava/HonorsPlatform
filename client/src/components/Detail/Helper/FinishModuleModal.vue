@@ -98,7 +98,7 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from "vue";
 import { Grade, Module, CompletedModule } from '../../../SheetTypes'
-import { moveRowToRange, Range } from '../../../SheetsAPI'
+import { moveRowToRange } from '../../../SheetsAPI'
 import { unmapCompletedModules } from '../../../DataMappers'
 
 const props = defineProps<{
@@ -147,8 +147,8 @@ async function moveToCompleted() {
     ...completedModuleData.value
   }
   await moveRowToRange(
-    Range.MODULES,
-    Range.COMPLETED_MODULES,
+    'Modules',
+    'Completed Modules',
     props.module.row,
     unmapCompletedModules([movedModule.value])
   )

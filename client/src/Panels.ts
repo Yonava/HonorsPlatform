@@ -14,7 +14,6 @@ import ThesisDetail from './components/Detail/ThesisDetail.vue';
 import ThesisListItem from './components/ListItem/ThesisListItem.vue';
 
 import { markRaw } from 'vue';
-import { Range } from './SheetsAPI';
 
 import { tools } from './AdditionalTools';
 import { sortOptions } from './SortOptions'
@@ -25,6 +24,8 @@ import {
   unmapStudents,
   mapGraduates,
   unmapGraduates,
+  mapGradEngagements,
+  unmapGradEngagements,
   mapModules,
   unmapModules,
   mapCompletedModules,
@@ -47,7 +48,7 @@ export const panels = {
     },
     color: 'blue',
     icon: 'mdi-account-group',
-    sheetRange: Range.STUDENTS,
+    sheetRange: 'Students',
     mappers: {
       map: mapStudents,
       unmap: unmapStudents
@@ -67,7 +68,7 @@ export const panels = {
     },
     color: 'purple',
     icon: 'mdi-account-school',
-    sheetRange: Range.GRADUATES,
+    sheetRange: 'Graduates',
     mappers: {
       map: mapGraduates,
       unmap: unmapGraduates
@@ -86,7 +87,7 @@ export const panels = {
     },
     color: 'orange',
     icon: 'mdi-book-open-variant',
-    sheetRange: Range.MODULES,
+    sheetRange: 'Modules',
     mappers: {
       map: mapModules,
       unmap: unmapModules
@@ -105,7 +106,7 @@ export const panels = {
     },
     color: 'red',
     icon: 'mdi-book',
-    sheetRange: Range.COMPLETED_MODULES,
+    sheetRange: 'Completed Modules',
     mappers: {
       map: mapCompletedModules,
       unmap: unmapCompletedModules
@@ -124,13 +125,28 @@ export const panels = {
     },
     color: 'green',
     icon: 'mdi-application-edit-outline',
-    sheetRange: Range.THESES,
+    sheetRange: 'Theses',
     mappers: {
       map: mapTheses,
       unmap: unmapTheses
     },
     sortOptions: sortOptions.THESES
-  }
+  },
+  GRADUATE_ENGAGEMENTS: {
+    tools: [],
+    title: {
+      singular: 'Graduate Engagement',
+      plural: 'Graduate Engagements'
+    },
+    color: 'pink',
+    icon: 'mdi-account-tie',
+    sheetRange: 'Graduate Engagements',
+    mappers: {
+      map: mapGradEngagements,
+      unmap: unmapGradEngagements
+    },
+    sortOptions: []
+  },
 } as const;
 
 export type PanelName = keyof typeof panels;

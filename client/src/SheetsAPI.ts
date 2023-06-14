@@ -2,17 +2,7 @@ import axios from "axios";
 import router from "./router";
 import { useAuth } from "./store/useAuth";
 
-export enum Range {
-  STUDENTS = "Students",
-  MODULES = "Modules",
-  GRADUATES = "Graduates",
-  COMPLETED_MODULES = "Completed Modules",
-  ANNOUNCEMENTS = "Announcements",
-  GRAD_ENGAGEMENT = "Grad Engagement",
-  REGISTRAR_LIST = "Registrar List",
-  THESES = "Theses",
-  TEMPORARY_DATA = "Temporary Data",
-}
+export type Range = "Students" | "Modules" | "Graduates" | "Completed Modules" | "Announcements" | "Grad Engagements" | "Registrar List" | "Theses" | "Temporary Data";
 
 // response delay to allow for Google Sheets API to update
 const responseDelay = 100;

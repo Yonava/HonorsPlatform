@@ -81,7 +81,7 @@ import EngagementTracking from "./Helper/EngagementTracking.vue";
 import DetailHeader from "./Helper/DetailHeader.vue";
 
 import { ref, computed } from "vue";
-import { moveRowToRange, Range } from "../../SheetsAPI";
+import { moveRowToRange } from "../../SheetsAPI";
 import { unmapStudents } from "../../DataMappers";
 import type { GradEngagement } from "../../SheetTypes";
 import {
@@ -149,8 +149,8 @@ async function moveToStudents() {
   const _grad = JSON.parse(JSON.stringify(grad.value));
 
   await moveRowToRange(
-    Range.GRADUATES,
-    Range.STUDENTS,
+    'Graduates',
+    'Students',
     grad.value.row,
     await unmapStudents([
       {

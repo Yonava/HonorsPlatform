@@ -64,14 +64,14 @@ import EngagementView from './EngagementView.vue'
 import LockArea from './LockArea.vue'
 import { GradEngagement } from '../../../SheetTypes'
 import GradEngagementModal from './GradEngagementModal.vue'
-import { mapGradEngagement, unmapGradEngagement } from '../../../DataMappers'
+import { mapGradEngagements, unmapGradEngagements } from '../../../DataMappers'
 import {
   getEvery,
   clearByRow,
   postInRange,
-  Range,
   updateByRow
 } from '../../../SheetsAPI'
+import { useSheetManager } from '../../../store/useSheetManager'
 
 const props = defineProps<{
   id: string | undefined
@@ -99,8 +99,8 @@ watch(() => props.id , async () => {
 async function fetchEngagements() {
   loading.value = true
   engagements.value = []
-  const events = await getEvery(Range.GRAD_ENGAGEMENT)
-  engagements.value = mapGradEngagement(events).filter(e => e.gradId === props.id)
+  const events = await getEvery('Grad Engagements')
+  engagements.value = mapGradEngagements(events).filter(e => e.gradId === props.id)
   emits('update', engagements.value)
   loading.value = false
 }
@@ -108,19 +108,19 @@ async function fetchEngagements() {
 async function addEngagementEvent(event: GradEngagement) {
   event.gradId = props.id
   loading.value = true
-  await postInRange(Range.GRAD_ENGAGEMENT, unmapGradEngagement([event]))
+  await postInRange('Grad Engagements', unmapGradEngagements([event]))
   await fetchEngagements()
 }
 
 async function updateEngagementEvent(event: GradEngagement) {
   loading.value = true
-  await updateByRow(Range.GRAD_ENGAGEMENT, event.row, unmapGradEngagement([event]))
+  await updateByRow('Grad Engagements', event.row, unmapGradEngagements([event]))
   await fetchEngagements()
 }
 
 async function deleteEngagementEvent(event: GradEngagement) {
   loading.value = true
-  await clearByRow(Range.GRAD_ENGAGEMENT, event.row)
+  await clearByRow('Grad Engagements', event.row)
   await fetchEngagements()
 }
 
@@ -137,6 +137,7 @@ function closeModal() {
 function getNewEngagement(): GradEngagement {
   return clone({
     row: 0,
+    sysId: useSheetManager().newSysId(),
     gradId: '',
     event: '',
     dateTime: '',

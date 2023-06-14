@@ -69,7 +69,6 @@ import {
   getEvery,
   clearByRow,
   postInRange,
-  Range,
   updateByRow
 } from '../../../SheetsAPI'
 
@@ -101,7 +100,7 @@ watch(() => props.id , async () => {
 async function fetch() {
   loading.value = true
   modules.value = []
-  const events = await getEvery(Range.MODULES)
+  const events = await getEvery('Modules')
   modules.value = mapModules(events).filter(e => e.studentId === props.id)
   emits('update', modules.value)
   loading.value = false
@@ -112,9 +111,9 @@ async function updateModule(newModule: Module) {
   closeModal()
 
   if (newModule && newModule.row === -1) {
-    await postInRange(Range.MODULES, unmapModules([newModule]))
+    await postInRange('Modules', unmapModules([newModule]))
   } else if (newModule) {
-    await updateByRow(Range.MODULES, newModule.row, unmapModules([newModule]))
+    await updateByRow('Modules', newModule.row, unmapModules([newModule]))
   }
 
   await fetch()
@@ -122,7 +121,7 @@ async function updateModule(newModule: Module) {
 
 async function deleteModule(event: Module) {
   loading.value = true
-  await clearByRow(Range.MODULES, event.row)
+  await clearByRow('Modules', event.row)
   await fetch()
 }
 

@@ -57,7 +57,7 @@
 </template>
 
 <script setup lang="ts">
-import { Range, getEvery, replaceRange } from "../SheetsAPI";
+import { getEvery, replaceRange } from "../SheetsAPI";
 import { ref, computed, watch } from "vue";
 import { termValidator, getCurrentTerm } from "../TermValidator";
 
@@ -71,8 +71,8 @@ const hasSucceeded = ref(false);
 
 async function generateRegistrarList() {
   loading.value = true;
-  const students = await getEvery(Range.STUDENTS);
-  const completedModules = await getEvery(Range.COMPLETED_MODULES)
+  const students = await getEvery('Students');
+  const completedModules = await getEvery('Completed Modules')
   const termColumn = 4;
   const modulesInTerm = completedModules.filter((module) => {
     if (!module[termColumn]) return false
@@ -95,7 +95,7 @@ async function generateRegistrarList() {
     "Course Code",
     `Generated on ${new Date().toLocaleString()} for ${term.value.toUpperCase()}`
   ]);
-  await replaceRange(Range.REGISTRAR_LIST, output);
+  await replaceRange('Registrar List', output);
   loading.value = false;
   success.value = true;
   hasSucceeded.value = true;

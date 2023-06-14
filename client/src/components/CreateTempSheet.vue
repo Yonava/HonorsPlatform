@@ -30,7 +30,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { headerRowMemo, getEvery, replaceRange, Range } from '../SheetsAPI'
+import { headerRowMemo, getEvery, replaceRange } from '../SheetsAPI'
 import { useDialog } from '../store/useDialog'
 import { useSheetManager } from '../store/useSheetManager'
 
@@ -46,7 +46,7 @@ const createTempSheet = async () => {
   const selectedIndices = headerRow.map((header, i) => selectedHeaders.value.includes(header) ? i : -1).filter(i => i !== -1)
 
     await replaceRange(
-    Range.TEMPORARY_DATA,
+    'Temporary Data',
     [
       headerRow.filter((_, i) => selectedIndices.includes(i)),
       ...items.map(student => selectedIndices.map(i => student[i]))
