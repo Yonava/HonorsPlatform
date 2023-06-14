@@ -101,13 +101,13 @@
           </div>
         </v-sheet>
       </div>
-      <div v-if="lgAndUp && !selectedItem">
+      <div v-if="mdAndUp && !selectedItem">
         <img
           src="../assets/honorsLogo.jpeg"
           class="honors-logo"
         >
         <span class="software-version">
-          prerelease v0.77.1 (beta)
+          {{ version }}
         </span>
       </div>
     </v-main>
@@ -146,7 +146,7 @@ import { useDisplay } from 'vuetify'
 
 import { useSheetManager } from '../store/useSheetManager'
 import { storeToRefs } from 'pinia'
-import { getPanel, panels } from '../Panels'
+import { getPanel, panels, version } from '../Panels'
 
 const sheetManager = useSheetManager()
 const { selectedItem, panel } = storeToRefs(sheetManager)

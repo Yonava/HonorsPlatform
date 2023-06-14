@@ -91,7 +91,7 @@
           <SortPanel class="mt-5" />
         </div>
         <span style="font-size: 10px">
-          prerelease v0.77.1 (beta)
+          {{ version }}
         </span>
       </div>
     </v-navigation-drawer>
@@ -242,7 +242,7 @@ import { useDisplay } from "vuetify";
 import { useKeyBindings } from "../../KeyBindings";
 import { useDialog } from '../../store/useDialog'
 
-import { panels, Panel } from "../../Panels";
+import { panels, Panel, version } from "../../Panels";
 import { useSheetManager } from "../../store/useSheetManager";
 import { storeToRefs } from "pinia";
 

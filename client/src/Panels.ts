@@ -136,3 +136,4 @@ export const panels = {
 export type PanelName = keyof typeof panels;
 export type Panel = typeof panels[PanelName];
 export const getPanel = (panelName: PanelName) => panels[panelName];
+export const version = 'prerelease v0.78 (beta)'
