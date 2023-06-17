@@ -140,7 +140,7 @@ export const panels = {
     },
     color: 'pink',
     icon: 'mdi-account-tie',
-    sheetRange: 'Graduate Engagements',
+    sheetRange: 'Grad Engagements',
     mappers: {
       map: mapGradEngagements,
       unmap: unmapGradEngagements

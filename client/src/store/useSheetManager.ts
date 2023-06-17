@@ -5,6 +5,7 @@ import { getPanel, Panel } from '../Panels';
 import router from '../router';
 import { useSyncState } from './useSyncState';
 import { warn } from '../Warn'
+import { useDocumentCache } from './useDocumentCache';
 
 export type JumpObject = {
   key: string,
@@ -138,10 +139,10 @@ export const useSheetManager = defineStore('sheetManager', {
       await clearByRow(this.panel.sheetRange, row)
       await this.fetchItems()
     },
-    async addItem(panel = useSheetManager().panel, pin = true, columns?: any[]) {
+    async addItem(panel?: null | Panel, pin = true, columns?: any[]) {
       this.searchFilter = ''
 
-      const [newItem] = await panel.mappers.map([
+      const [newItem] = await (panel ?? this.panel).mappers.map([
         columns ?? [this.newSysId()]
       ]);
       newItem.row = null;
