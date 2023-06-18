@@ -1,15 +1,12 @@
 import { defineStore } from 'pinia'
-import { getEvery, clearByRow, updateByRow, postInRange } from '../SheetsAPI';
 import { SheetItem } from '../SheetTypes';
 import { getPanel, Panel } from '../Panels';
 import router from '../router';
 import { useSyncState } from './useSyncState';
-import { warn } from '../Warn'
 import { useDocumentCache } from './useDocumentCache';
 
 export type JumpObject = {
-  key: string,
-  value: string,
+  sysId: string,
   fallbackFn?: () => void // If the item you are jumping to is not found, this function will be called
 };
 
@@ -20,9 +17,7 @@ export type SortOption = {
 
 export const useSheetManager = defineStore('sheetManager', {
   state: () => ({
-    selectedItem: null as SheetItem | null,
     panel: getPanel('STUDENTS'),
-    items: [] as SheetItem[],
     searchFilter: '',
     pinnedItem: null as SheetItem | null,
     loadingItems: false,
@@ -33,10 +28,14 @@ export const useSheetManager = defineStore('sheetManager', {
   }),
   getters: {
     filteredItems(state) {
-      const outputArray = [...state.items];
+      const documents = useDocumentCache();
+      const outputArray = [...documents[state.panel.sheetRange].list];
       if (state.pinnedItem) {
-        outputArray.splice(outputArray.findIndex(item => item.sysId === state.pinnedItem?.sysId), 1);
-        outputArray.unshift(state.pinnedItem);
+        const indexOfPinnedItem = outputArray.findIndex(item => item.sysId === state.pinnedItem?.sysId);
+        if (indexOfPinnedItem !== -1) {
+          outputArray.splice(indexOfPinnedItem, 1);
+          outputArray.unshift(state.pinnedItem);
+        }
       }
       if (state.searchFilter === '') {
         return outputArray;
@@ -55,20 +54,17 @@ export const useSheetManager = defineStore('sheetManager', {
     setSearchFilter(filter: string) {
       this.searchFilter = filter;
     },
-    setItems(items: SheetItem[]) {
-      this.pinnedItem = null;
-      this.items = items;
-    },
     async setPanel(panel: Panel, jumpTo?: JumpObject) {
-      this.selectedItem = null;
-      this.pinnedItem = null;
+      this.panel = panel;
+
+      this.setPinnedItem(null);
+      this.setSearchFilter('');
+
       this.sort = {
         func: null,
         ascending: true
       };
-      this.items = [];
-      this.panel = panel;
-      this.searchFilter = '';
+
       document.title = panel.title.plural + ' - Honors Program';
       router.push({
         name: 'panel',
@@ -76,110 +72,43 @@ export const useSheetManager = defineStore('sheetManager', {
           type: panel.title.plural.toLowerCase()
         }
       });
+
       await this.fetchItems();
+
       if (jumpTo) {
-        this.jumpToItem(jumpTo);
+        this.jumpToItem(jumpTo.sysId, jumpTo.fallbackFn);
       }
     },
     async fetchItems() {
+      const documents = useDocumentCache();
+      const { refreshCache } = documents;
       this.loadingItems = true;
-      this.items = [];
-      const range = this.panel.sheetRange;
-      const data = await getEvery(range);
-      const items = await this.panel.mappers.map(data);
-      this.items = items;
+      if (documents[this.panel.sheetRange].list.length === 0) {
+        await refreshCache();
+      }
       this.setSort()
-      this.selectedItem = this.items.find(item => item.row === this.selectedItem?.row) ?? null;
-      this.pinnedItem = this.items.find(item => item.row === this.pinnedItem?.row) ?? null;
       this.loadingItems = false;
       useSyncState().$reset()
     },
-    jumpToItem(jumpObject: JumpObject) {
-      const item = this.items.find(item => item[jumpObject.key] === jumpObject.value);
-      if (!item) {
-        console.error('useStateManager: Could not find item to select');
-        if (jumpObject.fallbackFn) {
-          jumpObject.fallbackFn();
-        }
-        return;
+    jumpToItem(sysId: string, fallbackFn?: () => void) {
+      const { setSelectedItemBySysId } = useDocumentCache();
+      const setItemSuccessfully = setSelectedItemBySysId(sysId)
+      if (!setItemSuccessfully) {
+        console.error('useStateManager: item not found');
+        fallbackFn?.()
       }
-      this.selectedItem = item;
-    },
-    setItem(item: SheetItem | null) {
-      this.selectedItem = item;
     },
     setPinnedItem(item: SheetItem | null) {
       this.pinnedItem = item;
-    },
-    async deleteItem(options?: { item?: SheetItem, showWarning?: boolean }) {
-
-      let { item, showWarning } = options ?? { showWarning: true, item: null }
-
-      if (!item) {
-        if (!this.selectedItem) {
-          console.error('useStateManager: No item selected for update');
-          return;
-        }
-        item = this.selectedItem;
-      }
-
-      if (showWarning) {
-        try {
-          await warn()
-        } catch {
-          return
-        }
-      }
-
-      this.loadingItems = true
-      const { row } = item
-      if (item === this.selectedItem) {
-        this.selectedItem = null
-      }
-      await clearByRow(this.panel.sheetRange, row)
-      await this.fetchItems()
-    },
-    async addItem(panel?: null | Panel, pin = true, columns?: any[]) {
-      this.searchFilter = ''
-
-      const [newItem] = await (panel ?? this.panel).mappers.map([
-        columns ?? [this.newSysId()]
-      ]);
-      newItem.row = null;
-
-      this.selectedItem = newItem;
-      this.items.unshift(newItem);
-      if (pin) {
-        this.pinnedItem = newItem;
-      }
-
-      // if columns is overwritten, immediately update the item
-      if (columns) {
-        await this.updateItem(newItem);
-      }
-    },
-    async updateItem(item?: SheetItem) {
-      if (!item) {
-        if (!this.selectedItem) {
-          console.error('useStateManager: No item selected for update');
-          return;
-        }
-        item = this.selectedItem;
-      }
-      useSyncState().processing = true
-      // row is null when the item has never been saved to the sheet
-      if (item.row === null || item.row === undefined) {
-        const row = await postInRange(this.panel.sheetRange, await this.panel.mappers.unmap([item]))
-        item.row = row
-      } else {
-        await updateByRow(this.panel.sheetRange, item.row, await this.panel.mappers.unmap([item]))
-      }
-      useSyncState().$reset()
     },
     newSysId() {
       return Math.random().toString(36).substring(2, 15);
     },
     setSort(sortObject?: SortOption) {
+
+      const documents = useDocumentCache();
+      const { list: itemsOnActivePanel } = documents[this.panel.sheetRange];
+
       if (!sortObject) {
         sortObject = this.sort;
       }
@@ -187,11 +116,14 @@ export const useSheetManager = defineStore('sheetManager', {
         console.warn('useStateManager (setSort): No sort function provided')
         return;
       }
+
       this.sort = sortObject;
-      this.pinnedItem = null;
-      this.items.sort(sortObject.func);
+      this.setPinnedItem(null);
+
+      itemsOnActivePanel.sort(sortObject.func);
+
       if (!sortObject.ascending) {
-        this.items.reverse();
+        itemsOnActivePanel.reverse();
       }
     }
   }

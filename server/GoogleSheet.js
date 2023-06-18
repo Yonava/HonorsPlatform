@@ -22,7 +22,6 @@ module.exports = class GoogleSheet {
         auth,
       });
       this.spreadsheetId = spreadsheetId;
-      console.log(this.spreadsheetId)
       return this;
     } catch (e) {
       throw e

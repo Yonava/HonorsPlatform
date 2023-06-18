@@ -204,17 +204,19 @@ import {
 } from "../../StudentTools";
 
 import { useSheetManager } from "../../store/useSheetManager";
+import { useDocumentCache } from "../../store/useDocumentCache";
 import { useSyncState } from "../../store/useSyncState";
 import { useDialog } from "../../store/useDialog";
 import { storeToRefs } from "pinia";
 import { useUpdateItem } from "../../TrackItemForUpdate";
 import { warn } from '../../Warn'
+import { toRefs } from 'vue'
 
-const sheetManager = useSheetManager();
-const { selectedItem: student, items } = storeToRefs(sheetManager);
-useUpdateItem(student);
 const { processing } = storeToRefs(useSyncState());
 const { open, close } = useDialog();
+
+const { Students } = useDocumentCache();
+const { list: items, selected: student } = toRefs(Students);
 
 const modules = ref<Module[]>([]);
 const loadingModules = ref(false);
@@ -313,8 +315,7 @@ function viewThesis() {
               color: "blue",
               onClick: () => {
                 sheetManager.setPanel(getPanel("STUDENTS"), {
-                  key: "sysId",
-                  value: _student.sysId,
+                  sysId: _student.sysId,
                 });
                 close();
               },
@@ -368,8 +369,7 @@ async function graduate() {
           color: getPanel("GRADUATES").color,
           onClick: () => {
             sheetManager.setPanel(getPanel("GRADUATES"), {
-              key: "sysId",
-              value: _student.sysId
+              sysId: _student.sysId
             });
             close();
           },

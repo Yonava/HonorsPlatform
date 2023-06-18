@@ -186,8 +186,7 @@ async function moveToStudents() {
           color: `${getPanel('STUDENTS').color}-darken-2`,
           onClick: () => {
             sheetManager.setPanel(getPanel('STUDENTS'), {
-              key: 'sysId',
-              value: _grad.sysId,
+              sysId: _grad.sysId,
             });
             close();
           },

@@ -1,12 +1,14 @@
 import { useSheetManager } from "./store/useSheetManager";
 import { storeToRefs } from "pinia";
 import { useSyncState } from "./store/useSyncState";
+import { useDocumentCache } from "./store/useDocumentCache";
 import { watch } from "vue";
 import type { Ref } from "vue";
 
 export function useUpdateItem(item: Ref<any>) {
-  const { updateItem, setItems } = useSheetManager();
-  const { items, panel } = storeToRefs(useSheetManager());
+  const { updateItem } = useSheetManager();
+  const { panel } = storeToRefs(useSheetManager());
+  const { removeItemBySysId } = useDocumentCache();
   const { setProcessing } = useSyncState();
 
   let timeout = setTimeout(() => { }, 0)
@@ -17,7 +19,7 @@ export function useUpdateItem(item: Ref<any>) {
       const [defaultItem] = await panel.value.mappers.map([['sysId']])
       const { sysId: newSysId, row: newRow, ...newRest } = defaultItem
       if (JSON.stringify(rest) === JSON.stringify(newRest)) {
-        setItems([...items.value].filter(i => i.sysId !== oldItem.sysId))
+        removeItemBySysId(sysId)
         return
       }
     }
