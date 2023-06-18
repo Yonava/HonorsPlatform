@@ -15,7 +15,7 @@
             <v-dialog v-model="idDialog" width="300">
               <template #activator="{ props }">
                 <v-btn v-bind="props" size="x-small" color="red">
-                  Add Student ID
+                  Add Student ID {{ student.row }}
                 </v-btn>
               </template>
               <div class="student-id-dialog pa-4">
@@ -216,6 +216,7 @@ const { setPanel, newSysId } = useSheetManager();
 
 const { Students, addItemToCache, setSelectedItem } = useDocumentCache();
 const { list: items, selected: student } = toRefs(Students);
+useUpdateItem(student);
 
 const modules = ref<Module[]>([]);
 const loadingModules = ref(false);

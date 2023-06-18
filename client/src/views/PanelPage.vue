@@ -146,9 +146,11 @@ import { useDisplay } from 'vuetify'
 
 import { useSheetManager } from '../store/useSheetManager'
 import { useDocumentCache } from '../store/useDocumentCache'
+import { storeToRefs } from 'pinia'
 import { getPanel, panels, version } from '../Panels'
 
-const { getActivePanel, setPanel, fetchItems } = useSheetManager()
+const { setPanel, fetchItems } = useSheetManager()
+const { getActivePanel } = storeToRefs(useSheetManager())
 const { getSelectedItem, setSelectedItem } = useDocumentCache()
 
 const route = useRoute()
@@ -156,7 +158,7 @@ if (route.query.type) {
   const newPanel = Object.values(panels).find((p) => p.title.plural.toLowerCase() === route.query.type)
   if (newPanel) setPanel(newPanel)
 } else {
-  document.title = getActivePanel.title.plural + ' - Honors Program'
+  document.title = getActivePanel.value.title.plural + ' - Honors Program'
   fetchItems()
 }
 

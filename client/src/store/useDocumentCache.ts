@@ -148,7 +148,7 @@ export const useDocumentCache = defineStore("documentCache", {
     },
     async updateItem(item?: types.SheetItem, panelObject?: panels.Panel) {
       const { panel: activePanel } = useSheetManager();
-      const { setProcessing, $reset } = useSyncState();
+      const { setProcessing } = useSyncState();
 
       const panel = panelObject ?? activePanel;
       const itemToUpdate = item ?? this[panel.sheetRange].selected;
@@ -175,7 +175,7 @@ export const useDocumentCache = defineStore("documentCache", {
         )
       }
 
-      $reset();
+      useSyncState().$reset();
     },
   }
 });

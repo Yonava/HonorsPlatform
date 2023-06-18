@@ -1,8 +1,8 @@
-import { useSheetManager } from './store/useSheetManager';
+import { useDocumentCache } from './store/useDocumentCache';
 
 export const addActions = {
-  STUDENTS: async () => await useSheetManager().addItem(),
-  GRADUATES: async () => await useSheetManager().addItem(),
+  STUDENTS: async () => await useDocumentCache().addItemToCache(),
+  GRADUATES: async () => await useDocumentCache().addItemToCache(),
   MODULES: async () => null,
   COMPLETED_MODULES: async () => null,
   THESES: async () => null,
