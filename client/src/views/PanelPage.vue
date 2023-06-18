@@ -2,7 +2,7 @@
   <div id="panel-parent">
     <v-sheet
       class="background-matte"
-      :color="`${panel.color}-lighten-4`"
+      :color="`${getActivePanel.color}-lighten-4`"
     ></v-sheet>
     <AppBar />
     <v-main>
@@ -15,7 +15,7 @@
       >
         <v-sheet
           v-if="smAndUp"
-          :color="`${panel.color}-darken-2`"
+          :color="`${getActivePanel.color}-darken-2`"
           class="d-flex align-center flex-column flex-start pt-3"
           style="min-width: 80px; max-width: 80px; height: 100%; background: green"
         >
@@ -60,7 +60,7 @@
           class="d-flex flex-grow-1 flex-column align-center"
         >
           <v-sheet
-            :color="`${panel.color}-lighten-4`"
+            :color="`${getActivePanel.color}-lighten-4`"
             style="width: 100%;"
           >
             <PanelList />
@@ -69,7 +69,7 @@
         <v-sheet
           v-if="mdAndUp"
           @mousedown="resizeStart"
-          :color="resizing ? panel.color : 'transparent'"
+          :color="resizing ? getActivePanel.color : 'transparent'"
           :style="{
             width: '3px',
             height: '100%',
@@ -86,22 +86,22 @@
           class="d-flex flex-grow-1 flex-column align-center"
         >
           <div
-            v-if="selectedItem"
+            v-if="getSelectedItem()"
             style="width: 100%"
           >
-            <component :is="panel.components.detail" />
+            <component :is="getActivePanel.components.detail" />
           </div>
           <div
             v-else
             class="d-flex flex-column align-center justify-center"
           >
             <v-icon style="font-size: 35vw; opacity: 0.1;">
-              {{ panel.icon }}
+              {{ getActivePanel.icon }}
             </v-icon>
           </div>
         </v-sheet>
       </div>
-      <div v-if="mdAndUp && !selectedItem">
+      <div v-if="mdAndUp && !getSelectedItem()">
         <img
           src="../assets/honorsLogo.jpeg"
           class="honors-logo"
@@ -122,8 +122,8 @@
       style="width: 100%; height: calc(100% - 120px);"
     >
       <component
-        v-if="selectedItem"
-        :is="panel.components.detail"
+        v-if="getSelectedItem()"
+        :is="getActivePanel.components.detail"
       />
     </v-navigation-drawer>
   </div>
@@ -145,19 +145,19 @@ import { useKeyBindings } from '../KeyBindings'
 import { useDisplay } from 'vuetify'
 
 import { useSheetManager } from '../store/useSheetManager'
-import { storeToRefs } from 'pinia'
+import { useDocumentCache } from '../store/useDocumentCache'
 import { getPanel, panels, version } from '../Panels'
 
-const sheetManager = useSheetManager()
-const { selectedItem, panel } = storeToRefs(sheetManager)
+const { getActivePanel, setPanel, fetchItems } = useSheetManager()
+const { getSelectedItem, setSelectedItem } = useDocumentCache()
 
 const route = useRoute()
 if (route.query.type) {
   const newPanel = Object.values(panels).find((p) => p.title.plural.toLowerCase() === route.query.type)
-  if (newPanel) sheetManager.setPanel(newPanel)
+  if (newPanel) setPanel(newPanel)
 } else {
-  document.title = panel.value.title.plural + ' - Honors Program'
-  sheetManager.fetchItems()
+  document.title = getActivePanel.title.plural + ' - Honors Program'
+  fetchItems()
 }
 
 const {
@@ -168,21 +168,21 @@ const {
 } = useDisplay()
 
 const showDetailDrawer = computed({
-  get: () => !!selectedItem.value,
+  get: () => !!getSelectedItem(),
   set: (v) => {
     if (!v) {
-      selectedItem.value = null
+      setSelectedItem(null)
     }
   }
 })
 
 useKeyBindings({
-  'r': () => sheetManager.fetchItems(),
-  '1': () => sheetManager.setPanel(getPanel('STUDENTS')),
-  '2': () => sheetManager.setPanel(getPanel('GRADUATES')),
-  '3': () => sheetManager.setPanel(getPanel('MODULES')),
-  '4': () => sheetManager.setPanel(getPanel('COMPLETED_MODULES')),
-  '5': () => sheetManager.setPanel(getPanel('THESES')),
+  'r': () => fetchItems(),
+  '1': () => setPanel(getPanel('STUDENTS')),
+  '2': () => setPanel(getPanel('GRADUATES')),
+  '3': () => setPanel(getPanel('MODULES')),
+  '4': () => setPanel(getPanel('COMPLETED_MODULES')),
+  '5': () => setPanel(getPanel('THESES')),
 })
 
 function getDefaultWidth() {

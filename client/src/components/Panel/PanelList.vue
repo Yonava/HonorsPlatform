@@ -8,7 +8,7 @@
         <div
           v-for="item in filteredItems.slice(0, itemsToDisplay)"
           :key="item"
-          @click="setItem(item)"
+          @click="setSelectedItem(item)"
           :class="[
             'item-card',
             'pa-3',
@@ -65,12 +65,14 @@ import {
   watch
 } from 'vue'
 
+import { useDocumentCache } from '../../store/useDocumentCache'
 import { useSheetManager } from '../../store/useSheetManager'
 import { storeToRefs } from 'pinia'
 
+const { setSelectedItem, getSelectedItem } = useDocumentCache()
+
 const sheetManager = useSheetManager()
-const { filteredItems, selectedItem, loadingItems, panel, searchFilter } = storeToRefs(sheetManager)
-const { setItem } = sheetManager
+const { filteredItems, loadingItems, panel, searchFilter } = storeToRefs(sheetManager)
 
 const itemsToDisplay = ref(filteredItems.value.length)
 
@@ -90,8 +92,8 @@ watch(filteredItems, () => {
 })
 
 const isSelected = item => {
-  if (!selectedItem.value) return false
-  return selectedItem.value.sysId === item.sysId
+  if (!getSelectedItem()) return false
+  return getSelectedItem().sysId === item.sysId
 }
 </script>
 

@@ -80,7 +80,7 @@ import DetailFrame from "./Helper/DetailFrame.vue";
 import EngagementTracking from "./Helper/EngagementTracking.vue";
 import DetailHeader from "./Helper/DetailHeader.vue";
 
-import { ref, computed } from "vue";
+import { ref, computed, toRefs } from "vue";
 import { moveRowToRange } from "../../SheetsAPI";
 import { unmapStudents } from "../../DataMappers";
 import type { GradEngagement } from "../../SheetTypes";
@@ -91,15 +91,17 @@ import {
 } from "../../EmailUtilities";
 
 import { useSheetManager } from "../../store/useSheetManager";
-import { storeToRefs } from "pinia";
+import { useDocumentCache } from "../../store/useDocumentCache";
 import { useUpdateItem } from "../../TrackItemForUpdate";
 import { useDialog } from "../../store/useDialog";
 import { warn } from "../../Warn";
 import { getPanel } from "../../Panels";
 
-const sheetManager = useSheetManager();
-const { selectedItem: grad } = storeToRefs(sheetManager);
+const { fetchItems, setPanel } = useSheetManager();
+const { Graduates } = useDocumentCache();
+const { selected: grad } = toRefs(Graduates)
 useUpdateItem(grad);
+
 const { open, close } = useDialog();
 
 const movingGrad = ref(false);
@@ -169,7 +171,7 @@ async function moveToStudents() {
     ])
   );
 
-  sheetManager.fetchItems();
+  fetchItems();
 
   open({
     body: {
@@ -185,7 +187,7 @@ async function moveToStudents() {
           text: `View ${_grad.name}s Student Profile`,
           color: `${getPanel('STUDENTS').color}-darken-2`,
           onClick: () => {
-            sheetManager.setPanel(getPanel('STUDENTS'), {
+            setPanel(getPanel('STUDENTS'), {
               sysId: _grad.sysId,
             });
             close();

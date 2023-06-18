@@ -33,6 +33,13 @@ export const useDocumentCache = defineStore("documentCache", {
       selected: null as types.Thesis | null,
     },
   }),
+  getters: {
+    getSelectedItem: (state) => (panelObject?: panels.Panel) => {
+      const { panel: activePanel } = useSheetManager();
+      const panel = panelObject ?? activePanel;
+      return state[panel.sheetRange].selected;
+    }
+  },
   actions: {
     async refreshCache(panelObject?: panels.Panel) {
 

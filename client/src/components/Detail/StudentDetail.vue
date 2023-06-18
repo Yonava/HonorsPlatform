@@ -207,15 +207,14 @@ import { useSheetManager } from "../../store/useSheetManager";
 import { useDocumentCache } from "../../store/useDocumentCache";
 import { useSyncState } from "../../store/useSyncState";
 import { useDialog } from "../../store/useDialog";
-import { storeToRefs } from "pinia";
 import { useUpdateItem } from "../../TrackItemForUpdate";
 import { warn } from '../../Warn'
 import { toRefs } from 'vue'
 
-const { processing } = storeToRefs(useSyncState());
 const { open, close } = useDialog();
+const { setPanel, newSysId } = useSheetManager();
 
-const { Students } = useDocumentCache();
+const { Students, addItemToCache, setSelectedItem } = useDocumentCache();
 const { list: items, selected: student } = toRefs(Students);
 
 const modules = ref<Module[]>([]);
@@ -279,7 +278,7 @@ function viewThesis() {
     return;
   }
   const _student = JSON.parse(JSON.stringify(student.value));
-  sheetManager.setPanel(getPanel("THESES"), {
+  setPanel(getPanel("THESES"), {
     key: "studentId",
     value: _student.id,
     fallbackFn: () => {
@@ -292,11 +291,11 @@ function viewThesis() {
               text: "Create",
               color: "green",
               onClick: () => {
-                sheetManager.addItem(
+                addItemToCache(
                   getPanel("THESES"),
                   true,
                   [
-                    sheetManager.newSysId(),
+                    newSysId(),
                     _student.id,
                     _student.name,
                     _student.email,
@@ -314,7 +313,7 @@ function viewThesis() {
               text: `Back to student profile`,
               color: "blue",
               onClick: () => {
-                sheetManager.setPanel(getPanel("STUDENTS"), {
+                setPanel(getPanel("STUDENTS"), {
                   sysId: _student.sysId,
                 });
                 close();
@@ -353,7 +352,7 @@ async function graduate() {
     return;
   }
   await moveToGraduates(_student);
-  sheetManager.setItem(null);
+  setSelectedItem(null);
   open({
     body: {
       title: "Student Graduated",
@@ -368,7 +367,7 @@ async function graduate() {
           text: `View new graduate profile`,
           color: getPanel("GRADUATES").color,
           onClick: () => {
-            sheetManager.setPanel(getPanel("GRADUATES"), {
+            setPanel(getPanel("GRADUATES"), {
               sysId: _student.sysId
             });
             close();

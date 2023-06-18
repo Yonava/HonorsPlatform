@@ -48,6 +48,9 @@ export const useSheetManager = defineStore('sheetManager', {
     },
     activeSort(state) {
       return state.sort;
+    },
+    getActivePanel(state) {
+      return state.panel;
     }
   },
   actions: {
