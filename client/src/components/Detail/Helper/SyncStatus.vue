@@ -1,7 +1,7 @@
 <template>
   <div>
     <div
-      v-if="processing"
+      v-if="syncing"
       class="d-flex flex-row align-center"
       style="height: 25px"
     >
@@ -31,5 +31,5 @@ import { useSyncState } from '../../../store/useSyncState'
 import { storeToRefs } from 'pinia'
 
 const syncState = useSyncState()
-const { syncTime, processing } = storeToRefs(syncState)
+const { syncTime, syncing } = storeToRefs(syncState)
 </script>
