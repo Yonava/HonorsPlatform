@@ -170,7 +170,7 @@ function update() {
 const showDialog = computed({
   get: () => {
     if (props.show && props.module) {
-      newModule.value = props.module.row === -1
+      newModule.value = props.module.row === null
     }
     return props.show
   },

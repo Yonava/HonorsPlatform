@@ -30,7 +30,9 @@ export async function getEvery(range: Range, addResponseDelay = true): Promise<s
     if (addResponseDelay) {
       await new Promise(resolve => setTimeout(resolve, responseDelay));
     }
+    console.log("getEvery", range);
     const { data } = (await axios.get(`/api/range/${range}`, requestHeaders()));
+    console.log("gotEvery", range, data)
     headerRowMemo[range] = data.shift();
     return data;
   } catch {

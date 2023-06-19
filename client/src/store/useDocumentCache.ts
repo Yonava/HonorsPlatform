@@ -96,6 +96,7 @@ export const useDocumentCache = defineStore("documentCache", {
     },
     async deleteItem(item?: types.SheetItem, panelObject?: panels.Panel, showWarning = true) {
       const { panel: activePanel } = useSheetManager();
+      const { setProcessing } = useSyncState();
 
       const panel = panelObject ?? activePanel;
       const itemToDelete = item ?? this[panel.sheetRange].selected;
@@ -120,10 +121,17 @@ export const useDocumentCache = defineStore("documentCache", {
         }
       }
 
+      setProcessing(true);
+
       this.removeItemFromCacheBySysId(sysId, panel);
       await clearByRow(panel.sheetRange, row);
+
+      useSyncState().$reset();
     },
     async addItemToCache(panelObject?: panels.Panel, pin = true, columns?: any[]) {
+
+      console.log('adding item to cache', panelObject?.sheetRange, pin, columns)
+
       const { setSearchFilter, panel: activePanel, newSysId, setPinnedItem } = useSheetManager();
       setSearchFilter("");
 
@@ -145,6 +153,8 @@ export const useDocumentCache = defineStore("documentCache", {
       if (columns) {
         await this.updateItem(newItem, panel);
       }
+
+      return newItem;
     },
     async updateItem(item?: types.SheetItem, panelObject?: panels.Panel) {
       const { panel: activePanel } = useSheetManager();
@@ -156,6 +166,13 @@ export const useDocumentCache = defineStore("documentCache", {
       if (!itemToUpdate) {
         console.error("useDocumentCache: No item to update");
         return;
+      }
+
+      const itemInList = this[panel.sheetRange].list.find(item => item.sysId === itemToUpdate.sysId);
+      if (itemInList) {
+        Object.assign(itemInList, itemToUpdate);
+      } else {
+        this[panel.sheetRange].list.unshift(itemToUpdate);
       }
 
       const { row } = itemToUpdate;

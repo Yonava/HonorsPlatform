@@ -26,7 +26,7 @@
         </h1>
       </div>
       <v-btn
-        @click="forceAuthorize"
+        @click="forceAuthorize()"
         color="red-darken-2"
         elevation="3"
         class="mb-12"

@@ -31,7 +31,7 @@
         ></v-progress-circular>
       </div>
       <div
-        v-else-if="modules.length === 0"
+        v-else-if="displayedModules.length === 0"
         style="font-weight: 200; color: red; font-size: 25px"
       >
         No modules in progress.
@@ -43,7 +43,7 @@
         <ModuleList
           @selected="i => openModal(i)"
           @delete="deleteModule($event)"
-          :modules="modules"
+          :modules="displayedModules"
         />
       </div>
       <ModuleDetailModal
@@ -58,12 +58,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
 import ModuleList from './ModuleList.vue'
 import LockArea from './LockArea.vue'
 import ModuleDetailModal from './ModuleDetailModal.vue'
+import { ref, computed, watch, toRefs, onMounted } from 'vue'
 import { Module } from '../../../SheetTypes'
+import { panels } from '../../../Panels'
 import { useSheetManager } from '../../../store/useSheetManager'
+import { useDocumentCache } from '../../../store/useDocumentCache'
 import { mapModules, unmapModules } from '../../../DataMappers'
 import {
   getEvery,
@@ -73,56 +75,39 @@ import {
 } from '../../../SheetsAPI'
 
 const { newSysId } = useSheetManager()
+const documents = useDocumentCache()
+const { refreshCache, deleteItem, addItemToCache, updateItem, Modules } = documents
+const { list: modules } = toRefs(Modules)
+const modulePanel = panels['MODULES']
+
+const loading = ref(true)
+onMounted(async () => {
+  const cachedModules = documents[modulePanel.sheetRange].list
+  if (cachedModules.length === 0) {
+    await refreshCache(modulePanel)
+  }
+  loading.value = false
+})
 
 const props = defineProps<{
   id: string | undefined
 }>()
 
-const clone = <T>(obj: T): T => JSON.parse(JSON.stringify(obj))
-
-const emits = defineEmits([
-  'update',
-  'loading-state'
-])
-const loading = ref(true)
-const modules = ref<Module[]>([])
-const selectedModule = ref<Module | undefined>(undefined)
 const showModal = ref(false)
+const selectedModule = ref<Module | undefined>(undefined)
 
-watch(loading, (val) => {
-  emits('loading-state', val)
+const displayedModules = computed(() => {
+  if (!props.id) return []
+  return modules.value.filter(e => e.studentId === props.id)
 })
 
-watch(() => props.id , async () => {
-  await fetch()
-}, { immediate: true })
-
-async function fetch() {
-  loading.value = true
-  modules.value = []
-  const events = await getEvery('Modules')
-  modules.value = mapModules(events).filter(e => e.studentId === props.id)
-  emits('update', modules.value)
-  loading.value = false
-}
-
 async function updateModule(newModule: Module) {
-  loading.value = true
   closeModal()
-
-  if (newModule && newModule.row === -1) {
-    await postInRange('Modules', unmapModules([newModule]))
-  } else if (newModule) {
-    await updateByRow('Modules', newModule.row, unmapModules([newModule]))
-  }
-
-  await fetch()
+  await updateItem(newModule, modulePanel)
 }
 
-async function deleteModule(event: Module) {
-  loading.value = true
-  await clearByRow('Modules', event.row)
-  await fetch()
+async function deleteModule(module: Module) {
+  await deleteItem(module, modulePanel)
 }
 
 function openModal(selected: Module) {
@@ -135,18 +120,16 @@ function closeModal() {
   selectedModule.value = undefined
 }
 
-function addNewModule() {
-  selectedModule.value = {
-    sysId: newSysId(),
-    studentId: props.id,
-    courseCode: '',
-    description: '',
-    term: '',
-    instructor: '',
-    docuSignCreated: '',
-    docuSignCompleted: '',
-    row: -1
-  }
+async function addNewModule() {
+  const [newItem] = await modulePanel.mappers.map([
+    [
+      newSysId(),
+      props.id,
+    ]
+  ]);
+  newItem.row = null;
+
+  selectedModule.value = newItem
   showModal.value = true
 }
 </script>

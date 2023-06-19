@@ -1,10 +1,6 @@
 <template>
   <div>
-    <DetailFrame
-      v-model="student.note"
-      :disableDelete="!canDelete"
-      disableReason="Cannot delete student with active modules, delete or mark modules as completed first."
-    >
+    <DetailFrame v-model="student.note">
       <template #main>
         <DetailHeader
           v-model="student.name"
@@ -105,11 +101,7 @@
           class="mt-2"
         ></v-autocomplete>
 
-        <ModuleFetch
-          @update="modules = $event"
-          @loading-state="loadingModules = $event"
-          :id="student.id"
-        />
+        <ModuleFetch :id="student.id" />
 
         <div style="width: 1px; height: 10px"></div>
 
@@ -218,7 +210,6 @@ const { Students, addItemToCache, setSelectedItem } = useDocumentCache();
 const { list: items, selected: student } = toRefs(Students);
 useUpdateItem(student);
 
-const modules = ref<Module[]>([]);
 const loadingModules = ref(false);
 
 const tempStudentId = ref("");
@@ -228,11 +219,6 @@ const idDialog = ref(false);
 const movingStudent = ref(false);
 
 const showAddNote = ref(false);
-
-const canDelete = computed(() => {
-  if (!student.value.id) return true;
-  return modules.value.length === 0 && !loadingModules.value;
-});
 
 function studentIdRule(studentId: string) {
   if (!studentId) return "Enter Student ID";
@@ -328,22 +314,21 @@ function viewThesis() {
 }
 
 async function graduate() {
-  if (!canDelete.value) {
-    open({
-      body: {
-        title: "Student Still Has Modules",
-        description: "This student still has modules. Please remove all modules from this student before graduating them.",
-        buttons: [
-          {
-            text: "Resolve",
-            color: getPanel("STUDENTS").color,
-            onClick: close,
-          }
-        ]
-      }
-    })
-    return;
-  }
+
+  // TODO: check if student has modules once canDelete is re-implemented
+    // open({
+    //   body: {
+    //     title: "Student Still Has Modules",
+    //     description: "This student still has modules. Please remove all modules from this student before graduating them.",
+    //     buttons: [
+    //       {
+    //         text: "Resolve",
+    //         color: getPanel("STUDENTS").color,
+    //         onClick: close,
+    //       }
+    //     ]
+    //   }
+    // })
   const _student = JSON.parse(JSON.stringify(student.value));
   movingStudent.value = true;
   try {
