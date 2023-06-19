@@ -54,12 +54,6 @@
         label="Graduation Date"
         prepend-icon="mdi-calendar"
       ></v-text-field>
-
-      <EngagementTracking
-        @update="engagements = $event"
-        @loading-state="loadingEngagements = $event"
-        :id="grad.id"
-      />
     </template>
     <template #buttons>
       <v-btn
@@ -77,7 +71,6 @@
 
 <script setup lang="ts">
 import DetailFrame from "./Helper/DetailFrame.vue";
-import EngagementTracking from "./Helper/EngagementTracking.vue";
 import DetailHeader from "./Helper/DetailHeader.vue";
 
 import { ref, computed, toRefs } from "vue";

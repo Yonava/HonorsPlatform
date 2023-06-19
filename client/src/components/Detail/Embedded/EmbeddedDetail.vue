@@ -6,7 +6,7 @@
       :condition="text.lock.condition"
     />
     <div v-else>
-      <div class="d-flex flex-row align-center">
+      <div class="d-flex flex-row align-center mb-2">
         <h2>
           {{ text.title }}
         </h2>
@@ -27,7 +27,7 @@
         <v-progress-circular
           indeterminate
           class="mt-3"
-          color="blue-darken-2"
+          :color="`${panel.color}-darken-2`"
         ></v-progress-circular>
       </div>
       <div
@@ -44,7 +44,7 @@
           :is="getActivePanel.embedded.list"
           @selected="item => setSelectedItem(item, panel)"
           @delete="item => deleteItem(item, panel)"
-          :modules="displayedItems"
+          :items="displayedItems"
         />
       </div>
       <component :is="getActivePanel.embedded.detail" />
@@ -54,7 +54,7 @@
 </template>
 
 <script setup lang="ts">
-import LockArea from '../Helper/LockArea.vue'
+import LockArea from './LockArea.vue'
 import { ref, computed, watch, toRefs, onMounted } from 'vue'
 import { Module } from '../../../SheetTypes'
 import { panels } from '../../../Panels'

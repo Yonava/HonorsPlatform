@@ -61,6 +61,8 @@ export const useSheetManager = defineStore('sheetManager', {
       this.searchFilter = filter;
     },
     async setPanel(panel: Panel, jumpTo?: JumpObject) {
+
+      useDocumentCache().setSelectedItem(null);
       this.panel = panel;
 
       this.setPinnedItem(null);

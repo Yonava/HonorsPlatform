@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
-import { getEvery, clearByRow, updateByRow, postInRange, moveRowToRange } from '../SheetsAPI';
+import { getEvery, clearByRow, updateByRow, postInRange } from '../SheetsAPI';
+import { getPanel } from "../Panels";
 import * as types from "../SheetTypes";
 import * as panels from "../Panels";
 import { useSheetManager } from "./useSheetManager";
@@ -74,6 +75,11 @@ export const useDocumentCache = defineStore("documentCache", {
       }
 
       this.refreshLog[range] = new Date();
+
+      // DANGER! This implementation may become a bit "loop-ey" 🤪
+      if (panel?.embedded) {
+        await this.refreshCache(getPanel(panel.embedded.panel));
+      }
       return documents;
     },
     async refreshAll() {
