@@ -1,4 +1,4 @@
-import { Range, getHeaderRowCache } from "./SheetsAPI";
+import { getHeaderRowCache } from "./SheetsAPI";
 import {
   Student,
   StudentYear,
@@ -20,7 +20,7 @@ function removeEmptyObjects(item: Object) {
 }
 
 export async function mapStudents(sheetData: string[][]): Promise<Student[]> {
-  const headerRow = await getHeaderRowCache(Range.STUDENTS);
+  const headerRow = await getHeaderRowCache('Students');
   const categories = headerRow.slice(9);
   return sheetData
     .map((student, index) => ({
@@ -46,8 +46,8 @@ export async function mapStudents(sheetData: string[][]): Promise<Student[]> {
 }
 
 export async function unmapStudents(students: Student[]): Promise<string[][]> {
-  const headerRow = await getHeaderRowCache(Range.STUDENTS);
-  const categories = headerRow.slice(8);
+  const headerRow = await getHeaderRowCache('Students');
+  const categories = headerRow.slice(9);
   // create 10 char id using base64 encoding
   return students.map((student: Student) => {
     const misc = categories.map((category: string) => student.misc[category] ?? '');
@@ -156,7 +156,7 @@ export function unmapGraduates(graduates: Graduate[]): string[][] {
   });
 }
 
-export function mapGradEngagement(sheetData: string[][]): GradEngagement[] {
+export function mapGradEngagements(sheetData: string[][]): GradEngagement[] {
   return sheetData
     .map((engagement, index) => {
       return {
@@ -171,7 +171,7 @@ export function mapGradEngagement(sheetData: string[][]): GradEngagement[] {
     .filter(removeEmptyObjects);
 }
 
-export function unmapGradEngagement(engagements: GradEngagement[]): string[][] {
+export function unmapGradEngagements(engagements: GradEngagement[]): string[][] {
   return engagements.map((engagement) => {
     return [
       engagement.sysId,

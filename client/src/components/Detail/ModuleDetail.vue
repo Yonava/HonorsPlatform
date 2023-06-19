@@ -91,18 +91,18 @@ import FinishModuleModal from './Helper/FinishModuleModal.vue'
 import InstructorComplete from './Helper/InstructorComplete.vue'
 import DetailFrame from './Helper/DetailFrame.vue'
 
-import { ref } from 'vue'
+import { ref, toRefs } from 'vue'
 import { termValidator } from '../../TermValidator'
-import type { Module } from '../../SheetTypes'
 
 import { useSheetManager } from '../../store/useSheetManager'
-import { storeToRefs } from 'pinia'
 import { useUpdateItem } from '../../TrackItemForUpdate'
+import { useDocumentCache } from '../../store/useDocumentCache'
 
-const sheetManager = useSheetManager()
-const { fetchItems } = sheetManager
-const { selectedItem: module } = storeToRefs(sheetManager)
+const { Modules, addItemToCache, setSelectedItem } = useDocumentCache();
+const { selected: module } = toRefs(Modules);
 useUpdateItem(module)
+
+const { fetchItems } = useSheetManager()
 
 const moveModuleDialog = ref(false)
 </script>

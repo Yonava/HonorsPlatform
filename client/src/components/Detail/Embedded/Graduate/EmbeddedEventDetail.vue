@@ -1,7 +1,7 @@
 <template>
   <ModalContent v-model="showDialog">
     <div
-      v-if="item"
+      v-if="selectedEvent"
       class="d-flex justify-center align-center"
     >
       <v-card
@@ -23,29 +23,29 @@
           <div class="d-flex flex-row mb-3">
             <v-spacer></v-spacer>
             <v-btn
-              v-if="!item.dateTime"
-              @click="item.dateTime = getNewDate()"
+              v-if="!selectedEvent.dateTime"
+              @click="selectedEvent.dateTime = getNewDate()"
               color="purple"
               size="x-small"
             >Now</v-btn>
           </div>
           <div class="d-flex flex-row">
             <v-text-field
-              v-model="item.event"
+              v-model="selectedEvent.event"
               prepend-inner-icon="mdi-calendar"
               label="Event name"
               variant="outlined"
               class="mr-5"
             ></v-text-field>
             <v-text-field
-              v-model="item.dateTime"
+              v-model="selectedEvent.dateTime"
               prepend-inner-icon="mdi-clock-outline"
               label="Date/Time"
               variant="outlined"
             ></v-text-field>
           </div>
           <v-textarea
-            v-model="item.note"
+            v-model="selectedEvent.note"
             no-resize
             label="Note"
             variant="outlined"
@@ -53,26 +53,19 @@
         </div>
         <v-card-actions class="pa-0">
           <v-btn
-            v-if="creating"
-            @click="add"
-            color="green"
-            variant="outlined"
-          >create</v-btn>
-          <v-btn
-            v-else
             @click="update"
             color="green"
             variant="outlined"
-          >update</v-btn>
+          >{{ newEvent ? 'create' : 'update' }}</v-btn>
           <v-btn
             v-if="xs"
-            @click="emits('close')"
+            @click="setSelectedItem(null, eventsPanel)"
             color="red"
             variant="outlined"
           >close</v-btn>
           <v-spacer></v-spacer>
           <v-btn
-            @click="close"
+            @click="setSelectedItem(null, eventsPanel)"
             variant="outlined"
             color="red"
           >discard changes</v-btn>
@@ -83,63 +76,47 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, toRefs } from 'vue'
+import { GradEngagement } from '../../../../SheetTypes'
+import { panels } from '../../../../Panels'
+import { useDocumentCache } from '../../../../store/useDocumentCache'
 import { useDisplay } from 'vuetify'
-import ModalContent from '../../ModalContent.vue'
-import { GradEngagement } from '../../../SheetTypes'
+import ModalContent from '../../../ModalContent.vue'
 
-const props = defineProps<{
-  item: GradEngagement | undefined,
-  show: boolean
-}>()
+const { "Grad Engagements": gradEngagements, setSelectedItem, updateItem } = useDocumentCache()
+const { selected } = toRefs(gradEngagements)
 
-const startingItem = ref(null)
-const item = ref<GradEngagement>(null)
-const { xs } = useDisplay()
-
-const changed = computed(() => {
-  return JSON.stringify(item.value) !== JSON.stringify(startingItem.value)
-})
+const startingState = ref<GradEngagement>(null)
+const selectedEvent = ref<GradEngagement>(null)
+const newEvent = ref(false)
+const eventsPanel = panels['GRADUATE_ENGAGEMENTS']
 
 const clone = <T>(obj: T) => JSON.parse(JSON.stringify(obj))
+const { xs } = useDisplay()
 
-watch(() => props.item, newVal => {
-  if (!newVal) return
-  item.value = clone(newVal)
-  startingItem.value = clone(newVal)
+watch(selected, (val) => {
+  if (!val) return
+  newEvent.value = typeof val.row !== 'number'
+  startingState.value = clone(val)
+  selectedEvent.value = clone(val)
 })
-
-const creating = computed(() => !item.value.gradId)
-const bannerText = computed(() => creating.value ? 'Create Event' : 'Update Event')
-
-const emits = defineEmits([
-  'close',
-  'update',
-  'add'
-])
-
-const showDialog = computed({
-  get: () => props.show,
-  set: () => emits('close')
-})
-
-const close = async () => {
-  emits('close')
-}
-
-const add = () => {
-  if (!changed.value) return close()
-  emits('add', item.value)
-  close()
-}
 
 const update = () => {
-  if (!changed.value) return close()
-  emits('update', item.value)
-  close()
+  setSelectedItem(null, eventsPanel)
+  if (JSON.stringify(selectedEvent.value) === JSON.stringify(startingState.value)) {
+    return
+  }
+  updateItem(selectedEvent.value, eventsPanel)
 }
 
-function getNewDate() {
+const showDialog = computed({
+  get: () => !!selected.value,
+  set: () => setSelectedItem(null, eventsPanel)
+})
+
+const bannerText = computed(() => newEvent.value ? 'Create Event' : 'Update Event')
+
+const getNewDate = () => {
   const date = new Date()
   const time = date.toLocaleTimeString('en-US', {
     hour: 'numeric'

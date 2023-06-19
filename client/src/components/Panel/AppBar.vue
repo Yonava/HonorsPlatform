@@ -6,7 +6,7 @@
       temporary
       fixed
       location="end"
-      :color="`${panel.color}-darken-2`"
+      :color="`${getActivePanel.color}-darken-2`"
       style="
         width: 75%;
         max-width: 350px;
@@ -28,7 +28,7 @@
           <Announcements />
         </div>
         <v-btn
-          v-if="panel.add"
+          v-if="getActivePanel.add"
           @click="add.fire"
           :loading="add.loading"
           style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240)"
@@ -36,10 +36,10 @@
           block
         >
           <v-icon :icon="add.success ? 'mdi-check' : 'mdi-plus'" size="large" class="mr-2"></v-icon>
-          Add {{ panel.title.singular }}
+          Add {{ getActivePanel.title.singular }}
         </v-btn>
         <v-btn
-          @click="sheetManager.fetchItems"
+          @click="fetchItems(true)"
           :loading="loadingItems"
           style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240)"
           class="mt-3"
@@ -95,7 +95,7 @@
         </span>
       </div>
     </v-navigation-drawer>
-    <v-app-bar :color="`${panel.color}-darken-2`" class="app-bar px-5">
+    <v-app-bar :color="`${getActivePanel.color}-darken-2`" class="app-bar px-5">
       <div v-if="searchMode">
         <input
           v-model="searchText"
@@ -106,7 +106,7 @@
         />
       </div>
       <div v-else class="d-flex align-center">
-        <v-icon :icon="panel.icon" size="x-large" class="mr-2"></v-icon>
+        <v-icon :icon="getActivePanel.icon" size="x-large" class="mr-2"></v-icon>
         <v-menu>
           <template v-slot:activator="{ props }">
             <h1 v-bind="props" class="title">
@@ -118,7 +118,7 @@
             <v-list-item
               v-for="listPanel in panels"
               :key="listPanel.title.singular"
-              @click="sheetManager.setPanel(listPanel)"
+              @click="setPanel(listPanel)"
               class="type-list-item"
             >
               <v-list-item-title
@@ -152,7 +152,7 @@
       />
       <v-spacer></v-spacer>
       <v-btn
-        v-if="smAndUp && panel.add"
+        v-if="smAndUp && getActivePanel.add"
         @click="add.fire"
         :loading="add.loading"
         :style="{
@@ -163,12 +163,12 @@
       >
         <v-icon :icon="add.success ? 'mdi-check' : 'mdi-plus'" size="large"></v-icon>
         <span v-if="mdAndUp" class="ml-2">
-          Add {{ panel.title.singular }}
+          Add {{ getActivePanel.title.singular }}
         </span>
       </v-btn>
       <v-btn
         v-if="smAndUp"
-        @click="sheetManager.fetchItems"
+        @click="fetchItems(true)"
         :loading="loadingItems"
         class="ml-3"
         style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240)"
@@ -244,12 +244,14 @@ import { useDialog } from '../../store/useDialog'
 
 import { panels, Panel, version } from "../../Panels";
 import { useSheetManager } from "../../store/useSheetManager";
+import { useDocumentCache } from "../../store/useDocumentCache";
 import { storeToRefs } from "pinia";
 
 const { show: dialogOpen } = storeToRefs(useDialog())
+const { getSelectedItem } = useDocumentCache();
 const sheetManager = useSheetManager();
-const { searchFilter, panel, selectedItem, loadingItems, filteredItems } =
-  storeToRefs(sheetManager);
+const { searchFilter, getActivePanel, loadingItems, filteredItems } = storeToRefs(sheetManager);
+const { setPanel, fetchItems } = sheetManager;
 
 const searchText = computed({
   get: () => searchFilter.value,
@@ -265,7 +267,7 @@ const add = ref({
   fire: async () => {
     if (add.value.loading || add.value.success) return;
     add.value.loading = true;
-    await panel.value.add();
+    await getActivePanel.value.add();
     add.value.success = true;
     setTimeout(() => {
       add.value.success = false;
@@ -284,8 +286,8 @@ const { lgAndUp, mdAndUp, smAndUp, smAndDown, xs } = useDisplay();
 function panelItemColor(panelParam: Panel) {
   return {
     color:
-      panel.value.title.singular === panelParam.title.singular
-        ? panel.value.color
+      getActivePanel.value.title.singular === panelParam.title.singular
+        ? getActivePanel.value.color
         : "black",
   };
 }
@@ -295,7 +297,7 @@ const filterPlaceholder = computed(() => {
 });
 
 const panelTitle = computed(() => {
-  const title = panel.value.title.plural;
+  const title = getActivePanel.value.title.plural;
   if (lgAndUp.value || title.split(" ").length <= 1) return title;
   else {
     return title.split(" ")[1];
@@ -303,7 +305,7 @@ const panelTitle = computed(() => {
 });
 
 watchEffect(() => {
-  if (dialogOpen.value || selectedItem.value) {
+  if (dialogOpen.value || getSelectedItem()) {
     navDrawer.value = false;
   }
 });

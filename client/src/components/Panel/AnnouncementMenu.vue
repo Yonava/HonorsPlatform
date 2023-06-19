@@ -1,11 +1,11 @@
 <template>
   <v-menu v-model="active">
     <template v-slot:activator="{ props }">
-      <v-btn 
+      <v-btn
         v-bind="props"
         icon
       >
-        <v-badge 
+        <v-badge
           v-if="!read && announcements.length > 0"
           size="small"
           color="red"
@@ -26,12 +26,12 @@
       </v-btn>
     </template>
 
-    <v-list 
+    <v-list
       style="max-width: 80vw; width: 500px"
       class="pa-5"
     >
       <div class="d-flex align-center">
-        <v-icon 
+        <v-icon
           size="x-large"
           class="mr-3"
         >mdi-bullhorn-variant</v-icon>
@@ -39,21 +39,21 @@
           Dr. Matthews Says...
         </h1>
       </div>
-      <div 
+      <div
         v-if="loading"
         class="d-flex justify-center"
       >
-        <v-progress-circular 
+        <v-progress-circular
           size="32"
           indeterminate
           class="ma-10"
         ></v-progress-circular>
       </div>
-      <div 
+      <div
         v-else-if="announcements.length === 0"
         class="d-flex justify-center"
       >
-        <h2 
+        <h2
           class="ma-10"
           style="color: green"
         >
@@ -77,7 +77,7 @@
 
 <script setup lang="ts">
 import { ref, watch, computed } from 'vue'
-import { getEvery, Range } from '../../SheetsAPI'
+import { getEvery } from '../../SheetsAPI'
 import { useDisplay } from 'vuetify'
 
 const { mdAndUp, smAndDown } = useDisplay()
@@ -97,7 +97,7 @@ watch(active, async (val) => {
 async function fetchAnnouncements() {
   loading.value = true
   announcements.value = []
-  const res = await getEvery(Range.ANNOUNCEMENTS, false)
+  const res = await getEvery('Announcements', false)
   announcements.value = res.map(row => row[0])
     .filter(announcement => announcement)
   loading.value = false
@@ -107,7 +107,7 @@ const tooltipText = computed(() => {
   if (announcements.value.length && !read.value) {
     return `Unread Announcements (${announcements.value.length})`
   } else {
-    return 'No New Annoucements'
+    return 'No New Announcements'
   }
 })
 

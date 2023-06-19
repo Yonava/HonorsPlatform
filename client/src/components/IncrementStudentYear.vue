@@ -98,7 +98,6 @@ const selectStudent = (student: Student) => {
 
 const selectGrad = (sysId: string) => {
   setPanel(getPanel('GRADUATES'), {
-    key: 'sysId',
     value: sysId
   })
   close();

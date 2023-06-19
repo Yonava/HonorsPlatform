@@ -1,7 +1,7 @@
 const { google } = require("googleapis")
 
 module.exports = class GoogleSheet {
-  spreadsheetId = '1bW-aQRn-GAbTsNkV2VB9xtBFT3n-LPrSJXua_NA2G6Y';
+  spreadsheetId;
   sheets;
 
   writable(range, data) {
@@ -15,12 +15,13 @@ module.exports = class GoogleSheet {
     }
   }
 
-  async init(auth) {
+  async init({ auth, spreadsheetId }) {
     try {
       this.sheets = google.sheets({
         version: 'v4',
         auth,
       });
+      this.spreadsheetId = spreadsheetId;
       return this;
     } catch (e) {
       throw e

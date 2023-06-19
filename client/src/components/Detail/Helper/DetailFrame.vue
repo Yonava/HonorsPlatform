@@ -9,6 +9,7 @@
   >
     <div>
       <slot name="main"></slot>
+      <EmbeddedDetail v-if="getActivePanel.embedded" />
     </div>
     <v-divider
       v-if="sm"
@@ -59,13 +60,17 @@
 </template>
 
 <script setup lang="ts">
+import EmbeddedDetail from '../Embedded/EmbeddedDetail.vue'
 import { computed, ref, watch } from 'vue'
-import { useElementSize } from '@vueuse/core'
+import { get, useElementSize } from '@vueuse/core'
 import { useSheetManager } from '../../../store/useSheetManager'
 import { useDialog } from '../../../store/useDialog'
+import { useDocumentCache } from '../../../store/useDocumentCache'
+import { storeToRefs } from 'pinia'
 
 const { open, close } = useDialog()
-const { deleteItem, panel } = useSheetManager()
+const { deleteItem } = useDocumentCache()
+const { getActivePanel } = storeToRefs(useSheetManager())
 
 const sm = ref(false)
 const el = ref(null)
@@ -102,7 +107,7 @@ const attemptDelete = () => {
         buttons: [
           {
             text: 'ok',
-            color: `${panel.color}-darken-2`,
+            color: `${getActivePanel.value.color}-darken-2`,
             onClick: close
           }
         ]

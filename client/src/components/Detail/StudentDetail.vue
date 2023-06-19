@@ -1,10 +1,6 @@
 <template>
   <div>
-    <DetailFrame
-      v-model="student.note"
-      :disableDelete="!canDelete"
-      disableReason="Cannot delete student with active modules, delete or mark modules as completed first."
-    >
+    <DetailFrame v-model="student.note">
       <template #main>
         <DetailHeader
           v-model="student.name"
@@ -105,34 +101,17 @@
           class="mt-2"
         ></v-autocomplete>
 
-        <ModuleFetch
-          @update="modules = $event"
-          @loading-state="loadingModules = $event"
-          :id="student.id"
-        />
-
-        <div style="width: 1px; height: 10px"></div>
-
-        <h2>Other:</h2>
-        <div
-          style="overflow: auto; max-height: 180px"
-          class="d-flex flex-row flex-wrap"
-        >
+        <div class="d-flex flex-wrap">
           <div
             v-for="(value, key) in student.misc"
             :key="key"
-            style="width: 30%"
-            class="mx-1"
+            style="width: calc(50% - 15px); margin-right: 15px;"
           >
             <v-text-field
               v-model="student.misc[key]"
               :label="key"
               outlined
             ></v-text-field>
-          </div>
-          <div v-if="Object.keys(student.misc).length === 0">
-            No additional information. Allocate custom data tracking on google
-            sheets.
           </div>
         </div>
       </template>
@@ -187,7 +166,6 @@
 import { ref, computed } from "vue";
 import DetailFrame from "./Helper/DetailFrame.vue";
 import DetailHeader from "./Helper/DetailHeader.vue";
-import ModuleFetch from "./Helper/ModuleFetch.vue";
 import AddStudentNote from "./Helper/AddStudentNote.vue";
 import type { Module } from "../../SheetTypes";
 import {
@@ -204,19 +182,20 @@ import {
 } from "../../StudentTools";
 
 import { useSheetManager } from "../../store/useSheetManager";
+import { useDocumentCache } from "../../store/useDocumentCache";
 import { useSyncState } from "../../store/useSyncState";
 import { useDialog } from "../../store/useDialog";
-import { storeToRefs } from "pinia";
 import { useUpdateItem } from "../../TrackItemForUpdate";
 import { warn } from '../../Warn'
+import { toRefs } from 'vue'
 
-const sheetManager = useSheetManager();
-const { selectedItem: student, items } = storeToRefs(sheetManager);
-useUpdateItem(student);
-const { processing } = storeToRefs(useSyncState());
 const { open, close } = useDialog();
+const { setPanel, newSysId } = useSheetManager();
 
-const modules = ref<Module[]>([]);
+const { Students, addItemToCache } = useDocumentCache();
+const { list: items, selected: student } = toRefs(Students);
+useUpdateItem(student);
+
 const loadingModules = ref(false);
 
 const tempStudentId = ref("");
@@ -226,11 +205,6 @@ const idDialog = ref(false);
 const movingStudent = ref(false);
 
 const showAddNote = ref(false);
-
-const canDelete = computed(() => {
-  if (!student.value.id) return true;
-  return modules.value.length === 0 && !loadingModules.value;
-});
 
 function studentIdRule(studentId: string) {
   if (!studentId) return "Enter Student ID";
@@ -277,24 +251,24 @@ function viewThesis() {
     return;
   }
   const _student = JSON.parse(JSON.stringify(student.value));
-  sheetManager.setPanel(getPanel("THESES"), {
+  setPanel(getPanel("THESES"), {
     key: "studentId",
     value: _student.id,
     fallbackFn: () => {
       open({
         body: {
-          title: `Could not find thesis for ${_student.name}, want to create one?`,
-          description: `Press create to create a new thesis for ${_student.name}.`,
+          title: `${_student.name} Does Not Have a Thesis`,
+          description: ``,
           buttons: [
             {
-              text: "Create",
+              text: "Create New Thesis",
               color: "green",
               onClick: () => {
-                sheetManager.addItem(
+                addItemToCache(
                   getPanel("THESES"),
                   true,
                   [
-                    sheetManager.newSysId(),
+                    newSysId(),
                     _student.id,
                     _student.name,
                     _student.email,
@@ -304,16 +278,10 @@ function viewThesis() {
               },
             },
             {
-              text: "No thanks",
-              color: "red",
-              onClick: () => close(),
-            },
-            {
-              text: `Back to student profile`,
-              color: "blue",
+              text: 'Back to Student Profile',
+              color: getPanel("STUDENTS").color,
               onClick: () => {
-                sheetManager.setPanel(getPanel("STUDENTS"), {
-                  key: "sysId",
+                setPanel(getPanel("STUDENTS"), {
                   value: _student.sysId,
                 });
                 close();
@@ -327,22 +295,21 @@ function viewThesis() {
 }
 
 async function graduate() {
-  if (!canDelete.value) {
-    open({
-      body: {
-        title: "Student Still Has Modules",
-        description: "This student still has modules. Please remove all modules from this student before graduating them.",
-        buttons: [
-          {
-            text: "Resolve",
-            color: getPanel("STUDENTS").color,
-            onClick: close,
-          }
-        ]
-      }
-    })
-    return;
-  }
+
+  // TODO: check if student has modules once canDelete is re-implemented
+    // open({
+    //   body: {
+    //     title: "Student Still Has Modules",
+    //     description: "This student still has modules. Please remove all modules from this student before graduating them.",
+    //     buttons: [
+    //       {
+    //         text: "Resolve",
+    //         color: getPanel("STUDENTS").color,
+    //         onClick: close,
+    //       }
+    //     ]
+    //   }
+    // })
   const _student = JSON.parse(JSON.stringify(student.value));
   movingStudent.value = true;
   try {
@@ -352,7 +319,6 @@ async function graduate() {
     return;
   }
   await moveToGraduates(_student);
-  sheetManager.setItem(null);
   open({
     body: {
       title: "Student Graduated",
@@ -367,8 +333,7 @@ async function graduate() {
           text: `View new graduate profile`,
           color: getPanel("GRADUATES").color,
           onClick: () => {
-            sheetManager.setPanel(getPanel("GRADUATES"), {
-              key: "sysId",
+            setPanel(getPanel("GRADUATES"), {
               value: _student.sysId
             });
             close();

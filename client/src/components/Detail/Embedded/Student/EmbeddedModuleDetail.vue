@@ -94,7 +94,7 @@
           </v-btn>
           <v-btn
             v-if="xs && !newModule"
-            @click="emits('close')"
+            @click="setSelectedItem(null, modulePanel)"
             color="red"
             variant="outlined"
           >close</v-btn>
@@ -107,7 +107,7 @@
           >complete</v-btn>
           <v-btn
             v-else
-            @click="emits('close')"
+            @click="setSelectedItem(null, modulePanel)"
             variant="outlined"
             color="red"
           >discard</v-btn>
@@ -115,7 +115,7 @@
       </v-card>
     </div>
     <FinishModuleModal
-      @success="emits('update')"
+      @success="null"
       @close="showCompleteModal = false"
       :show="showCompleteModal"
       :module="selectedModule"
@@ -125,56 +125,46 @@
 </template>
 
 <script setup lang="ts">
-import { watch, ref, computed } from 'vue'
-import { Module } from '../../../SheetTypes'
+import { watch, ref, computed, toRefs } from 'vue'
+import { Module } from '../../../../SheetTypes'
+import { panels } from '../../../../Panels'
+import { useDocumentCache } from '../../../../store/useDocumentCache'
 import { useDisplay } from 'vuetify'
-import { termValidator, getCurrentTerm } from '../../../TermValidator'
-import FinishModuleModal from './FinishModuleModal.vue'
-import ModalContent from '../../ModalContent.vue'
-import InstructorComplete from './InstructorComplete.vue'
+import { termValidator, getCurrentTerm } from '../../../../TermValidator'
+import FinishModuleModal from '../../Helper/FinishModuleModal.vue'
+import ModalContent from '../../../ModalContent.vue'
+import InstructorComplete from '../../Helper/InstructorComplete.vue'
 
-const props = defineProps<{
-  module: Module | undefined
-  show: boolean
-}>()
+const { Modules, setSelectedItem, updateItem } = useDocumentCache()
+const { selected } = toRefs(Modules)
 
-const emits = defineEmits([
-  'close',
-  'update'
-])
-
-const selectedModule = ref<Module>(null)
 const startingState = ref<Module>(null)
+const selectedModule = ref<Module>(null)
 const showCompleteModal = ref(false)
 const newModule = ref(false)
+const modulePanel = panels['MODULES']
 
 const clone = <T>(obj: T) => JSON.parse(JSON.stringify(obj))
-
 const { xs } = useDisplay()
 
-watch(() => props.show, (val) => {
-  if (val) {
-    startingState.value = clone(props.module)
-    selectedModule.value = clone(props.module)
-  }
+watch(selected, (val) => {
+  if (!val) return
+  newModule.value = typeof val.row !== 'number'
+  startingState.value = clone(val)
+  selectedModule.value = clone(val)
 })
 
-function update() {
+const update = () => {
+  setSelectedItem(null, modulePanel)
   if (JSON.stringify(selectedModule.value) === JSON.stringify(startingState.value)) {
-    emits('close')
     return
   }
-  emits('update', selectedModule.value)
+  updateItem(selectedModule.value, modulePanel)
 }
 
 const showDialog = computed({
-  get: () => {
-    if (props.show && props.module) {
-      newModule.value = props.module.row === -1
-    }
-    return props.show
-  },
-  set: (val) => emits('close')
+  get: () => !!selected.value,
+  set: () => setSelectedItem(null, modulePanel)
 })
 </script>
 

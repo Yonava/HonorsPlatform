@@ -1,7 +1,8 @@
 import { Student, Graduate } from './SheetTypes'
 import { unmapGraduates } from './DataMappers'
-import { getEvery, Range, replaceRange, getHeaderRowCache, moveRowToRange, postInRange } from './SheetsAPI'
+import { getEvery, replaceRange, getHeaderRowCache, postInRange } from './SheetsAPI'
 import { panels } from './Panels'
+import { useDocumentCache } from './store/useDocumentCache'
 
 export const statusOptions = {
   'Active': 'account-check',
@@ -54,18 +55,45 @@ export function studentToGraduate(student: Student): Graduate {
   }
 }
 
+export function graduateToStudent(graduate: Graduate): Student {
+  return {
+    row: graduate.row,
+    sysId: graduate.sysId,
+    id: graduate.id.startsWith("G") ? "" : graduate.id,
+    name: graduate.name,
+    email: graduate.email,
+    points: 0,
+    activeStatus: "Active",
+    year: "",
+    athletics: "",
+    note: graduate.note,
+    misc: {},
+  }
+}
+
 export async function moveToGraduates(student: Student) {
-  await moveRowToRange(
-    Range.STUDENTS,
-    Range.GRADUATES,
-    student.row,
-    unmapGraduates([studentToGraduate(student)])
+  const { moveItemBetweenLists } = useDocumentCache()
+  await moveItemBetweenLists(
+    student,
+    studentToGraduate(student),
+    panels['STUDENTS'],
+    panels['GRADUATES']
+  )
+}
+
+export async function moveToStudents(graduate: Graduate) {
+  const { moveItemBetweenLists } = useDocumentCache()
+  await moveItemBetweenLists(
+    graduate,
+    graduateToStudent(graduate),
+    panels['GRADUATES'],
+    panels['STUDENTS']
   )
 }
 
 export async function incrementStudentYear() {
   const { map, unmap } = panels['STUDENTS'].mappers
-  const students = await map(await getEvery(Range.STUDENTS))
+  const students = await map(await getEvery('Students'))
   const graduatingSeniors: Student[] = []
   const failedToIncrement: Student[] = []
 
@@ -103,12 +131,12 @@ export async function incrementStudentYear() {
       const indexOfGrad = students.findIndex(s => s.sysId === student.sysId)
       students.splice(indexOfGrad, 1)
     })
-    await postInRange(Range.GRADUATES, unmapGraduates(graduatingSeniors.map(studentToGraduate)))
+    await postInRange('Graduates', unmapGraduates(graduatingSeniors.map(studentToGraduate)))
   }
 
   const data = await unmap(students)
-  const headerRow = await getHeaderRowCache(Range.STUDENTS)
-  await replaceRange(Range.STUDENTS, [headerRow, ...data])
+  const headerRow = await getHeaderRowCache('Students')
+  await replaceRange('Students', [headerRow, ...data])
 
   console.log('Batch job "incrementStudentYear" complete!')
 

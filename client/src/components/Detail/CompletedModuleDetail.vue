@@ -72,17 +72,16 @@
 </template>
 
 <script setup lang="ts">
-import type { CompletedModule } from '../../SheetTypes'
 import DetailHeader from './Helper/DetailHeader.vue'
 import InstructorComplete from './Helper/InstructorComplete.vue'
 import DetailFrame from './Helper/DetailFrame.vue'
 
-import { useSheetManager } from '../../store/useSheetManager'
-import { storeToRefs } from 'pinia'
+import { toRefs } from 'vue'
+import { useDocumentCache } from '../../store/useDocumentCache'
 import { useUpdateItem } from '../../TrackItemForUpdate'
 
-const sheetManager = useSheetManager()
-const { selectedItem: completedModule } = storeToRefs(sheetManager)
+const { "Completed Modules": CompletedModules } = useDocumentCache()
+const { selected: completedModule } = toRefs(CompletedModules)
 useUpdateItem(completedModule)
 </script>
 

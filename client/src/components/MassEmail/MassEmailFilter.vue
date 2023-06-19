@@ -68,7 +68,7 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import { SheetItem } from '../../SheetTypes'
-import { getHeaderRow, getEvery, Range } from "../../SheetsAPI";
+import { getHeaderRow, getEvery } from "../../SheetsAPI";
 import { panels, getPanel } from "../../Panels";
 import { Student, Graduate, Module, CompletedModule, Thesis } from "../../SheetTypes";
 import { useDisplay } from "vuetify";
@@ -108,7 +108,7 @@ watch(selectedRange, async (newVal) => {
 
   headerRow.value = await getHeaderRow(newVal.sheetRange);
   // removes ability to query for custom student ranges
-  if (newVal.sheetRange === Range.STUDENTS) {
+  if (newVal.sheetRange === 'Students') {
     headerRow.value = headerRow.value.slice(0, 9);
   }
 
@@ -116,7 +116,7 @@ watch(selectedRange, async (newVal) => {
   sheetItems.value = await newVal.mappers.map(rawData);
 
   if (newVal.title.plural === getPanel('MODULES').title.plural || newVal.title.plural === getPanel('COMPLETED_MODULES').title.plural) {
-    const students = await mapStudents(await getEvery(Range.STUDENTS));
+    const students = await mapStudents(await getEvery('Students'));
     sheetItems.value.forEach((module) => {
       const student = students.find((student: Student) => student.id === module.studentId);
       if (student) module.email = student.email;

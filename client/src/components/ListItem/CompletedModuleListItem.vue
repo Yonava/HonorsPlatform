@@ -10,7 +10,7 @@
         >Course Code</v-tooltip>
       </div>
       <v-spacer></v-spacer>
-      <v-sheet 
+      <v-sheet
         class="px-3 py-1 d-flex flex-row align-center"
         :color="item.completedDate ? 'green' : 'red'"
         elevation="1"
@@ -26,20 +26,20 @@
         <span>{{ item.completedDate ? `Completed ${item.completedDate}` : 'No Completion Date' }}</span>
       </v-sheet>
     </div>
-    <div 
+    <div
       class="d-flex flex-column mt-5"
       style="font-size: 0.9em;"
     >
       <div class="d-flex flex-row">
         <div class="d-flex flex-row align-center">
-          <v-icon 
+          <v-icon
             class="mr-1"
             style="opacity: 0.75"
           >
             mdi-calendar
           </v-icon>
           <p :style="termStyle">
-            {{ item.term || '(No Term)' }} 
+            {{ item.term || '(No Term)' }}
           </p>
           <v-tooltip
             :disabled="smAndDown"
@@ -52,7 +52,7 @@
           <p>
             {{ item.studentId || '(No Student ID)' }}
           </p>
-          <v-icon 
+          <v-icon
             class="ml-1"
             style="opacity: 0.75"
           >
@@ -82,7 +82,7 @@ const props = defineProps<{
 const { smAndDown } = useDisplay()
 
 const termStyle = computed(() => {
-  if (termValidator(props.item.term)) {
+  if (termValidator(props.item.studentId)) {
     return {}
   } else {
     return {

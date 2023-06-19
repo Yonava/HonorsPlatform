@@ -157,10 +157,10 @@ import DetailHeader from './Helper/DetailHeader.vue'
 import InstructorComplete from './Helper/InstructorComplete.vue'
 import DetailFrame from './Helper/DetailFrame.vue'
 
-import { ref } from 'vue'
+import { ref, toRefs } from 'vue'
 import { getCurrentTerm, termValidator } from '../../TermValidator'
 import type { Thesis } from '../../SheetTypes'
-import { getEvery, Range } from '../../SheetsAPI'
+import { getEvery } from '../../SheetsAPI'
 import { getPanel } from '../../Panels'
 import {
   emailValidator,
@@ -169,13 +169,14 @@ import {
 } from '../../EmailUtilities'
 
 import { useSheetManager } from '../../store/useSheetManager'
+import { useDocumentCache } from '../../store/useDocumentCache'
 import { useDialog } from '../../store/useDialog'
 import { storeToRefs } from 'pinia'
 import { useUpdateItem } from '../../TrackItemForUpdate'
 
-const sheetManager = useSheetManager()
-const { setPanel } = sheetManager
-const { selectedItem: thesis } = storeToRefs(sheetManager)
+const { setPanel } = useSheetManager()
+const { Theses } = useDocumentCache()
+const { selected: thesis } = toRefs(Theses)
 useUpdateItem(thesis)
 
 const studentPanel = getPanel('STUDENTS')
@@ -188,7 +189,7 @@ const studentDataState = ref({
 
 async function setStudentData() {
   studentDataState.value.loading = true
-  const students = await getEvery(Range.STUDENTS)
+  const students = await getEvery('Students')
   const mappedStudents = await getPanel('STUDENTS').mappers.map(students)
   const student = mappedStudents.find(s => s.id === thesis.value.studentId)
   if (!student) {

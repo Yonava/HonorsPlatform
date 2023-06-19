@@ -1,7 +1,7 @@
 <template>
   <div>
     <div
-      v-for="mod in modules"
+      v-for="mod in items"
       :key="mod.courseCode"
       @click="select(mod)"
       class="module-card pa-2 mt-2 d-flex flex-row align-center"
@@ -39,10 +39,10 @@
 </template>
 
 <script setup lang="ts">
-import { Module } from "../../../SheetTypes"
+import { Module } from "../../../../SheetTypes"
 
 const props = defineProps<{
-  modules: Module[];
+  items: Module[];
 }>();
 
 const emits = defineEmits([

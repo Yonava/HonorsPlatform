@@ -9,7 +9,7 @@ export const warn = (callback?: (...args: any[]) => Promise<void> | void, callba
   return new Promise((resolve, reject) => {
     const dismissWatcher = watch(() => useDialog().show, v => {
       if (!v) {
-        reject('warn: dialog closed background')
+        reject('warn: cancelled by user — background')
         dismissWatcher()
       }
     })

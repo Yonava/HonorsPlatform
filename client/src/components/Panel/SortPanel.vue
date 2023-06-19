@@ -1,6 +1,6 @@
 <template>
   <div
-    v-if="panel.sortOptions.length > 0"
+    v-if="getActivePanel.sortOptions.length > 0"
     class="pa-2"
     style="width: 100%"
   >
@@ -14,7 +14,7 @@
     </div>
     <div>
       <div
-        v-for="sortOption in panel.sortOptions"
+        v-for="sortOption in getActivePanel.sortOptions"
         :key="sortOption.label"
         @click="setSort(sortOption.func)"
         :style="{
@@ -45,6 +45,7 @@ import { ref } from "vue";
 const sheetManager = useSheetManager();
 const { setSort: setSortPinia } = sheetManager;
 const { activeSort, panel } = storeToRefs(sheetManager);
+const { getActivePanel } = sheetManager;
 
 const ascending = ref(true);
 const setSort = (func: (a: any, b: any) => number) => {

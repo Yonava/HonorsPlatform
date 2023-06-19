@@ -1,7 +1,7 @@
 <template>
   <div>
     <div
-      v-for="event in engagements"
+      v-for="event in items"
       :key="event.id"
       @click="select(event)"
     >
@@ -22,7 +22,7 @@
           </div>
         </div>
         <v-icon
-          @click="remove(event)"
+          @click.stop="remove(event)"
           size="large"
           class="delete-icon"
         >mdi-close</v-icon>
@@ -32,10 +32,10 @@
 </template>
 
 <script setup lang="ts">
-import { GradEngagement } from "../../../SheetTypes"
+import { GradEngagement } from "../../../../SheetTypes"
 
 const props = defineProps<{
-  engagements: GradEngagement[];
+  items: GradEngagement[];
 }>();
 
 const emits = defineEmits([
