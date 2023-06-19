@@ -94,47 +94,29 @@ const eventsPanel = panels['GRADUATE_ENGAGEMENTS']
 const clone = <T>(obj: T) => JSON.parse(JSON.stringify(obj))
 const { xs } = useDisplay()
 
-watch(selected, newVal => {
-  if (!newVal) return
-  item.value = clone(newVal)
-  startingItem.value = clone(newVal)
+watch(selected, (val) => {
+  if (!val) return
+  newEvent.value = typeof val.row !== 'number'
+  startingState.value = clone(val)
+  selectedEvent.value = clone(val)
 })
-
-const changed = computed(() => {
-  return JSON.stringify(item.value) !== JSON.stringify(startingItem.value)
-})
-
-const creating = computed(() => !item.value.gradId)
-const bannerText = computed(() => creating.value ? 'Create Event' : 'Update Event')
-
-const emits = defineEmits([
-  'close',
-  'update',
-  'add'
-])
-
-const showDialog = computed({
-  get: () => props.show,
-  set: () => emits('close')
-})
-
-const close = async () => {
-  emits('close')
-}
-
-const add = () => {
-  if (!changed.value) return close()
-  emits('add', item.value)
-  close()
-}
 
 const update = () => {
-  if (!changed.value) return close()
-  emits('update', item.value)
-  close()
+  setSelectedItem(null, eventsPanel)
+  if (JSON.stringify(selectedEvent.value) === JSON.stringify(startingState.value)) {
+    return
+  }
+  updateItem(selectedEvent.value, eventsPanel)
 }
 
-function getNewDate() {
+const showDialog = computed({
+  get: () => !!selected.value,
+  set: () => setSelectedItem(null, eventsPanel)
+})
+
+const bannerText = computed(() => newEvent.value ? 'Create Event' : 'Update Event')
+
+const getNewDate = () => {
   const date = new Date()
   const time = date.toLocaleTimeString('en-US', {
     hour: 'numeric'
