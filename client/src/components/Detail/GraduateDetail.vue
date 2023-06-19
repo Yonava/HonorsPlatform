@@ -138,13 +138,13 @@ async function sendBackToStudents() {
       description: `${_grad.name} has been moved to students.`,
       buttons: [
         {
-          text: "Ok",
-          color: `${getPanel('GRADUATES').color}-darken-2`,
+          text: "Dismiss",
+          color: `${getPanel('GRADUATES').color}`,
           onClick: close,
         },
         {
           text: `View ${_grad.name}s Student Profile`,
-          color: `${getPanel('STUDENTS').color}-darken-2`,
+          color: `${getPanel('STUDENTS').color}`,
           onClick: () => {
             setPanel(getPanel('STUDENTS'), {
               value: _grad.sysId,

@@ -257,11 +257,11 @@ function viewThesis() {
     fallbackFn: () => {
       open({
         body: {
-          title: `Could not find thesis for ${_student.name}, want to create one?`,
-          description: `Press create to create a new thesis for ${_student.name}.`,
+          title: `${_student.name} Does Not Have a Thesis`,
+          description: ``,
           buttons: [
             {
-              text: "Create",
+              text: "Create New Thesis",
               color: "green",
               onClick: () => {
                 addItemToCache(
@@ -278,13 +278,8 @@ function viewThesis() {
               },
             },
             {
-              text: "No thanks",
-              color: "red",
-              onClick: () => close(),
-            },
-            {
-              text: `Back to student profile`,
-              color: "blue",
+              text: 'Back to Student Profile',
+              color: getPanel("STUDENTS").color,
               onClick: () => {
                 setPanel(getPanel("STUDENTS"), {
                   value: _student.sysId,
