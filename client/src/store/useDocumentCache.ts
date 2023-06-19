@@ -8,6 +8,8 @@ import { useSyncState } from "./useSyncState";
 
 export const useDocumentCache = defineStore("documentCache", {
   state: () => ({
+    refreshLog: {} as Record<string, Date>,
+    refreshAfter: 1000 * 60 * 5, // 5 minutes
     Students: {
       list: [] as types.Student[],
       selected: null as types.Student | null,
@@ -38,6 +40,17 @@ export const useDocumentCache = defineStore("documentCache", {
       const { panel: activePanel } = useSheetManager();
       const panel = panelObject ?? activePanel;
       return state[panel.sheetRange].selected;
+    },
+    dueForRefresh: (state) => (panelObject?: panels.Panel) => {
+      const { panel: activePanel } = useSheetManager();
+      const panel = panelObject ?? activePanel;
+      const lastRefresh = state.refreshLog[panel.sheetRange];
+      if (!lastRefresh) {
+        return true;
+      }
+
+      // return true if last refresh was more than refreshAfter milliseconds ago
+      return Date.now() - lastRefresh.getTime() > state.refreshAfter;
     }
   },
   actions: {
@@ -58,6 +71,7 @@ export const useDocumentCache = defineStore("documentCache", {
         }
       }
 
+      this.refreshLog[range] = new Date();
       return documents;
     },
     async refreshAll() {

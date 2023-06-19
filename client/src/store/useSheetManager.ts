@@ -28,6 +28,9 @@ export const useSheetManager = defineStore('sheetManager', {
   }),
   getters: {
     filteredItems(state) {
+      if (state.loadingItems) {
+        return [];
+      }
       const documents = useDocumentCache();
       const outputArray = [...documents[state.panel.sheetRange].list];
       if (state.pinnedItem) {
@@ -82,11 +85,11 @@ export const useSheetManager = defineStore('sheetManager', {
         this.jumpToItem(jumpTo.sysId, jumpTo.fallbackFn);
       }
     },
-    async fetchItems() {
+    async fetchItems(force = false) {
       const documents = useDocumentCache();
-      const { refreshCache } = documents;
+      const { refreshCache, dueForRefresh } = documents;
       this.loadingItems = true;
-      if (documents[this.panel.sheetRange].list.length === 0) {
+      if (dueForRefresh() || force) {
         await refreshCache();
       }
       this.setSort()

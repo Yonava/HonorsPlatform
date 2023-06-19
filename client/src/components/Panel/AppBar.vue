@@ -39,7 +39,7 @@
           Add {{ getActivePanel.title.singular }}
         </v-btn>
         <v-btn
-          @click="sheetManager.fetchItems"
+          @click="fetchItems(true)"
           :loading="loadingItems"
           style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240)"
           class="mt-3"
@@ -168,7 +168,7 @@
       </v-btn>
       <v-btn
         v-if="smAndUp"
-        @click="fetchItems"
+        @click="fetchItems(true)"
         :loading="loadingItems"
         class="ml-3"
         style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240)"
@@ -246,13 +246,12 @@ import { panels, Panel, version } from "../../Panels";
 import { useSheetManager } from "../../store/useSheetManager";
 import { useDocumentCache } from "../../store/useDocumentCache";
 import { storeToRefs } from "pinia";
-import { get } from "@vueuse/core";
 
 const { show: dialogOpen } = storeToRefs(useDialog())
 const { getSelectedItem } = useDocumentCache();
 const sheetManager = useSheetManager();
 const { searchFilter, getActivePanel, loadingItems, filteredItems } = storeToRefs(sheetManager);
-const { fetchItems, setPanel } = sheetManager;
+const { setPanel, fetchItems } = sheetManager;
 
 const searchText = computed({
   get: () => searchFilter.value,
