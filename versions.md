@@ -1,4 +1,4 @@
-# Current Version: prerelease 0.78
+# Current Version: prerelease 0.8
 
 ### prerelease 0.8 (Jun. 19)
 - Entire application much more efficient with REST requests
