@@ -1,5 +1,13 @@
 # Current Version: prerelease 0.78
 
+### prerelease v0.8 (Jun. 19)
+- Entire application much more efficient with REST requests
+- Massive architectural overhaul: added useDocumentCache store to create comprehensive document caching system with auto detection of stale data
+- Cleaned up and standardized dialog messages and color schemes
+- Standardized panel embeddings new pinia store APIs
+- Recursive embeddings refreshCache written to do a full cache refresh when user hits "Refresh Data" button on AppBar
+- Various smaller code quality improvements
+
 ### prerelease 0.78 (Jun. 14)
 - Feature: Better dialogs on mobile. ModalContent now handles xs device modals using navigation-drawer for a non-abrasive user experience
 - Improvement: Improvements to the "Add Student Note" feature. Added date to each new note, added autofocusing inputs, and added new keyboard shortcuts.
