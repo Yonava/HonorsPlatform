@@ -9,6 +9,7 @@
   >
     <div>
       <slot name="main"></slot>
+      <EmbeddedDetail />
     </div>
     <v-divider
       v-if="sm"
@@ -59,6 +60,7 @@
 </template>
 
 <script setup lang="ts">
+import EmbeddedDetail from '../Embedded/EmbeddedDetail.vue'
 import { computed, ref, watch } from 'vue'
 import { get, useElementSize } from '@vueuse/core'
 import { useSheetManager } from '../../../store/useSheetManager'

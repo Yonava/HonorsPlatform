@@ -11,7 +11,7 @@
             <v-dialog v-model="idDialog" width="300">
               <template #activator="{ props }">
                 <v-btn v-bind="props" size="x-small" color="red">
-                  Add Student ID {{ student.row }}
+                  Add Student ID
                 </v-btn>
               </template>
               <div class="student-id-dialog pa-4">
@@ -101,20 +101,11 @@
           class="mt-2"
         ></v-autocomplete>
 
-        <ModuleFetch :id="student.id" />
-
-        <div style="width: 1px; height: 10px"></div>
-
-        <h2>Other:</h2>
-        <div
-          style="overflow: auto; max-height: 180px"
-          class="d-flex flex-row flex-wrap"
-        >
+        <div class="d-flex flex-wrap">
           <div
             v-for="(value, key) in student.misc"
             :key="key"
-            style="width: 30%"
-            class="mx-1"
+            style="width: calc(50% - 15px); margin-right: 15px;"
           >
             <v-text-field
               v-model="student.misc[key]"
@@ -122,11 +113,9 @@
               outlined
             ></v-text-field>
           </div>
-          <div v-if="Object.keys(student.misc).length === 0">
-            No additional information. Allocate custom data tracking on google
-            sheets.
-          </div>
         </div>
+
+        <ModuleFetch :id="student.id" />
       </template>
       <template #notes-button>
         <v-btn

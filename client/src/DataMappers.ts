@@ -47,7 +47,7 @@ export async function mapStudents(sheetData: string[][]): Promise<Student[]> {
 
 export async function unmapStudents(students: Student[]): Promise<string[][]> {
   const headerRow = await getHeaderRowCache('Students');
-  const categories = headerRow.slice(8);
+  const categories = headerRow.slice(9);
   // create 10 char id using base64 encoding
   return students.map((student: Student) => {
     const misc = categories.map((category: string) => student.misc[category] ?? '');

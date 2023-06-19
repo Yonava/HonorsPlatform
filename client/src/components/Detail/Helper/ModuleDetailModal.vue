@@ -115,7 +115,7 @@
       </v-card>
     </div>
     <FinishModuleModal
-      @success="emits('update')"
+      @success="emits('close')"
       @close="showCompleteModal = false"
       :show="showCompleteModal"
       :module="selectedModule"

@@ -65,9 +65,11 @@ export const useDocumentCache = defineStore("documentCache", {
 
       // clean up selected item
       if (this[range].selected) {
-        const doesSelectedStillExist = documents.some(item => item.sysId === this[range].selected?.sysId);
-        if (!doesSelectedStillExist) {
+        const selectedItemInNewData = documents.find(item => item.sysId === this[range].selected?.sysId);
+        if (!selectedItemInNewData) {
           this[range].selected = null;
+        } else {
+          this[range].selected = selectedItemInNewData;
         }
       }
 
