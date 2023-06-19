@@ -9,7 +9,7 @@
   >
     <div>
       <slot name="main"></slot>
-      <EmbeddedDetail />
+      <EmbeddedDetail v-if="getActivePanel.embedded" />
     </div>
     <v-divider
       v-if="sm"

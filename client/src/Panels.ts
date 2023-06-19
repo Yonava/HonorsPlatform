@@ -1,5 +1,7 @@
 import StudentListItem from './components/ListItem/StudentListItem.vue';
 import StudentDetail from './components/Detail/StudentDetail.vue';
+import EmbeddedModuleList from './components/Detail/Embedded/Student/EmbeddedModuleList.vue';
+import EmbeddedModuleDetail from './components/Detail/Embedded/Student/EmbeddedModuleDetail.vue';
 
 import ModuleListItem from './components/ListItem/ModuleListItem.vue';
 import ModuleDetail from './components/Detail/ModuleDetail.vue';
@@ -9,6 +11,8 @@ import CompletedModuleListItem from './components/ListItem/CompletedModuleListIt
 
 import GraduateListItem from './components/ListItem/GraduateListItem.vue';
 import GraduateDetail from './components/Detail/GraduateDetail.vue';
+import EmbeddedEventDetail from './components/Detail/Embedded/Graduate/EmbeddedEventDetail.vue';
+import EmbeddedEventList from './components/Detail/Embedded/Graduate/EmbeddedEventList.vue';
 
 import ThesisDetail from './components/Detail/ThesisDetail.vue';
 import ThesisListItem from './components/ListItem/ThesisListItem.vue';
@@ -53,6 +57,24 @@ export const panels = {
       map: mapStudents,
       unmap: unmapStudents
     },
+    embedded: {
+      panel: 'MODULES',
+      text: {
+        title: 'Modules In Progress',
+        add: 'Add Module',
+        noItemsToDisplay: 'No modules currently in progress.',
+        lock: {
+          title: 'Module Tracking',
+          condition: 'student ID'
+        }
+      },
+      filterBy: {
+        inner: 'studentId',
+        outer: 'id'
+      },
+      detail: markRaw(EmbeddedModuleDetail),
+      list: markRaw(EmbeddedModuleList),
+    },
     sortOptions: sortOptions.STUDENTS
   },
   GRADUATES: {
@@ -72,6 +94,24 @@ export const panels = {
     mappers: {
       map: mapGraduates,
       unmap: unmapGraduates
+    },
+    embedded: {
+      panel: "GRADUATE_ENGAGEMENTS",
+      text: {
+        title: 'Engagement Tracking',
+        add: 'Add Event',
+        noItemsToDisplay: 'No engagements currently recorded.',
+        lock: {
+          title: 'Engagement Tracking',
+          condition: 'grad ID'
+        }
+      },
+      filterBy: {
+        inner: 'gradId',
+        outer: 'id'
+      },
+      detail: markRaw(EmbeddedEventDetail),
+      list: markRaw(EmbeddedEventList),
     },
     sortOptions: sortOptions.GRADUATES
   },

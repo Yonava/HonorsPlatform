@@ -114,8 +114,6 @@
             ></v-text-field>
           </div>
         </div>
-
-        <ModuleFetch :id="student.id" />
       </template>
       <template #notes-button>
         <v-btn
@@ -168,7 +166,6 @@
 import { ref, computed } from "vue";
 import DetailFrame from "./Helper/DetailFrame.vue";
 import DetailHeader from "./Helper/DetailHeader.vue";
-import ModuleFetch from "./Helper/ModuleFetch.vue";
 import AddStudentNote from "./Helper/AddStudentNote.vue";
 import type { Module } from "../../SheetTypes";
 import {
