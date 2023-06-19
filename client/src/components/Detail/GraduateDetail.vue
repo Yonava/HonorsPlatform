@@ -147,7 +147,7 @@ async function sendBackToStudents() {
           color: `${getPanel('STUDENTS').color}-darken-2`,
           onClick: () => {
             setPanel(getPanel('STUDENTS'), {
-              sysId: _grad.sysId,
+              value: _grad.sysId,
             });
             close();
           },

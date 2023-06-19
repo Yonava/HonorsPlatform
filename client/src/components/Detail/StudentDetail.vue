@@ -287,7 +287,7 @@ function viewThesis() {
               color: "blue",
               onClick: () => {
                 setPanel(getPanel("STUDENTS"), {
-                  sysId: _student.sysId,
+                  value: _student.sysId,
                 });
                 close();
               },
@@ -339,7 +339,7 @@ async function graduate() {
           color: getPanel("GRADUATES").color,
           onClick: () => {
             setPanel(getPanel("GRADUATES"), {
-              sysId: _student.sysId
+              value: _student.sysId
             });
             close();
           },

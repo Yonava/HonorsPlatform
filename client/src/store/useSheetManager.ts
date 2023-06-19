@@ -6,7 +6,8 @@ import { useSyncState } from './useSyncState';
 import { useDocumentCache } from './useDocumentCache';
 
 export type JumpObject = {
-  sysId: string,
+  value: string,
+  key?: string, // defaults to 'sysId'
   fallbackFn?: () => void // If the item you are jumping to is not found, this function will be called
 };
 
@@ -84,7 +85,7 @@ export const useSheetManager = defineStore('sheetManager', {
       await this.fetchItems();
 
       if (jumpTo) {
-        this.jumpToItem(jumpTo.sysId, jumpTo.fallbackFn);
+        this.jumpToItem(jumpTo);
       }
     },
     async fetchItems(force = false) {
@@ -98,12 +99,12 @@ export const useSheetManager = defineStore('sheetManager', {
       this.loadingItems = false;
       useSyncState().$reset()
     },
-    jumpToItem(sysId: string, fallbackFn?: () => void) {
-      const { setSelectedItemBySysId } = useDocumentCache();
-      const setItemSuccessfully = setSelectedItemBySysId(sysId)
-      if (!setItemSuccessfully) {
+    jumpToItem({ key = 'sysId', value, fallbackFn = () => null }: JumpObject) {
+      const { setSelectedItemByKeyValue } = useDocumentCache();
+      const success = setSelectedItemByKeyValue(key, value);
+      if (!success) {
         console.error('useStateManager: item not found');
-        fallbackFn?.()
+        fallbackFn()
       }
     },
     setPinnedItem(item: SheetItem | null) {

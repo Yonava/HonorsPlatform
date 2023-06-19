@@ -92,6 +92,17 @@ export const useDocumentCache = defineStore("documentCache", {
       const panel = panelObject ?? activePanel;
       this[panel.sheetRange].selected = item;
     },
+    setSelectedItemByKeyValue(key: string, value: string, panelObject?: panels.Panel) {
+      const { panel: activePanel } = useSheetManager();
+      const panel = panelObject ?? activePanel;
+      const item = this[panel.sheetRange].list.find(item => item[key] === value);
+      if (item) {
+        this[panel.sheetRange].selected = item;
+        return item;
+      } else {
+        return null;
+      }
+    },
     setSelectedItemBySysId(sysId: string, panelObject?: panels.Panel) {
       const { panel: activePanel } = useSheetManager();
       const panel = panelObject ?? activePanel;
