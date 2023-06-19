@@ -1,9 +1,5 @@
 <template>
-  <DetailFrame
-    v-model="grad.note"
-    :disableDelete="!canDelete"
-    disableReason="All engagements must be removed before deleting a graduate"
-  >
+  <DetailFrame v-model="grad.note">
     <template #main>
       <DetailHeader v-model="grad.name" :id="grad.id" placeholder="Name">
         <template v-if="!grad.id" #id>
@@ -57,7 +53,7 @@
     </template>
     <template #buttons>
       <v-btn
-        @click="moveToStudents"
+        @click="sendBackToStudents"
         :loading="movingGrad"
         color="purple-darken-2"
         size="large"
@@ -74,15 +70,13 @@ import DetailFrame from "./Helper/DetailFrame.vue";
 import DetailHeader from "./Helper/DetailHeader.vue";
 
 import { ref, computed, toRefs } from "vue";
-import { moveRowToRange } from "../../SheetsAPI";
 import { unmapStudents } from "../../DataMappers";
-import type { GradEngagement } from "../../SheetTypes";
 import {
   emailValidator,
   phoneValidator,
   sendEmail,
 } from "../../EmailUtilities";
-
+import { moveToStudents } from '../../StudentTools'
 import { useSheetManager } from "../../store/useSheetManager";
 import { useDocumentCache } from "../../store/useDocumentCache";
 import { useUpdateItem } from "../../TrackItemForUpdate";
@@ -99,36 +93,29 @@ const { open, close } = useDialog();
 
 const movingGrad = ref(false);
 
-const engagements = ref<GradEngagement[]>([]);
-const loadingEngagements = ref(true);
-
-const canDelete = computed(() => {
-  return engagements.value.length === 0 && !loadingEngagements.value;
-});
-
 async function generateGradId() {
   const newId = "G" + Math.random().toString().substring(2, 9);
   grad.value.id = newId;
 }
 
-async function moveToStudents() {
-  if (!canDelete.value) {
-    open({
-      body: {
-        title: "Cannot Move",
-        description:
-          `${grad.value.name} has engagements. Please remove them before moving ${grad.value.name} back to students.`,
-        buttons: [
-          {
-            text: "Ok",
-            color: `${getPanel('GRADUATES').color}-darken-2`,
-            onClick: close,
-          },
-        ],
-      },
-    });
-    return;
-  }
+async function sendBackToStudents() {
+  // if (!canDelete.value) {
+  //   open({
+  //     body: {
+  //       title: "Cannot Move",
+  //       description:
+  //         `${grad.value.name} has engagements. Please remove them before moving ${grad.value.name} back to students.`,
+  //       buttons: [
+  //         {
+  //           text: "Ok",
+  //           color: `${getPanel('GRADUATES').color}-darken-2`,
+  //           onClick: close,
+  //         },
+  //       ],
+  //     },
+  //   });
+  //   return;
+  // }
   movingGrad.value = true;
   try {
     await warn(
@@ -143,28 +130,7 @@ async function moveToStudents() {
 
   const _grad = JSON.parse(JSON.stringify(grad.value));
 
-  await moveRowToRange(
-    'Graduates',
-    'Students',
-    grad.value.row,
-    await unmapStudents([
-      {
-        row: _grad.row,
-        sysId: _grad.sysId,
-        id: _grad.id.startsWith("G") ? "" : _grad.id,
-        name: _grad.name,
-        email: _grad.email,
-        points: 0,
-        activeStatus: "Active",
-        year: null,
-        athletics: "",
-        note: _grad.note,
-        misc: {},
-      },
-    ])
-  );
-
-  fetchItems();
+  await moveToStudents(_grad)
 
   open({
     body: {

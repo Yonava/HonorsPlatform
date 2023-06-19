@@ -1,6 +1,6 @@
 import { Student, Graduate } from './SheetTypes'
 import { unmapGraduates } from './DataMappers'
-import { getEvery, replaceRange, getHeaderRowCache, moveRowToRange, postInRange } from './SheetsAPI'
+import { getEvery, replaceRange, getHeaderRowCache, postInRange } from './SheetsAPI'
 import { panels } from './Panels'
 import { useDocumentCache } from './store/useDocumentCache'
 
@@ -56,7 +56,19 @@ export function studentToGraduate(student: Student): Graduate {
 }
 
 export function graduateToStudent(graduate: Graduate): Student {
-  // TODO: Move logic from GraduateDetails.vue to here
+  return {
+    row: graduate.row,
+    sysId: graduate.sysId,
+    id: graduate.id.startsWith("G") ? "" : graduate.id,
+    name: graduate.name,
+    email: graduate.email,
+    points: 0,
+    activeStatus: "Active",
+    year: "",
+    athletics: "",
+    note: graduate.note,
+    misc: {},
+  }
 }
 
 export async function moveToGraduates(student: Student) {
@@ -70,7 +82,13 @@ export async function moveToGraduates(student: Student) {
 }
 
 export async function moveToStudents(graduate: Graduate) {
-  // TODO: Move logic from GraduateDetails.vue to here
+  const { moveItemBetweenLists } = useDocumentCache()
+  await moveItemBetweenLists(
+    graduate,
+    graduateToStudent(graduate),
+    panels['GRADUATES'],
+    panels['STUDENTS']
+  )
 }
 
 export async function incrementStudentYear() {

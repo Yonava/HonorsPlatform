@@ -192,7 +192,7 @@ import { toRefs } from 'vue'
 const { open, close } = useDialog();
 const { setPanel, newSysId } = useSheetManager();
 
-const { Students, addItemToCache, setSelectedItem } = useDocumentCache();
+const { Students, addItemToCache } = useDocumentCache();
 const { list: items, selected: student } = toRefs(Students);
 useUpdateItem(student);
 
@@ -324,7 +324,6 @@ async function graduate() {
     return;
   }
   await moveToGraduates(_student);
-  setSelectedItem(null);
   open({
     body: {
       title: "Student Graduated",
