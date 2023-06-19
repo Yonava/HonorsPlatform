@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { getEvery, clearByRow, updateByRow, postInRange } from '../SheetsAPI';
+import { getEvery, clearByRow, updateByRow, postInRange, moveRowToRange } from '../SheetsAPI';
 import * as types from "../SheetTypes";
 import * as panels from "../Panels";
 import { useSheetManager } from "./useSheetManager";
@@ -194,5 +194,12 @@ export const useDocumentCache = defineStore("documentCache", {
 
       useSyncState().$reset();
     },
-  }
+    async moveItemBetweenLists(oldItem: types.SheetItem, newItem: types.SheetItem, oldPanel: panels.Panel, newPanel: panels.Panel) {
+      await this.deleteItem(oldItem, oldPanel, false);
+      await postInRange(
+        newPanel.sheetRange,
+        await newPanel.mappers.unmap([newItem])
+      )
+      this[newPanel.sheetRange].list.unshift(newItem);
+    }}
 });

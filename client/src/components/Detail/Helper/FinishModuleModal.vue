@@ -97,9 +97,11 @@
 
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from "vue";
+import { getPanel } from '../../../Panels'
 import { Grade, Module, CompletedModule } from '../../../SheetTypes'
-import { moveRowToRange } from '../../../SheetsAPI'
-import { unmapCompletedModules } from '../../../DataMappers'
+import { useDocumentCache } from '../../../store/useDocumentCache'
+
+const { moveItemBetweenLists } = useDocumentCache()
 
 const props = defineProps<{
   show: boolean;
@@ -142,16 +144,19 @@ const completedModuleData = ref({
 
 async function moveToCompleted() {
   loading.value = true
+
   movedModule.value = {
     ...props.module,
     ...completedModuleData.value
   }
-  await moveRowToRange(
-    'Modules',
-    'Completed Modules',
-    props.module.row,
-    unmapCompletedModules([movedModule.value])
+
+  await moveItemBetweenLists(
+    props.module,
+    movedModule.value,
+    getPanel('MODULES'),
+    getPanel('COMPLETED_MODULES')
   )
+
   loading.value = false
   success.value = true
 }
