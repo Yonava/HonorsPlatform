@@ -234,5 +234,25 @@ export const useDocumentCache = defineStore("documentCache", {
         await newPanel.mappers.unmap([newItem])
       )
       this[newPanel.sheetRange].list.unshift(newItem);
-    }}
-});
+    },
+    addItemsToCache(list: types.SheetItem[], panelObject?: panels.Panel) {
+      const { panel: activePanel } = useSheetManager();
+      const panel = panelObject ?? activePanel;
+      this[panel.sheetRange].list.push(...list);
+    },
+    removeItemsFromCache(list: types.SheetItem[], panelObject?: panels.Panel) {
+      const { panel: activePanel } = useSheetManager();
+      const panel = panelObject ?? activePanel;
+      for (const item of list) {
+        const index = this[panel.sheetRange].list.findIndex(i => i.sysId === item.sysId);
+        if (index !== -1) {
+          this[panel.sheetRange].list.splice(index, 1);
+        }
+      }
+
+      if (!this[panel.sheetRange].list.some(item => item.sysId === this[panel.sheetRange].selected?.sysId)) {
+        this[panel.sheetRange].selected = null;
+      }
+    }
+  }
+})

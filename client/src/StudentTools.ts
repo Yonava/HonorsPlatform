@@ -93,6 +93,7 @@ export async function moveToStudents(graduate: Graduate) {
 
 export async function incrementStudentYear() {
   const { map, unmap } = panels['STUDENTS'].mappers
+  const { addItemsToCache, removeItemsFromCache } = useDocumentCache()
   const students = await map(await getEvery('Students'))
   const graduatingSeniors: Student[] = []
   const failedToIncrement: Student[] = []
@@ -125,6 +126,9 @@ export async function incrementStudentYear() {
       graduatingSeniors.push(student)
     }
   })
+
+  removeItemsFromCache(graduatingSeniors, panels['STUDENTS'])
+  addItemsToCache(graduatingSeniors.map(studentToGraduate), panels['GRADUATES'])
 
   if (graduatingSeniors.length > 0) {
     graduatingSeniors.forEach(student => {

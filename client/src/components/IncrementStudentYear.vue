@@ -16,14 +16,14 @@
             style="gap: 10px;"
           >
             <v-sheet
-              v-for="senior in graduatingSeniors"
-              :key="senior.sysId"
-              @click="selectGrad(senior.sysId)"
+              v-for="graduate in graduatingSeniors"
+              :key="graduate.sysId"
+              @click="select(graduate.sysId, 'GRADUATES')"
+              :color="getPanel('GRADUATES').color"
               class="px-3 py-1 hoverable"
               style="cursor: pointer;"
-              color="blue"
             >
-              {{ senior.name }}
+              {{ graduate.name }}
             </v-sheet>
           </v-sheet>
         </div>
@@ -44,7 +44,7 @@
             <v-sheet
               v-for="failure in failedToIncrement"
               :key="failure.sysId"
-              @click="selectStudent(failure)"
+              @click="select(failure.sysId, 'STUDENTS')"
               class="px-3 py-1 hoverable"
               style="cursor: pointer;"
               color="red lighten-2"
@@ -73,9 +73,11 @@ import type { Student } from "../SheetTypes";
 import { useDialog } from "../store/useDialog";
 import { useSheetManager } from "../store/useSheetManager";
 import { ref } from "vue";
-import { getPanel } from '../Panels'
+import { getPanel, PanelName } from '../Panels'
+import { useDocumentCache } from '../store/useDocumentCache'
 
-const { fetchItems, setItem, setPanel } = useSheetManager();
+const { setPanel } = useSheetManager();
+const { setSelectedItem } = useDocumentCache();
 const { close } = useDialog();
 
 const loading = ref(true);
@@ -84,20 +86,14 @@ const failedToIncrement = ref<Student[]>([]);
 
 incrementStudentYear().then(
   ({ failedToIncrement: failed, graduatingSeniors: graduated }) => {
-    fetchItems();
     graduatingSeniors.value = graduated;
     failedToIncrement.value = failed;
     loading.value = false;
   }
 );
 
-const selectStudent = (student: Student) => {
-  setItem(student);
-  close();
-};
-
-const selectGrad = (sysId: string) => {
-  setPanel(getPanel('GRADUATES'), {
+const select = (sysId: string, panelName: PanelName) => {
+  setPanel(getPanel(panelName), {
     value: sysId
   })
   close();
