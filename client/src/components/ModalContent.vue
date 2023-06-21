@@ -22,7 +22,7 @@
         class="xs-outer-wrapper"
       >
         <slot></slot>
-        <div style="margin-bottom: 18vh"></div>
+        <div style="margin-bottom: 25vh"></div>
       </v-sheet>
     </v-navigation-drawer>
     </div>

@@ -1,9 +1,5 @@
 <template>
-  <v-sheet
-    class="d-flex align-center justify-center flex-column"
-    height="100vh"
-    width="100vw"
-  >
+  <v-sheet class="d-flex align-center justify-center flex-column">
     <v-progress-circular
       v-if="loading"
       indeterminate
@@ -17,10 +13,9 @@
     />
     <v-sheet
       v-if="!loading"
-      position="absolute"
-      class="d-flex align-center justify-center flex-column ma-5"
+      class="d-flex align-center justify-center flex-column"
     >
-      <div class="my-8 d-flex flex-row align-center">
+      <div class="mb-8 d-flex flex-row align-center">
         <h1 style="font-size: 250%">
           Authorize
         </h1>
@@ -30,12 +25,12 @@
         color="red-darken-2"
         elevation="3"
         class="mb-12"
-        :size="xs ? 'default' : 'x-large'"
+        size="x-large"
       >
         <v-icon class="mr-2">mdi-google</v-icon>
         Continue With Google
       </v-btn>
-      <div>
+      <div style="width: 450px" class="mb-10">
         <v-expansion-panels variant="accordion">
           <v-expansion-panel
             elevation="0"
@@ -79,9 +74,6 @@ import { useRoute, useRouter } from 'vue-router'
 import { useAuth } from '../store/useAuth'
 import { onMounted, ref } from 'vue'
 import axios from 'axios'
-import { useDisplay } from 'vuetify'
-
-const { xs } = useDisplay()
 
 const route = useRoute()
 const router = useRouter()
@@ -114,10 +106,6 @@ onMounted(async () => {
 
 <style scoped>
 .logo {
-  position: absolute;
-  top: 20px;
-  width: 300px;
-  object-fit: cover;
-  mix-blend-mode: multiply;
+  width: 400px;
 }
 </style>
