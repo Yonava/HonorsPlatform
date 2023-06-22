@@ -51,6 +51,7 @@ module.exports = class GoogleSheet {
   }
 
   async postInRange(range, data) {
+    console.log(range, data)
     if (data.length > 1) {
       await this.sheets.spreadsheets.values.append(
         this.writable(range, data)
