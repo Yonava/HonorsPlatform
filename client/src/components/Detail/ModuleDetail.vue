@@ -94,7 +94,7 @@ import { useUpdateItem } from '../../TrackItemForUpdate'
 import { useDialog } from '../../store/useDialog'
 import { useDocumentCache } from '../../store/useDocumentCache'
 
-const { Modules, addItemToCache, setSelectedItem } = useDocumentCache();
+const { Modules, setSelectedItem } = useDocumentCache();
 const completedModulesPanel = getPanel('COMPLETED_MODULES')
 const modulesPanel = getPanel('MODULES')
 

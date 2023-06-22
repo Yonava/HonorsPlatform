@@ -161,10 +161,7 @@ export const useDocumentCache = defineStore("documentCache", {
 
       useSyncState().$reset();
     },
-    async addItemToCache(panelObject?: panels.Panel, pin = true, columns?: any[]) {
-
-      console.log('adding item to cache', panelObject?.sheetRange, pin, columns)
-
+    async addItem(panelObject?: panels.Panel, pin = true, postImmediately = false, columns?: any[]) {
       const { setSearchFilter, panel: activePanel, newSysId, setPinnedItem } = useSheetManager();
       setSearchFilter("");
 
@@ -182,9 +179,14 @@ export const useDocumentCache = defineStore("documentCache", {
         setPinnedItem(newItem);
       }
 
-      // if columns is overwritten, immediately update the item
-      if (columns) {
-        await this.updateItem(newItem, panel);
+      if (postImmediately) {
+        useSyncState().setProcessing(true);
+        const row = await postInRange(
+          panel.sheetRange,
+          await panel.mappers.unmap([newItem])
+        )
+        newItem.row = row
+        useSyncState().$reset();
       }
 
       return newItem;
@@ -199,36 +201,32 @@ export const useDocumentCache = defineStore("documentCache", {
       if (!itemToUpdate) {
         console.error("useDocumentCache: No item to update");
         return;
+      } else if (typeof itemToUpdate.row !== "number") {
+        console.error("useDocumentCache: No row to update");
+        return;
       }
 
       const itemInList = this[panel.sheetRange].list.find(item => item.sysId === itemToUpdate.sysId);
       if (itemInList) {
         Object.assign(itemInList, itemToUpdate);
       } else {
-        this[panel.sheetRange].list.unshift(itemToUpdate);
+        console.error("useDocumentCache: Item not in list");
+        return;
       }
 
-      const { row } = itemToUpdate;
       setProcessing(true);
 
-      if (typeof row !== "number") {
-        const row = await postInRange(
-          panel.sheetRange,
-          await panel.mappers.unmap([itemToUpdate])
-        )
-        itemToUpdate.row = row
-      } else {
-        await updateByRow(
-          panel.sheetRange,
-          row,
-          await panel.mappers.unmap([itemToUpdate])
-        )
-      }
+      await updateByRow(
+        panel.sheetRange,
+        itemToUpdate.row,
+        await panel.mappers.unmap([itemToUpdate])
+      )
 
       useSyncState().$reset();
     },
     async moveItemBetweenLists(oldItem: types.SheetItem, newItem: types.SheetItem, oldPanel: panels.Panel, newPanel: panels.Panel) {
       await this.deleteItem(oldItem, oldPanel, false);
+      console.log(this.getSelectedItem())
       await postInRange(
         newPanel.sheetRange,
         await newPanel.mappers.unmap([newItem])

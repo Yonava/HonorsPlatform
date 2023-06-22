@@ -63,7 +63,7 @@ import { useDocumentCache } from '../../../store/useDocumentCache'
 
 const { newSysId, getActivePanel } = useSheetManager()
 const documents = useDocumentCache()
-const { refreshCache, deleteItem, addItemToCache, setSelectedItem, getSelectedItem } = documents
+const { refreshCache, deleteItem, setSelectedItem, getSelectedItem, addItem } = documents
 const { filterBy, text } = getActivePanel.embedded
 const panel = panels[getActivePanel.embedded.panel]
 
@@ -84,14 +84,9 @@ const displayedItems = computed(() => {
 })
 
 async function addNewItem() {
-  const [newItem] = await panel.mappers.map([
-    [
-      newSysId(),
-      getSelectedItem()[filterBy.outer],
-    ]
-  ]);
-  newItem.row = null;
-
-  setSelectedItem(newItem, panel)
+  await addItem(panel, false, false, [
+    newSysId(),
+    getSelectedItem()[filterBy.outer],
+  ])
 }
 </script>

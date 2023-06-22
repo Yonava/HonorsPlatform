@@ -192,7 +192,7 @@ import { toRefs } from 'vue'
 const { open, close } = useDialog();
 const { setPanel, newSysId } = useSheetManager();
 
-const { Students, addItemToCache } = useDocumentCache();
+const { Students, addItem } = useDocumentCache();
 const { list: items, selected: student } = toRefs(Students);
 useUpdateItem(student);
 
@@ -264,8 +264,9 @@ function viewThesis() {
               text: "Create New Thesis",
               color: "green",
               onClick: () => {
-                addItemToCache(
+                addItem(
                   getPanel("THESES"),
+                  true,
                   true,
                   [
                     newSysId(),
