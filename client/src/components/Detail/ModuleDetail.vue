@@ -16,7 +16,7 @@
       <InstructorComplete
         @update="module.instructor = $event"
         :instructor="module.instructor"
-        color="orange-darken-2"
+        :color="color"
       />
       <v-text-field
         v-model="module.instructor"
@@ -32,14 +32,14 @@
         <v-btn
           v-if="!module.docuSignCreated"
           @click="module.docuSignCreated = new Date().toLocaleDateString()"
-          color="orange-darken-2"
+          :color="color"
           size="x-small"
         >Now</v-btn>
         <v-spacer></v-spacer>
         <v-btn
           v-if="!module.docuSignCompleted"
           @click="module.docuSignCompleted = new Date().toLocaleDateString()"
-          color="orange-darken-2"
+          :color="color"
           size="x-small"
         >Now</v-btn>
       </div>
@@ -61,25 +61,20 @@
           label="DocuSign Completed"
         ></v-text-field>
       </div>
-
-      <FinishModuleModal
-        @success="fetchItems"
-        @close="moveModuleDialog = false"
-        :show="moveModuleDialog"
-        :module="module"
-      />
     </template>
     <template #buttons>
       <v-btn
-        @click="moveModuleDialog = true"
-        color="orange-darken-2"
+        @click="moveModule"
+        :color="color"
         size="large"
       >
         <v-icon
           class="mr-2"
           size="x-large"
-        >mdi-check</v-icon>
-        Mark Module As Completed
+        >
+          {{ completedModulesPanel.icon }}
+        </v-icon>
+        Complete Module
       </v-btn>
     </template>
   </DetailFrame>
@@ -87,22 +82,30 @@
 
 <script setup lang="ts">
 import DetailHeader from './Helper/DetailHeader.vue'
-import FinishModuleModal from './Helper/FinishModuleModal.vue'
+import MoveModule from './Helper/MoveModule.vue'
 import InstructorComplete from './Helper/InstructorComplete.vue'
 import DetailFrame from './Helper/DetailFrame.vue'
 
 import { ref, toRefs } from 'vue'
 import { termValidator } from '../../TermValidator'
+import { getPanel } from '../../Panels'
 
-import { useSheetManager } from '../../store/useSheetManager'
 import { useUpdateItem } from '../../TrackItemForUpdate'
+import { useDialog } from '../../store/useDialog'
 import { useDocumentCache } from '../../store/useDocumentCache'
 
 const { Modules, addItemToCache, setSelectedItem } = useDocumentCache();
+const completedModulesPanel = getPanel('COMPLETED_MODULES')
+const modulesPanel = getPanel('MODULES')
+
+const color = modulesPanel.color + '-darken-2'
+
 const { selected: module } = toRefs(Modules);
 useUpdateItem(module)
 
-const { fetchItems } = useSheetManager()
-
-const moveModuleDialog = ref(false)
+const moveModule = () => {
+  useDialog().open({
+    component: MoveModule,
+  })
+}
 </script>
