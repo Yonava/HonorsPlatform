@@ -16,16 +16,18 @@ export function useUpdateItem(item: Ref<SheetItem>, panelObject?: any) {
 
   let timeout = setTimeout(() => { }, 0)
   watch(item, async (newItem, oldItem) => {
-    // switch to new item
+
+    if (!oldItem) {
+      return
+    }
+
+    // indicates that the sheet item has changed
     if (newItem !== oldItem) {
 
+      // there is still an item in transit, update it immediately
       if (processing.value) {
         updateItem(oldItem, panel)
         clearTimeout(timeout)
-      }
-
-      if (!oldItem) {
-        return
       }
 
       // no row # means it's a new item that has never hit the server
@@ -33,12 +35,14 @@ export function useUpdateItem(item: Ref<SheetItem>, panelObject?: any) {
         const { sysId } = oldItem
         removeItemFromCacheBySysId(sysId, panel)
       }
-      return
+
+    // new item is the same sheet item as the old item, indicate it is processing and wait for 2 seconds to see if more changes come in
+    } else {
+      setProcessing(true)
+      clearTimeout(timeout)
+      timeout = setTimeout(() => {
+        updateItem(newItem, panel)
+      }, 2000);
     }
-    setProcessing(true)
-    clearTimeout(timeout)
-    timeout = setTimeout(() => {
-      updateItem(newItem, panel)
-    }, 2000);
   }, { deep: true })
 }
