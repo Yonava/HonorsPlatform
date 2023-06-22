@@ -26,6 +26,16 @@ export const useSyncState = defineStore('syncState', {
     },
     setLastSynced(date: Date = new Date()) {
       this.lastSynced = date;
+    },
+    waitUntilSynced() {
+      return new Promise((resolve) => {
+        const interval = setInterval(() => {
+          if (!this.processing) {
+            clearInterval(interval);
+            resolve('synced');
+          }
+        }, 100);
+      })
     }
   }
 })

@@ -4,8 +4,10 @@ import { getPanel } from "../Panels";
 import * as types from "../SheetTypes";
 import * as panels from "../Panels";
 import { useSheetManager } from "./useSheetManager";
+import { useDialog } from "./useDialog";
 import { warn } from "../Warn";
 import { useSyncState } from "./useSyncState";
+import { storeToRefs } from "pinia";
 
 export const useDocumentCache = defineStore("documentCache", {
   state: () => ({
@@ -127,9 +129,10 @@ export const useDocumentCache = defineStore("documentCache", {
         this[panel.sheetRange].selected = null;
       }
     },
-    async deleteItem(item?: types.SheetItem, panelObject?: panels.Panel, showWarning = true) {
+    async deleteItem(item?: types.SheetItem, panelObject?: panels.Panel, showWarning = true, concurrent = false) {
       const { panel: activePanel } = useSheetManager();
-      const { setProcessing } = useSyncState();
+      const { setProcessing, waitUntilSynced } = useSyncState();
+      const { processing } = storeToRefs(useSyncState());
 
       const panel = panelObject ?? activePanel;
       const itemToDelete = item ?? this[panel.sheetRange].selected;
@@ -137,12 +140,12 @@ export const useDocumentCache = defineStore("documentCache", {
         console.error("useDocumentCache: No item to delete");
         return;
       }
-      const { sysId, row } = itemToDelete;
+
 
       // no row means it's a new item that hasn't been saved to the sheet yet
-      if (typeof row !== "number") {
+      if (typeof itemToDelete.row !== "number" && !processing.value) {
         console.log("useDocumentCache: No row to delete, not hitting API");
-        this.removeItemFromCacheBySysId(sysId, panel);
+        this.removeItemFromCacheBySysId(itemToDelete.sysId, panel);
         return;
       }
 
@@ -153,6 +156,17 @@ export const useDocumentCache = defineStore("documentCache", {
           return
         }
       }
+
+      if (!concurrent && processing.value) {
+        useDialog().open({
+          body: {
+            title: "Processing Request..."
+          }
+        })
+        await waitUntilSynced();
+        useDialog().close();
+      }
+      const { sysId, row } = itemToDelete;
 
       setProcessing(true);
 
@@ -239,25 +253,6 @@ export const useDocumentCache = defineStore("documentCache", {
         await newPanel.mappers.unmap([newItem])
       )
       this[newPanel.sheetRange].list.unshift(newItem);
-    },
-    addItemsToCache(list: types.SheetItem[], panelObject?: panels.Panel) {
-      const { panel: activePanel } = useSheetManager();
-      const panel = panelObject ?? activePanel;
-      this[panel.sheetRange].list.push(...list);
-    },
-    removeItemsFromCache(list: types.SheetItem[], panelObject?: panels.Panel) {
-      const { panel: activePanel } = useSheetManager();
-      const panel = panelObject ?? activePanel;
-      for (const item of list) {
-        const index = this[panel.sheetRange].list.findIndex(i => i.sysId === item.sysId);
-        if (index !== -1) {
-          this[panel.sheetRange].list.splice(index, 1);
-        }
-      }
-
-      if (!this[panel.sheetRange].list.some(item => item.sysId === this[panel.sheetRange].selected?.sysId)) {
-        this[panel.sheetRange].selected = null;
-      }
     }
   }
 })

@@ -86,6 +86,7 @@
         </div>
         <v-card-actions class="pa-0">
           <v-btn
+            @click="showDialog = false"
             color="red"
             variant="outlined"
           >
@@ -123,9 +124,16 @@ useUpdateItem(selectedModule, modulePanel)
 
 const { xs } = useDisplay()
 
+const dialogCanOpen = ref(true)
 const showDialog = computed({
-  get: () => !!selectedModule.value,
-  set: () => setSelectedItem(null, modulePanel)
+  get: () => !!selectedModule.value && dialogCanOpen.value,
+  set: () => {
+    dialogCanOpen.value = false
+    setTimeout(() => {
+      setSelectedItem(null, modulePanel)
+      dialogCanOpen.value = true
+    }, 300)
+  }
 })
 
 const openMoveDialog = () => {

@@ -1,7 +1,7 @@
 import { Student, Graduate } from './SheetTypes'
 import { unmapGraduates } from './DataMappers'
 import { getEvery, replaceRange, getHeaderRowCache, postInRange } from './SheetsAPI'
-import { panels } from './Panels'
+import { getPanel, panels } from './Panels'
 import { useDocumentCache } from './store/useDocumentCache'
 
 export const statusOptions = {
@@ -64,7 +64,7 @@ export function graduateToStudent(graduate: Graduate): Student {
     email: graduate.email,
     points: 0,
     activeStatus: "Active",
-    year: "",
+    year: "Senior",
     athletics: "",
     note: graduate.note,
     misc: {},
@@ -93,7 +93,7 @@ export async function moveToStudents(graduate: Graduate) {
 
 export async function incrementStudentYear() {
   const { map, unmap } = panels['STUDENTS'].mappers
-  const { addItemsToCache, removeItemsFromCache } = useDocumentCache()
+  const { refreshCache } = useDocumentCache()
   const students = await map(await getEvery('Students'))
   const graduatingSeniors: Student[] = []
   const failedToIncrement: Student[] = []
@@ -127,9 +127,6 @@ export async function incrementStudentYear() {
     }
   })
 
-  removeItemsFromCache(graduatingSeniors, panels['STUDENTS'])
-  addItemsToCache(graduatingSeniors.map(studentToGraduate), panels['GRADUATES'])
-
   if (graduatingSeniors.length > 0) {
     graduatingSeniors.forEach(student => {
       const indexOfGrad = students.findIndex(s => s.sysId === student.sysId)
@@ -142,7 +139,8 @@ export async function incrementStudentYear() {
   const headerRow = await getHeaderRowCache('Students')
   await replaceRange('Students', [headerRow, ...data])
 
-  console.log('Batch job "incrementStudentYear" complete!')
+  await refreshCache(getPanel('STUDENTS'))
+  await refreshCache(getPanel('GRADUATES'))
 
   return {
     graduatingSeniors,
