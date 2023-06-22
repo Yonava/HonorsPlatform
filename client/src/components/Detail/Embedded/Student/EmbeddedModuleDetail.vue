@@ -132,28 +132,9 @@ import InstructorComplete from '../../Helper/InstructorComplete.vue'
 const { Modules, setSelectedItem, updateItem } = useDocumentCache()
 const { selected } = toRefs(Modules)
 
-const startingState = ref<Module>(null)
-const selectedModule = ref<Module>(null)
-const newModule = ref(false)
 const modulePanel = panels['MODULES']
 
-const clone = <T>(obj: T) => JSON.parse(JSON.stringify(obj))
 const { xs } = useDisplay()
-
-watch(selected, (val) => {
-  if (!val) return
-  newModule.value = typeof val.row !== 'number'
-  startingState.value = clone(val)
-  selectedModule.value = clone(val)
-})
-
-const update = () => {
-  setSelectedItem(null, modulePanel)
-  if (JSON.stringify(selectedModule.value) === JSON.stringify(startingState.value)) {
-    return
-  }
-  updateItem(selectedModule.value, modulePanel)
-}
 
 const showDialog = computed({
   get: () => !!selected.value,
