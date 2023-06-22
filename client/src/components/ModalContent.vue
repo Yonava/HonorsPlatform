@@ -15,7 +15,7 @@
       touchless
       rounded
       location="bottom"
-      style="width: 100%; height: 75%;"
+      style="width: 100%; height: calc(100vh - 125px);"
     >
       <v-sheet
         :color="color"

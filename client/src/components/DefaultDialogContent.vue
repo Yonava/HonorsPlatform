@@ -11,7 +11,7 @@
       :key="button.buttonText"
       @click="button.onClick"
       :color="button.color"
-      class="mr-3"
+      class="mr-3 mb-3"
     >
       {{ button.text }}
     </v-btn>

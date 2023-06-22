@@ -119,7 +119,7 @@
       touchless
       rounded
       location="bottom"
-      style="width: 100%; height: calc(100% - 120px);"
+      style="width: 100%; height: calc(100vh - 125px);"
     >
       <component
         v-if="getSelectedItem()"
