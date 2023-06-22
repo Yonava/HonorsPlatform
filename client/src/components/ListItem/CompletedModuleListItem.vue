@@ -38,14 +38,14 @@
           >
             mdi-calendar
           </v-icon>
-          <p :style="termStyle">
+          <p :style="term.style">
             {{ item.term || '(No Term)' }}
           </p>
           <v-tooltip
             :disabled="smAndDown"
             activator="parent"
             location="bottom"
-          >{{ termTooltip }}</v-tooltip>
+          >{{ term.tooltip }}</v-tooltip>
         </div>
         <v-spacer></v-spacer>
         <div class="d-flex flex-row align-center">
@@ -81,22 +81,19 @@ const props = defineProps<{
 
 const { smAndDown } = useDisplay()
 
-const termStyle = computed(() => {
-  if (termValidator(props.item.studentId)) {
-    return {}
+const term = computed(() => {
+  if (termValidator(props.item.term)) {
+    return {
+      tooltip: 'Term'
+    }
   } else {
     return {
-      color: 'red',
-      fontWeight: 900
+      tooltip: 'Term (Potentially Invalid)',
+      style: {
+        color: 'red',
+        fontWeight: 900
+      }
     }
-  }
-})
-
-const termTooltip = computed(() => {
-  if (termValidator(props.item.term)) {
-    return 'Term'
-  } else {
-    return 'Term (Potentially Invalid)'
   }
 })
 </script>

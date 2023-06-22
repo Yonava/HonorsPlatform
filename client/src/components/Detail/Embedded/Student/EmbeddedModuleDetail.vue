@@ -101,7 +101,7 @@
           <v-spacer></v-spacer>
           <v-btn
             v-if="!newModule"
-            @click="showCompleteModal = true"
+            @click="openMoveDialog"
             variant="outlined"
             color="blue"
           >complete</v-btn>
@@ -114,13 +114,6 @@
         </v-card-actions>
       </v-card>
     </div>
-    <FinishModuleModal
-      @success="null"
-      @close="showCompleteModal = false"
-      :show="showCompleteModal"
-      :module="selectedModule"
-      color="blue-darken-2"
-    />
   </ModalContent>
 </template>
 
@@ -130,8 +123,9 @@ import { Module } from '../../../../SheetTypes'
 import { panels } from '../../../../Panels'
 import { useDocumentCache } from '../../../../store/useDocumentCache'
 import { useDisplay } from 'vuetify'
+import { useDialog } from '../../../../store/useDialog'
 import { termValidator, getCurrentTerm } from '../../../../TermValidator'
-import FinishModuleModal from '../../Helper/FinishModuleModal.vue'
+import MoveModule from '../../Helper/MoveModule.vue'
 import ModalContent from '../../../ModalContent.vue'
 import InstructorComplete from '../../Helper/InstructorComplete.vue'
 
@@ -140,7 +134,6 @@ const { selected } = toRefs(Modules)
 
 const startingState = ref<Module>(null)
 const selectedModule = ref<Module>(null)
-const showCompleteModal = ref(false)
 const newModule = ref(false)
 const modulePanel = panels['MODULES']
 
@@ -166,6 +159,12 @@ const showDialog = computed({
   get: () => !!selected.value,
   set: () => setSelectedItem(null, modulePanel)
 })
+
+const openMoveDialog = () => {
+  useDialog().open({
+    component: MoveModule,
+  })
+}
 </script>
 
 <style scoped>

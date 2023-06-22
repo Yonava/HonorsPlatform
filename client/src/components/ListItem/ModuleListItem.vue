@@ -2,7 +2,7 @@
   <div>
     <div class="d-flex flex-row">
       <div v-if="overOneYearInProgress && !item.docuSignCompleted">
-        <v-icon 
+        <v-icon
           class="mr-2"
           color="red"
         >
@@ -23,17 +23,17 @@
             location="bottom"
           >Course Code</v-tooltip>
         </span>
-        <span :style="termStyle">
+        <span :style="term.style">
           {{ item.term || '(No Term)' }}
           <v-tooltip
             :disabled="smAndDown"
             activator="parent"
             location="bottom"
-          >{{ termTooltip }}</v-tooltip>
+          >{{ term.tooltip }}</v-tooltip>
         </span>
       </div>
       <v-spacer></v-spacer>
-      <v-sheet 
+      <v-sheet
         :color="docuSignStatus.color"
         :style="{
           height: '25px',
@@ -58,20 +58,20 @@
         >{{ docuSignStatus.tooltip }}</v-tooltip>
       </v-sheet>
     </div>
-    <div 
+    <div
       class="d-flex flex-column mt-5"
       style="font-size: 0.9em;"
     >
       <div class="d-flex flex-row">
         <div class="d-flex flew-row align-center">
-          <v-icon 
+          <v-icon
             class="mr-1"
             style="opacity: 0.75"
           >
             mdi-human-male-board
           </v-icon>
           <p>
-            {{ item.instructor || '(No Instructor)' }} 
+            {{ item.instructor || '(No Instructor)' }}
           </p>
           <v-tooltip
             :disabled="smAndDown"
@@ -84,7 +84,7 @@
           <p>
             {{ item.studentId || '(No Student ID)' }}
           </p>
-          <v-icon 
+          <v-icon
             class="ml-1"
             style="opacity: 0.75"
           >
@@ -186,26 +186,23 @@ const docuSignStatus: ComputedRef<DocuSignStatus> = computed(() => {
   }
 })
 
-const termTooltip = computed(() => {
-  if (termValidator(props.item.term)) {
-    return 'Term'
-  } else {
-    return `Term (Potentially Invalid)`
-  }
-})
-
-const termStyle = computed(() => {
+const term = computed(() => {
   if (termValidator(props.item.term)) {
     return {
-      'font-weight': '300',
-      'font-size': '0.6em',
-      'color': 'black'
+      tooltip: 'Term',
+      style: {
+        fontSize: '0.6em',
+        fontWeight: 400
+      }
     }
   } else {
     return {
-      'font-weight': '900',
-      'font-size': '0.6em',
-      'color': 'red'
+      tooltip: 'Term (Potentially Invalid)',
+      style: {
+        color: 'red',
+        fontWeight: 900,
+        fontSize: '0.6em'
+      }
     }
   }
 })

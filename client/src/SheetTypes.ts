@@ -1,6 +1,7 @@
 export type SheetItem = Module | Graduate | Student | CompletedModule | Thesis | GradEngagement;
 
-export type Grade = "High Pass" | "Pass" | "Low Pass" | "Fail" | null;
+export const grades = [null, "High Pass", "Pass", "Low Pass", "Fail"] as const;
+export type Grade = typeof grades[number];
 
 export interface SheetEntry {
   row: number | null | undefined;
