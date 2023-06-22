@@ -16,7 +16,7 @@
         >
           <v-icon class="mr-1">mdi-file-document-edit-outline</v-icon>
           <span>
-            {{ newModule ? 'Create' : 'Update' }} Module
+            Modules
           </span>
         </v-sheet>
         <input
@@ -86,31 +86,17 @@
         </div>
         <v-card-actions class="pa-0">
           <v-btn
-            @click="update"
-            color="green"
-            variant="outlined"
-          >
-            {{ newModule ? 'create' : 'update' }}
-          </v-btn>
-          <v-btn
-            v-if="xs && !newModule"
-            @click="setSelectedItem(null, modulePanel)"
             color="red"
             variant="outlined"
-          >close</v-btn>
+          >
+            close
+          </v-btn>
           <v-spacer></v-spacer>
           <v-btn
-            v-if="!newModule"
             @click="openMoveDialog"
             variant="outlined"
             color="blue"
           >complete</v-btn>
-          <v-btn
-            v-else
-            @click="setSelectedItem(null, modulePanel)"
-            variant="outlined"
-            color="red"
-          >discard</v-btn>
         </v-card-actions>
       </v-card>
     </div>
@@ -124,20 +110,21 @@ import { panels } from '../../../../Panels'
 import { useDocumentCache } from '../../../../store/useDocumentCache'
 import { useDisplay } from 'vuetify'
 import { useDialog } from '../../../../store/useDialog'
+import { useUpdateItem } from '../../../../TrackItemForUpdate'
 import { termValidator, getCurrentTerm } from '../../../../TermValidator'
 import MoveModule from '../../Helper/MoveModule.vue'
 import ModalContent from '../../../ModalContent.vue'
 import InstructorComplete from '../../Helper/InstructorComplete.vue'
 
-const { Modules, setSelectedItem, updateItem } = useDocumentCache()
-const { selected } = toRefs(Modules)
-
 const modulePanel = panels['MODULES']
+const { Modules, setSelectedItem, updateItem } = useDocumentCache()
+const { selected: selectedModule } = toRefs(Modules)
+useUpdateItem(selectedModule, modulePanel)
 
 const { xs } = useDisplay()
 
 const showDialog = computed({
-  get: () => !!selected.value,
+  get: () => !!selectedModule.value,
   set: () => setSelectedItem(null, modulePanel)
 })
 

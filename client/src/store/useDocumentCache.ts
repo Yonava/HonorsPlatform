@@ -192,6 +192,7 @@ export const useDocumentCache = defineStore("documentCache", {
       return newItem;
     },
     async updateItem(item?: types.SheetItem, panelObject?: panels.Panel) {
+      console.log('updateItem')
       const { panel: activePanel } = useSheetManager();
       const { setProcessing } = useSyncState();
 
@@ -202,7 +203,13 @@ export const useDocumentCache = defineStore("documentCache", {
         console.error("useDocumentCache: No item to update");
         return;
       } else if (typeof itemToUpdate.row !== "number") {
-        console.error("useDocumentCache: No row to update");
+        setProcessing(true);
+        const row = await postInRange(
+          panel.sheetRange,
+          await panel.mappers.unmap([itemToUpdate])
+        )
+        itemToUpdate.row = row
+        useSyncState().$reset();
         return;
       }
 

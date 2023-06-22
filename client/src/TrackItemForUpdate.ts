@@ -23,10 +23,15 @@ export function useUpdateItem(item: Ref<SheetItem>, panelObject?: any) {
         updateItem(oldItem, panel)
         clearTimeout(timeout)
       }
+
+      if (!oldItem) {
+        return
+      }
+
       // no row # means it's a new item that has never hit the server
-      if (typeof oldItem.row !== 'number') {
+      if (typeof oldItem?.row !== 'number' && !processing.value) {
         const { sysId } = oldItem
-        removeItemFromCacheBySysId(sysId)
+        removeItemFromCacheBySysId(sysId, panel)
       }
       return
     }
