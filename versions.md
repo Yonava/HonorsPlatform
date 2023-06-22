@@ -1,4 +1,15 @@
-# Current Version: prerelease 0.8
+# Current Version: prerelease 0.81
+
+### prerelease 0.81 (Jun. 22)
+- Fixed student year increment cache duplication bugs
+- Fixed completed module term display red text bug
+- Removed Finish Module system and replaced it with a cleaner system that integrates with new Pinia APIs
+- Integrated the embedded module detail system with useDocumentCache
+- Removed mass add and remove from cache endpoints on useDocumentCache. On mass updates, refreshCache preferred
+- Improved the useDocument addItemToCache API and renamed it to addItem for consistency
+- Added concurrency controls to deleteItem in useDocumentCache
+- Student year now defaults to "Senior" when moved moved from graduates back to students
+- Tons of other smaller bug fixes and improvements
 
 ### prerelease 0.8 (Jun. 19)
 - Entire application much more efficient with REST requests
