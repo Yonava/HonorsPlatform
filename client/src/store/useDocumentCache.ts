@@ -200,7 +200,7 @@ export const useDocumentCache = defineStore("documentCache", {
       const {
         panel = activePanel,
         pin = true,
-        postToSheet = true,
+        postToSheet = false,
         columns = null,
       } = options;
 

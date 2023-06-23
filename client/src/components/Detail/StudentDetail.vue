@@ -264,17 +264,16 @@ function viewThesis() {
               text: "Create New Thesis",
               color: "green",
               onClick: () => {
-                addItem(
-                  getPanel("THESES"),
-                  true,
-                  true,
-                  [
+                addItem({
+                  panel: getPanel("THESES"),
+                  postToSheet: true,
+                  columns: [
                     newSysId(),
                     _student.id,
                     _student.name,
                     _student.email,
-                  ]
-                );
+                  ],
+                });
                 close();
               },
             },

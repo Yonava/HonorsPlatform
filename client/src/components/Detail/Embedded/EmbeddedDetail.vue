@@ -80,10 +80,14 @@ const displayedItems = computed(() => {
 })
 
 const addEmbeddedItem = async () => {
-  await addItem(panel, false, false, [
-    newSysId(),
-    getSelectedItem()[filterBy.outer],
-  ])
+  await addItem({
+    panel,
+    pin: false,
+    columns: [
+      newSysId(),
+      getSelectedItem()[filterBy.outer],
+    ],
+  })
 }
 
 const setSelectedEmbeddedItem = (item: SheetItem, panel: Panel) => {
