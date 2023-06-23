@@ -94,7 +94,7 @@ async function moveModule() {
           text: "View In Completed Modules",
           color: completedModulePanel.color,
           onClick: () => {
-            setPanel(completedModulePanel, {
+            setPanel('COMPLETED_MODULES', {
               value: sysId
             })
             useDialog().close()

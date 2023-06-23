@@ -125,7 +125,7 @@ export const panels = {
       singular: 'Module',
       plural: 'Modules'
     },
-    color: 'brown',
+    color: 'orange',
     icon: 'mdi-book-open-variant',
     sheetRange: 'Modules',
     mappers: {

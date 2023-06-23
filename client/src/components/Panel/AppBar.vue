@@ -116,9 +116,9 @@
 
           <v-list>
             <v-list-item
-              v-for="listPanel in panels"
+              v-for="(listPanel, panelName) in panels"
               :key="listPanel.title.singular"
-              @click="setPanel(listPanel)"
+              @click="setPanel(panelName)"
               class="type-list-item"
             >
               <v-list-item-title

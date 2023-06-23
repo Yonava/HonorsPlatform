@@ -93,7 +93,7 @@ async function generateRegistrarList() {
     "Name",
     "Email",
     "Course Code",
-    `Generated on ${new Date().toLocaleString()} for ${term.value.toUpperCase()}`
+    `Generated on ${new Date().toLocaleString('en-US')} for ${term.value.toUpperCase()}`
   ]);
   await replaceRange('Registrar List', output);
   loading.value = false;

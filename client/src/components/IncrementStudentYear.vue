@@ -93,7 +93,7 @@ incrementStudentYear().then(
 );
 
 const select = (sysId: string, panelName: PanelName) => {
-  setPanel(getPanel(panelName), {
+  setPanel(panelName, {
     value: sysId
   })
   close();

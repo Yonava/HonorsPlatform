@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { SheetItem } from '../SheetTypes';
-import { getPanel, Panel } from '../Panels';
+import { getPanel, Panel, PanelName } from '../Panels';
 import router from '../router';
 import { useSyncState } from './useSyncState';
 import { useDocumentCache } from './useDocumentCache';
@@ -61,10 +61,10 @@ export const useSheetManager = defineStore('sheetManager', {
     setSearchFilter(filter: string) {
       this.searchFilter = filter;
     },
-    async setPanel(panel: Panel, jumpTo?: JumpObject) {
+    async setPanel(panelName: PanelName, jumpTo?: JumpObject) {
 
       useDocumentCache().setSelectedItem(null);
-      this.panel = panel;
+      this.panel = getPanel(panelName);
 
       this.setPinnedItem(null);
       this.setSearchFilter('');
@@ -74,18 +74,17 @@ export const useSheetManager = defineStore('sheetManager', {
         ascending: true
       };
 
-      document.title = panel.title.plural + ' - Honors Program';
+      document.title = this.panel.title.plural + ' - Honors Program';
       router.push({
         name: 'panel',
         query: {
-          type: panel.title.plural.toLowerCase()
+          type: this.panel.title.plural.toLowerCase()
         }
       });
 
       await this.fetchItems();
 
       if (jumpTo) {
-        console.log('jumping')
         this.jumpToItem(jumpTo);
       }
     },

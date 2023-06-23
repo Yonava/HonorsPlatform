@@ -155,8 +155,9 @@ const { getSelectedItem, setSelectedItem } = useDocumentCache()
 
 const route = useRoute()
 if (route.query.type) {
-  const newPanel = Object.values(panels).find((p) => p.title.plural.toLowerCase() === route.query.type)
-  if (newPanel) setPanel(newPanel)
+  const panelIndex = Object.values(panels).findIndex((p) => p.title.plural.toLowerCase() === route.query.type)
+  const panelKeys = Object.keys(panels) as (keyof typeof panels)[]
+  if (panelIndex !== -1) setPanel(panelKeys[panelIndex])
 } else {
   document.title = getActivePanel.value.title.plural + ' - Honors Program'
   fetchItems()
@@ -180,11 +181,11 @@ const showDetailDrawer = computed({
 
 useKeyBindings({
   'r': () => fetchItems(),
-  '1': () => setPanel(getPanel('STUDENTS')),
-  '2': () => setPanel(getPanel('GRADUATES')),
-  '3': () => setPanel(getPanel('MODULES')),
-  '4': () => setPanel(getPanel('COMPLETED_MODULES')),
-  '5': () => setPanel(getPanel('THESES')),
+  '1': () => setPanel('STUDENTS'),
+  '2': () => setPanel('GRADUATES'),
+  '3': () => setPanel('MODULES'),
+  '4': () => setPanel('COMPLETED_MODULES'),
+  '5': () => setPanel('THESES'),
 })
 
 function getDefaultWidth() {

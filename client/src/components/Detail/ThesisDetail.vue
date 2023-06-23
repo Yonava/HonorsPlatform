@@ -207,7 +207,7 @@ async function setStudentData() {
 const jumpToStudent = () => {
   const _thesis = JSON.parse(JSON.stringify(thesis.value)) as Thesis
   const { open, close } = useDialog()
-  setPanel(studentPanel, {
+  setPanel('STUDENTS', {
     key: 'id',
     value: _thesis.studentId,
     fallbackFn: () => {

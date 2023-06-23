@@ -251,7 +251,7 @@ function viewThesis() {
     return;
   }
   const _student = JSON.parse(JSON.stringify(student.value));
-  setPanel(getPanel("THESES"), {
+  setPanel('THESES', {
     key: "studentId",
     value: _student.id,
     fallbackFn: () => {
@@ -282,7 +282,7 @@ function viewThesis() {
               text: 'Back to Student Profile',
               color: getPanel("STUDENTS").color,
               onClick: () => {
-                setPanel(getPanel("STUDENTS"), {
+                setPanel('STUDENTS', {
                   value: _student.sysId,
                 });
                 close();
@@ -334,7 +334,7 @@ async function graduate() {
           text: `View new graduate profile`,
           color: getPanel("GRADUATES").color,
           onClick: () => {
-            setPanel(getPanel("GRADUATES"), {
+            setPanel('GRADUATES', {
               value: _student.sysId
             });
             close();

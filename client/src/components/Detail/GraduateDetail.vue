@@ -146,7 +146,7 @@ async function sendBackToStudents() {
           text: `View ${_grad.name}s Student Profile`,
           color: `${getPanel('STUDENTS').color}`,
           onClick: () => {
-            setPanel(getPanel('STUDENTS'), {
+            setPanel('STUDENTS', {
               value: _grad.sysId,
             });
             close();
