@@ -12,7 +12,7 @@
         </h2>
         <v-spacer></v-spacer>
         <v-btn
-          @click="addNewItem"
+          @click="addEmbeddedItem"
           size="small"
           color="green"
         >
@@ -21,13 +21,13 @@
         </v-btn>
       </div>
       <div
-        v-if="loading"
+        v-if="loadingItems"
         class="d-flex flex-row justify-center"
       >
         <v-progress-circular
+          :color="panel.color"
           indeterminate
-          class="mt-3"
-          :color="`${panel.color}-darken-2`"
+          class="ma-4"
         ></v-progress-circular>
       </div>
       <div
@@ -43,7 +43,7 @@
         <component
           :is="getActivePanel.embedded.list"
           @selected="item => setSelectedItem(item, panel)"
-          @delete="item => deleteItem(item, panel)"
+          @delete="item => deleteEmbeddedItem(item, panel)"
           :items="displayedItems"
         />
       </div>
@@ -56,37 +56,40 @@
 <script setup lang="ts">
 import LockArea from './LockArea.vue'
 import { ref, computed, watch, toRefs, onMounted } from 'vue'
-import { Module } from '../../../SheetTypes'
-import { panels } from '../../../Panels'
+import { SheetItem } from '../../../SheetTypes'
+import { panels, Panel } from '../../../Panels'
 import { useSheetManager } from '../../../store/useSheetManager'
 import { useDocumentCache } from '../../../store/useDocumentCache'
+import { storeToRefs } from 'pinia'
 
-const { newSysId, getActivePanel } = useSheetManager()
+const sheetManager = useSheetManager()
+const { newSysId, getActivePanel } = sheetManager
+const { loadingItems } = storeToRefs(sheetManager)
+
 const documents = useDocumentCache()
-const { refreshCache, deleteItem, setSelectedItem, getSelectedItem, addItem } = documents
+const { deleteItem, setSelectedItem, getSelectedItem, addItem } = documents
+
 const { filterBy, text } = getActivePanel.embedded
 const panel = panels[getActivePanel.embedded.panel]
 
 const { list: items } = toRefs(documents[panel.sheetRange])
-
-const loading = ref(true)
-onMounted(async () => {
-  const cachedModules = documents[panel.sheetRange].list
-  if (cachedModules.length === 0) {
-    await refreshCache(panel)
-  }
-  loading.value = false
-})
 
 const displayedItems = computed(() => {
   if (!getSelectedItem()[filterBy.outer]) return []
   return items.value.filter(e => e[filterBy.inner] === getSelectedItem()[filterBy.outer])
 })
 
-async function addNewItem() {
+const addEmbeddedItem = async () => {
   await addItem(panel, false, false, [
     newSysId(),
     getSelectedItem()[filterBy.outer],
   ])
+}
+
+const deleteEmbeddedItem = async (item: SheetItem, panel: Panel) => {
+  await deleteItem({
+    item,
+    panel,
+  })
 }
 </script>

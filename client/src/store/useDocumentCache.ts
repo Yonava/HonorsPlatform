@@ -8,6 +8,13 @@ import { warn } from "../Warn";
 import { useSyncState } from "./useSyncState";
 import { storeToRefs } from "pinia";
 
+type DeleteItem = {
+  item?: types.SheetItem;
+  panel?: Panel;
+  showWarning?: boolean;
+  concurrent?: boolean;
+}
+
 export const useDocumentCache = defineStore("documentCache", {
   state: () => ({
     refreshLog: {} as Record<string, Date>,
@@ -56,7 +63,7 @@ export const useDocumentCache = defineStore("documentCache", {
     }
   },
   actions: {
-    async refreshCache(panelObject?: panels.Panel) {
+    async refreshCache(panelObject?: Panel) {
 
       const { panel: activePanel } = useSheetManager();
       const panel = panelObject ?? activePanel;
@@ -128,23 +135,28 @@ export const useDocumentCache = defineStore("documentCache", {
         this[panel.sheetRange].selected = null;
       }
     },
-    async deleteItem(item?: types.SheetItem, panelObject?: Panel, showWarning = true, concurrent = false) {
+    async deleteItem(options: DeleteItem = {}) {
       const { panel: activePanel } = useSheetManager();
-      const { setProcessing, waitUntilSynced } = useSyncState();
-      const { processing } = storeToRefs(useSyncState());
+      const syncState = useSyncState();
+      const { setProcessing, waitUntilSynced } = syncState;
+      const { processing } = storeToRefs(syncState);
 
-      const panel = panelObject ?? activePanel;
-      const itemToDelete = item ?? this[panel.sheetRange].selected;
-      if (!itemToDelete) {
+      const {
+        panel = activePanel,
+        item = this[panel.sheetRange].selected,
+        showWarning = true,
+        concurrent = false
+      } = options;
+
+      if (!item) {
         console.error("useDocumentCache: No item to delete");
         return;
       }
 
-
       // no row means it's a new item that hasn't been saved to the sheet yet
-      if (typeof itemToDelete.row !== "number" && !processing.value) {
+      if (typeof item.row !== "number" && !processing.value) {
         console.log("useDocumentCache: No row to delete, not hitting API");
-        this.removeItemFromCacheBySysId(itemToDelete.sysId, panel);
+        this.removeItemFromCacheBySysId(item.sysId, panel);
         return;
       }
 
@@ -165,12 +177,15 @@ export const useDocumentCache = defineStore("documentCache", {
         await waitUntilSynced();
         useDialog().close();
       }
-      const { sysId, row } = itemToDelete;
+      const { sysId, row } = item;
 
       setProcessing(true);
-
-      this.removeItemFromCacheBySysId(sysId, panel);
-      await clearByRow(panel.sheetRange, row);
+      if (typeof row === "number") {
+        this.removeItemFromCacheBySysId(sysId, panel);
+        await clearByRow(panel.sheetRange, row);
+      } else {
+        console.error("useDocumentCache: deleteItem started processing without an assigned row!");
+      }
 
       useSyncState().$reset();
     },
