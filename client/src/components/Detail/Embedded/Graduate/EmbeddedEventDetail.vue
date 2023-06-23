@@ -106,7 +106,7 @@ const update = () => {
   if (JSON.stringify(selectedEvent.value) === JSON.stringify(startingState.value)) {
     return
   }
-  updateItem(selectedEvent.value, eventsPanel)
+  updateItem({ panel: eventsPanel })
 }
 
 const showDialog = computed({

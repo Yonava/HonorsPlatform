@@ -5,8 +5,9 @@ import { useSheetManager } from "./store/useSheetManager";
 import { watch } from "vue";
 import type { Ref } from "vue";
 import type { SheetItem } from "./SheetTypes";
+import type { Panel } from "./Panels";
 
-export function useUpdateItem(item: Ref<SheetItem>, panelObject?: any) {
+export function useUpdateItem(item: Ref<SheetItem>, panelObject?: Panel) {
   const { updateItem, removeItemFromCacheBySysId } = useDocumentCache();
   const { setProcessing } = useSyncState();
   const { processing } = storeToRefs(useSyncState());
@@ -26,7 +27,10 @@ export function useUpdateItem(item: Ref<SheetItem>, panelObject?: any) {
 
       // there is still an item in transit, update it immediately
       if (processing.value) {
-        updateItem(oldItem, panel)
+        updateItem({
+          item: oldItem,
+          panel,
+        })
         clearTimeout(timeout)
       }
 
@@ -41,7 +45,10 @@ export function useUpdateItem(item: Ref<SheetItem>, panelObject?: any) {
       setProcessing(true)
       clearTimeout(timeout)
       timeout = setTimeout(() => {
-        updateItem(newItem, panel)
+        updateItem({
+          item: newItem,
+          panel,
+        })
       }, 2000);
     }
   }, { deep: true })

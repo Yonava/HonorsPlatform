@@ -26,6 +26,11 @@ type AddItem = {
   columns?: any[];
 }
 
+type UpdateItem = {
+  item?: types.SheetItem;
+  panel?: Panel;
+}
+
 export const useDocumentCache = defineStore("documentCache", {
   state: () => ({
     refreshLog: {} as Record<string, Date>,
@@ -230,24 +235,25 @@ export const useDocumentCache = defineStore("documentCache", {
 
       return newItem;
     },
-    async updateItem(item?: types.SheetItem, panelObject?: Panel) {
-      console.log('updateItem')
+    async updateItem(options: UpdateItem = {}) {
       const { panel: activePanel } = useSheetManager();
       const { setProcessing } = useSyncState();
 
-      const panel = panelObject ?? activePanel;
-      const itemToUpdate = item ?? this[panel.sheetRange].selected;
+      const {
+        panel = activePanel,
+        item = this[activePanel.sheetRange].selected,
+      } = options;
 
-      if (!itemToUpdate) {
+      if (!item) {
         console.error("useDocumentCache: No item to update");
         return;
-      } else if (typeof itemToUpdate.row !== "number") {
+      } else if (typeof item.row !== "number") {
         setProcessing(true);
         const row = await postInRange(
           panel.sheetRange,
-          await panel.mappers.unmap([itemToUpdate])
+          await panel.mappers.unmap([item])
         )
-        itemToUpdate.row = row
+        item.row = row
         useSyncState().$reset();
         return;
       }
