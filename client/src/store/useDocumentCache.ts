@@ -19,6 +19,13 @@ type DeleteItem = {
   concurrent?: boolean;
 }
 
+type AddItem = {
+  panel?: Panel;
+  pin?: boolean;
+  postToSheet?: boolean;
+  columns?: any[];
+}
+
 export const useDocumentCache = defineStore("documentCache", {
   state: () => ({
     refreshLog: {} as Record<string, Date>,
@@ -187,11 +194,17 @@ export const useDocumentCache = defineStore("documentCache", {
 
       useSyncState().$reset();
     },
-    async addItem(panelObject?: Panel, pin = true, postImmediately = false, columns?: any[]) {
+    async addItem(options: AddItem = {}) {
       const { setSearchFilter, panel: activePanel, newSysId, setPinnedItem } = useSheetManager();
-      setSearchFilter("");
 
-      const panel = panelObject ?? activePanel;
+      const {
+        panel = activePanel,
+        pin = true,
+        postToSheet = true,
+        columns = null,
+      } = options;
+
+      setSearchFilter("");
 
       const [newItem] = await panel.mappers.map([
         columns ?? [newSysId()]
@@ -205,7 +218,7 @@ export const useDocumentCache = defineStore("documentCache", {
         setPinnedItem(newItem);
       }
 
-      if (postImmediately) {
+      if (postToSheet) {
         useSyncState().setProcessing(true);
         const row = await postInRange(
           panel.sheetRange,
