@@ -63,15 +63,31 @@ async function moveModule() {
   const { sysId } = selectedModule;
   const { waitUntilSynced } = useSyncState()
 
+  loading.value = true;
+
+  await waitUntilSynced({ showDialog: true })
+
   if (typeof selectedModule.row !== 'number') {
-    await addItem({
-      panel: modulePanel,
-      columns: (await modulePanel.mappers.unmap([selectedModule]))[0],
-      postToSheet: true
+    loading.value = false;
+    return useDialog().open({
+      body: {
+        title: "Try Adding Something First",
+        description: "You cannot complete a module with nothing on it 🤪. Play around with it, have fun, ENJOY LIFE, then come back when you are actually ready to move something!",
+        buttons: [
+          {
+            text: "Sounds Good",
+            color: "blue",
+            onClick: () => useDialog().close()
+          },
+          {
+            text: "Sounds Good (But In Pink ✨🦄✨)",
+            color: "pink",
+            onClick: () => useDialog().close()
+          }
+        ]
+      }
     })
   }
-
-  loading.value = true;
 
   const newCompletedModule = {
     ...selectedModule,
@@ -90,7 +106,12 @@ async function moveModule() {
   } catch (e) {
     console.error(e)
     await waitUntilSynced({ showDialog: true })
-    return moveModule()
+    return useDialog().open({
+      body: {
+        title: "Error",
+        description: "There was an error moving this module to completed modules. Please try again later."
+      }
+    })
   }
 
   useDialog().open({

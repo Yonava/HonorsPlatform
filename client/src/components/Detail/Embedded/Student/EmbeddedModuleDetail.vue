@@ -16,7 +16,7 @@
         >
           <v-icon class="mr-1">mdi-file-document-edit-outline</v-icon>
           <span>
-            Modules
+            Modules {{ selectedModule.row || 'no row' }}
           </span>
         </v-sheet>
         <input
