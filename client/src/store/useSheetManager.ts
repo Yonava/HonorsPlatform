@@ -101,7 +101,7 @@ export const useSheetManager = defineStore('sheetManager', {
     },
     async jumpToItem({ key = 'sysId', value, fallbackFn = () => null }: JumpObject) {
       // allows the UI to update on mobile and tablet breakpoints before jumping
-      await new Promise(resolve => setTimeout(resolve, 250));
+      await new Promise(resolve => setTimeout(resolve, 100));
       const { setSelectedItemByKeyValue } = useDocumentCache();
       const success = setSelectedItemByKeyValue(key, value);
       if (!success) {

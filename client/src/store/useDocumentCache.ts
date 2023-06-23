@@ -260,8 +260,12 @@ export const useDocumentCache = defineStore("documentCache", {
       useSyncState().$reset();
     },
     async moveItemBetweenLists(oldItem: types.SheetItem, newItem: types.SheetItem, oldPanel: Panel, newPanel: Panel) {
-      await this.deleteItem(oldItem, oldPanel, false);
-      console.log(this.getSelectedItem())
+      await this.deleteItem({
+        item: oldItem,
+        panel: oldPanel,
+        showWarning: false,
+        concurrent: true
+      })
       await postInRange(
         newPanel.sheetRange,
         await newPanel.mappers.unmap([newItem])
