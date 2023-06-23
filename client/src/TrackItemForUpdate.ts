@@ -7,6 +7,8 @@ import type { Ref } from "vue";
 import type { SheetItem } from "./SheetTypes";
 import type { Panel } from "./Panels";
 
+const batchTime = 2_000 // ms
+
 export function useUpdateItem(item: Ref<SheetItem>, panelObject?: Panel) {
   const { updateItem, removeItemFromCacheBySysId } = useDocumentCache();
   const { setProcessing } = useSyncState();
@@ -16,14 +18,24 @@ export function useUpdateItem(item: Ref<SheetItem>, panelObject?: Panel) {
   const panel = panelObject ?? getActivePanel.value
 
   let timeout = setTimeout(() => { }, 0)
+  let currentItem = ''
   watch(item, async (newItem, oldItem) => {
 
-    if (!oldItem) {
+    if (JSON.stringify(newItem) === currentItem) {
+      clearTimeout(timeout)
+      setProcessing(false)
+      console.log('same item, aborting update')
       return
     }
 
     // indicates that the sheet item has changed
     if (newItem !== oldItem) {
+
+      currentItem = JSON.stringify(newItem)
+
+      if (!oldItem) {
+        return
+      }
 
       // there is still an item in transit, update it immediately
       if (processing.value) {
@@ -49,7 +61,8 @@ export function useUpdateItem(item: Ref<SheetItem>, panelObject?: Panel) {
           item: newItem,
           panel,
         })
-      }, 2000);
+        currentItem = JSON.stringify(newItem)
+      }, batchTime);
     }
-  }, { deep: true })
+  }, { deep: true, immediate: true })
 }

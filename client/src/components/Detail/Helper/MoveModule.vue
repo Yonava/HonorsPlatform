@@ -57,12 +57,21 @@ const completedDate = ref(newDateString());
 const finalGrade = ref<Grade>(null);
 
 async function moveModule() {
-  loading.value = true;
-  const { moveItemBetweenLists, getSelectedItem } = useDocumentCache()
+  const { moveItemBetweenLists, getSelectedItem, addItem } = useDocumentCache()
   const { setPanel } = useSheetManager()
   const selectedModule = getSelectedItem(modulePanel) as Module;
   const { sysId } = selectedModule;
   const { waitUntilSynced } = useSyncState()
+
+  if (typeof selectedModule.row !== 'number') {
+    await addItem({
+      panel: modulePanel,
+      columns: (await modulePanel.mappers.unmap([selectedModule]))[0],
+      postToSheet: true
+    })
+  }
+
+  loading.value = true;
 
   const newCompletedModule = {
     ...selectedModule,

@@ -208,7 +208,6 @@ export const useDocumentCache = defineStore("documentCache", {
     },
     async addItem(options: AddItem = {}) {
       const { setSearchFilter, panel: activePanel, newSysId, setPinnedItem } = useSheetManager();
-
       const {
         panel = activePanel,
         pin = true,
@@ -265,7 +264,7 @@ export const useDocumentCache = defineStore("documentCache", {
         return;
       }
 
-      const itemInList = this[panel.sheetRange].list.find(item => item.sysId === item.sysId);
+      const itemInList = this[panel.sheetRange].list.find((listItem) => listItem.sysId === item.sysId);
       if (itemInList) {
         Object.assign(itemInList, item);
       } else {
