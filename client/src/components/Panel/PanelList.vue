@@ -8,7 +8,7 @@
         <div
           v-for="item in filteredItems.slice(0, itemsToDisplay)"
           :key="item"
-          @click="setSelectedItem(item)"
+          @click="setSelectedItem({ item })"
           :class="[
             'item-card',
             'pa-3',

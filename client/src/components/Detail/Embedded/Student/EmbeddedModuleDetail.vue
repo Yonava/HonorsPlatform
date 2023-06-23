@@ -130,7 +130,7 @@ const showDialog = computed({
   set: () => {
     dialogCanOpen.value = false
     setTimeout(() => {
-      setSelectedItem(null, modulePanel)
+      setSelectedItem({ panel: modulePanel })
       dialogCanOpen.value = true
     }, 300)
   }

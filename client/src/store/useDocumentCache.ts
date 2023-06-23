@@ -7,6 +7,11 @@ import { warn } from "../Warn";
 import { useSyncState } from "./useSyncState";
 import { storeToRefs } from "pinia";
 
+type SetSelectedItem = {
+  item?: types.SheetItem;
+  panel?: Panel;
+}
+
 type DeleteItem = {
   item?: types.SheetItem;
   panel?: Panel;
@@ -94,9 +99,9 @@ export const useDocumentCache = defineStore("documentCache", {
         await this.refreshCache(panels[panel]);
       }
     },
-    setSelectedItem(item: types.SheetItem | null, panelObject?: Panel) {
+    setSelectedItem(options: SetSelectedItem = {}) {
       const { panel: activePanel } = useSheetManager();
-      const panel = panelObject ?? activePanel;
+      const { panel = activePanel, item = null } = options;
       this[panel.sheetRange].selected = item;
     },
     setSelectedItemByKeyValue(key: string, value: string, panelObject?: Panel) {

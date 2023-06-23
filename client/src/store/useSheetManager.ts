@@ -4,6 +4,7 @@ import { getPanel, Panel, PanelName } from '../Panels';
 import router from '../router';
 import { useSyncState } from './useSyncState';
 import { useDocumentCache } from './useDocumentCache';
+import { set } from '@vueuse/core';
 
 export type JumpObject = {
   value: string,
@@ -62,8 +63,8 @@ export const useSheetManager = defineStore('sheetManager', {
       this.searchFilter = filter;
     },
     async setPanel(panelName: PanelName, jumpTo?: JumpObject) {
-
-      useDocumentCache().setSelectedItem(null);
+      const { setSelectedItem } = useDocumentCache();
+      setSelectedItem();
       this.panel = getPanel(panelName);
 
       this.setPinnedItem(null);

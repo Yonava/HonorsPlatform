@@ -59,13 +59,13 @@
           >{{ newEvent ? 'create' : 'update' }}</v-btn>
           <v-btn
             v-if="xs"
-            @click="setSelectedItem(null, eventsPanel)"
+            @click="setSelectedItem({ panel: eventsPanel })"
             color="red"
             variant="outlined"
           >close</v-btn>
           <v-spacer></v-spacer>
           <v-btn
-            @click="setSelectedItem(null, eventsPanel)"
+            @click="setSelectedItem({ panel: eventsPanel })"
             variant="outlined"
             color="red"
           >discard changes</v-btn>
@@ -102,7 +102,7 @@ watch(selected, (val) => {
 })
 
 const update = () => {
-  setSelectedItem(null, eventsPanel)
+  setSelectedItem({ panel: eventsPanel })
   if (JSON.stringify(selectedEvent.value) === JSON.stringify(startingState.value)) {
     return
   }
@@ -111,7 +111,7 @@ const update = () => {
 
 const showDialog = computed({
   get: () => !!selected.value,
-  set: () => setSelectedItem(null, eventsPanel)
+  set: () => setSelectedItem({ panel: eventsPanel })
 })
 
 const bannerText = computed(() => newEvent.value ? 'Create Event' : 'Update Event')

@@ -174,7 +174,7 @@ const showDetailDrawer = computed({
   get: () => !!getSelectedItem(),
   set: (v) => {
     if (!v) {
-      setSelectedItem(null)
+      setSelectedItem()
     }
   }
 })

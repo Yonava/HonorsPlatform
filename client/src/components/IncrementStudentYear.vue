@@ -77,7 +77,6 @@ import { getPanel, PanelName } from '../Panels'
 import { useDocumentCache } from '../store/useDocumentCache'
 
 const { setPanel } = useSheetManager();
-const { setSelectedItem } = useDocumentCache();
 const { close } = useDialog();
 
 const loading = ref(true);

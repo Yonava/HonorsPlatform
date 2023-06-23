@@ -42,7 +42,7 @@
       >
         <component
           :is="getActivePanel.embedded.list"
-          @selected="item => setSelectedItem(item, panel)"
+          @selected="item => setSelectedEmbeddedItem(item, panel)"
           @delete="item => deleteEmbeddedItem(item, panel)"
           :items="displayedItems"
         />
@@ -84,6 +84,13 @@ const addEmbeddedItem = async () => {
     newSysId(),
     getSelectedItem()[filterBy.outer],
   ])
+}
+
+const setSelectedEmbeddedItem = (item: SheetItem, panel: Panel) => {
+  setSelectedItem({
+    item,
+    panel,
+  })
 }
 
 const deleteEmbeddedItem = async (item: SheetItem, panel: Panel) => {
