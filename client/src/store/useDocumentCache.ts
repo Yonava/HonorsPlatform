@@ -31,6 +31,13 @@ type UpdateItem = {
   panel?: Panel;
 }
 
+type MoveItemBetweenLists = {
+  oldItem: types.SheetItem;
+  oldPanel: Panel;
+  newItem: types.SheetItem;
+  newPanel: Panel;
+}
+
 export const useDocumentCache = defineStore("documentCache", {
   state: () => ({
     refreshLog: {} as Record<string, Date>,
@@ -258,9 +265,9 @@ export const useDocumentCache = defineStore("documentCache", {
         return;
       }
 
-      const itemInList = this[panel.sheetRange].list.find(item => item.sysId === itemToUpdate.sysId);
+      const itemInList = this[panel.sheetRange].list.find(item => item.sysId === item.sysId);
       if (itemInList) {
-        Object.assign(itemInList, itemToUpdate);
+        Object.assign(itemInList, item);
       } else {
         console.error("useDocumentCache: Item not in list");
         return;
@@ -270,13 +277,13 @@ export const useDocumentCache = defineStore("documentCache", {
 
       await updateByRow(
         panel.sheetRange,
-        itemToUpdate.row,
-        await panel.mappers.unmap([itemToUpdate])
+        item.row,
+        await panel.mappers.unmap([item])
       )
 
       useSyncState().$reset();
     },
-    async moveItemBetweenLists(oldItem: types.SheetItem, newItem: types.SheetItem, oldPanel: Panel, newPanel: Panel) {
+    async moveItemBetweenLists({ oldItem, newItem, oldPanel, newPanel }: MoveItemBetweenLists) {
       const { waitUntilSynced } = useSyncState();
       if (typeof oldItem.row !== "number") {
         return Promise.reject("useDocumentCache: Cannot move item that hasn't been saved to the sheet yet");

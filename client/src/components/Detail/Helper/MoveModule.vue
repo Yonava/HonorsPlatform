@@ -72,12 +72,12 @@ async function moveModule() {
 
 
   try {
-    await moveItemBetweenLists(
-      selectedModule,
-      newCompletedModule,
-      modulePanel,
-      completedModulePanel
-    )
+    await moveItemBetweenLists({
+      oldItem: selectedModule,
+      oldPanel: modulePanel,
+      newItem: newCompletedModule,
+      newPanel: completedModulePanel
+    })
   } catch (e) {
     console.error(e)
     await waitUntilSynced({ showDialog: true })
