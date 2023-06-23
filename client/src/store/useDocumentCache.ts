@@ -1,8 +1,7 @@
 import { defineStore } from "pinia";
 import { getEvery, clearByRow, updateByRow, postInRange } from '../SheetsAPI';
-import { getPanel } from "../Panels";
+import { getPanel, panels, Panel } from "../Panels";
 import * as types from "../SheetTypes";
-import * as panels from "../Panels";
 import { useSheetManager } from "./useSheetManager";
 import { useDialog } from "./useDialog";
 import { warn } from "../Warn";
@@ -39,12 +38,12 @@ export const useDocumentCache = defineStore("documentCache", {
     },
   }),
   getters: {
-    getSelectedItem: (state) => (panelObject?: panels.Panel) => {
+    getSelectedItem: (state) => (panelObject?: Panel) => {
       const { panel: activePanel } = useSheetManager();
       const panel = panelObject ?? activePanel;
       return state[panel.sheetRange].selected;
     },
-    dueForRefresh: (state) => (panelObject?: panels.Panel) => {
+    dueForRefresh: (state) => (panelObject?: Panel) => {
       const { panel: activePanel } = useSheetManager();
       const panel = panelObject ?? activePanel;
       const lastRefresh = state.refreshLog[panel.sheetRange];
@@ -85,16 +84,16 @@ export const useDocumentCache = defineStore("documentCache", {
       return documents;
     },
     async refreshAll() {
-      for (const panel of Object.keys(panels.panels) as (keyof typeof panels.panels)[]) {
-        await this.refreshCache(panels.panels[panel]);
+      for (const panel of Object.keys(panels) as (keyof typeof panels)[]) {
+        await this.refreshCache(panels[panel]);
       }
     },
-    setSelectedItem(item: types.SheetItem | null, panelObject?: panels.Panel) {
+    setSelectedItem(item: types.SheetItem | null, panelObject?: Panel) {
       const { panel: activePanel } = useSheetManager();
       const panel = panelObject ?? activePanel;
       this[panel.sheetRange].selected = item;
     },
-    setSelectedItemByKeyValue(key: string, value: string, panelObject?: panels.Panel) {
+    setSelectedItemByKeyValue(key: string, value: string, panelObject?: Panel) {
       const { panel: activePanel } = useSheetManager();
       const panel = panelObject ?? activePanel;
       const item = this[panel.sheetRange].list.find(item => item[key] === value);
@@ -105,7 +104,7 @@ export const useDocumentCache = defineStore("documentCache", {
         return null;
       }
     },
-    setSelectedItemBySysId(sysId: string, panelObject?: panels.Panel) {
+    setSelectedItemBySysId(sysId: string, panelObject?: Panel) {
       const { panel: activePanel } = useSheetManager();
       const panel = panelObject ?? activePanel;
       const item = this[panel.sheetRange].list.find(item => item.sysId === sysId);
@@ -116,7 +115,7 @@ export const useDocumentCache = defineStore("documentCache", {
         return null;
       }
     },
-    removeItemFromCacheBySysId(sysId: string, panelObject?: panels.Panel) {
+    removeItemFromCacheBySysId(sysId: string, panelObject?: Panel) {
       const { panel: activePanel } = useSheetManager();
       const panel = panelObject ?? activePanel;
       const index = this[panel.sheetRange].list.findIndex(item => item.sysId === sysId);
@@ -129,7 +128,7 @@ export const useDocumentCache = defineStore("documentCache", {
         this[panel.sheetRange].selected = null;
       }
     },
-    async deleteItem(item?: types.SheetItem, panelObject?: panels.Panel, showWarning = true, concurrent = false) {
+    async deleteItem(item?: types.SheetItem, panelObject?: Panel, showWarning = true, concurrent = false) {
       const { panel: activePanel } = useSheetManager();
       const { setProcessing, waitUntilSynced } = useSyncState();
       const { processing } = storeToRefs(useSyncState());
@@ -175,7 +174,7 @@ export const useDocumentCache = defineStore("documentCache", {
 
       useSyncState().$reset();
     },
-    async addItem(panelObject?: panels.Panel, pin = true, postImmediately = false, columns?: any[]) {
+    async addItem(panelObject?: Panel, pin = true, postImmediately = false, columns?: any[]) {
       const { setSearchFilter, panel: activePanel, newSysId, setPinnedItem } = useSheetManager();
       setSearchFilter("");
 
@@ -205,7 +204,7 @@ export const useDocumentCache = defineStore("documentCache", {
 
       return newItem;
     },
-    async updateItem(item?: types.SheetItem, panelObject?: panels.Panel) {
+    async updateItem(item?: types.SheetItem, panelObject?: Panel) {
       console.log('updateItem')
       const { panel: activePanel } = useSheetManager();
       const { setProcessing } = useSyncState();
@@ -245,7 +244,7 @@ export const useDocumentCache = defineStore("documentCache", {
 
       useSyncState().$reset();
     },
-    async moveItemBetweenLists(oldItem: types.SheetItem, newItem: types.SheetItem, oldPanel: panels.Panel, newPanel: panels.Panel) {
+    async moveItemBetweenLists(oldItem: types.SheetItem, newItem: types.SheetItem, oldPanel: Panel, newPanel: Panel) {
       await this.deleteItem(oldItem, oldPanel, false);
       console.log(this.getSelectedItem())
       await postInRange(

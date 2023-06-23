@@ -123,8 +123,8 @@ export const useSheetManager = defineStore('sheetManager', {
       if (!sortObject) {
         sortObject = this.sort;
       }
+
       if (!sortObject.func) {
-        console.warn('useStateManager (setSort): No sort function provided')
         return;
       }
 
