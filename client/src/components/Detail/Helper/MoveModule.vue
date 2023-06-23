@@ -42,6 +42,7 @@ import { getPanel } from "../../../Panels";
 import { useDocumentCache } from '../../../store/useDocumentCache'
 import { useDialog } from '../../../store/useDialog'
 import { useSheetManager } from '../../../store/useSheetManager'
+import { useSyncState } from '../../../store/useSyncState'
 
 const modulePanel = getPanel("MODULES");
 const completedModulePanel = getPanel("COMPLETED_MODULES");
@@ -61,6 +62,7 @@ async function moveModule() {
   const { setPanel } = useSheetManager()
   const selectedModule = getSelectedItem(modulePanel) as Module;
   const { sysId } = selectedModule;
+  const { waitUntilSynced } = useSyncState()
 
   const newCompletedModule = {
     ...selectedModule,
@@ -69,12 +71,18 @@ async function moveModule() {
   }
 
 
-  await moveItemBetweenLists(
-    selectedModule,
-    newCompletedModule,
-    modulePanel,
-    completedModulePanel
-  )
+  try {
+    await moveItemBetweenLists(
+      selectedModule,
+      newCompletedModule,
+      modulePanel,
+      completedModulePanel
+    )
+  } catch (e) {
+    console.error(e)
+    await waitUntilSynced({ showDialog: true })
+    return moveModule()
+  }
 
   useDialog().open({
     body: {

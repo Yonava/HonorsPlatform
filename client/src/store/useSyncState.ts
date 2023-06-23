@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia';
+import { useDialog } from './useDialog'
 
 export const useSyncState = defineStore('syncState', {
   state: () => ({
@@ -27,12 +28,30 @@ export const useSyncState = defineStore('syncState', {
     setLastSynced(date: Date = new Date()) {
       this.lastSynced = date;
     },
-    waitUntilSynced() {
+    waitUntilSynced({ showDialog = false } = {}) {
+      const { open, close } = useDialog();
+      const promiseResult = 'synced';
+
+      if (!this.processing) {
+        return Promise.resolve(promiseResult);
+      }
+
+      if (showDialog) {
+        open({
+          body: {
+            title: "Processing Request..."
+          }
+        })
+      }
+
       return new Promise((resolve) => {
         const interval = setInterval(() => {
           if (!this.processing) {
             clearInterval(interval);
-            resolve('synced');
+            resolve(promiseResult);
+            if (showDialog) {
+              close();
+            }
           }
         }, 100);
       })

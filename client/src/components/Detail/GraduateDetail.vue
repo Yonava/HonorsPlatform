@@ -99,6 +99,7 @@ async function generateGradId() {
 }
 
 async function sendBackToStudents() {
+  if (typeof grad.value.row !== "number") return;
   // if (!canDelete.value) {
   //   open({
   //     body: {
@@ -129,8 +130,13 @@ async function sendBackToStudents() {
   }
 
   const _grad = JSON.parse(JSON.stringify(grad.value));
-
-  await moveToStudents(_grad)
+  try {
+    await moveToStudents(_grad)
+  } catch (e) {
+    movingGrad.value = false;
+    console.error(e);
+    return;
+  }
 
   open({
     body: {

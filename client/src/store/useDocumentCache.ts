@@ -3,7 +3,6 @@ import { getEvery, clearByRow, updateByRow, postInRange } from '../SheetsAPI';
 import { getPanel, panels, Panel } from "../Panels";
 import * as types from "../SheetTypes";
 import { useSheetManager } from "./useSheetManager";
-import { useDialog } from "./useDialog";
 import { warn } from "../Warn";
 import { useSyncState } from "./useSyncState";
 import { storeToRefs } from "pinia";
@@ -169,13 +168,7 @@ export const useDocumentCache = defineStore("documentCache", {
       }
 
       if (!concurrent && processing.value) {
-        useDialog().open({
-          body: {
-            title: "Processing Request..."
-          }
-        })
-        await waitUntilSynced();
-        useDialog().close();
+        await waitUntilSynced({ showDialog: true });
       }
       const { sysId, row } = item;
 
@@ -260,11 +253,15 @@ export const useDocumentCache = defineStore("documentCache", {
       useSyncState().$reset();
     },
     async moveItemBetweenLists(oldItem: types.SheetItem, newItem: types.SheetItem, oldPanel: Panel, newPanel: Panel) {
+      const { waitUntilSynced } = useSyncState();
+      if (typeof oldItem.row !== "number") {
+        return Promise.reject("useDocumentCache: Cannot move item that hasn't been saved to the sheet yet");
+      }
+      await waitUntilSynced({ showDialog: true });
       await this.deleteItem({
         item: oldItem,
         panel: oldPanel,
         showWarning: false,
-        concurrent: true
       })
       await postInRange(
         newPanel.sheetRange,

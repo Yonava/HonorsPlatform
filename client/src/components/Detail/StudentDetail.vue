@@ -296,7 +296,7 @@ function viewThesis() {
 }
 
 async function graduate() {
-
+  if (typeof student.value.row !== "number") return;
   // TODO: check if student has modules once canDelete is re-implemented
     // open({
     //   body: {
@@ -319,7 +319,15 @@ async function graduate() {
     movingStudent.value = false;
     return;
   }
-  await moveToGraduates(_student);
+
+  try {
+    await moveToGraduates(_student);
+  } catch (e) {
+    movingStudent.value = false;
+    console.error(e);
+    return;
+  }
+
   open({
     body: {
       title: "Student Graduated",

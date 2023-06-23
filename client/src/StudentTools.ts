@@ -73,22 +73,30 @@ export function graduateToStudent(graduate: Graduate): Student {
 
 export async function moveToGraduates(student: Student) {
   const { moveItemBetweenLists } = useDocumentCache()
-  await moveItemBetweenLists(
-    student,
-    studentToGraduate(student),
-    panels['STUDENTS'],
-    panels['GRADUATES']
-  )
+  try {
+    await moveItemBetweenLists(
+      student,
+      studentToGraduate(student),
+      panels['STUDENTS'],
+      panels['GRADUATES']
+    )
+  } catch (e) {
+    return Promise.reject(e)
+  }
 }
 
 export async function moveToStudents(graduate: Graduate) {
   const { moveItemBetweenLists } = useDocumentCache()
-  await moveItemBetweenLists(
-    graduate,
-    graduateToStudent(graduate),
-    panels['GRADUATES'],
-    panels['STUDENTS']
-  )
+  try {
+    await moveItemBetweenLists(
+      graduate,
+      graduateToStudent(graduate),
+      panels['GRADUATES'],
+      panels['STUDENTS']
+    )
+  } catch (e) {
+    return Promise.reject(e)
+  }
 }
 
 export async function incrementStudentYear() {
