@@ -2,7 +2,7 @@
   <div>
     <div class="d-flex flex-row">
       <div style="font-weight: 900; font-size: 1.5em; line-height: 1">
-        {{ item.courseCode || '-' }}
+        {{ item.courseCode || '(No Course Code)' }}
         <v-tooltip
           :disabled="smAndDown"
           activator="parent"

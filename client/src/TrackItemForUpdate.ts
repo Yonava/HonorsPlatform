@@ -21,10 +21,10 @@ export function useUpdateItem(item: Ref<SheetItem>, panelObject?: Panel) {
   let currentItem = ''
   watch(item, async (newItem, oldItem) => {
 
+    // user has reverted the item back to its original state
     if (JSON.stringify(newItem) === currentItem) {
       clearTimeout(timeout)
       setProcessing(false)
-      console.log('same item, aborting update')
       return
     }
 
