@@ -55,6 +55,10 @@ export const useSheetManager = defineStore('sheetManager', {
     },
     getActivePanel(state) {
       return state.panel;
+    },
+    getActiveEmbeddedPanel(state) {
+      const embeddedPanel = getPanel(state.panel.embedded.panel)
+      return embeddedPanel ?? null
     }
   },
   actions: {

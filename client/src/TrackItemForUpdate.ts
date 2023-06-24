@@ -21,6 +21,8 @@ export function useUpdateItem(item: Ref<SheetItem>, panelObject?: Panel) {
   let currentItem = ''
   watch(item, async (newItem, oldItem) => {
 
+    console.log(newItem, oldItem)
+
     // user has reverted the item back to its original state
     if (JSON.stringify(newItem) === currentItem) {
       clearTimeout(timeout)
@@ -33,10 +35,6 @@ export function useUpdateItem(item: Ref<SheetItem>, panelObject?: Panel) {
 
       currentItem = JSON.stringify(newItem)
 
-      if (!oldItem) {
-        return
-      }
-
       // there is still an item in transit, update it immediately
       if (processing.value) {
         updateItem({
@@ -47,8 +45,9 @@ export function useUpdateItem(item: Ref<SheetItem>, panelObject?: Panel) {
       }
 
       // no row # means it's a new item that has never hit the server
-      if (typeof oldItem?.row !== 'number' && !processing.value) {
+      if (oldItem && typeof oldItem?.row !== 'number' && !processing.value) {
         const { sysId } = oldItem
+        console.log('pre-emptive delete')
         removeItemFromCacheBySysId(sysId, panel)
       }
 

@@ -86,6 +86,7 @@ const props = defineProps<{
   disableReason?: string,
 }>()
 
+// @ts-ignore
 const emits = defineEmits<{
   'update:modelValue': (value: string) => void,
 }>()

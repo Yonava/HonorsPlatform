@@ -25,7 +25,7 @@
         class="d-flex flex-row justify-center"
       >
         <v-progress-circular
-          :color="panel.color"
+          :color="getActiveEmbeddedPanel.color"
           indeterminate
           class="ma-4"
         ></v-progress-circular>
@@ -42,12 +42,15 @@
       >
         <component
           :is="getActivePanel.embedded.list"
-          @selected="item => setSelectedEmbeddedItem(item, panel)"
-          @delete="item => deleteEmbeddedItem(item, panel)"
+          @selected="item => setSelectedEmbeddedItem(item)"
+          @delete="item => deleteEmbeddedItem(item)"
           :items="displayedItems"
         />
       </div>
-      <component :is="getActivePanel.embedded.detail" />
+      <component
+        v-if="getSelectedItem(getActiveEmbeddedPanel)"
+        :is="getActivePanel.embedded.detail"
+      />
     </div>
   </div>
 
@@ -63,16 +66,15 @@ import { useDocumentCache } from '../../../store/useDocumentCache'
 import { storeToRefs } from 'pinia'
 
 const sheetManager = useSheetManager()
-const { newSysId, getActivePanel } = sheetManager
+const { newSysId, getActivePanel, getActiveEmbeddedPanel } = sheetManager
 const { loadingItems } = storeToRefs(sheetManager)
 
 const documents = useDocumentCache()
 const { deleteItem, setSelectedItem, getSelectedItem, addItem } = documents
 
 const { filterBy, text } = getActivePanel.embedded
-const panel = panels[getActivePanel.embedded.panel]
 
-const { list: items } = toRefs(documents[panel.sheetRange])
+const { list: items } = toRefs(documents[getActiveEmbeddedPanel.sheetRange])
 
 const displayedItems = computed(() => {
   if (!getSelectedItem()[filterBy.outer]) return []
@@ -81,7 +83,7 @@ const displayedItems = computed(() => {
 
 const addEmbeddedItem = async () => {
   await addItem({
-    panel,
+    panel: getActiveEmbeddedPanel,
     pin: false,
     columns: [
       newSysId(),
@@ -90,17 +92,17 @@ const addEmbeddedItem = async () => {
   })
 }
 
-const setSelectedEmbeddedItem = (item: SheetItem, panel: Panel) => {
+const setSelectedEmbeddedItem = (item: SheetItem) => {
   setSelectedItem({
     item,
-    panel,
+    panel: getActiveEmbeddedPanel,
   })
 }
 
-const deleteEmbeddedItem = async (item: SheetItem, panel: Panel) => {
+const deleteEmbeddedItem = async (item: SheetItem) => {
   await deleteItem({
     item,
-    panel,
+    panel: getActiveEmbeddedPanel,
   })
 }
 </script>
