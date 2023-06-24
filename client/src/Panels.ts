@@ -178,6 +178,7 @@ export const panels = {
     sortOptions: sortOptions.THESES
   },
   GRADUATE_ENGAGEMENTS: {
+    add: addActions.GRADUATE_ENGAGEMENTS,
     tools: [],
     components: {
       detail: markRaw(GraduateEngagementDetail),
@@ -194,7 +195,7 @@ export const panels = {
       map: mapGradEngagements,
       unmap: unmapGradEngagements
     },
-    sortOptions: []
+    sortOptions: sortOptions.GRADUATE_ENGAGEMENTS
   },
 } as const;
 

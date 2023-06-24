@@ -1,4 +1,4 @@
-import { Student, Graduate, Module, CompletedModule, Thesis } from './SheetTypes';
+import { Student, Graduate, Module, CompletedModule, Thesis, GradEngagement } from './SheetTypes';
 
 export const sortOptions = {
   STUDENTS: [
@@ -205,6 +205,16 @@ export const sortOptions = {
         desc: 'mdi-human-male-board',
       },
       func: (a: Thesis, b: Thesis) => a.mentor.localeCompare(b.mentor)
+    }
+  ],
+  GRADUATE_ENGAGEMENTS: [
+    {
+      label: 'ID',
+      icon: {
+        asc: 'mdi-card-account-details',
+        desc: 'mdi-card-account-details'
+      },
+      func: (a: GradEngagement, b: GradEngagement) => a.gradId.localeCompare(b.gradId)
     }
   ]
 }
