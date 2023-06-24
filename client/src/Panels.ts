@@ -17,6 +17,9 @@ import EmbeddedEventList from './components/Detail/Embedded/Graduate/EmbeddedEve
 import ThesisDetail from './components/Detail/ThesisDetail.vue';
 import ThesisListItem from './components/ListItem/ThesisListItem.vue';
 
+import GraduateEngagementDetail from './components/Detail/GraduateEngagementDetail.vue';
+import GraduateEngagementListItem from './components/ListItem/GraduateEngagementListItem.vue';
+
 import { markRaw } from 'vue';
 
 import * as types from './SheetTypes';
@@ -176,6 +179,10 @@ export const panels = {
   },
   GRADUATE_ENGAGEMENTS: {
     tools: [],
+    components: {
+      detail: markRaw(GraduateEngagementDetail),
+      list: markRaw(GraduateEngagementListItem),
+    },
     title: {
       singular: 'Graduate Engagement',
       plural: 'Graduate Engagements'
