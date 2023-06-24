@@ -7,7 +7,7 @@ import type { Ref } from "vue";
 import type { SheetItem } from "./SheetTypes";
 import type { Panel } from "./Panels";
 
-const batchTime = 2_000 // ms
+const updateDebounceMs = 2_000
 
 export function useUpdateItem(item: Ref<SheetItem>, panelObject?: Panel) {
   const { updateItem, removeItemFromCacheBySysId } = useDocumentCache();
@@ -62,7 +62,7 @@ export function useUpdateItem(item: Ref<SheetItem>, panelObject?: Panel) {
           panel,
         })
         currentItem = JSON.stringify(newItem)
-      }, batchTime);
+      }, updateDebounceMs);
     }
   }, { deep: true, immediate: true })
 }

@@ -38,34 +38,39 @@ type MoveItemBetweenLists = {
   newPanel: Panel;
 }
 
+type PanelState<T> = {
+  list: T[];
+  selected: T | null;
+}
+
 export const useDocumentCache = defineStore("documentCache", {
   state: () => ({
     refreshLog: {} as Record<string, Date>,
     refreshAfter: 1000 * 60 * 5, // 5 minutes
     Students: {
-      list: [] as types.Student[],
-      selected: null as types.Student | null,
-    },
+      list: [],
+      selected: null,
+    } as PanelState<types.Student>,
     Graduates: {
-      list: [] as types.Graduate[],
-      selected: null as types.Graduate | null,
-    },
+      list: [],
+      selected: null,
+    } as PanelState<types.Graduate>,
     "Grad Engagements": {
-      list: [] as types.GradEngagement[],
-      selected: null as types.GradEngagement | null,
-    },
+      list: [],
+      selected: null,
+    } as PanelState<types.GradEngagement>,
     Modules: {
-      list: [] as types.Module[],
-      selected: null as types.Module | null,
-    },
+      list: [],
+      selected: null,
+    } as PanelState<types.Module>,
     "Completed Modules": {
-      list: [] as types.CompletedModule[],
-      selected: null as types.CompletedModule | null,
-    },
+      list: [],
+      selected: null,
+    } as PanelState<types.CompletedModule>,
     Theses: {
-      list: [] as types.Thesis[],
-      selected: null as types.Thesis | null,
-    },
+      list: [],
+      selected: null,
+    } as PanelState<types.Thesis>,
   }),
   getters: {
     getSelectedItem: (state) => (panelObject?: Panel) => {
@@ -247,7 +252,7 @@ export const useDocumentCache = defineStore("documentCache", {
 
       const {
         panel = activePanel,
-        item = this[activePanel.sheetRange].selected,
+        item = this[panel.sheetRange].selected,
       } = options;
 
       if (!item) {
