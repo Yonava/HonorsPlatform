@@ -55,6 +55,10 @@ export const useSheetManager = defineStore('sheetManager', {
     },
     getActivePanel(state) {
       return state.panel;
+    },
+    getActiveEmbeddedPanel(state) {
+      const embeddedPanel = getPanel(state.panel.embedded.panel)
+      return embeddedPanel ?? null
     }
   },
   actions: {
@@ -103,7 +107,10 @@ export const useSheetManager = defineStore('sheetManager', {
       // allows the UI to update on mobile and tablet breakpoints before jumping
       await new Promise(resolve => setTimeout(resolve, 100));
       const { setSelectedItemByKeyValue } = useDocumentCache();
-      const success = setSelectedItemByKeyValue(key, value);
+      const success = setSelectedItemByKeyValue({
+        key,
+        value
+      });
       if (!success) {
         console.error('useStateManager: item not found');
         fallbackFn()

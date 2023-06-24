@@ -237,7 +237,9 @@ export const useDocumentCache = defineStore("documentCache", {
         columns = null,
       } = options;
 
-      setSearchFilter("");
+      if (panel === activePanel) {
+        setSearchFilter("");
+      }
 
       const [newItem] = await panel.mappers.map([
         columns ?? [newSysId()]

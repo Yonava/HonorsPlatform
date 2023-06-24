@@ -10,90 +10,89 @@
       style="
         width: 75%;
         max-width: 350px;
-        height: 120vh;
+        height: 100vh;
         position: fixed;
         top: 0;
       "
+      class="pa-4"
     >
-      <div class="pa-4">
-        <div class="d-flex flex-row" style="width: 100%">
-          <!-- <v-btn icon>
-            <v-icon
-              @click="$router.push({ name: 'leaderboard' })"
-              icon="mdi-podium"
-              size="large"
-            ></v-icon>
-          </v-btn>
-          <v-spacer></v-spacer> -->
-          <Announcements />
-        </div>
-        <v-btn
-          v-if="getActivePanel.add"
-          @click="add.fire"
-          :loading="add.loading"
-          style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240)"
-          class="mt-5"
-          block
-        >
-          <v-icon :icon="add.success ? 'mdi-check' : 'mdi-plus'" size="large" class="mr-2"></v-icon>
-          Add {{ getActivePanel.title.singular }}
-        </v-btn>
-        <v-btn
-          @click="fetchItems(true)"
-          :loading="loadingItems"
-          style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240)"
-          class="mt-3"
-          block
-        >
-          <v-icon icon="mdi-refresh" size="large" class="mr-2"></v-icon>
-          Refresh Data
-        </v-btn>
-        <v-btn
-          @click="$router.push({ name: 'registrar' })"
-          style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240)"
-          class="mt-3"
-          block
-        >
+      <div class="d-flex flex-row" style="width: 100%">
+        <!-- <v-btn icon>
           <v-icon
-            icon="mdi-list-box-outline"
+            @click="$router.push({ name: 'leaderboard' })"
+            icon="mdi-podium"
             size="large"
-            class="mr-2"
           ></v-icon>
-          Registrar List
         </v-btn>
-        <v-btn
-          @click="$router.push({ name: 'email' })"
-          style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240)"
-          class="mt-3"
-          block
-        >
-          <v-icon
-            icon="mdi-email-fast-outline"
-            size="large"
-            class="mr-2"
-          ></v-icon>
-          Mass Email
-        </v-btn>
-        <AdditionalTools>
-          <template #showing="{ toolsAvailable }">
-            <v-btn
-              v-if="toolsAvailable"
-              style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240)"
-              class="mt-3"
-              block
-            >
-              <v-icon icon="mdi-hammer" size="large" class="mr-2"></v-icon>
-              Additional Tools
-            </v-btn>
-          </template>
-        </AdditionalTools>
-        <div style="overflow: auto; height: 50vh">
-          <SortPanel class="mt-5" />
-        </div>
-        <span style="font-size: 10px">
-          {{ version }}
-        </span>
+        <v-spacer></v-spacer> -->
+        <Announcements />
       </div>
+      <v-btn
+        v-if="getActivePanel.add"
+        @click="add.fire"
+        :loading="add.loading"
+        style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240)"
+        class="mt-5"
+        block
+      >
+        <v-icon :icon="add.success ? 'mdi-check' : 'mdi-plus'" size="large" class="mr-2"></v-icon>
+        Add {{ getActivePanel.title.singular }}
+      </v-btn>
+      <v-btn
+        @click="fetchItems(true)"
+        :loading="loadingItems"
+        style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240)"
+        class="mt-3"
+        block
+      >
+        <v-icon icon="mdi-refresh" size="large" class="mr-2"></v-icon>
+        Refresh Data
+      </v-btn>
+      <v-btn
+        @click="$router.push({ name: 'registrar' })"
+        style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240)"
+        class="mt-3"
+        block
+      >
+        <v-icon
+          icon="mdi-list-box-outline"
+          size="large"
+          class="mr-2"
+        ></v-icon>
+        Registrar List
+      </v-btn>
+      <v-btn
+        @click="$router.push({ name: 'email' })"
+        style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240)"
+        class="mt-3"
+        block
+      >
+        <v-icon
+          icon="mdi-email-fast-outline"
+          size="large"
+          class="mr-2"
+        ></v-icon>
+        Mass Email
+      </v-btn>
+      <AdditionalTools>
+        <template #showing="{ toolsAvailable }">
+          <v-btn
+            v-if="toolsAvailable"
+            style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240)"
+            class="mt-3"
+            block
+          >
+            <v-icon icon="mdi-hammer" size="large" class="mr-2"></v-icon>
+            Additional Tools
+          </v-btn>
+        </template>
+      </AdditionalTools>
+      <div style="overflow: auto; max-height: 50vh">
+        <SortPanel class="mt-5" />
+      </div>
+      <span style="font-size: 10px; position: absolute; bottom: 10px;">
+        {{ version }}
+      </span>
     </v-navigation-drawer>
     <v-app-bar :color="`${getActivePanel.color}-darken-2`" class="app-bar px-5">
       <div v-if="searchMode">

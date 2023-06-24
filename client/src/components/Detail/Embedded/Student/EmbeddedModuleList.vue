@@ -1,9 +1,10 @@
 <template>
   <div>
-    <div
+    <v-sheet
       v-for="mod in items"
       :key="mod.courseCode"
       @click="select(mod)"
+      :color="getActiveEmbeddedPanel.color + '-darken-2'"
       class="module-card pa-2 mt-2 d-flex flex-row align-center"
     >
       <div style="d-flex flex-column align-center">
@@ -34,12 +35,15 @@
       >
         mdi-close
       </v-icon>
-    </div>
+    </v-sheet>
   </div>
 </template>
 
 <script setup lang="ts">
 import { Module } from "../../../../SheetTypes"
+import { useSheetManager } from '../../../../store/useSheetManager'
+
+const { getActiveEmbeddedPanel } = useSheetManager()
 
 const props = defineProps<{
   items: Module[];
@@ -56,15 +60,10 @@ const remove = (event: Module) => emits('delete', event);
 
 <style scoped>
 .module-card {
-  background: #467ada;
-  border-radius: 10px;
+  border-radius: 5px;
   transition: 300ms;
   box-shadow: 0 0 10px rgba(0,0,0,0.2);
   cursor: pointer;
-}
-
-.module-card:hover {
-  background: #2559b9;
 }
 
 .delete-module {

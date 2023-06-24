@@ -33,10 +33,6 @@ export function useUpdateItem(item: Ref<SheetItem>, panelObject?: Panel) {
 
       currentItem = JSON.stringify(newItem)
 
-      if (!oldItem) {
-        return
-      }
-
       // there is still an item in transit, update it immediately
       if (processing.value) {
         updateItem({
@@ -47,7 +43,7 @@ export function useUpdateItem(item: Ref<SheetItem>, panelObject?: Panel) {
       }
 
       // no row # means it's a new item that has never hit the server
-      if (typeof oldItem?.row !== 'number' && !processing.value) {
+      if (oldItem && typeof oldItem?.row !== 'number' && !processing.value) {
         const { sysId } = oldItem
         removeItemFromCacheBySysId(sysId, panel)
       }
