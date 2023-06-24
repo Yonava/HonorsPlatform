@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { getEvery, clearByRow, updateByRow, postInRange } from '../SheetsAPI';
-import { getPanel, panels, Panel } from "../Panels";
+import { getPanel, panels, Panel, GetSheetItemType } from "../Panels";
 import * as types from "../SheetTypes";
 import { useSheetManager } from "./useSheetManager";
 import { warn } from "../Warn";
@@ -9,6 +9,12 @@ import { storeToRefs } from "pinia";
 
 type SetSelectedItem = {
   item?: types.SheetItem;
+  panel?: Panel;
+}
+
+type SetSelectedItemByKeyValue = {
+  key?: string;
+  value?: string | undefined;
   panel?: Panel;
 }
 
@@ -128,9 +134,20 @@ export const useDocumentCache = defineStore("documentCache", {
       const { panel = activePanel, item = null } = options;
       this[panel.sheetRange].selected = item;
     },
-    setSelectedItemByKeyValue(key: string, value: string, panelObject?: Panel) {
+    setSelectedItemByKeyValue(options: SetSelectedItemByKeyValue = {}) {
       const { panel: activePanel } = useSheetManager();
-      const panel = panelObject ?? activePanel;
+
+      const {
+        panel = activePanel,
+        key = "sysId",
+        value = undefined,
+      } = options;
+
+      if (value === undefined) {
+        console.error("useDocumentCache.setSelectedItemByKeyValue: value is undefined");
+        return null;
+      }
+
       const item = this[panel.sheetRange].list.find(item => item[key] === value);
       if (item) {
         this[panel.sheetRange].selected = item;

@@ -19,6 +19,8 @@ import ThesisListItem from './components/ListItem/ThesisListItem.vue';
 
 import { markRaw } from 'vue';
 
+import * as types from './SheetTypes';
+
 import { tools } from './AdditionalTools';
 import { sortOptions } from './SortOptions'
 import { addActions } from './AddActions';
@@ -190,6 +192,11 @@ export const panels = {
 } as const;
 
 export type PanelName = keyof typeof panels;
+
+export type PanelRange = typeof panels[PanelName]['sheetRange'];
+
+export type GetSheetItemType<T extends PanelRange> = T extends 'Students' ? types.Student : T extends 'Modules' ? types.Module : T extends 'Completed Modules' ? types.CompletedModule : T extends 'Graduates' ? types.Graduate : T extends 'Theses' ? types.Thesis : T extends 'Grad Engagements' ? types.GradEngagement : never;
+
 export type Panel = typeof panels[PanelName];
 export const getPanel = (panelName: PanelName) => panels[panelName];
 export const version = 'prerelease v0.81.3 (beta)'
