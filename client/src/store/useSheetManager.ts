@@ -1,10 +1,9 @@
 import { defineStore } from 'pinia'
 import { SheetItem } from '../SheetTypes';
-import { getPanel, Panel, PanelName } from '../Panels';
+import { getPanel, PanelName, panels } from '../Panels';
 import router from '../router';
 import { useSyncState } from './useSyncState';
 import { useDocumentCache } from './useDocumentCache';
-import { set } from '@vueuse/core';
 
 export type JumpObject = {
   value: string,
@@ -19,7 +18,7 @@ export type SortOption = {
 
 export const useSheetManager = defineStore('sheetManager', {
   state: () => ({
-    panel: getPanel('STUDENTS'),
+    panel: getPanel(Object.keys(panels)[0] as PanelName),
     searchFilter: '',
     pinnedItem: null as SheetItem | null,
     loadingItems: false,

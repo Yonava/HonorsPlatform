@@ -10,9 +10,6 @@
         v-model="event.dateTime"
         label="Time"
         prepend-icon="mdi-clock-outline"
-        :style="{
-          width: '50%',
-        }"
       >
       </v-text-field>
     </template>

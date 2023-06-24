@@ -82,45 +82,8 @@ export const panels = {
     },
     sortOptions: sortOptions.STUDENTS
   },
-  GRADUATES: {
-    add: addActions.GRADUATES,
-    tools: tools.GRADUATES,
-    components: {
-      detail: markRaw(GraduateDetail),
-      list: markRaw(GraduateListItem),
-    },
-    title: {
-      singular: 'Graduate',
-      plural: 'Graduates'
-    },
-    color: 'purple',
-    icon: 'mdi-account-school',
-    sheetRange: 'Graduates',
-    mappers: {
-      map: mapGraduates,
-      unmap: unmapGraduates
-    },
-    embedded: {
-      panel: "GRADUATE_ENGAGEMENTS",
-      text: {
-        title: 'Engagement Tracking',
-        add: 'Add Event',
-        noItemsToDisplay: 'No engagements currently recorded.',
-        lock: {
-          title: 'Engagement Tracking',
-          condition: 'grad ID'
-        }
-      },
-      filterBy: {
-        inner: 'gradId',
-        outer: 'id'
-      },
-      detail: markRaw(EmbeddedEventDetail),
-      list: markRaw(EmbeddedEventList),
-    },
-    sortOptions: sortOptions.GRADUATES
-  },
   MODULES: {
+    add: addActions.MODULES,
     tools: tools.MODULES,
     components: {
       detail: markRaw(ModuleDetail),
@@ -159,6 +122,7 @@ export const panels = {
     sortOptions: sortOptions.COMPLETED_MODULES,
   },
   THESES: {
+    add: addActions.THESES,
     tools: tools.THESES,
     components: {
       detail: markRaw(ThesisDetail),
@@ -176,6 +140,44 @@ export const panels = {
       unmap: unmapTheses
     },
     sortOptions: sortOptions.THESES
+  },
+  GRADUATES: {
+    add: addActions.GRADUATES,
+    tools: tools.GRADUATES,
+    components: {
+      detail: markRaw(GraduateDetail),
+      list: markRaw(GraduateListItem),
+    },
+    title: {
+      singular: 'Graduate',
+      plural: 'Graduates'
+    },
+    color: 'purple',
+    icon: 'mdi-account-school',
+    sheetRange: 'Graduates',
+    mappers: {
+      map: mapGraduates,
+      unmap: unmapGraduates
+    },
+    embedded: {
+      panel: "GRADUATE_ENGAGEMENTS",
+      text: {
+        title: 'Engagement Tracking',
+        add: 'Add Event',
+        noItemsToDisplay: 'No engagements currently recorded.',
+        lock: {
+          title: 'Engagement Tracking',
+          condition: 'grad ID'
+        }
+      },
+      filterBy: {
+        inner: 'gradId',
+        outer: 'id'
+      },
+      detail: markRaw(EmbeddedEventDetail),
+      list: markRaw(EmbeddedEventList),
+    },
+    sortOptions: sortOptions.GRADUATES
   },
   GRADUATE_ENGAGEMENTS: {
     add: addActions.GRADUATE_ENGAGEMENTS,
@@ -207,4 +209,4 @@ export type GetSheetItemType<T extends PanelRange> = T extends 'Students' ? type
 
 export type Panel = typeof panels[PanelName];
 export const getPanel = (panelName: PanelName) => panels[panelName];
-export const version = 'prerelease v0.81.3 (beta)'
+export const version = 'prerelease v0.82 (beta)'

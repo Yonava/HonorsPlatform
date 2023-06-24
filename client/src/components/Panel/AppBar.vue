@@ -265,14 +265,15 @@ const add = ref({
   loading: false,
   success: false,
   fire: async () => {
+    if (!getActivePanel.value.add) return;
     if (add.value.loading || add.value.success) return;
     add.value.loading = true;
     await getActivePanel.value.add();
+    add.value.loading = false;
     add.value.success = true;
     setTimeout(() => {
       add.value.success = false;
-    }, 5000);
-    add.value.loading = false;
+    }, 3000);
   },
 });
 
@@ -307,6 +308,13 @@ const panelTitle = computed(() => {
 watchEffect(() => {
   if (dialogOpen.value || getSelectedItem()) {
     navDrawer.value = false;
+  }
+});
+
+watchEffect(() => {
+  if (getActivePanel.value) {
+    add.value.loading = false;
+    add.value.success = false;
   }
 });
 </script>
