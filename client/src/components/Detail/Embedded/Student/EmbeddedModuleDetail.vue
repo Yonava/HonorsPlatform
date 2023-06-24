@@ -78,7 +78,6 @@ import { useSheetManager } from '../../../../store/useSheetManager'
 import { useDocumentCache } from '../../../../store/useDocumentCache'
 import { toRefs } from 'vue'
 import { useDialog } from '../../../../store/useDialog'
-import { useUpdateItem } from '../../../../TrackItemForUpdate'
 import { termValidator, getCurrentTerm } from '../../../../TermValidator'
 import MoveModule from '../../Helper/MoveModule.vue'
 import InstructorComplete from '../../Helper/InstructorComplete.vue'
@@ -86,7 +85,6 @@ import InstructorComplete from '../../Helper/InstructorComplete.vue'
 const { getActiveEmbeddedPanel } = useSheetManager()
 const { Modules, setSelectedItem } = useDocumentCache()
 const { selected: selectedModule } = toRefs(Modules)
-useUpdateItem(selectedModule, getActiveEmbeddedPanel)
 
 const openMoveDialog = () => {
   useDialog().open({

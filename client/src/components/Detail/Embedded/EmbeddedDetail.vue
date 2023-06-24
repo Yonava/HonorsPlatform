@@ -57,10 +57,10 @@
 </template>
 
 <script setup lang="ts">
+import { useUpdateItem } from '../../../TrackItemForUpdate'
 import LockArea from './LockArea.vue'
 import { ref, computed, watch, toRefs, onMounted } from 'vue'
 import { SheetItem } from '../../../SheetTypes'
-import { panels, Panel } from '../../../Panels'
 import { useSheetManager } from '../../../store/useSheetManager'
 import { useDocumentCache } from '../../../store/useDocumentCache'
 import { storeToRefs } from 'pinia'
@@ -74,7 +74,8 @@ const { deleteItem, setSelectedItem, getSelectedItem, addItem } = documents
 
 const { filterBy, text } = getActivePanel.embedded
 
-const { list: items } = toRefs(documents[getActiveEmbeddedPanel.sheetRange])
+const { list: items, selected } = toRefs(documents[getActiveEmbeddedPanel.sheetRange])
+useUpdateItem(selected, getActiveEmbeddedPanel)
 
 const displayedItems = computed(() => {
   if (!getSelectedItem()[filterBy.outer]) return []

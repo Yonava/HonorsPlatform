@@ -87,7 +87,7 @@
             </v-btn>
           </template>
         </AdditionalTools>
-        <div style="overflow: auto; height: 50vh">
+        <div style="overflow: auto; max-height: 50vh">
           <SortPanel class="mt-5" />
         </div>
         <span style="font-size: 10px">
