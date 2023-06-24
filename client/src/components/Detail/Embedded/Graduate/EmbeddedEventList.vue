@@ -6,7 +6,7 @@
       @click="select(event)"
     >
       <v-sheet
-        color="purple-darken-2"
+        :color="getActiveEmbeddedPanel.color"
         class="pa-2 mb-2 d-flex flex-row justify-space-between align-center"
         style="cursor: pointer; border-radius: 5px"
         elevation="5"
@@ -33,6 +33,9 @@
 
 <script setup lang="ts">
 import { GradEngagement } from "../../../../SheetTypes"
+import { useSheetManager } from '../../../../store/useSheetManager'
+
+const { getActiveEmbeddedPanel } = useSheetManager()
 
 const props = defineProps<{
   items: GradEngagement[];

@@ -59,7 +59,7 @@
 <script setup lang="ts">
 import { useUpdateItem } from '../../../TrackItemForUpdate'
 import LockArea from './LockArea.vue'
-import { ref, computed, watch, toRefs, onMounted } from 'vue'
+import { computed, toRefs, onMounted } from 'vue'
 import { SheetItem } from '../../../SheetTypes'
 import { useSheetManager } from '../../../store/useSheetManager'
 import { useDocumentCache } from '../../../store/useDocumentCache'

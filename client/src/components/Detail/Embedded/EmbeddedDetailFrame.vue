@@ -11,7 +11,7 @@
           class="py-2 px-4 d-flex align-center"
           style="font-weight: bold; color: white; border-radius: 20px; width: 120%"
         >
-          <v-icon class="mr-1">
+          <v-icon class="mr-2">
             {{ getActiveEmbeddedPanel.icon }}
           </v-icon>
           <span>
@@ -24,7 +24,7 @@
           type="text"
           class="title mt-2"
         >
-        <slot name="main"></slot>
+        <slot></slot>
         <v-card-actions class="pa-0">
           <v-btn
             @click="showDialog = false"
