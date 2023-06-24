@@ -5,6 +5,7 @@
         {{ item.event || '(No Event Name)' }}
       </div>
       <v-spacer></v-spacer>
+
       <v-sheet
         class="px-3 py-1 d-flex flex-row align-center"
         :color="getPanel('GRADUATE_ENGAGEMENTS').color"
@@ -19,6 +20,11 @@
       >
         <v-icon class="mr-1">mdi-calendar</v-icon>
         <span>{{ item.dateTime ? dateTimeDisplay : 'No Event Date' }}</span>
+        <v-tooltip
+          :disabled="smAndDown || !item.dateTime"
+          activator="parent"
+          location="bottom"
+        >{{ item.dateTime }}</v-tooltip>
       </v-sheet>
     </div>
     <div
