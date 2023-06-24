@@ -44,8 +44,7 @@ import { ref } from "vue";
 
 const sheetManager = useSheetManager();
 const { setSort: setSortPinia } = sheetManager;
-const { activeSort, panel } = storeToRefs(sheetManager);
-const { getActivePanel } = sheetManager;
+const { activeSort, panel, getActivePanel } = storeToRefs(sheetManager);
 
 const ascending = ref(true);
 const setSort = (func: (a: any, b: any) => number) => {
