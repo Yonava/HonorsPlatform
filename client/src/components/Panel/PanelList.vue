@@ -1,12 +1,12 @@
 <template>
-  <div style="width: 100%">
+  <div>
     <div v-if="!loadingItems">
       <div
         style="position: relative; width: 100%"
         class="d-flex flex-column align-center"
       >
         <div
-          v-for="item in filteredItems.slice(0, itemsToDisplay)"
+          v-for="item in incrementallyRenderedItems"
           :key="item"
           @click="setSelectedItem({ item })"
           :class="[
@@ -67,6 +67,7 @@ import {
 
 import { useDocumentCache } from '../../store/useDocumentCache'
 import { useSheetManager } from '../../store/useSheetManager'
+import { useIncrementalRender } from '../../useIncrementalRender'
 import { storeToRefs } from 'pinia'
 
 const { setSelectedItem, getSelectedItem } = useDocumentCache()
@@ -74,22 +75,7 @@ const { setSelectedItem, getSelectedItem } = useDocumentCache()
 const sheetManager = useSheetManager()
 const { filteredItems, loadingItems, panel, searchFilter } = storeToRefs(sheetManager)
 
-const itemsToDisplay = ref(filteredItems.value.length)
-
-let updateInterval;
-watch(filteredItems, () => {
-  if (itemsToDisplay.value !== filteredItems.value.length) {
-    clearInterval(updateInterval)
-    updateInterval = setInterval(() => {
-      if (itemsToDisplay.value === filteredItems.value.length) {
-        clearInterval(updateInterval)
-        return
-      }
-      else if (itemsToDisplay.value > filteredItems.value.length) itemsToDisplay.value = filteredItems.value.length
-      else if (itemsToDisplay.value < filteredItems.value.length) itemsToDisplay.value = itemsToDisplay.value + 1
-    }, 10)
-  }
-})
+const { incrementallyRenderedItems } = useIncrementalRender(filteredItems)
 
 const isSelected = item => {
   if (!getSelectedItem()) return false

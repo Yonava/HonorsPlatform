@@ -1,7 +1,6 @@
 import { getHeaderRowCache } from "./SheetsAPI";
 import {
   Student,
-  StudentYear,
   Graduate,
   Module,
   CompletedModule,
@@ -10,6 +9,7 @@ import {
   Thesis,
   ThesisDecision,
 } from "./SheetTypes";
+import { YearOption, StatusOption } from "./StudentTools";
 
 export const instructorCache: string[] = []
 
@@ -30,8 +30,8 @@ export async function mapStudents(sheetData: string[][]): Promise<Student[]> {
       name: student[2] ?? '',
       email: student[3] ?? '',
       points: parseInt(student[4]) || 0,
-      activeStatus: student[5] ?? '',
-      year: (student[6] ?? null) as StudentYear,
+      activeStatus: (student[5] ?? '') as StatusOption,
+      year: (student[6] ?? '') as YearOption,
       athletics: student[7] ?? '',
       note: student[8] ?? '',
       misc: categories.reduce((acc: { [key in string]: string }, category: string, index: number) => {
