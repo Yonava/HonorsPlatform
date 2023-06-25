@@ -1,3 +1,5 @@
+import { StatusOption, YearOption } from "./StudentTools";
+
 export type SheetItem = Module | Graduate | Student | CompletedModule | Thesis | GradEngagement;
 
 export const grades = [null, "High Pass", "Pass", "Low Pass", "Fail"] as const;
@@ -37,16 +39,14 @@ export interface Student extends SheetEntry {
   name: string;
   email: string;
   points: number;
-  activeStatus: string;
-  year: StudentYear;
+  activeStatus: StatusOption;
+  year: YearOption;
   athletics: string;
   note: string;
   misc: {
     [key: string]: string
   };
 }
-
-export type StudentYear = 'Freshman' | 'Sophomore' | 'Junior' | 'Senior' | ''
 
 export interface GradEngagement extends SheetEntry {
   gradId: string;

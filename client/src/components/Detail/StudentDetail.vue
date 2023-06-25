@@ -77,8 +77,8 @@
         <div class="d-flex flex-row">
           <v-select
             v-model="student.activeStatus"
-            :items="Object.keys(statusOptions)"
-            :prepend-icon="`mdi-${statusOptions[student.activeStatus]}`"
+            :items="statusOptionLabels"
+            :prepend-icon="statusOptionIcon"
             label="Active Status"
             style="width: 15%"
             class="mr-4"
@@ -163,11 +163,9 @@
 
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
 import DetailFrame from "./Helper/DetailFrame.vue";
 import DetailHeader from "./Helper/DetailHeader.vue";
 import AddStudentNote from "./Helper/AddStudentNote.vue";
-import type { Module } from "../../SheetTypes";
 import {
   emailValidator,
   getStudentEmail,
@@ -180,14 +178,16 @@ import {
   statusOptions,
   athleticOptions,
 } from "../../StudentTools";
-
 import { useSheetManager } from "../../store/useSheetManager";
 import { useDocumentCache } from "../../store/useDocumentCache";
 import { useSyncState } from "../../store/useSyncState";
 import { useDialog } from "../../store/useDialog";
 import { useUpdateItem } from "../../TrackItemForUpdate";
 import { warn } from '../../Warn'
-import { toRefs } from 'vue'
+import { toRefs, ref, computed } from 'vue'
+
+const statusOptionIcon = computed(() => `mdi-${statusOptions.find((option) => option.label === student.value.activeStatus)?.icon ?? "help"}`);
+const statusOptionLabels = computed(() => statusOptions.map((option) => option.label));
 
 const { open, close } = useDialog();
 const { setPanel, newSysId } = useSheetManager();
@@ -195,8 +195,6 @@ const { setPanel, newSysId } = useSheetManager();
 const { Students, addItem } = useDocumentCache();
 const { list: items, selected: student } = toRefs(Students);
 useUpdateItem(student);
-
-const loadingModules = ref(false);
 
 const tempStudentId = ref("");
 const unlockingThesis = ref(false);

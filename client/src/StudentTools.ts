@@ -4,11 +4,30 @@ import { getEvery, replaceRange, getHeaderRowCache, postInRange } from './Sheets
 import { getPanel, panels } from './Panels'
 import { useDocumentCache } from './store/useDocumentCache'
 
-export const statusOptions = {
-  'Active': 'account-check',
-  'Inactive': 'account-remove',
-  'Pending': 'account-question',
-}
+export const statusOptions = [
+  {
+    label: 'Active',
+    icon: 'account-check',
+    color: 'green',
+  },
+  {
+    label: 'Inactive',
+    icon: 'account-remove',
+    color: 'red',
+  },
+  {
+    label: 'Pending',
+    icon: 'account-question',
+    color: 'grey',
+  },
+  {
+    label: 'Request Delete',
+    icon: 'account-off',
+    color: 'grey',
+  }
+] as const
+
+export type StatusOption = typeof statusOptions[number]['label'] | ''
 
 export const yearOptions = [
   'Freshman',
@@ -19,7 +38,9 @@ export const yearOptions = [
   'Associate Sophomore',
   'Associate Junior',
   'Associate Senior',
-]
+] as const
+
+export type YearOption = typeof yearOptions[number] | ''
 
 // maps name to material icon
 export const athleticOptions = {
@@ -106,10 +127,16 @@ export async function incrementStudentYear() {
   const graduatingSeniors: Student[] = []
   const failedToIncrement: Student[] = []
 
-  const newStudentYear = (year: string) => {
+  const newStudentYear = (year: YearOption) => {
     if (year.includes('Senior')) {
       return 'Graduate'
     }
+
+    if (!year) {
+      console.error('StudentTools: newStudentYear warning! Triggered with no year.')
+      return ''
+    }
+
     const index = yearOptions.indexOf(year)
     return yearOptions[index + 1]
   }
@@ -126,12 +153,13 @@ export async function incrementStudentYear() {
       failedToIncrement.push(student)
       return
     }
-    // @ts-ignore
-    // TODO: fix type system for StudentYear in SheetTypes
-    student.year = newStudentYear(student.year)
 
-    if (student.year.includes('Graduate')) {
+    const studentYear = newStudentYear(student.year)
+
+    if (studentYear === 'Graduate') {
       graduatingSeniors.push(student)
+    } else {
+      student.year = studentYear
     }
   })
 
