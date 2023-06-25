@@ -30,7 +30,7 @@
       </div>
       <v-spacer></v-spacer>
       <v-sheet
-        :color="color"
+        :color="statusColor"
         :style="{
           height: '25px',
           color: 'white',
@@ -101,7 +101,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { Student } from '../../SheetTypes'
-import { athleticOptions } from '../../StudentTools'
+import { athleticOptions, statusOptions } from '../../StudentTools'
 import { emailValidator } from '../../EmailUtilities'
 import { useDisplay } from 'vuetify'
 
@@ -111,11 +111,8 @@ const props = defineProps<{
 
 const { smAndDown } = useDisplay()
 
-const color = computed(() => {
-  const activeStatus = props.item.activeStatus?.toLowerCase() ?? ''
-  if (activeStatus === 'active') return 'green'
-  if (activeStatus === 'inactive') return 'red'
-  return 'grey'
+const statusColor = computed<typeof statusOptions[number]['color']>(() => {
+  return statusOptions.find((option) => option.label === props.item.activeStatus)?.color ?? 'grey'
 })
 
 const points = computed(() => {

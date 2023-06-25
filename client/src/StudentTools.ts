@@ -23,7 +23,7 @@ export const statusOptions = [
   {
     label: 'Request Delete',
     icon: 'account-off',
-    color: 'grey',
+    color: 'purple',
   }
 ] as const
 
