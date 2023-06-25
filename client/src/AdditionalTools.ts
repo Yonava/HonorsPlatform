@@ -1,10 +1,17 @@
 import { useDialog } from './store/useDialog'
+import { useSheetManager } from './store/useSheetManager'
 import { warn } from './Warn'
 import IncrementStudentYearDialog from './components/IncrementStudentYear.vue'
 import CreateTempSheet from './components/CreateTempSheet.vue'
 
 export const tools = {
   STUDENTS: [
+    {
+      name: 'Cover Panel',
+      handler: async () => {
+        useSheetManager().setPanelCover(!useSheetManager().panelCover)
+      }
+    },
     {
       name: 'Increment Student Year',
       handler: async () => {

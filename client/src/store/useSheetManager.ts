@@ -25,7 +25,8 @@ export const useSheetManager = defineStore('sheetManager', {
     sort: {
       func: null as ((a: SheetItem, b: SheetItem) => number) | null,
       ascending: true
-    } as SortOption
+    } as SortOption,
+    panelCover: false
   }),
   getters: {
     filteredItems(state) {
@@ -62,6 +63,9 @@ export const useSheetManager = defineStore('sheetManager', {
     }
   },
   actions: {
+    setPanelCover(cover: boolean) {
+      this.panelCover = cover
+    },
     setSearchFilter(filter: string) {
       this.searchFilter = filter;
     },

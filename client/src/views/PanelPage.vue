@@ -4,7 +4,22 @@
       class="background-matte"
       :color="`${getActivePanel.color}-lighten-4`"
     ></v-sheet>
-    <AppBar />
+    <transition>
+      <v-app-bar
+        v-if="panelCover"
+        :color="`${getActivePanel.color}-darken-2`"
+        class="px-5"
+      >
+        <v-icon
+          @click="setPanelCover(false)"
+          icon="mdi-chevron-left"
+          size="x-large"
+          class="mr-2"
+        ></v-icon>
+        <h1>{{ getActivePanel.title.singular }} Report</h1>
+      </v-app-bar>
+      <AppBar v-else />
+    </transition>
     <v-main>
       <div
         :style="{
@@ -13,6 +28,17 @@
         }"
         class="d-flex flex-row"
       >
+        <v-sheet
+          :style="{
+            zIndex: '99',
+            position: 'absolute',
+            width: (panelListWidth + 80) + 'px',
+            height: '100%',
+            transform: panelCover ? 'translateX(0)' : 'translateX(-100%)',
+            transition: 'transform 0.2s ease-in-out',
+          }"
+          :color="`${getActivePanel.color}-lighten-4`"
+        ></v-sheet>
         <v-sheet
           v-if="smAndUp"
           :color="`${getActivePanel.color}-darken-2`"
@@ -75,7 +101,7 @@
             height: '100%',
             cursor: 'col-resize',
             position: 'absolute',
-            zIndex: 2,
+            zIndex: 100,
             left: `${proposedWidth + sortPanelWidth}px`,
           }"
         ></v-sheet>
@@ -149,8 +175,8 @@ import { useDocumentCache } from '../store/useDocumentCache'
 import { storeToRefs } from 'pinia'
 import { getPanel, panels, version } from '../Panels'
 
-const { setPanel, fetchItems } = useSheetManager()
-const { getActivePanel } = storeToRefs(useSheetManager())
+const { setPanel, fetchItems, setPanelCover } = useSheetManager()
+const { getActivePanel, panelCover } = storeToRefs(useSheetManager())
 const { getSelectedItem, setSelectedItem } = useDocumentCache()
 
 const route = useRoute()
@@ -188,8 +214,9 @@ const panelHopBindings = () => {
 }
 
 useKeyBindings({
-  'r': () => fetchItems(),
-  ...panelHopBindings()
+  'r': () => fetchItems(true),
+  ...panelHopBindings(),
+  ' ': () => setPanelCover(!panelCover.value),
 })
 
 function getDefaultWidth() {
@@ -255,5 +282,15 @@ img.honors-logo {
   left: 0;
   height: 130%;
   width: 130%;
+}
+
+.v-enter-active,
+.v-leave-active {
+  transition: 200ms ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
 }
 </style>
