@@ -6,12 +6,12 @@
     ></v-sheet>
     <transition>
       <v-app-bar
-        v-if="panelCover"
+        v-if="getPanelCover"
         :color="`${getActivePanel.color}-darken-2`"
         class="px-5"
       >
         <v-icon
-          @click="setPanelCover(false)"
+          @click="setPanelCover('close')"
           icon="mdi-chevron-left"
           size="x-large"
           class="mr-2"
@@ -34,7 +34,7 @@
             position: 'absolute',
             width: (panelListWidth + 80) + 'px',
             height: '100%',
-            transform: panelCover ? 'translateX(0)' : 'translateX(-100%)',
+            transform: getPanelCover ? 'translateX(0)' : 'translateX(-100%)',
             transition: 'transform 0.2s ease-in-out',
           }"
           :color="`${getActivePanel.color}-lighten-4`"
@@ -172,12 +172,15 @@ import { useDisplay } from 'vuetify'
 
 import { useSheetManager } from '../store/useSheetManager'
 import { useDocumentCache } from '../store/useDocumentCache'
+import { useDialog } from '../store/useDialog'
 import { storeToRefs } from 'pinia'
 import { getPanel, panels, version } from '../Panels'
 
-const { setPanel, fetchItems, setPanelCover } = useSheetManager()
-const { getActivePanel, panelCover } = storeToRefs(useSheetManager())
+const { setPanel, fetchItems } = useSheetManager()
+const { getActivePanel } = storeToRefs(useSheetManager())
 const { getSelectedItem, setSelectedItem } = useDocumentCache()
+const { setPanelCover } = useDialog()
+const { getPanelCover } = storeToRefs(useDialog())
 
 const route = useRoute()
 if (route.query.type) {
@@ -216,13 +219,13 @@ const panelHopBindings = () => {
 useKeyBindings({
   'r': () => fetchItems(true),
   ...panelHopBindings(),
-  ' ': () => setPanelCover(!panelCover.value),
+  ' ': () => setPanelCover('toggle'),
 })
 
 function getDefaultWidth() {
   const local = localStorage.getItem('panelListWidth')
   if (local) return parseInt(local)
-  return 420
+  return 480
 }
 
 const resizing = ref(false)

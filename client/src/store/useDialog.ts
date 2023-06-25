@@ -1,5 +1,7 @@
 import { defineStore } from "pinia";
 import { markRaw } from "vue";
+import { Panel } from "../Panels";
+import { useSheetManager } from "./useSheetManager";
 
 export type DialogButton = {
   text: string;
@@ -15,6 +17,7 @@ export type DialogBody = {
 
 export const useDialog = defineStore("dialog", {
   state: () => ({
+    panelCover: {} as Record<Panel['title']['plural'], boolean>,
     show: false,
     body: {
       title: "",
@@ -24,7 +27,24 @@ export const useDialog = defineStore("dialog", {
     component: null,
     contentTimeout: null as any
   }),
+  getters: {
+    getPanelCover(state) {
+      const { getActivePanel } = useSheetManager();
+      return state.panelCover[getActivePanel.title.plural];
+    }
+  },
   actions: {
+    setPanelCover(action: 'open' | 'close' | 'toggle', panelObject?: Panel) {
+      const { getActivePanel } = useSheetManager();
+      const panel = panelObject ?? getActivePanel;
+      if (action === 'open') {
+        this.panelCover[panel.title.plural] = true;
+      } else if (action === 'close') {
+        this.panelCover[panel.title.plural] = false;
+      } else if (action === 'toggle') {
+        this.panelCover[panel.title.plural] = !this.panelCover[panel.title.plural];
+      }
+    },
     open(options?: { body?: DialogBody; component?: any }) {
       if (this.show) {
         this.close();
