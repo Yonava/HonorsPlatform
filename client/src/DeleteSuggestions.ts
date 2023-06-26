@@ -3,13 +3,42 @@ import { useSheetManager } from './store/useSheetManager'
 import { useDocumentCache } from "./store/useDocumentCache";
 
 type Deletion = {
+  flaggedBecause: string[]
   item: any,
   status: null | "danger" | "warn",
-  flaggedBecause: string[]
+}
+
+type DeletionOutput = {
+  rationale: string,
+  status: null | "danger" | "warn",
+  item: any
 }
 
 const capitalize = (str: string) => {
   return str.charAt(0).toUpperCase() + str.slice(1)
+}
+
+const deletionToDeletionOutput = (deletion: Deletion) => {
+  return {
+    rationale: capitalize(rationaleToString(deletion.flaggedBecause)),
+    status: deletion.status,
+    item: deletion.item
+  }
+}
+
+const sortPriority = (a: DeletionOutput, b: DeletionOutput) => {
+  if (a.status === "danger" && b.status === "warn") {
+    return -1
+  } else if (a.status === "warn" && b.status === "danger") {
+    return 1
+    // break tie by sorting by name
+  } else if (a.item.name < b.item.name) {
+    return -1
+  } else if (a.item.name > b.item.name) {
+    return 1
+  } else {
+    return 0
+  }
 }
 
 const rationaleToString = (rationale: string[]) => {
@@ -22,6 +51,83 @@ const rationaleToString = (rationale: string[]) => {
     return `${rationale.join(", ")}, and ${lastItem}`
   }
 }
+
+
+// Modules
+
+// Danger if module docuSignCreated is over 3 months old and docuSignCompleted is false
+// Danger if module does not have a studentId
+// Danger if modules studentId does not link to a student
+// Danger if modules studentId links to a graduate
+// Warn if module docuSignCreated and docuSignCompleted are both false
+
+const moduleDeletions = async () => {
+  const { fetchItems } = useSheetManager()
+  const {
+    Modules,
+    Students,
+    Graduates
+  } = useDocumentCache()
+
+  const requiredPanels: Panel[] = [
+    getPanel("MODULES"),
+    getPanel("STUDENTS"),
+    getPanel("GRADUATES")
+  ]
+
+  for await (const panel of requiredPanels) {
+    await fetchItems({
+      panelObject: panel,
+      showLoading: false,
+      fetchEmbeddedPanelData: false
+    })
+  }
+
+  const modules = Modules.list
+  const students = Students.list
+  const graduates = Graduates.list
+
+  return modules.map(module => {
+    const deletionData: Deletion = {
+      item: module,
+      status: null,
+      flaggedBecause: []
+    }
+
+    if (!module.studentId) {
+      deletionData.status = "danger"
+      deletionData.flaggedBecause.push("it is not linked to a student")
+    } else {
+      const student = students.find(student => student.id === module.studentId)
+      const graduate = graduates.find(graduate => graduate.id === module.studentId)
+      if (!student && !graduate) {
+        deletionData.status = "danger"
+        deletionData.flaggedBecause.push("it is linked to a student that does not exist")
+      } else if (graduate && !student) {
+        deletionData.status = "danger"
+        deletionData.flaggedBecause.push("it is linked to a graduate")
+      }
+    }
+
+    if (module.docuSignCreated && !module.docuSignCompleted) {
+      const docuSignCreated = new Date(module.docuSignCreated)
+      const now = new Date()
+      const threeMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 3, now.getDate())
+      if (docuSignCreated < threeMonthsAgo) {
+        deletionData.status = "danger"
+        deletionData.flaggedBecause.push("it was created over 3 months ago and has not been completed")
+      }
+    }
+
+    if (!module.docuSignCreated && !module.docuSignCompleted) {
+      deletionData.status ??= "warn"
+      deletionData.flaggedBecause.push("the docu sign is yet to be created")
+    }
+
+    return deletionData
+  })
+}
+
 
 const studentDeletions = async () => {
   const { fetchItems } = useSheetManager()
@@ -105,25 +211,6 @@ const studentDeletions = async () => {
     }
 
     return deletionData
-  }).filter(deletion => !!deletion.status).map(deletion => {
-    return {
-      rationale: capitalize(rationaleToString(deletion.flaggedBecause)),
-      status: deletion.status,
-      item: deletion.item
-    }
-  }).sort((a, b) => {
-    if (a.status === "danger" && b.status === "warn") {
-      return -1
-    } else if (a.status === "warn" && b.status === "danger") {
-      return 1
-      // break tie by sorting by name
-    } else if (a.item.name < b.item.name) {
-      return -1
-    } else if (a.item.name > b.item.name) {
-      return 1
-    } else {
-      return 0
-    }
   })
 }
 
@@ -131,11 +218,21 @@ export const getSuggestedDeletions = async (panelObject?: Panel) => {
   const { getActivePanel } = useSheetManager()
   const panel = panelObject ?? getActivePanel
   const { sheetRange } = panel
+  let output: Deletion[] = []
 
   switch (sheetRange) {
     case "Students":
-      return await studentDeletions()
+      output = await studentDeletions()
+      break
+    case "Modules":
+      output = await moduleDeletions()
+      break
     default:
       return []
   }
+
+  return output
+    .filter(deletion => !!deletion.status)
+    .map(deletionToDeletionOutput)
+    .sort(sortPriority)
 }

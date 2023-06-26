@@ -16,7 +16,7 @@
           size="x-large"
           class="mr-2"
         ></v-icon>
-        <h1>{{ getActivePanel.title.singular }} Deletion Suggestions</h1>
+        <h1>Deletion Suggestions</h1>
       </v-app-bar>
       <AppBar v-else />
     </transition>
@@ -32,7 +32,7 @@
           :style="{
             zIndex: '99',
             position: 'absolute',
-            width: (panelListWidth + 80) + 'px',
+            width: mdAndUp ? (panelListWidth + 80) + 'px' : '100%',
             height: '100%',
             overflow: 'auto',
             transform: getPanelCover ? 'translateX(0)' : 'translateX(-100%)',
