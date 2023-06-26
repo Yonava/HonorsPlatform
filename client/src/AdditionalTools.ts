@@ -6,9 +6,16 @@ import CreateTempSheet from './components/CreateTempSheet.vue'
 export const tools = {
   STUDENTS: [
     {
-      name: 'Cover Panel',
+      name: 'Suggested Deletions',
       handler: async () => {
-        useDialog().setPanelCover('toggle')
+        useDialog().open({
+          body: {
+            title: 'Crushing The Data and Running The Numbers!',
+          }
+        })
+        useDialog().setPanelCover('open')
+        await new Promise(resolve => setTimeout(resolve, 3000))
+        useDialog().close()
       }
     },
     {

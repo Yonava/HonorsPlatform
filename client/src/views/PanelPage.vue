@@ -16,7 +16,7 @@
           size="x-large"
           class="mr-2"
         ></v-icon>
-        <h1>{{ getActivePanel.title.singular }} Report</h1>
+        <h1>{{ getActivePanel.title.singular }} Deletion Suggestions</h1>
       </v-app-bar>
       <AppBar v-else />
     </transition>
@@ -34,11 +34,14 @@
             position: 'absolute',
             width: (panelListWidth + 80) + 'px',
             height: '100%',
+            overflow: 'auto',
             transform: getPanelCover ? 'translateX(0)' : 'translateX(-100%)',
             transition: 'transform 0.2s ease-in-out',
           }"
-          :color="`${getActivePanel.color}-lighten-4`"
-        ></v-sheet>
+          :color="getActivePanel.color + '-lighten-4'"
+        >
+          <PanelCover />
+        </v-sheet>
         <v-sheet
           v-if="smAndUp"
           :color="`${getActivePanel.color}-darken-2`"
@@ -167,6 +170,7 @@ import StudentDetail from '../components/Detail/StudentDetail.vue'
 import SortPanel from '../components/Panel/SortPanel.vue'
 import AppBar from '../components/Panel/AppBar.vue'
 import ServeDialog from '../components/Panel/ServeDialog.vue'
+import PanelCover from '../components/Panel/PanelCover.vue'
 import { useKeyBindings } from '../KeyBindings'
 import { useDisplay } from 'vuetify'
 

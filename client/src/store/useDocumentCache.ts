@@ -79,6 +79,11 @@ export const useDocumentCache = defineStore("documentCache", {
     } as PanelState<types.Thesis>,
   }),
   getters: {
+    getPanelListData: (state) => (panelObject?: Panel) => {
+      const { panel: activePanel } = useSheetManager();
+      const panel = panelObject ?? activePanel;
+      return state[panel.sheetRange].list;
+    },
     getSelectedItem: (state) => (panelObject?: Panel) => {
       const { panel: activePanel } = useSheetManager();
       const panel = panelObject ?? activePanel;
@@ -97,7 +102,7 @@ export const useDocumentCache = defineStore("documentCache", {
     }
   },
   actions: {
-    async refreshCache(panelObject?: Panel) {
+    async refreshCache(panelObject?: Panel, fetchEmbeddedPanelData = true) {
 
       const { panel: activePanel } = useSheetManager();
       const panel = panelObject ?? activePanel;
@@ -119,7 +124,7 @@ export const useDocumentCache = defineStore("documentCache", {
       this.refreshLog[range] = new Date();
 
       // DANGER! This implementation may become a bit "loop-ey" 🤪
-      if (panel?.embedded) {
+      if (panel?.embedded && fetchEmbeddedPanelData) {
         await this.refreshCache(getPanel(panel.embedded.panel));
       }
       return documents;

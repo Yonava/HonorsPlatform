@@ -59,12 +59,6 @@
 </template>
 
 <script setup lang="ts">
-import {
-  ref,
-  computed,
-  watch
-} from 'vue'
-
 import { useDocumentCache } from '../../store/useDocumentCache'
 import { useSheetManager } from '../../store/useSheetManager'
 import { useIncrementalRender } from '../../useIncrementalRender'

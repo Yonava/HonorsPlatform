@@ -20,6 +20,7 @@ type FetchItems = {
   showLoading?: boolean,
   forceCacheRefresh?: boolean,
   panelObject?: Panel,
+  fetchEmbeddedPanelData?: boolean,
 }
 
 export const useSheetManager = defineStore('sheetManager', {
@@ -102,7 +103,8 @@ export const useSheetManager = defineStore('sheetManager', {
       const {
         showLoading = true,
         forceCacheRefresh = false,
-        panelObject = this.panel
+        panelObject = this.panel,
+        fetchEmbeddedPanelData = true
       } = options;
 
       const documents = useDocumentCache();
@@ -113,7 +115,7 @@ export const useSheetManager = defineStore('sheetManager', {
       }
 
       if (dueForRefresh(panelObject) || forceCacheRefresh) {
-        await refreshCache(panelObject);
+        await refreshCache(panelObject, fetchEmbeddedPanelData);
       }
 
       this.setSort()

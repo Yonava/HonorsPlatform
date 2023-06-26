@@ -65,7 +65,12 @@ export const useDialog = defineStore("dialog", {
       this.show = false;
       clearInterval(this.contentTimeout);
       this.contentTimeout = setTimeout(() => {
-        this.$reset();
+        this.component = null;
+        this.body = {
+          title: "",
+          description: "",
+          buttons: []
+        };
       }, 300);
     },
     toggle(options?: { body?: DialogBody; component?: any }) {
