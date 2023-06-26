@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { SheetItem } from '../SheetTypes';
-import { getPanel, PanelName, panels } from '../Panels';
+import { getPanel, PanelName, panels, Panel } from '../Panels';
 import router from '../router';
 import { useSyncState } from './useSyncState';
 import { useDocumentCache } from './useDocumentCache';
@@ -14,6 +14,12 @@ export type JumpObject = {
 export type SortOption = {
   func: (a: SheetItem, b: SheetItem) => number,
   ascending: boolean
+}
+
+type FetchItems = {
+  showLoading?: boolean,
+  forceCacheRefresh?: boolean,
+  panelObject?: Panel,
 }
 
 export const useSheetManager = defineStore('sheetManager', {
@@ -92,13 +98,24 @@ export const useSheetManager = defineStore('sheetManager', {
         this.jumpToItem(jumpTo);
       }
     },
-    async fetchItems(force = false) {
+    async fetchItems(options: FetchItems = {}) {
+      const {
+        showLoading = true,
+        forceCacheRefresh = false,
+        panelObject = this.panel
+      } = options;
+
       const documents = useDocumentCache();
       const { refreshCache, dueForRefresh } = documents;
-      this.loadingItems = true;
-      if (dueForRefresh() || force) {
-        await refreshCache();
+
+      if (showLoading) {
+        this.loadingItems = true;
       }
+
+      if (dueForRefresh(panelObject) || forceCacheRefresh) {
+        await refreshCache(panelObject);
+      }
+
       this.setSort()
       this.loadingItems = false;
       useSyncState().$reset()

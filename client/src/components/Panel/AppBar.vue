@@ -39,7 +39,7 @@
         Add {{ getActivePanel.title.singular }}
       </v-btn>
       <v-btn
-        @click="fetchItems(true)"
+        @click="fetchItems({ forceCacheRefresh: true })"
         :loading="loadingItems"
         style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240)"
         class="mt-3"
@@ -167,7 +167,7 @@
       </v-btn>
       <v-btn
         v-if="smAndUp"
-        @click="fetchItems(true)"
+        @click="fetchItems({ forceCacheRefresh: true })"
         :loading="loadingItems"
         class="ml-3"
         style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240)"

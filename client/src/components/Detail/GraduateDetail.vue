@@ -84,7 +84,7 @@ import { useDialog } from "../../store/useDialog";
 import { warn } from "../../Warn";
 import { getPanel } from "../../Panels";
 
-const { fetchItems, setPanel } = useSheetManager();
+const { setPanel } = useSheetManager();
 const { Graduates } = useDocumentCache();
 const { selected: grad } = toRefs(Graduates)
 useUpdateItem(grad);

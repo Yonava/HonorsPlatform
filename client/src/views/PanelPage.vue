@@ -217,7 +217,7 @@ const panelHopBindings = () => {
 }
 
 useKeyBindings({
-  'r': () => fetchItems(true),
+  'r': () => fetchItems({ forceCacheRefresh: true }),
   ...panelHopBindings(),
   ' ': () => setPanelCover('toggle'),
 })
