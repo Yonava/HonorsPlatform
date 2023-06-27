@@ -6,7 +6,7 @@
     ></v-sheet>
     <transition>
       <v-app-bar
-        v-if="getPanelCover"
+        v-if="getPanelCover.show"
         :color="`${getActivePanel.color}-darken-2`"
         class="px-5"
       >
@@ -16,7 +16,13 @@
           size="x-large"
           class="mr-2"
         ></v-icon>
-        <h1>Suggestions</h1>
+        <h1>Suggestions {{ getPanelCover.filter }}</h1>
+        <div>
+          <input
+            v-model="getPanelCover.filter"
+            type="text"
+          >
+        </div>
       </v-app-bar>
       <AppBar v-else />
     </transition>
@@ -35,7 +41,7 @@
             width: mdAndUp ? (panelListWidth + 80) + 'px' : '100%',
             height: mdAndUp ? '100%' : '100vh',
             overflow: 'auto',
-            transform: getPanelCover ? 'translateX(0)' : 'translateX(-100%)',
+            transform: getPanelCover.show ? 'translateX(0)' : 'translateX(-100%)',
             transition: 'transform 0.2s ease-in-out',
           }"
           :color="getActivePanel.color + '-lighten-4'"
@@ -82,8 +88,8 @@
         <div
           ref="panelList"
           :style="{
-            overflow: getPanelCover ? 'hidden' : 'auto',
-            height: getPanelCover ? '80vh' : '',
+            overflow: getPanelCover.show ? 'hidden' : 'auto',
+            height: getPanelCover.show ? '80vh' : '',
             minWidth: mdAndUp ? `${panelListWidth}px` : '',
             maxWidth: mdAndUp ? `${panelListWidth}px` : '',
           }"
@@ -224,7 +230,7 @@ const panelHopBindings = () => {
 useKeyBindings({
   'r': () => fetchItems({ forceCacheRefresh: true }),
   ...panelHopBindings(),
-  ' ': () => setPanelCover('toggle'),
+  ' ': () => setPanelCover('open'),
 })
 
 function getDefaultWidth() {

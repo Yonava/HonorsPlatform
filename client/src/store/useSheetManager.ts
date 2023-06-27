@@ -25,6 +25,8 @@ type FetchItems = {
 
 export const useSheetManager = defineStore('sheetManager', {
   state: () => ({
+    panelSwitchDebounce: 250,
+    canPanelSwitch: true,
     panel: getPanel(Object.keys(panels)[0] as PanelName),
     searchFilter: '',
     pinnedItem: null as SheetItem | null,
@@ -73,6 +75,12 @@ export const useSheetManager = defineStore('sheetManager', {
       this.searchFilter = filter;
     },
     async setPanel(panelName: PanelName, jumpTo?: JumpObject) {
+      if (!this.canPanelSwitch) {
+        return;
+      }
+
+      this.canPanelSwitch = false;
+
       const { setSelectedItem } = useDocumentCache();
       setSelectedItem();
       this.panel = getPanel(panelName);
@@ -98,6 +106,10 @@ export const useSheetManager = defineStore('sheetManager', {
       if (jumpTo) {
         this.jumpToItem(jumpTo);
       }
+
+      setTimeout(() => {
+        this.canPanelSwitch = true;
+      }, this.panelSwitchDebounce);
     },
     async fetchItems(options: FetchItems = {}) {
       const {

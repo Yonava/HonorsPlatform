@@ -59,17 +59,22 @@
 </template>
 
 <script setup lang="ts">
+import { getPanel } from '../../Panels'
 import { useDocumentCache } from '../../store/useDocumentCache'
 import { useSheetManager } from '../../store/useSheetManager'
 import { useIncrementalRender } from '../../useIncrementalRender'
 import { storeToRefs } from 'pinia'
 
-const { setSelectedItem, getSelectedItem } = useDocumentCache()
+const { setSelectedItem, getSelectedItem, dueForRefresh, refreshCache } = useDocumentCache()
 
 const sheetManager = useSheetManager()
-const { filteredItems, loadingItems, panel, searchFilter } = storeToRefs(sheetManager)
+const { filteredItems, loadingItems, panel, searchFilter, getActivePanel } = storeToRefs(sheetManager)
 
 const { incrementallyRenderedItems } = useIncrementalRender(filteredItems)
+
+if (getActivePanel.value.sheetRange === 'Modules' && dueForRefresh(getPanel('STUDENTS'))) {
+  refreshCache(getPanel('STUDENTS'), false)
+}
 
 const isSelected = item => {
   if (!getSelectedItem()) return false

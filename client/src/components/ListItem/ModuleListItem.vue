@@ -103,7 +103,7 @@
           v-else
           class="d-flex flew-row align-center"
         >
-          <p>
+          <p :style="studentId.style">
             {{ item.studentId || '(No Student ID)' }}
           </p>
           <v-icon
@@ -116,7 +116,7 @@
             :disabled="smAndDown"
             activator="parent"
             location="bottom"
-          >Student ID</v-tooltip>
+          >{{ studentId.tooltip }}</v-tooltip>
         </div>
       </div>
     </div>
@@ -125,6 +125,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import { getPanel } from '../../Panels'
 import type { ComputedRef } from 'vue'
 import { Module } from '../../SheetTypes'
 import { useDocumentCache } from '../../store/useDocumentCache'
@@ -134,13 +135,6 @@ import { useDisplay } from 'vuetify'
 const props = defineProps<{
   item: Module
 }>()
-
-const { Students } = useDocumentCache()
-const student = computed(() => {
-  const studentMatch = Students.list.find(s => s.id === props.item.studentId)
-  if (!studentMatch?.id) return null
-  return studentMatch ?? null
-})
 
 const { smAndDown } = useDisplay()
 
@@ -232,6 +226,33 @@ const term = computed(() => {
         color: 'red',
         fontWeight: 900,
         fontSize: '0.6em'
+      }
+    }
+  }
+})
+
+const { Students } = useDocumentCache()
+
+const student = computed(() => {
+  const studentMatch = Students.list.find(s => s.id === props.item.studentId)
+  if (!studentMatch?.id) return null
+  return studentMatch ?? null
+})
+
+const studentId = computed(() => {
+  if (student.value || Students.list.length === 0) {
+    return {
+      tooltip: 'Student ID',
+      style: {
+        fontWeight: 400
+      }
+    }
+  } else {
+    return {
+      tooltip: 'No Student Linked',
+      style: {
+        color: 'red',
+        fontWeight: 900
       }
     }
   }

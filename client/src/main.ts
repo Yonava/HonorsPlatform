@@ -26,14 +26,8 @@ const vuetify = createVuetify({
 
 const pinia = createPinia()
 
-const app = createApp(App)
+createApp(App)
   .use(pinia)
   .use(router)
   .use(vuetify)
   .mount('#app')
-
-app.directive('uppercase', {
-  update(el) {
-    el.value = el.value.toUpperCase()
-  }
-})

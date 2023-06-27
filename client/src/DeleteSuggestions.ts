@@ -207,7 +207,7 @@ const studentDeletions = async () => {
 
     if (!student.year) {
       deletionData.status ??= "warn"
-      deletionData.flaggedBecause.push("this student does not have a year")
+      deletionData.flaggedBecause.push("this student has not been assigned a class year")
     }
 
     return deletionData

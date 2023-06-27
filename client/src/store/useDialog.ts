@@ -15,9 +15,14 @@ export type DialogBody = {
   buttons?: DialogButton[];
 };
 
+type PanelCoverData = {
+  show: boolean;
+  filter: string;
+}
+
 export const useDialog = defineStore("dialog", {
   state: () => ({
-    panelCover: {} as Record<Panel['title']['plural'], boolean>,
+    panelCover: {} as Record<Panel['title']['plural'], PanelCoverData>,
     show: false,
     body: {
       title: "",
@@ -30,7 +35,7 @@ export const useDialog = defineStore("dialog", {
   getters: {
     getPanelCover(state) {
       const { getActivePanel } = useSheetManager();
-      return state.panelCover[getActivePanel.title.plural];
+      return state.panelCover[getActivePanel.title.plural] ?? { show: false, filter: '' };
     }
   },
   actions: {
@@ -38,11 +43,9 @@ export const useDialog = defineStore("dialog", {
       const { getActivePanel } = useSheetManager();
       const panel = panelObject ?? getActivePanel;
       if (action === 'open') {
-        this.panelCover[panel.title.plural] = true;
+        this.panelCover[panel.title.plural] = { show: true, filter: '' };
       } else if (action === 'close') {
-        this.panelCover[panel.title.plural] = false;
-      } else if (action === 'toggle') {
-        this.panelCover[panel.title.plural] = !this.panelCover[panel.title.plural];
+        this.panelCover[panel.title.plural] = { show: false, filter: '' };
       }
     },
     open(options?: { body?: DialogBody; component?: any }) {

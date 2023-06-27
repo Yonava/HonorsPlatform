@@ -1,21 +1,44 @@
 <template>
   <div>
     <div v-if="!loadingSuggestions && incrementallyRenderedItems.length > 0">
-      <div
+      <v-sheet
         v-for="{ item, rationale, status } in incrementallyRenderedItems"
         :key="item"
         @click="setSelectedItem({ item })"
+        :color="selectedForDeletion.includes(item.sysId) ? 'red-lighten-4' : ''"
         :class="[
           'item-card',
           'px-4 pb-4',
-          isSelected(item) ? 'selected-item-card' : ''
+          isSelected(item) ? 'selected-item-card' : '',
         ]"
       >
-        <div class="pa-5">
-          <component
-            :is="getActivePanel.components.list"
-            :item="item"
-          />
+        <div
+          class="pa-5 d-flex flex-row align-center"
+          style="width: 100%"
+        >
+          <div style="width: 10%">
+            <v-icon
+              v-if="!selectedForDeletion.includes(item.sysId)"
+              @click.stop="selectedForDeletion.push(item.sysId)"
+              size="x-large"
+            >
+              mdi-delete-empty-outline
+            </v-icon>
+            <v-icon
+              v-else
+              @click.stop="selectedForDeletion = selectedForDeletion.filter(id => id !== item.sysId)"
+              size="x-large"
+              color="red"
+            >
+              mdi-delete
+            </v-icon>
+          </div>
+          <div style="width: 90%">
+            <component
+              :is="getActivePanel.components.list"
+              :item="item"
+            />
+          </div>
         </div>
         <v-sheet
           :color="status === 'danger' ? 'red' : 'yellow'"
@@ -26,7 +49,7 @@
           <h3 style="text-transform: capitalize">We {{ status === 'danger' ? 'encourage' : 'would consider' }} deleting this {{ getActivePanel.title.singular }} because</h3>
           <p>{{ rationale }}</p>
         </v-sheet>
-      </div>
+      </v-sheet>
     </div>
     <div
       v-else-if="loadingSuggestions"
@@ -73,6 +96,7 @@ const { getSelectedItem, setSelectedItem } = useDocumentCache();
 const { processing } = storeToRefs(useSyncState());
 
 const deletionData = ref([]);
+const selectedForDeletion = ref([]);
 const loadingSuggestions = ref(false);
 
 const { xs } = useDisplay();
@@ -117,6 +141,7 @@ const isSelected = item => {
   background: rgba(255,255,255, 0.5);
   cursor: pointer;
   transition: 350ms;
+  overflow: auto;
   border-bottom: 1px solid rgba(111, 111, 111, 0.21);
 }
 

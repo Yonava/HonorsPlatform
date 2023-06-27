@@ -53,9 +53,9 @@
           class="d-flex flex-column mb-4"
         >
           <v-text-field
-            v-model="initials"
+            v-model.trim="initials"
             @keyup.enter="setInitials"
-            :value="initials.toUpperCase()"
+            :value="initials ? initials.toUpperCase() : ''"
             clearable
             label="Initials"
             ref="initialsBox"
@@ -63,7 +63,7 @@
           ></v-text-field>
           <v-btn
             @click="setInitials"
-            :disabled="initials.length < 2"
+            :disabled="initials ? initials.length < 2 : true"
             color="blue-darken-2"
           >Set Initials</v-btn>
         </div>
