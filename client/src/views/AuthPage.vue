@@ -30,7 +30,7 @@
         <v-icon class="mr-2">mdi-google</v-icon>
         Continue With Google
       </v-btn>
-      <div style="width: 450px" class="mb-10">
+      <div style="max-width: 450px; width: 80%" class="mb-10">
         <v-expansion-panels variant="accordion">
           <v-expansion-panel
             elevation="0"

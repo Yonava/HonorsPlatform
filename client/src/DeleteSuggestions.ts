@@ -115,7 +115,7 @@ const moduleDeletions = async () => {
       const threeMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 3, now.getDate())
       if (docuSignCreated < threeMonthsAgo) {
         deletionData.status = "danger"
-        deletionData.flaggedBecause.push("it was created over 3 months ago and has not been completed")
+        deletionData.flaggedBecause.push("it has been in progress for over 3 months")
       }
     }
 

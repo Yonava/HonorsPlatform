@@ -80,7 +80,29 @@
           >Instructor</v-tooltip>
         </div>
         <v-spacer></v-spacer>
-        <div class="d-flex flew-row align-center">
+        <div
+          v-if="student"
+          class="d-flex flew-row align-center"
+        >
+          <p>
+            {{ student.name || '(No Student Name)' }}
+          </p>
+          <v-icon
+            class="ml-1"
+            style="opacity: 0.75"
+          >
+            mdi-account
+          </v-icon>
+          <v-tooltip
+            :disabled="smAndDown"
+            activator="parent"
+            location="bottom"
+          >Student Name</v-tooltip>
+        </div>
+        <div
+          v-else
+          class="d-flex flew-row align-center"
+        >
           <p>
             {{ item.studentId || '(No Student ID)' }}
           </p>
@@ -103,14 +125,22 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { Module } from '../../SheetTypes'
 import type { ComputedRef } from 'vue'
+import { Module } from '../../SheetTypes'
+import { useDocumentCache } from '../../store/useDocumentCache'
 import { termValidator } from '../../TermValidator'
 import { useDisplay } from 'vuetify'
 
 const props = defineProps<{
   item: Module
 }>()
+
+const { Students } = useDocumentCache()
+const student = computed(() => {
+  const studentMatch = Students.list.find(s => s.id === props.item.studentId)
+  if (!studentMatch?.id) return null
+  return studentMatch ?? null
+})
 
 const { smAndDown } = useDisplay()
 
