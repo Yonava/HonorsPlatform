@@ -124,11 +124,10 @@
 </template>
 
 <script setup lang="ts">
+import { useStudentModuleMatcher } from './ModuleStudentMatch'
 import { computed } from 'vue'
-import { getPanel } from '../../Panels'
 import type { ComputedRef } from 'vue'
 import { Module } from '../../SheetTypes'
-import { useDocumentCache } from '../../store/useDocumentCache'
 import { termValidator } from '../../TermValidator'
 import { useDisplay } from 'vuetify'
 
@@ -231,30 +230,5 @@ const term = computed(() => {
   }
 })
 
-const { Students } = useDocumentCache()
-
-const student = computed(() => {
-  const studentMatch = Students.list.find(s => s.id === props.item.studentId)
-  if (!studentMatch?.id) return null
-  return studentMatch ?? null
-})
-
-const studentId = computed(() => {
-  if (student.value || Students.list.length === 0) {
-    return {
-      tooltip: 'Student ID',
-      style: {
-        fontWeight: 400
-      }
-    }
-  } else {
-    return {
-      tooltip: 'No Student Linked',
-      style: {
-        color: 'red',
-        fontWeight: 900
-      }
-    }
-  }
-})
+const { student, studentId } = useStudentModuleMatcher(props.item)
 </script>

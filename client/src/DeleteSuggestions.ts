@@ -261,6 +261,5 @@ export const getSuggestedDeletions = async (panelObject?: Panel) => {
       return []
   }
 
-  return output
-    .filter(deletion => !!deletion.status)
+  return output.filter(deletion => !!deletion.status)
 }

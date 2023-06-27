@@ -72,8 +72,10 @@ const { filteredItems, loadingItems, panel, searchFilter, getActivePanel } = sto
 
 const { incrementallyRenderedItems } = useIncrementalRender(filteredItems)
 
-if (getActivePanel.value.sheetRange === 'Modules' && dueForRefresh(getPanel('STUDENTS'))) {
-  refreshCache(getPanel('STUDENTS'), false)
+const studentPanel = getPanel('STUDENTS')
+const isActivePanelAModule = getActivePanel.value.sheetRange === 'Modules' || getActivePanel.value.sheetRange === 'Completed Modules'
+if (isActivePanelAModule && dueForRefresh(studentPanel)) {
+  refreshCache(studentPanel, false)
 }
 
 const isSelected = item => {

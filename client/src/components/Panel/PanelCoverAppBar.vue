@@ -25,7 +25,7 @@
 import { useDialog } from "../../store/useDialog";
 import { useSheetManager } from "../../store/useSheetManager";
 
-const { getPanelCover } = useDialog();
+const { getPanelCover, setPanelCover } = useDialog();
 const { getActivePanel } = useSheetManager();
 </script>
 

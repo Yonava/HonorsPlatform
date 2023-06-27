@@ -48,8 +48,30 @@
           >{{ term.tooltip }}</v-tooltip>
         </div>
         <v-spacer></v-spacer>
-        <div class="d-flex flex-row align-center">
+        <div
+          v-if="student"
+          class="d-flex flew-row align-center"
+        >
           <p>
+            {{ student.name || '(No Student Name)' }}
+          </p>
+          <v-icon
+            class="ml-1"
+            style="opacity: 0.75"
+          >
+            mdi-account
+          </v-icon>
+          <v-tooltip
+            :disabled="smAndDown"
+            activator="parent"
+            location="bottom"
+          >Student Name</v-tooltip>
+        </div>
+        <div
+          v-else
+          class="d-flex flew-row align-center"
+        >
+          <p :style="studentId.style">
             {{ item.studentId || '(No Student ID)' }}
           </p>
           <v-icon
@@ -62,7 +84,7 @@
             :disabled="smAndDown"
             activator="parent"
             location="bottom"
-          >Student ID</v-tooltip>
+          >{{ studentId.tooltip }}</v-tooltip>
         </div>
       </div>
     </div>
@@ -70,6 +92,7 @@
 </template>
 
 <script setup lang="ts">
+import { useStudentModuleMatcher } from './ModuleStudentMatch'
 import { computed } from 'vue'
 import { useDisplay } from 'vuetify'
 import { CompletedModule } from '../../SheetTypes'
@@ -96,4 +119,6 @@ const term = computed(() => {
     }
   }
 })
+
+const { student, studentId } = useStudentModuleMatcher(props.item)
 </script>
