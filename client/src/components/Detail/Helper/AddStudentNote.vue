@@ -55,6 +55,7 @@
           <v-text-field
             v-model="initials"
             @keyup.enter="setInitials"
+            :value="initials.toUpperCase()"
             clearable
             label="Initials"
             ref="initialsBox"
@@ -62,6 +63,7 @@
           ></v-text-field>
           <v-btn
             @click="setInitials"
+            :disabled="initials.length < 2"
             color="blue-darken-2"
           >Set Initials</v-btn>
         </div>
@@ -111,7 +113,7 @@ const note = ref('')
 
 function setInitials() {
   inputInitials.value = false
-  localStorage.setItem('initials', initials.value)
+  localStorage.setItem('initials', initials.value.toUpperCase())
   focus()
 }
 

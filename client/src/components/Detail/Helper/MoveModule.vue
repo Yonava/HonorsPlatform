@@ -1,5 +1,5 @@
 <template>
-  <v-sheet class="px-12">
+  <v-sheet>
     <div class="ma-6 d-flex justify-center flex-column">
       <h1 class="mb-6">
         Let's Finish It Up!
@@ -11,7 +11,7 @@
           variant="outlined"
           prepend-inner-icon="mdi-calendar"
         ></v-text-field>
-        <div class="d-flex flex-column mb-12 mt-3">
+        <div class="d-flex flex-column mb-12 mt-3 mx-12">
           <v-btn
             v-for="grade in grades"
             :key="grade"
@@ -21,15 +21,15 @@
           >{{ grade || "Leave Ungraded" }}</v-btn>
         </div>
         <v-btn
-        @click="moveModule"
-        :loading="loading"
-        :color="color"
-        size="large"
-      >
-        <v-icon class="mr-2">
-          {{ completedModulePanel.icon }}
-        </v-icon>
-        Move To Completed Modules
+          @click="moveModule"
+          :loading="loading"
+          :color="color"
+          size="large"
+        >
+          <v-icon class="mr-2">
+            {{ completedModulePanel.icon }}
+          </v-icon>
+          Move To Completed Modules
       </v-btn>
       </div>
   </v-sheet>
