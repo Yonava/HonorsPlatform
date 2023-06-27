@@ -95,7 +95,10 @@
       </span>
     </v-navigation-drawer>
     <v-app-bar :color="`${getActivePanel.color}-darken-2`" class="app-bar px-5">
-      <div v-if="searchMode">
+      <div
+        v-if="searchMode"
+        style="width: 100%;"
+      >
         <input
           v-model="searchText"
           :placeholder="filterPlaceholder"
@@ -218,7 +221,7 @@
           >
         </v-btn> -->
       </div>
-      <div v-else>
+      <div v-else-if="!searchMode">
         <v-btn icon>
           <v-icon
             @click="navDrawer = true"
@@ -368,9 +371,8 @@ h1.title {
   padding: 3px;
   padding-left: 15px;
   border: none;
-  width: 300px;
-  max-width: 70vw;
   font-size: 1.4em;
+  width: 100%;
   font-weight: 200;
   box-shadow: 2px 1px 4px rgba(0, 0, 0, 0.5);
 }
