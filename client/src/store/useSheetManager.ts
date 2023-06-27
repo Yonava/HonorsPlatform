@@ -120,7 +120,7 @@ export const useSheetManager = defineStore('sheetManager', {
 
       this.setSort()
       this.loadingItems = false;
-      useSyncState().$reset()
+      useSyncState().setLastSynced();
     },
     async jumpToItem({ key = 'sysId', value, fallbackFn = () => null }: JumpObject) {
       // allows the UI to update on mobile and tablet breakpoints before jumping

@@ -6,12 +6,12 @@
       style="height: 25px"
     >
       <v-progress-circular
-        class="mr-2"
         indeterminate
+        class="mr-2"
         size="20"
       ></v-progress-circular>
       <p>
-        saving all changes...
+        saving changes...
       </p>
     </div>
     <p
@@ -31,5 +31,5 @@ import { useSyncState } from '../../../store/useSyncState'
 import { storeToRefs } from 'pinia'
 
 const syncState = useSyncState()
-const { syncTime, syncing } = storeToRefs(syncState)
+const { syncTime, syncing, processing } = storeToRefs(syncState)
 </script>
