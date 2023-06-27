@@ -5,25 +5,7 @@
       :color="`${getActivePanel.color}-lighten-4`"
     ></v-sheet>
     <transition>
-      <v-app-bar
-        v-if="getPanelCover.show"
-        :color="`${getActivePanel.color}-darken-2`"
-        class="px-5"
-      >
-        <v-icon
-          @click="setPanelCover('close')"
-          icon="mdi-chevron-left"
-          size="x-large"
-          class="mr-2"
-        ></v-icon>
-        <h1>Suggestions {{ getPanelCover.filter }}</h1>
-        <div>
-          <input
-            v-model="getPanelCover.filter"
-            type="text"
-          >
-        </div>
-      </v-app-bar>
+      <PanelCoverAppBar v-if="getPanelCover.show" />
       <AppBar v-else />
     </transition>
     <v-main>
@@ -172,6 +154,7 @@ import {
   onMounted
 } from 'vue'
 import { useRoute } from 'vue-router'
+import PanelCoverAppBar from '../components/Panel/PanelCoverAppBar.vue'
 import PanelList from '../components/Panel/PanelList.vue'
 import StudentDetail from '../components/Detail/StudentDetail.vue'
 import SortPanel from '../components/Panel/SortPanel.vue'

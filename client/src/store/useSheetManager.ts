@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { SheetItem } from '../SheetTypes';
 import { getPanel, PanelName, panels, Panel } from '../Panels';
 import router from '../router';
-import { useSyncState } from './useSyncState';
+import { filterItems } from '../FilterObjects';
 import { useDocumentCache } from './useDocumentCache';
 
 export type JumpObject = {
@@ -53,11 +53,7 @@ export const useSheetManager = defineStore('sheetManager', {
       if (state.searchFilter === '') {
         return outputArray;
       }
-      return outputArray.filter(item => {
-        const query = state.searchFilter.toLowerCase();
-        const values = Object.values(item).join(' ').toLowerCase();
-        return values.includes(query)
-      })
+      return filterItems(outputArray, state.searchFilter);
     },
     activeSort(state) {
       return state.sort;

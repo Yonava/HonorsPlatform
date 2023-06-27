@@ -1,24 +1,33 @@
 import { Panel, getPanel } from "./Panels";
 import { useSheetManager } from './store/useSheetManager'
 import { useDocumentCache } from "./store/useDocumentCache";
+import {
+  SheetItem,
+  Student,
+  Module,
+  CompletedModule,
+  Thesis,
+  GradEngagement,
+  Graduate
+} from "./SheetTypes";
 
-type Deletion = {
+type Deletion<T extends SheetItem> = {
   flaggedBecause: string[]
-  item: any,
   status: null | "danger" | "warn",
+  item: T,
 }
 
-type DeletionOutput = {
+export type DeletionOutput<T extends SheetItem> = {
   rationale: string,
   status: null | "danger" | "warn",
-  item: any
+  item: T
 }
 
 const capitalize = (str: string) => {
   return str.charAt(0).toUpperCase() + str.slice(1)
 }
 
-const deletionToDeletionOutput = (deletion: Deletion) => {
+const deletionToDeletionOutput = <T extends SheetItem>(deletion: Deletion<T>) => {
   return {
     rationale: capitalize(rationaleToString(deletion.flaggedBecause)),
     status: deletion.status,
@@ -26,7 +35,7 @@ const deletionToDeletionOutput = (deletion: Deletion) => {
   }
 }
 
-const sortPriority = (a: DeletionOutput, b: DeletionOutput) => {
+const sortStudents = (a: DeletionOutput<Student>, b: DeletionOutput<Student>) => {
   if (a.status === "danger" && b.status === "warn") {
     return -1
   } else if (a.status === "warn" && b.status === "danger") {
@@ -35,6 +44,21 @@ const sortPriority = (a: DeletionOutput, b: DeletionOutput) => {
   } else if (a.item.name < b.item.name) {
     return -1
   } else if (a.item.name > b.item.name) {
+    return 1
+  } else {
+    return 0
+  }
+}
+
+const sortModules = (a: DeletionOutput<Module>, b: DeletionOutput<Module>) => {
+  if (a.status === "danger" && b.status === "warn") {
+    return -1
+  } else if (a.status === "warn" && b.status === "danger") {
+    return 1
+    // break tie by sorting by courseCode
+  } else if (a.item.courseCode < b.item.courseCode) {
+    return -1
+  } else if (a.item.courseCode > b.item.courseCode) {
     return 1
   } else {
     return 0
@@ -88,7 +112,7 @@ const moduleDeletions = async () => {
   const graduates = Graduates.list
 
   return modules.map(module => {
-    const deletionData: Deletion = {
+    const deletionData: Deletion<Module> = {
       item: module,
       status: null,
       flaggedBecause: []
@@ -158,7 +182,7 @@ const studentDeletions = async () => {
   const completedModules = CompletedModules.list
 
   return students.map(student => {
-    const deletionData: Deletion = {
+    const deletionData: Deletion<Student> = {
       item: student,
       status: null,
       flaggedBecause: []
@@ -218,14 +242,20 @@ export const getSuggestedDeletions = async (panelObject?: Panel) => {
   const { getActivePanel } = useSheetManager()
   const panel = panelObject ?? getActivePanel
   const { sheetRange } = panel
-  let output: Deletion[] = []
+  let output: DeletionOutput<SheetItem>[] = []
 
   switch (sheetRange) {
     case "Students":
-      output = await studentDeletions()
+      const studentRecommendations = await studentDeletions()
+      output = studentRecommendations
+        .map(deletionToDeletionOutput)
+        .sort(sortStudents)
       break
     case "Modules":
-      output = await moduleDeletions()
+      const moduleRecommendations = await moduleDeletions()
+      output = moduleRecommendations
+        .map(deletionToDeletionOutput)
+        .sort(sortModules)
       break
     default:
       return []
@@ -233,6 +263,4 @@ export const getSuggestedDeletions = async (panelObject?: Panel) => {
 
   return output
     .filter(deletion => !!deletion.status)
-    .map(deletionToDeletionOutput)
-    .sort(sortPriority)
 }

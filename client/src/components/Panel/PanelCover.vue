@@ -61,7 +61,7 @@
       ></v-progress-circular>
     </div>
     <div
-      v-else-if="getPanelCover"
+      v-else-if="getPanelCover.show"
       class="pa-4 d-flex justify-center"
     >
       <v-sheet
@@ -80,32 +80,42 @@
 </template>
 
 <script setup lang="ts">
-import { watchEffect, ref, watch } from "vue";
+import { watchEffect, ref, watch, computed } from "vue";
 import { useDialog } from "../../store/useDialog";
 import { useSheetManager } from "../../store/useSheetManager";
 import { useDocumentCache } from "../../store/useDocumentCache";
 import { storeToRefs } from "pinia";
-import { getSuggestedDeletions } from "../../DeleteSuggestions";
+import { getSuggestedDeletions, DeletionOutput } from "../../DeleteSuggestions";
 import { useSyncState } from "../../store/useSyncState";
 import { useIncrementalRender } from "../../useIncrementalRender";
 import { useDisplay } from "vuetify";
+import { filterItems } from '../../FilterObjects'
+import { SheetItem } from '../../SheetTypes'
 
 const { getPanelCover } = storeToRefs(useDialog());
 const { getActivePanel } = storeToRefs(useSheetManager());
 const { getSelectedItem, setSelectedItem } = useDocumentCache();
 const { processing } = storeToRefs(useSyncState());
 
-const deletionData = ref([]);
+const deletionData = ref<DeletionOutput<SheetItem>[]>([]);
 const selectedForDeletion = ref([]);
 const loadingSuggestions = ref(false);
 
 const { xs } = useDisplay();
 
-const { incrementallyRenderedItems } = useIncrementalRender(deletionData);
+const displayItems = computed(() => {
+  const items = filterItems<SheetItem>(deletionData.value.map(data => data.item), getPanelCover.value.filter)
+  return items.map(item => {
+    const { rationale, status } = deletionData.value.find(data => data.item.sysId === item.sysId)
+    return { item, rationale, status }
+  })
+})
+
+const { incrementallyRenderedItems } = useIncrementalRender(displayItems);
 
 watchEffect(async () => {
   deletionData.value = [];
-  if (getPanelCover.value) {
+  if (getPanelCover.value.show) {
     loadingSuggestions.value = true;
     deletionData.value = await getSuggestedDeletions(getActivePanel.value);
     loadingSuggestions.value = false;
@@ -113,13 +123,13 @@ watchEffect(async () => {
 });
 
 watchEffect(async () => {
-  if (getPanelCover.value && !processing.value) {
+  if (getPanelCover.value.show && !processing.value) {
     deletionData.value = await getSuggestedDeletions(getActivePanel.value);
   }
 });
 
 watch(() => getSelectedItem(), async (newItem) => {
-  if (newItem && getPanelCover.value) {
+  if (newItem && getPanelCover.value.show) {
     deletionData.value = await getSuggestedDeletions(getActivePanel.value);
   }
 }, { deep: true });
