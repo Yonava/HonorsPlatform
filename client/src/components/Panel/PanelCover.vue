@@ -37,13 +37,21 @@
         indeterminate
       ></v-progress-circular>
     </div>
-    <div v-else-if="getPanelCover">
-      <div class="pa-5">
-        <h1 class="text-center">Looking Good!</h1>
+    <div
+      v-else-if="getPanelCover"
+      class="pa-4 d-flex justify-center"
+    >
+      <v-sheet
+        :color="getActivePanel.color + '-darken-2'"
+        class="pa-5 mt-2"
+        elevation="3"
+        style="border-radius: 10px; max-width: 500px"
+      >
+        <h1 class="text-center">Looking Good 💁‍♂️</h1>
         <p class="text-center">
           We would not suggest deleting any {{ getActivePanel.title.plural.toLowerCase() }} at this time.
         </p>
-      </div>
+      </v-sheet>
     </div>
   </div>
 </template>
@@ -57,6 +65,7 @@ import { storeToRefs } from "pinia";
 import { getSuggestedDeletions } from "../../DeleteSuggestions";
 import { useSyncState } from "../../store/useSyncState";
 import { useIncrementalRender } from "../../useIncrementalRender";
+import { useDisplay } from "vuetify";
 
 const { getPanelCover } = storeToRefs(useDialog());
 const { getActivePanel } = storeToRefs(useSheetManager());
@@ -65,6 +74,8 @@ const { processing } = storeToRefs(useSyncState());
 
 const deletionData = ref([]);
 const loadingSuggestions = ref(false);
+
+const { xs } = useDisplay();
 
 const { incrementallyRenderedItems } = useIncrementalRender(deletionData);
 

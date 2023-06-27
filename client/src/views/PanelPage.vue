@@ -16,7 +16,7 @@
           size="x-large"
           class="mr-2"
         ></v-icon>
-        <h1>Deletion Suggestions</h1>
+        <h1>Suggestions</h1>
       </v-app-bar>
       <AppBar v-else />
     </transition>
@@ -33,7 +33,7 @@
             zIndex: '99',
             position: 'absolute',
             width: mdAndUp ? (panelListWidth + 80) + 'px' : '100%',
-            height: '100%',
+            height: mdAndUp ? '100%' : '100vh',
             overflow: 'auto',
             transform: getPanelCover ? 'translateX(0)' : 'translateX(-100%)',
             transition: 'transform 0.2s ease-in-out',
@@ -82,7 +82,8 @@
         <div
           ref="panelList"
           :style="{
-            overflow: 'auto',
+            overflow: getPanelCover ? 'hidden' : 'auto',
+            height: getPanelCover ? '80vh' : '',
             minWidth: mdAndUp ? `${panelListWidth}px` : '',
             maxWidth: mdAndUp ? `${panelListWidth}px` : '',
           }"
