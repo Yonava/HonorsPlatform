@@ -7,16 +7,7 @@ export const tools = {
   STUDENTS: [
     {
       name: 'Suggested Deletions',
-      handler: async () => {
-        useDialog().open({
-          body: {
-            title: 'Taking A Quick Look Over The Data...',
-          }
-        })
-        useDialog().setPanelCover('open')
-        await new Promise(resolve => setTimeout(resolve, 2_000))
-        useDialog().close()
-      }
+      handler: () => { useDialog().setPanelCover('open') }
     },
     {
       name: 'Increment Student Year',
@@ -39,16 +30,7 @@ export const tools = {
   GRADUATES: [
     {
       name: 'Suggested Deletions',
-      handler: async () => {
-        useDialog().open({
-          body: {
-            title: 'Taking A Quick Look Over The Data...',
-          }
-        })
-        useDialog().setPanelCover('open')
-        await new Promise(resolve => setTimeout(resolve, 2_000))
-        useDialog().close()
-      }
+      handler: () => { useDialog().setPanelCover('open') }
     },
     {
       name: 'Create Temporary Sheet',
@@ -62,16 +44,7 @@ export const tools = {
   MODULES: [
     {
       name: 'Suggested Deletions',
-      handler: async () => {
-        useDialog().open({
-          body: {
-            title: 'Taking A Quick Look Over The Data...',
-          }
-        })
-        useDialog().setPanelCover('open')
-        await new Promise(resolve => setTimeout(resolve, 2_000))
-        useDialog().close()
-      }
+      handler: () => { useDialog().setPanelCover('open') }
     },
     {
       name: 'Create Temporary Sheet',
@@ -85,16 +58,7 @@ export const tools = {
   COMPLETED_MODULES: [
     {
       name: 'Suggested Deletions',
-      handler: async () => {
-        useDialog().open({
-          body: {
-            title: 'Taking A Quick Look Over The Data...',
-          }
-        })
-        useDialog().setPanelCover('open')
-        await new Promise(resolve => setTimeout(resolve, 2_000))
-        useDialog().close()
-      }
+      handler: () => { useDialog().setPanelCover('open') }
     },
     {
       name: 'Create Temporary Sheet',
@@ -108,16 +72,7 @@ export const tools = {
   THESES: [
     {
       name: 'Suggested Deletions',
-      handler: async () => {
-        useDialog().open({
-          body: {
-            title: 'Taking A Quick Look Over The Data...',
-          }
-        })
-        useDialog().setPanelCover('open')
-        await new Promise(resolve => setTimeout(resolve, 2_000))
-        useDialog().close()
-      }
+      handler: () => { useDialog().setPanelCover('open') }
     },
     {
       name: 'Create Temporary Sheet',
