@@ -24,9 +24,11 @@
 <script setup lang="ts">
 import { useDialog } from "../../store/useDialog";
 import { useSheetManager } from "../../store/useSheetManager";
+import { storeToRefs } from "pinia";
 
-const { getPanelCover, setPanelCover } = useDialog();
-const { getActivePanel } = useSheetManager();
+const { setPanelCover } = useDialog();
+const { getPanelCover } = storeToRefs(useDialog());
+const { getActivePanel } = storeToRefs(useSheetManager());
 </script>
 
 <style scoped>

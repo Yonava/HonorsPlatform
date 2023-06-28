@@ -1,5 +1,19 @@
 <template>
   <div>
+    <v-sheet
+      v-if="getPanelCover.selectedForDelete.includes(getSelectedItem().sysId)"
+      color="red"
+      elevation="2"
+      class="px-4 mb-2 d-flex flex-row align-center"
+      style="border-radius: 50px; gap: 5px;"
+    >
+      <v-icon size="x-small">
+        mdi-alert
+      </v-icon>
+      <p>
+        Marked For Deletion
+      </p>
+    </v-sheet>
     <div class="d-flex flex-row align-center">
       <p style="font-weight: 200">
         {{ id }}
@@ -22,7 +36,13 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
+import { useDialog } from '../../../store/useDialog';
+import { useDocumentCache } from '../../../store/useDocumentCache';
+import { storeToRefs } from "pinia";
 import SyncStatus from "./SyncStatus.vue";
+
+const { getPanelCover } = storeToRefs(useDialog());
+const { getSelectedItem } = useDocumentCache();
 
 const props = defineProps<{
   modelValue: string;

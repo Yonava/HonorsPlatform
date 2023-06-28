@@ -120,10 +120,13 @@ const loadingSuggestions = ref(false);
 const { xs } = useDisplay();
 
 const displayItems = computed(() => {
-  const items = filterItems<SheetItem>(deletionData.value.map(data => data.item), getPanelCover.value.filter)
+  const items = filterItems(deletionData.value.map(data => ({
+    title: Object.values(data.item)[3],
+    sysId: data.item.sysId,
+    rationale: data.rationale,
+  })), getPanelCover.value.filter)
   return items.map(item => {
-    const { rationale, status } = deletionData.value.find(data => data.item.sysId === item.sysId)
-    return { item, rationale, status }
+    return deletionData.value.find(data => data.item.sysId === item.sysId)
   })
 })
 
