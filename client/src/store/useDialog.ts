@@ -2,12 +2,16 @@ import { defineStore } from "pinia";
 import { markRaw } from "vue";
 import { Panel } from "../Panels";
 import { useSheetManager } from "./useSheetManager";
+import type { DeletionOutput } from "../DeleteSuggestions";
+import type { SheetItem } from "../SheetTypes";
 
 const defaultPanelCover = (show: boolean = false): PanelCoverData => {
   return {
     show,
     filter: '',
-    selectedForDelete: []
+    selectedForDelete: [],
+    deletionItems: [],
+    loading: false
   }
 }
 
@@ -27,6 +31,8 @@ type PanelCoverData = {
   show: boolean;
   filter: string;
   selectedForDelete: string[];
+  deletionItems: DeletionOutput<SheetItem>[];
+  loading: boolean;
 }
 
 export const useDialog = defineStore("dialog", {

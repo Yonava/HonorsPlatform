@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="!loadingSuggestions && incrementallyRenderedItems.length > 0">
+    <div v-if="!getPanelCover.loading && incrementallyRenderedItems.length > 0">
       <v-sheet
         v-for="{ item, rationale, status } in incrementallyRenderedItems"
         :key="item"
@@ -52,7 +52,7 @@
       </v-sheet>
     </div>
     <div
-      v-else-if="loadingSuggestions"
+      v-else-if="getPanelCover.loading"
       class="text-center mt-12"
     >
       <v-progress-circular
@@ -101,61 +101,57 @@ import { useDialog } from "../../store/useDialog";
 import { useSheetManager } from "../../store/useSheetManager";
 import { useDocumentCache } from "../../store/useDocumentCache";
 import { storeToRefs } from "pinia";
-import { getSuggestedDeletions, DeletionOutput } from "../../DeleteSuggestions";
+import { getSuggestedDeletions } from "../../DeleteSuggestions";
 import { useSyncState } from "../../store/useSyncState";
 import { useIncrementalRender } from "../../useIncrementalRender";
 import { useDisplay } from "vuetify";
 import { filterItems } from '../../FilterObjects'
-import { SheetItem } from '../../SheetTypes'
 
 const { getPanelCover } = storeToRefs(useDialog());
 const { getActivePanel } = storeToRefs(useSheetManager());
 const { getSelectedItem, setSelectedItem } = useDocumentCache();
 const { processing } = storeToRefs(useSyncState());
 
-const deletionData = ref<DeletionOutput<SheetItem>[]>([]);
-const selectedForDeletion = ref([]);
-const loadingSuggestions = ref(false);
-
 const { xs } = useDisplay();
 
 const displayItems = computed(() => {
-  const items = filterItems(deletionData.value.map(data => ({
+  const items = filterItems(getPanelCover.value.deletionItems.map(data => ({
+    // TODO: Either make filterItems more efficient or create a "primary property" for each panel
     title: Object.values(data.item)[3],
     sysId: data.item.sysId,
     rationale: data.rationale,
   })), getPanelCover.value.filter)
   return items.map(item => {
-    return deletionData.value.find(data => data.item.sysId === item.sysId)
+    return getPanelCover.value.deletionItems.find(data => data.item.sysId === item.sysId)
   })
 })
 
 const { incrementallyRenderedItems } = useIncrementalRender(displayItems);
 
 watchEffect(async () => {
-  deletionData.value = [];
+  getPanelCover.value.deletionItems = [];
   if (getPanelCover.value.show) {
-    loadingSuggestions.value = true;
-    deletionData.value = await getSuggestedDeletions(getActivePanel.value);
-    loadingSuggestions.value = false;
+    getPanelCover.value.loading = true;
+    getPanelCover.value.deletionItems = await getSuggestedDeletions(getActivePanel.value);
+    getPanelCover.value.loading = false;
   }
 });
 
 watchEffect(async () => {
   if (getPanelCover.value.show && !processing.value) {
-    deletionData.value = await getSuggestedDeletions(getActivePanel.value);
+    getPanelCover.value.deletionItems = await getSuggestedDeletions(getActivePanel.value);
   }
 });
 
 watch(() => getSelectedItem(), async (newItem) => {
   if (newItem && getPanelCover.value.show) {
-    deletionData.value = await getSuggestedDeletions(getActivePanel.value);
+    getPanelCover.value.deletionItems = await getSuggestedDeletions(getActivePanel.value);
   }
 }, { deep: true });
 
 watch(getActivePanel, async (newPanel) => {
-  deletionData.value = [];
-  deletionData.value = await getSuggestedDeletions(newPanel);
+  getPanelCover.value.deletionItems = [];
+  getPanelCover.value.deletionItems = await getSuggestedDeletions(newPanel);
 })
 
 const isSelected = item => {
