@@ -9,7 +9,7 @@
       size="x-large"
       class="mr-2"
     ></v-icon>
-    <h1>Suggestions</h1>
+    <h1>Suggestions ({{ getPanelCover.selectedForDelete.length }})</h1>
     <div>
       <input
         v-model="getPanelCover.filter"

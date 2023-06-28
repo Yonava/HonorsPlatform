@@ -10,7 +10,7 @@
     </div>
     <div v-else>
     <v-navigation-drawer
-      v-model="showDialog"
+      v-model="showNavDrawer"
       temporary
       touchless
       rounded
@@ -22,7 +22,7 @@
         class="xs-outer-wrapper"
       >
         <slot></slot>
-        <div style="margin-bottom: 25vh"></div>
+        <div style="margin-bottom: 125px"></div>
       </v-sheet>
     </v-navigation-drawer>
     </div>
@@ -31,7 +31,7 @@
 
 <script setup lang="ts">
 import { useDisplay } from 'vuetify'
-import { computed } from 'vue'
+import { computed, ref, watchEffect } from 'vue'
 import { useRouter } from 'vue-router'
 
 const { xs } = useDisplay()
@@ -51,6 +51,18 @@ const emits = defineEmits([
 const showDialog = computed({
   get: () => props.modelValue,
   set: (v) => emits('update:modelValue', v)
+})
+
+
+const showNavDrawer = ref(false)
+watchEffect(() => {
+  if (showDialog.value) {
+    setTimeout(() => {
+      showNavDrawer.value = true
+    }, 100)
+  } else {
+    showNavDrawer.value = false
+  }
 })
 </script>
 

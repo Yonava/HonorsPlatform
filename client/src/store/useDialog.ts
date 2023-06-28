@@ -3,6 +3,14 @@ import { markRaw } from "vue";
 import { Panel } from "../Panels";
 import { useSheetManager } from "./useSheetManager";
 
+const defaultPanelCover = (show: boolean = false): PanelCoverData => {
+  return {
+    show,
+    filter: '',
+    selectedForDelete: []
+  }
+}
+
 export type DialogButton = {
   text: string;
   onClick: () => void;
@@ -18,6 +26,7 @@ export type DialogBody = {
 type PanelCoverData = {
   show: boolean;
   filter: string;
+  selectedForDelete: string[];
 }
 
 export const useDialog = defineStore("dialog", {
@@ -35,7 +44,7 @@ export const useDialog = defineStore("dialog", {
   getters: {
     getPanelCover(state) {
       const { getActivePanel } = useSheetManager();
-      return state.panelCover[getActivePanel.title.plural] ?? { show: false, filter: '' };
+      return state.panelCover[getActivePanel.title.plural] ?? defaultPanelCover();
     }
   },
   actions: {
@@ -43,9 +52,9 @@ export const useDialog = defineStore("dialog", {
       const { getActivePanel } = useSheetManager();
       const panel = panelObject ?? getActivePanel;
       if (action === 'open') {
-        this.panelCover[panel.title.plural] = { show: true, filter: '' };
+        this.panelCover[panel.title.plural] = defaultPanelCover(true);
       } else if (action === 'close') {
-        this.panelCover[panel.title.plural] = { show: false, filter: '' };
+        this.panelCover[panel.title.plural] =  defaultPanelCover();
       }
     },
     open(options?: { body?: DialogBody; component?: any }) {

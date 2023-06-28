@@ -5,7 +5,7 @@
         v-for="{ item, rationale, status } in incrementallyRenderedItems"
         :key="item"
         @click="setSelectedItem({ item })"
-        :color="selectedForDeletion.includes(item.sysId) ? 'red-lighten-4' : ''"
+        :color="getPanelCover.selectedForDelete.includes(item.sysId) ? 'red-lighten-4' : ''"
         :class="[
           'item-card',
           'px-4 pb-4',
@@ -18,15 +18,15 @@
         >
           <div style="width: 10%">
             <v-icon
-              v-if="!selectedForDeletion.includes(item.sysId)"
-              @click.stop="selectedForDeletion.push(item.sysId)"
+              v-if="!getPanelCover.selectedForDelete.includes(item.sysId)"
+              @click.stop="getPanelCover.selectedForDelete.push(item.sysId)"
               size="x-large"
             >
               mdi-delete-empty-outline
             </v-icon>
             <v-icon
               v-else
-              @click.stop="selectedForDeletion = selectedForDeletion.filter(id => id !== item.sysId)"
+              @click.stop="getPanelCover.selectedForDelete = getPanelCover.selectedForDelete.filter(id => id !== item.sysId)"
               size="x-large"
               color="red"
             >
