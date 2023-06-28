@@ -61,18 +61,34 @@
       ></v-progress-circular>
     </div>
     <div
-      v-else-if="getPanelCover.show"
+      v-else-if="getPanelCover.show && !getPanelCover.filter"
       class="pa-4 d-flex justify-center"
     >
       <v-sheet
         :color="getActivePanel.color + '-darken-2'"
         class="pa-5 mt-2"
         elevation="3"
-        style="border-radius: 10px; max-width: 500px"
+        style="border-radius: 10px; width: 500px"
       >
         <h1 class="text-center">Looking Good 💁‍♂️</h1>
         <p class="text-center">
           We would not suggest deleting any {{ getActivePanel.title.plural.toLowerCase() }} at this time.
+        </p>
+      </v-sheet>
+    </div>
+    <div
+      v-else
+      class="pa-4 d-flex justify-center"
+    >
+      <v-sheet
+        :color="getActivePanel.color + '-darken-2'"
+        class="pa-5 mt-2"
+        elevation="3"
+        style="border-radius: 10px; width: 500px"
+      >
+        <h1 class="text-center">No Results</h1>
+        <p class="text-center">
+          No {{ getActivePanel.title.plural.toLowerCase() }} match your search criteria.
         </p>
       </v-sheet>
     </div>

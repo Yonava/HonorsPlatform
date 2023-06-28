@@ -22,7 +22,7 @@
         </div>
       </div>
       <v-sheet
-        v-if="incrementallyRenderedItems.length === 0"
+        v-if="filteredItems.length === 0"
         class="mt-2"
         style="width: 90%; border-radius: 10px; margin: 0 auto;"
         :color="`${panel.color}-darken-1`"
