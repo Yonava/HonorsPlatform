@@ -67,24 +67,15 @@ const sortModules = (a: DeletionOutput<Module>, b: DeletionOutput<Module>) => {
 }
 
 const rationaleToString = (rationale: string[]) => {
+  let string = ""
   if (rationale.length === 1) {
-    return rationale[0]
-  } else if (rationale.length === 2) {
-    return `${rationale[0]} and ${rationale[1]}`
-  } else {
+    string += rationale[0]
+  } else if (rationale.length > 1) {
     const lastItem = rationale.pop()
-    return `${rationale.join(", ")}, and ${lastItem}`
+    string += `${rationale.join(", ")} and ${lastItem}`
   }
+  return string.length > 0 ? string + "." : string
 }
-
-
-// Modules
-
-// Danger if module docuSignCreated is over 3 months old and docuSignCompleted is false
-// Danger if module does not have a studentId
-// Danger if modules studentId does not link to a student
-// Danger if modules studentId links to a graduate
-// Warn if module docuSignCreated and docuSignCompleted are both false
 
 const moduleDeletions = async () => {
   const { fetchItems } = useSheetManager()
@@ -240,12 +231,30 @@ const studentDeletions = async () => {
       const isInDeletionItems = getPanelCover.deletionItems.find(deletion => deletion.item.sysId === student.sysId)
       if (isInDeletionItems) {
         deletionData.status = "success"
-        deletionData.flaggedBecause.push("All issues have been resolved")
+        deletionData.flaggedBecause.push("all issues have been resolved")
       }
     }
 
     return deletionData
   })
+}
+
+const properlyOrder = (newOutput: DeletionOutput<SheetItem>[]) => {
+  const currentItems = useDialog().getPanelCover.deletionItems
+  if (currentItems.length === 0) {
+    return newOutput
+  } else {
+    const orderedItems = []
+    for (const currentItem of currentItems) {
+      const newItemMatchingIdInCurrentList = newOutput.find(newItem => {
+        return newItem.item.sysId === currentItem.item.sysId
+      })
+      if (newItemMatchingIdInCurrentList) {
+        orderedItems.push(newItemMatchingIdInCurrentList)
+      }
+    }
+    return orderedItems
+  }
 }
 
 export const getSuggestedDeletions = async (panelObject?: Panel) => {
@@ -257,20 +266,9 @@ export const getSuggestedDeletions = async (panelObject?: Panel) => {
   switch (sheetRange) {
     case "Students":
       const studentRecommendations = await studentDeletions()
-      output = studentRecommendations.map(deletionToDeletionOutput)
-      const currentItems = useDialog().getPanelCover.deletionItems
-      if (currentItems.length === 0) {
-        output = output.sort(sortStudents)
-      } else {
-        output = currentItems.map(deletion => {
-          const student = output.find(student => student.item.sysId === deletion.item.sysId)
-          if (deletion) {
-            return student
-          } else {
-            return null
-          }
-        }).filter(student => !!student) as DeletionOutput<SheetItem>[]
-      }
+      output = studentRecommendations
+        .map(deletionToDeletionOutput)
+        .sort(sortStudents)
       break
     case "Modules":
       const moduleRecommendations = await moduleDeletions()
@@ -282,5 +280,5 @@ export const getSuggestedDeletions = async (panelObject?: Panel) => {
       return []
   }
 
-  return output.filter(deletion => !!deletion.status)
+  return properlyOrder(output).filter(deletion => !!deletion.status)
 }
