@@ -213,7 +213,13 @@ const panelHopBindings = () => {
 useKeyBindings({
   'r': () => fetchItems({ forceCacheRefresh: true }),
   ...panelHopBindings(),
-  ' ': () => setPanelCover('open'),
+  ' ': () => {
+    if (getPanelCover.value.show) {
+      setPanelCover('close')
+    } else {
+      setPanelCover('open')
+    }
+  },
 })
 
 function getDefaultWidth() {

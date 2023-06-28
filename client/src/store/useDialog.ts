@@ -39,7 +39,7 @@ export const useDialog = defineStore("dialog", {
     }
   },
   actions: {
-    setPanelCover(action: 'open' | 'close' | 'toggle', panelObject?: Panel) {
+    setPanelCover(action: 'open' | 'close', panelObject?: Panel) {
       const { getActivePanel } = useSheetManager();
       const panel = panelObject ?? getActivePanel;
       if (action === 'open') {

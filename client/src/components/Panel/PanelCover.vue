@@ -77,7 +77,7 @@
       </v-sheet>
     </div>
     <div
-      v-else
+      v-else-if="getPanelCover.show"
       class="pa-4 d-flex justify-center"
     >
       <v-sheet
