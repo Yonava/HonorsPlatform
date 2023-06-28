@@ -1,6 +1,7 @@
 import { Panel, getPanel } from "./Panels";
 import { useSheetManager } from './store/useSheetManager'
 import { useDocumentCache } from "./store/useDocumentCache";
+import { useDialog } from "./store/useDialog";
 import {
   SheetItem,
   Student,
@@ -13,13 +14,13 @@ import {
 
 type Deletion<T extends SheetItem> = {
   flaggedBecause: string[]
-  status: null | "danger" | "warn",
+  status: null | "danger" | "warn" | "success",
   item: T,
 }
 
 export type DeletionOutput<T extends SheetItem> = {
   rationale: string,
-  status: null | "danger" | "warn",
+  status: null | "danger" | "warn" | "success",
   item: T
 }
 
@@ -234,6 +235,15 @@ const studentDeletions = async () => {
       deletionData.flaggedBecause.push("this student has not been assigned a class year")
     }
 
+    if (deletionData.flaggedBecause.length === 0) {
+      const { getPanelCover } = useDialog()
+      const isInDeletionItems = getPanelCover.deletionItems.find(deletion => deletion.item.sysId === student.sysId)
+      if (isInDeletionItems) {
+        deletionData.status = "success"
+        deletionData.flaggedBecause.push("All issues have been resolved")
+      }
+    }
+
     return deletionData
   })
 }
@@ -247,9 +257,20 @@ export const getSuggestedDeletions = async (panelObject?: Panel) => {
   switch (sheetRange) {
     case "Students":
       const studentRecommendations = await studentDeletions()
-      output = studentRecommendations
-        .map(deletionToDeletionOutput)
-        .sort(sortStudents)
+      output = studentRecommendations.map(deletionToDeletionOutput)
+      const currentItems = useDialog().getPanelCover.deletionItems
+      if (currentItems.length === 0) {
+        output = output.sort(sortStudents)
+      } else {
+        output = currentItems.map(deletion => {
+          const student = output.find(student => student.item.sysId === deletion.item.sysId)
+          if (deletion) {
+            return student
+          } else {
+            return null
+          }
+        }).filter(student => !!student) as DeletionOutput<SheetItem>[]
+      }
       break
     case "Modules":
       const moduleRecommendations = await moduleDeletions()

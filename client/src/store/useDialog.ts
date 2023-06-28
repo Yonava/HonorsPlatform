@@ -51,6 +51,10 @@ export const useDialog = defineStore("dialog", {
     getPanelCover(state) {
       const { getActivePanel } = useSheetManager();
       return state.panelCover[getActivePanel.title.plural] ?? defaultPanelCover();
+    },
+    getListOfFlaggedItems(state) {
+      const { getActivePanel } = useSheetManager();
+      return state.panelCover[getActivePanel.title.plural].deletionItems.filter(item => item.status !== "success");
     }
   },
   actions: {

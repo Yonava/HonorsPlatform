@@ -10,7 +10,7 @@
       class="mr-2"
     ></v-icon>
     <h1>Suggestions</h1>
-    <p class="ml-2">({{ getPanelCover.deletionItems.length }})</p>
+    <p class="ml-2">({{ getListOfFlaggedItems.length }})</p>
     <div>
       <input
         v-model="getPanelCover.filter"
@@ -28,7 +28,7 @@ import { useSheetManager } from "../../store/useSheetManager";
 import { storeToRefs } from "pinia";
 
 const { setPanelCover } = useDialog();
-const { getPanelCover } = storeToRefs(useDialog());
+const { getPanelCover, getListOfFlaggedItems } = storeToRefs(useDialog());
 const { getActivePanel } = storeToRefs(useSheetManager());
 </script>
 
