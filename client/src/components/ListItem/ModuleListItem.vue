@@ -144,6 +144,11 @@ type DocuSignStatus = {
 }
 
 const overOneYearInProgress = computed(() => {
+
+  if (!props.item.docuSignCreated.trim()) {
+    return false
+  }
+
   const now = new Date()
   try {
     const created = new Date(props.item.docuSignCreated)
@@ -162,12 +167,17 @@ const daysSinceDate = (date: string) => {
     const created = new Date(date)
     const diff = now.getTime() - created.getTime()
     const diffDays = Math.ceil(diff / (1000 * 60 * 60 * 24))
-    if (diffDays === 1) {
+
+    if (isNaN(diffDays)) {
+      return 'On A Date That Is Not Valid 🫣'
+    } else if (diffDays === 1) {
       return 'Today'
     } else if (diffDays === 2) {
       return 'Yesterday'
-    } else if (diffDays < 0){
-      return `${diffDays * -1} Days In The Future... Woah!`
+    } else if (diffDays === 0) {
+      return 'Tomorrow 😱'
+    } else if (diffDays < 0) {
+      return `${Math.abs(diffDays) + 1} Days In The Future... 🤯`
     } else {
       return `${diffDays - 1} Days Ago`
     }
@@ -183,7 +193,7 @@ const docuSignStatus: ComputedRef<DocuSignStatus> = computed(() => {
       icon: 'mdi-file-document-check-outline',
       text: 'Completed',
       color: 'green',
-      tooltip: `DocuSign Completed (${props.item.docuSignCompleted})`
+      tooltip: `DocuSign Completed ${daysSinceDate(props.item.docuSignCompleted)} (${props.item.docuSignCompleted})`
     }
   } else if (props.item.docuSignCreated) {
     return {

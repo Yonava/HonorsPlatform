@@ -10,7 +10,16 @@
       class="mr-2"
     ></v-icon>
     <h1>Suggestions</h1>
-    <p class="ml-2">({{ getListOfFlaggedItems.length }})</p>
+    <p
+      v-if="!getPanelCover.loading"
+      class="ml-2"
+    >({{ getListOfFlaggedItems.length }})</p>
+    <p
+      v-else
+      class="ml-2"
+    >
+      (computing)
+    </p>
     <div>
       <input
         v-model="getPanelCover.filter"

@@ -36,30 +36,16 @@ const deletionToDeletionOutput = <T extends SheetItem>(deletion: Deletion<T>) =>
   }
 }
 
-const sortStudents = (a: DeletionOutput<Student>, b: DeletionOutput<Student>) => {
+const sortItems = (a: DeletionOutput<SheetItem>, b: DeletionOutput<SheetItem>) => {
+  const [tieBreakerA, tieBreakerB] = [Object.values(a.item)[3], Object.values(b.item)[3]]
   if (a.status === "danger" && b.status === "warn") {
     return -1
   } else if (a.status === "warn" && b.status === "danger") {
     return 1
-    // break tie by sorting by name
-  } else if (a.item.name < b.item.name) {
+    // break tie by rationale, then name
+  } else if (tieBreakerA < tieBreakerB) {
     return -1
-  } else if (a.item.name > b.item.name) {
-    return 1
-  } else {
-    return 0
-  }
-}
-
-const sortModules = (a: DeletionOutput<Module>, b: DeletionOutput<Module>) => {
-  if (a.status === "danger" && b.status === "warn") {
-    return -1
-  } else if (a.status === "warn" && b.status === "danger") {
-    return 1
-    // break tie by sorting by courseCode
-  } else if (a.item.courseCode < b.item.courseCode) {
-    return -1
-  } else if (a.item.courseCode > b.item.courseCode) {
+  } else if (tieBreakerA > tieBreakerB) {
     return 1
   } else {
     return 0
@@ -226,15 +212,6 @@ const studentDeletions = async () => {
       deletionData.flaggedBecause.push("this student has not been assigned a class year")
     }
 
-    if (deletionData.flaggedBecause.length === 0) {
-      const { getPanelCover } = useDialog()
-      const isInDeletionItems = getPanelCover.deletionItems.find(deletion => deletion.item.sysId === student.sysId)
-      if (isInDeletionItems) {
-        deletionData.status = "success"
-        deletionData.flaggedBecause.push("all issues have been resolved")
-      }
-    }
-
     return deletionData
   })
 }
@@ -257,28 +234,49 @@ const properlyOrder = (newOutput: DeletionOutput<SheetItem>[]) => {
   }
 }
 
+const checkSuccess = (newItem: DeletionOutput<SheetItem>): DeletionOutput<SheetItem> => {
+  if (newItem.rationale.length > 0) {
+    return newItem
+  }
+
+  const { getPanelCover } = useDialog()
+  const isInPreviousItems = getPanelCover.deletionItems.find(deletion => deletion.item.sysId === newItem.item.sysId)
+  if (isInPreviousItems) {
+    return {
+      item: newItem.item,
+      status: 'success',
+      rationale: 'All issues have been resolved!'
+    }
+  } else {
+    return {
+      item: newItem.item,
+      status: null,
+      rationale: ''
+    }
+  }
+}
+
 export const getSuggestedDeletions = async (panelObject?: Panel) => {
   const { getActivePanel } = useSheetManager()
   const panel = panelObject ?? getActivePanel
   const { sheetRange } = panel
-  let output: DeletionOutput<SheetItem>[] = []
+  let output: Deletion<SheetItem>[] = []
 
   switch (sheetRange) {
     case "Students":
-      const studentRecommendations = await studentDeletions()
-      output = studentRecommendations
-        .map(deletionToDeletionOutput)
-        .sort(sortStudents)
+      output = await studentDeletions()
       break
     case "Modules":
-      const moduleRecommendations = await moduleDeletions()
-      output = moduleRecommendations
-        .map(deletionToDeletionOutput)
-        .sort(sortModules)
+      output = await moduleDeletions()
       break
     default:
       return []
   }
 
-  return properlyOrder(output).filter(deletion => !!deletion.status)
+  const newDeleteSuggestions = output
+    .map(deletionToDeletionOutput)
+    .sort(sortItems)
+    .map(checkSuccess)
+
+  return properlyOrder(newDeleteSuggestions).filter(deletion => !!deletion.status)
 }
