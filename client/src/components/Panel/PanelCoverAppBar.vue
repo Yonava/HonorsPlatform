@@ -28,10 +28,39 @@
         class="ml-5 filter-input"
       >
     </div>
+    <v-spacer></v-spacer>
+    <div
+      v-if="!getPanelCover.loadingSuggestions"
+      class="d-flex flex-row align-center"
+    >
+      <h4>
+        Delete All:
+      </h4>
+      <v-btn
+        :disabled="getPanelCover.selectedForDelete.length === 0"
+        class="ml-2"
+        variant="outlined"
+      >
+        selected items ({{ getPanelCover.selectedForDelete.length }})
+      </v-btn>
+      <v-btn
+        :disabled="dangerStatusItems.length === 0"
+        class="ml-2"
+        variant="elevated"
+        color="red"
+      >Recommended ({{ dangerStatusItems.length }})</v-btn>
+      <v-btn
+        :disabled="warnStatusItems.length === 0"
+        class="ml-2"
+        variant="elevated"
+        color="yellow"
+      >Considerations ({{ warnStatusItems.length }})</v-btn>
+    </div>
   </v-app-bar>
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useDialog } from "../../store/useDialog";
 import { useSheetManager } from "../../store/useSheetManager";
 import { storeToRefs } from "pinia";
@@ -39,6 +68,21 @@ import { storeToRefs } from "pinia";
 const { setPanelCover } = useDialog();
 const { getPanelCover, getListOfFlaggedItems } = storeToRefs(useDialog());
 const { getActivePanel } = storeToRefs(useSheetManager());
+
+// const selectedItems = computed(() => {
+//   const selected = []
+//   for (sysId of getPanelCover.value.selectedForDelete) {
+//     con
+//   }
+// })
+
+const warnStatusItems = computed(() => {
+  return getPanelCover.value.deletionItems.filter(item => item.status === 'warn')
+})
+
+const dangerStatusItems = computed(() => {
+  return getPanelCover.value.deletionItems.filter(item => item.status === 'danger')
+})
 </script>
 
 <style scoped>

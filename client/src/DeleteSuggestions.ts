@@ -177,7 +177,7 @@ const studentDeletions = async () => {
     }
 
     if (student.activeStatus === "Inactive") {
-      deletionData.status = "warn"
+      deletionData.status ??= "warn"
       deletionData.flaggedBecause.push("active status is currently marked as 'Inactive'")
     }
 
@@ -240,19 +240,12 @@ const checkSuccess = (newItem: DeletionOutput<SheetItem>): DeletionOutput<SheetI
   }
 
   const { getPanelCover } = useDialog()
-  const isInPreviousItems = getPanelCover.deletionItems.find(deletion => deletion.item.sysId === newItem.item.sysId)
-  if (isInPreviousItems) {
-    return {
-      item: newItem.item,
-      status: 'success',
-      rationale: 'All issues have been resolved!'
-    }
-  } else {
-    return {
-      item: newItem.item,
-      status: null,
-      rationale: ''
-    }
+  const { deletionItems: previousItems } = getPanelCover
+  const isInPreviousItems = previousItems.find(item => item.item.sysId === newItem.item.sysId)
+  return {
+    status: isInPreviousItems ? 'success' : null,
+    item: newItem.item,
+    rationale: ''
   }
 }
 

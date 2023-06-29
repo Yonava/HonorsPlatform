@@ -41,18 +41,29 @@
           </div>
         </div>
         <v-sheet
-          :color="status === 'danger' ? 'red' : status === 'warn' ? 'yellow' : 'green'"
+          v-if="status === 'success'"
+          color="green"
           elevation="2"
           class="pa-4"
           style="border-radius: 10px;"
         >
-          <h3 v-if="status === 'success'">
-            All good!
+          <h3>
+            All Good!
           </h3>
-          <h3
-            v-else
-            style="text-transform: capitalize"
-          >We {{ status === 'danger' ? 'encourage' : 'would consider' }} deleting this {{ getActivePanel.title.singular }} because</h3>
+          <p>
+            Every aforementioned issue has been resolved. We would like to formally retract what we said before and issue a sincere apology to this {{ getActivePanel.title.singular.toLowerCase() }}.
+          </p>
+        </v-sheet>
+        <v-sheet
+          v-else
+          :color="status === 'danger' ? 'red' : 'yellow'"
+          elevation="2"
+          class="pa-4"
+          style="border-radius: 10px;"
+        >
+          <h3 style="text-transform: capitalize">
+            We {{ status === 'danger' ? 'encourage' : 'would consider' }} deleting this {{ getActivePanel.title.singular }} because
+          </h3>
           <p>{{ rationale }}</p>
         </v-sheet>
       </v-sheet>

@@ -6,7 +6,7 @@
       temporary
       fixed
       location="end"
-      :color="`${getActivePanel.color}-darken-2`"
+      :color="appBarColor"
       style="
         width: 75%;
         max-width: 350px;
@@ -94,7 +94,10 @@
         {{ version }}
       </span>
     </v-navigation-drawer>
-    <v-app-bar :color="`${getActivePanel.color}-darken-2`" class="app-bar px-5">
+    <v-app-bar
+      :color="appBarColor"
+      class="app-bar px-5"
+    >
       <div
         v-if="searchMode"
         style="width: 100%;"
@@ -251,13 +254,12 @@ import { storeToRefs } from "pinia";
 
 const { show: dialogOpen } = storeToRefs(useDialog())
 const { getSelectedItem } = useDocumentCache();
-const sheetManager = useSheetManager();
-const { searchFilter, getActivePanel, loadingItems, filteredItems } = storeToRefs(sheetManager);
-const { setPanel, fetchItems } = sheetManager;
+const { searchFilter, getActivePanel, loadingItems, filteredItems } = storeToRefs(useSheetManager());
+const { setPanel, fetchItems, setSearchFilter } = useSheetManager();
 
 const searchText = computed({
   get: () => searchFilter.value,
-  set: (v) => sheetManager.setSearchFilter(v),
+  set: (v) => setSearchFilter(v),
 });
 
 const navDrawer = ref(false);
@@ -306,6 +308,10 @@ const panelTitle = computed(() => {
     return title.split(" ")[1];
   }
 });
+
+const appBarColor = computed(() => {
+  return getActivePanel.value.color + '-darken-2'
+})
 
 watchEffect(() => {
   if (dialogOpen.value || getSelectedItem()) {

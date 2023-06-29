@@ -37,8 +37,9 @@
 
 <script setup lang="ts">
 import { Grade, grades, Module } from "../../../SheetTypes";
-import { ref, computed } from "vue";
-import { getPanel } from "../../../Panels";
+import { useRouter } from 'vue-router'
+import { ref, computed, getCurrentInstance } from "vue";
+import { getPanel, panels } from "../../../Panels";
 import { useDocumentCache } from '../../../store/useDocumentCache'
 import { useDialog } from '../../../store/useDialog'
 import { useSheetManager } from '../../../store/useSheetManager'
@@ -58,7 +59,7 @@ const finalGrade = ref<Grade>(null);
 
 async function moveModule() {
   const { moveItemBetweenLists, getSelectedItem, addItem } = useDocumentCache()
-  const { setPanel } = useSheetManager()
+  const { setPanel, getActivePanel } = useSheetManager()
   const selectedModule = getSelectedItem(modulePanel) as Module;
   const { sysId } = selectedModule;
   const { waitUntilSynced } = useSyncState()
@@ -82,7 +83,16 @@ async function moveModule() {
           {
             text: "Sounds Good (But In Pink ✨🦄✨)",
             color: "pink",
-            onClick: () => useDialog().close()
+            onClick: () => {
+              const panelKeys = Object.keys(panels)
+              panelKeys.forEach(panel => {
+                panels[panel].color = 'pink'
+              })
+
+              setPanel('MODULES')
+
+              useDialog().close()
+            }
           }
         ]
       }
