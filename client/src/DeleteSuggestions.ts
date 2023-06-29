@@ -218,20 +218,16 @@ const studentDeletions = async () => {
 
 const properlyOrder = (newOutput: DeletionOutput<SheetItem>[]) => {
   const currentItems = useDialog().getPanelCover.deletionItems
-  if (currentItems.length === 0) {
-    return newOutput
-  } else {
-    const orderedItems = []
-    for (const currentItem of currentItems) {
-      const newItemMatchingIdInCurrentList = newOutput.find(newItem => {
-        return newItem.item.sysId === currentItem.item.sysId
-      })
-      if (newItemMatchingIdInCurrentList) {
-        orderedItems.push(newItemMatchingIdInCurrentList)
-      }
+  const orderedItems = []
+  for (const currentItem of currentItems) {
+    const newItemMatchingIdInCurrentList = newOutput.find(newItem => {
+      return newItem.item.sysId === currentItem.item.sysId
+    })
+    if (newItemMatchingIdInCurrentList) {
+      orderedItems.push(newItemMatchingIdInCurrentList)
     }
-    return orderedItems
   }
+  return orderedItems
 }
 
 const checkSuccess = (newItem: DeletionOutput<SheetItem>): DeletionOutput<SheetItem> => {
@@ -268,8 +264,13 @@ export const getSuggestedDeletions = async (panelObject?: Panel) => {
 
   const newDeleteSuggestions = output
     .map(deletionToDeletionOutput)
-    .sort(sortItems)
     .map(checkSuccess)
+    .filter(deletion => !!deletion.status)
 
-  return properlyOrder(newDeleteSuggestions).filter(deletion => !!deletion.status)
+  const currentItems = useDialog().getPanelCover.deletionItems
+  if (currentItems.length === 0) {
+    return newDeleteSuggestions.sort(sortItems)
+  } else {
+    return properlyOrder(newDeleteSuggestions)
+  }
 }
