@@ -51,7 +51,7 @@
             All Good!
           </h3>
           <p>
-            Every aforementioned issue has been resolved. We would like to formally retract what we said before and issue a sincere apology to this {{ getActivePanel.title.singular.toLowerCase() }}.
+            Every aforementioned issue has been resolved. We would like to formally retract what we said before and a sincere apology to this {{ getActivePanel.title.singular.toLowerCase() }}.
           </p>
         </v-sheet>
         <v-sheet
@@ -145,6 +145,7 @@ const displayItems = computed(() => {
 
 const { incrementallyRenderedItems } = useIncrementalRender(displayItems);
 
+// when panel cover is toggled to showing
 watchEffect(async () => {
   getPanelCover.value.deletionItems = [];
   if (getPanelCover.value.show) {
@@ -154,18 +155,23 @@ watchEffect(async () => {
   }
 });
 
+// reruns report when processing stops to target embedded item changes
 watchEffect(async () => {
+  if (getPanelCover.value.loading) return
   if (getPanelCover.value.show && !processing.value) {
     getPanelCover.value.deletionItems = await getSuggestedDeletions(getActivePanel.value);
   }
 });
 
+// reruns report when an item changes
 watch(() => getSelectedItem(), async (newItem) => {
+  if (getPanelCover.value.loading) return
   if (newItem && getPanelCover.value.show) {
     getPanelCover.value.deletionItems = await getSuggestedDeletions(getActivePanel.value);
   }
 }, { deep: true });
 
+// ensures the lag free closing and opening of the panel cover
 watch(getActivePanel, async (newPanel) => {
   getPanelCover.value.deletionItems = [];
   getPanelCover.value.deletionItems = await getSuggestedDeletions(newPanel);

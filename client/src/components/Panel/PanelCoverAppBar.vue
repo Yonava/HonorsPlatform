@@ -37,19 +37,22 @@
         Delete All:
       </h4>
       <v-btn
-        :disabled="getPanelCover.selectedForDelete.length === 0"
+        @click="deleteItems(selectedItems)"
+        :disabled="selectedItems.length === 0"
         class="ml-2"
         variant="outlined"
       >
-        selected items ({{ getPanelCover.selectedForDelete.length }})
+        selected items ({{ selectedItems.length }})
       </v-btn>
       <v-btn
+        @click="deleteItems(dangerStatusItems)"
         :disabled="dangerStatusItems.length === 0"
         class="ml-2"
         variant="elevated"
         color="red"
       >Recommended ({{ dangerStatusItems.length }})</v-btn>
       <v-btn
+        @click="deleteItems(warnStatusItems)"
         :disabled="warnStatusItems.length === 0"
         class="ml-2"
         variant="elevated"
@@ -64,25 +67,67 @@ import { computed } from 'vue'
 import { useDialog } from "../../store/useDialog";
 import { useSheetManager } from "../../store/useSheetManager";
 import { storeToRefs } from "pinia";
+import { useDocumentCache } from '../../store/useDocumentCache';
+import { useSyncState } from '../../store/useSyncState'
+import type { SheetItem } from '../../SheetTypes'
+import { warn } from '../../Warn'
 
-const { setPanelCover } = useDialog();
+const { setPanelCover, open, close } = useDialog();
 const { getPanelCover, getListOfFlaggedItems } = storeToRefs(useDialog());
+const { getPanelListData, deleteItem } = useDocumentCache()
 const { getActivePanel } = storeToRefs(useSheetManager());
 
-// const selectedItems = computed(() => {
-//   const selected = []
-//   for (sysId of getPanelCover.value.selectedForDelete) {
-//     con
-//   }
-// })
+const selectedItems = computed(() => {
+  const selected = []
+  const selectedSysIds = getPanelCover.value.selectedForDelete
+  selectedSysIds.forEach((sysId) => {
+    const itemCorrespondingToSysId = getPanelListData().find((itemInPanel) => {
+      return itemInPanel.sysId === sysId
+    })
+
+    if (itemCorrespondingToSysId) {
+      selected.push(itemCorrespondingToSysId)
+    }
+  })
+
+  return selected
+})
 
 const warnStatusItems = computed(() => {
-  return getPanelCover.value.deletionItems.filter(item => item.status === 'warn')
+  return getPanelCover.value.deletionItems
+    .filter(item => item.status === 'warn')
+    .map(item => item.item)
 })
 
 const dangerStatusItems = computed(() => {
-  return getPanelCover.value.deletionItems.filter(item => item.status === 'danger')
+  return getPanelCover.value.deletionItems
+    .filter(item => item.status === 'danger')
+    .map(item => item.item)
 })
+
+const deleteItems = async (items: SheetItem[]) => {
+  console.log(items)
+  await warn(null, null, `You are about to take a serious action that will permanently delete ${items.length} item${items.length > 1 ? 's' : ''}!`.toUpperCase())
+  await new Promise((resolve) => setTimeout(resolve, 500))
+  await warn(null, null, `are you sure???? permanently delete ${items.length} item${items.length > 1 ? 's' : ''}????`.toUpperCase())
+  await new Promise((resolve) => setTimeout(resolve, 500))
+  await useSyncState().waitUntilSynced()
+  open({
+    body: {
+      title: "Your Wish is My Command!",
+      description: "Hang tight as we process your request, this may take a moment."
+    }
+  })
+  for (const item of items) {
+    await deleteItem({
+      item,
+      showWarning: false,
+      concurrent: true
+    })
+    await new Promise((resolve) => setTimeout(resolve, 1000))
+  }
+  close()
+}
 </script>
 
 <style scoped>
