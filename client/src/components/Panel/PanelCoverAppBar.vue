@@ -9,18 +9,14 @@
       size="x-large"
       class="mr-2"
     ></v-icon>
-    <h1>Suggestions</h1>
+    <h1>
+      {{ mdAndDown ? 'Suggested' : 'Suggestions' }}
+    </h1>
     <p
       v-if="!getPanelCover.loading"
       class="ml-2"
     >({{ getListOfFlaggedItems.length }})</p>
-    <p
-      v-else
-      class="ml-2"
-    >
-      (computing)
-    </p>
-    <div>
+    <div v-if="!mdAndDown">
       <input
         v-model="getPanelCover.filter"
         type="text"
@@ -29,8 +25,21 @@
       >
     </div>
     <v-spacer></v-spacer>
+    <v-btn
+      v-if="mdAndDown"
+      @click="deleteItems(selectedItems)"
+      :disabled="selectedItems.length === 0"
+      color="red"
+      variant="elevated"
+      rounded
+    >
+      <v-icon>
+        mdi-delete
+      </v-icon>
+      {{ selectedItems.length }}
+    </v-btn>
     <div
-      v-if="!getPanelCover.loadingSuggestions"
+      v-if="!getPanelCover.loadingSuggestions && !mdAndDown"
       class="d-flex flex-row align-center"
     >
       <h4>
@@ -42,7 +51,7 @@
         class="ml-2"
         variant="outlined"
       >
-        selected items ({{ selectedItems.length }})
+        selected ({{ selectedItems.length }})
       </v-btn>
       <v-btn
         @click="deleteItems(dangerStatusItems)"
@@ -72,10 +81,14 @@ import { useSyncState } from '../../store/useSyncState'
 import type { SheetItem } from '../../SheetTypes'
 import { warn } from '../../Warn'
 
+import { useDisplay } from 'vuetify'
+
 const { setPanelCover, open, close } = useDialog();
 const { getPanelCover, getListOfFlaggedItems } = storeToRefs(useDialog());
 const { getPanelListData, deleteItem } = useDocumentCache()
 const { getActivePanel } = storeToRefs(useSheetManager());
+
+const { mdAndDown } = useDisplay()
 
 const selectedItems = computed(() => {
   const selected = []
@@ -106,10 +119,9 @@ const dangerStatusItems = computed(() => {
 })
 
 const deleteItems = async (items: SheetItem[]) => {
-  console.log(items)
   await warn(null, null, `You are about to take a serious action that will permanently delete ${items.length} item${items.length > 1 ? 's' : ''}!`.toUpperCase())
   await new Promise((resolve) => setTimeout(resolve, 500))
-  await warn(null, null, `are you sure???? permanently delete ${items.length} item${items.length > 1 ? 's' : ''}????`.toUpperCase())
+  await warn(null, null, `are you really sure you want to permanently delete ${items.length} item${items.length > 1 ? 's' : ''}?`.toUpperCase())
   await new Promise((resolve) => setTimeout(resolve, 500))
   await useSyncState().waitUntilSynced()
   open({
@@ -139,7 +151,7 @@ const deleteItems = async (items: SheetItem[]) => {
   padding-left: 15px;
   border: none;
   font-size: 1.4em;
-  width: 450px;
+  width: 400px;
   font-weight: 200;
   box-shadow: 2px 1px 4px rgba(0, 0, 0, 0.5);
 }

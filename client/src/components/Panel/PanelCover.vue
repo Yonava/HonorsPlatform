@@ -62,7 +62,7 @@
           style="border-radius: 10px;"
         >
           <h3 style="text-transform: capitalize">
-            We {{ status === 'danger' ? 'encourage' : 'would consider' }} deleting this {{ getActivePanel.title.singular }} because
+            We {{ status === 'danger' ? 'recommend' : 'would consider' }} deleting this {{ getActivePanel.title.singular }} because
           </h3>
           <p>{{ rationale }}</p>
         </v-sheet>
