@@ -75,9 +75,11 @@ const { incrementallyRenderedItems } = useIncrementalRender(filteredItems)
 const studentPanel = getPanel('STUDENTS')
 const graduatePanel = getPanel('GRADUATES')
 const isActivePanelAModule = getActivePanel.value.sheetRange === 'Modules' || getActivePanel.value.sheetRange === 'Completed Modules'
-const dataOutOfDate = dueForRefresh(studentPanel) || dueForRefresh(graduatePanel)
-if (isActivePanelAModule && dataOutOfDate) {
+if (isActivePanelAModule && dueForRefresh(studentPanel)) {
   refreshCache(studentPanel, false)
+}
+
+if (isActivePanelAModule && dueForRefresh(graduatePanel)) {
   refreshCache(graduatePanel, false)
 }
 
