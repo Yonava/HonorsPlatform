@@ -63,6 +63,132 @@ const rationaleToString = (rationale: string[]) => {
   return string.length > 0 ? string + "." : string
 }
 
+const thesisDeletions = async () => {
+  const { fetchItems } = useSheetManager()
+  const {
+    Theses,
+    Graduates,
+    Students,
+  } = useDocumentCache()
+
+  const requiredPanels: Panel[] = [
+    getPanel("THESES"),
+    getPanel("GRADUATES"),
+    getPanel("STUDENTS")
+  ]
+
+  for await (const panel of requiredPanels) {
+    await fetchItems({
+      panelObject: panel,
+      showLoading: false,
+      fetchEmbeddedPanelData: false
+    })
+  }
+
+  const theses = Theses.list
+  const graduates = Graduates.list
+  const students = Students.list
+
+  return theses.map(thesis => {
+    const deletionData: Deletion<Thesis> = {
+      item: thesis,
+      status: null,
+      flaggedBecause: []
+    }
+
+    if (!thesis.studentId) {
+      deletionData.status = "danger"
+      deletionData.flaggedBecause.push("it is not linked to a student")
+    } else {
+      const student = students.find(student => student.id === thesis.studentId)
+      const graduate = graduates.find(graduate => graduate.id === thesis.studentId)
+      if (!student && !graduate) {
+        deletionData.status = "danger"
+        deletionData.flaggedBecause.push("there is no student or graduate with the ID it is linked to")
+      } else if (!student && graduate) {
+        deletionData.status ??= "warn"
+        deletionData.flaggedBecause.push("it is linked to a student who has graduated")
+      }
+    }
+
+    if (!thesis.title) {
+      deletionData.status = "danger"
+      deletionData.flaggedBecause.push("it does not have a title")
+    }
+
+    if (thesis.decision === "Rejected") {
+      deletionData.status = "danger"
+      deletionData.flaggedBecause.push("it has been rejected by the honors committee")
+    }
+
+    if (thesis.draftReceived) {
+      const draftReceived = new Date(thesis.draftReceived)
+      const now = new Date()
+      const aYearAgo = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate())
+      if (draftReceived < aYearAgo) {
+        deletionData.status = "danger"
+        deletionData.flaggedBecause.push("draft received over a year ago without a final draft")
+      }
+    }
+
+    return deletionData
+  })
+}
+
+
+
+const graduateDeletions = async () => {
+  const { fetchItems } = useSheetManager()
+  const {
+    Graduates,
+    "Grad Engagements": GraduateEngagements,
+  } = useDocumentCache()
+
+  const requiredPanels: Panel[] = [
+    getPanel("GRADUATES"),
+    getPanel("GRADUATE_ENGAGEMENTS")
+  ]
+
+  for await (const panel of requiredPanels) {
+    await fetchItems({
+      panelObject: panel,
+      showLoading: false,
+      fetchEmbeddedPanelData: false
+    })
+  }
+
+  const graduates = Graduates.list
+  const graduateEngagements = GraduateEngagements.list
+
+  return graduates.map(graduate => {
+    const deletionData: Deletion<Graduate> = {
+      item: graduate,
+      status: null,
+      flaggedBecause: []
+    }
+
+    if (!graduate.name) {
+      deletionData.status = "danger"
+      deletionData.flaggedBecause.push("they do not have a name")
+    }
+
+    if (!graduate.id) {
+      deletionData.status ??= "warn"
+      deletionData.flaggedBecause.push("they do not have an ID")
+    } else if (!graduateEngagements.some(engagement => engagement.gradId === graduate.id)) {
+      deletionData.status ??= "warn"
+      deletionData.flaggedBecause.push("they have not taken part in any engagements")
+    }
+
+    if (graduate.email.toLowerCase().endsWith("@yahoo.com")) {
+      deletionData.status ??= "warn"
+      deletionData.flaggedBecause.push("they gave you a Yahoo email address (its probably not their primary email and some throwaway they made 10 years ago)")
+    }
+
+    return deletionData
+  })
+}
+
 const completedModuleDeletions = async () => {
   const { fetchItems } = useSheetManager()
   const {
@@ -225,7 +351,7 @@ const studentDeletions = async () => {
 
     if (!student.name) {
       deletionData.status = "danger"
-      deletionData.flaggedBecause.push("this student does not have a name")
+      deletionData.flaggedBecause.push("they do not have a name")
     }
 
     if (student.activeStatus === "Inactive") {
@@ -235,7 +361,7 @@ const studentDeletions = async () => {
 
     if (!student.id) {
       deletionData.status ??= "warn"
-      deletionData.flaggedBecause.push("this student does not have an id")
+      deletionData.flaggedBecause.push("they do not have an id")
     } else {
       const otherStudentsWithSameId = students.filter(otherStudent => otherStudent.id === student.id)
       if (otherStudentsWithSameId.length > 1) {
@@ -312,6 +438,12 @@ export const getSuggestedDeletions = async (panelObject?: Panel) => {
       break
     case "Completed Modules":
       output = await completedModuleDeletions()
+      break
+    case "Graduates":
+      output = await graduateDeletions()
+      break
+    case "Theses":
+      output = await thesisDeletions()
       break
     default:
       return []

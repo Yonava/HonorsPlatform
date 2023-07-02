@@ -56,7 +56,7 @@ export const panels = {
       plural: 'Students'
     },
     color: 'blue',
-    icon: 'mdi-account-group',
+    icon: 'mdi-account',
     sheetRange: 'Students',
     mappers: {
       map: mapStudents,

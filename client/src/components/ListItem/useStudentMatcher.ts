@@ -1,13 +1,16 @@
-import { Module, CompletedModule } from '../../SheetTypes'
 import { useDocumentCache } from '../../store/useDocumentCache'
+import { getPanel } from '../../Panels'
 import { computed } from 'vue'
 
-export function useStudentModuleMatcher(module: Module | CompletedModule) {
+export function useStudentMatcher(studentId: string) {
+
+  const studentPanel = getPanel('STUDENTS')
+  const graduatePanel = getPanel('GRADUATES')
 
   const { Students, Graduates } = useDocumentCache()
 
   const student = computed(() => {
-    const studentMatch = Students.list.find(s => s.id === module.studentId)
+    const studentMatch = Students.list.find(s => s.id === studentId)
     if (!studentMatch?.id) {
       return null
     }
@@ -15,7 +18,7 @@ export function useStudentModuleMatcher(module: Module | CompletedModule) {
   })
 
   const graduate = computed(() => {
-    const graduateMatch = Graduates.list.find(g => g.id === module.studentId)
+    const graduateMatch = Graduates.list.find(g => g.id === studentId)
     if (!graduateMatch?.id) {
       return null
     }
@@ -23,7 +26,7 @@ export function useStudentModuleMatcher(module: Module | CompletedModule) {
   })
 
   const idText = computed(() => {
-    return module.studentId ? `ID ${module.studentId}` : 'No ID'
+    return studentId ? `ID ${studentId}` : 'No ID'
   })
 
   const studentMatch = computed(() => {
@@ -33,8 +36,8 @@ export function useStudentModuleMatcher(module: Module | CompletedModule) {
         style: {
           fontWeight: 400
         },
-        tooltip: 'Student Name - ' + idText.value,
-        icon: 'mdi-account'
+        tooltip: `${studentPanel.title.singular} Name - ${idText.value}`,
+        icon: studentPanel.icon
       }
     } else if (graduate.value) {
       return {
@@ -43,8 +46,8 @@ export function useStudentModuleMatcher(module: Module | CompletedModule) {
           color: 'red',
           fontWeight: 900
         },
-        tooltip: 'Graduate Name - ' + idText.value,
-        icon: 'mdi-account-school'
+        tooltip: `${graduatePanel.title.singular} Name - ${idText.value}`,
+        icon: graduatePanel.icon
       }
     } else {
       return {

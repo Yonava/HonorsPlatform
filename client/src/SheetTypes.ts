@@ -55,11 +55,7 @@ export interface GradEngagement extends SheetEntry {
   note: string;
 }
 
-export enum ThesisDecision {
-  APPROVED = "Approved",
-  REJECTED = "Rejected",
-  PENDING = "Pending"
-}
+export type ThesisDecision = "Approved" | "Rejected" | "Pending";
 
 export interface Thesis extends SheetEntry {
   studentId: string;

@@ -6,23 +6,6 @@
         :id="thesis.studentId"
         placeholder="Thesis Title"
       />
-
-      <v-btn
-        v-if="thesis.studentId && !thesis.name"
-        @click="setStudentData"
-        :loading="studentDataState.loading"
-        :color="studentDataState.color"
-        class="mb-3"
-        block
-      >
-        <v-icon class="mr-2">mdi-account-group</v-icon>
-        <span v-if="!studentDataState.error">
-          Fill With Data From Students ({{ thesis.studentId }})
-        </span>
-        <span v-else>
-          {{ studentDataState.error }}
-        </span>
-      </v-btn>
       <v-text-field
         v-model="thesis.name"
         clearable
@@ -137,17 +120,16 @@
     </template>
     <template #buttons>
       <v-btn
-          @click="jumpToStudent"
-          :color="studentPanel.color"
-          size="large"
-          class="mt-3"
-        >
-          <v-icon
-            class="mr-4"
-            size="x-large"
-          >mdi-account</v-icon>
-          View Student
-        </v-btn>
+        @click="viewProfileButton.onClick()"
+        :color="viewProfileButton.color"
+        size="large"
+      >
+        <v-icon
+          class="mr-4"
+          size="x-large"
+        >{{ viewProfileButton.icon }}</v-icon>
+        {{ viewProfileButton.text }}
+      </v-btn>
     </template>
   </DetailFrame>
 </template>
@@ -157,7 +139,7 @@ import DetailHeader from './Helper/DetailHeader.vue'
 import InstructorComplete from './Helper/InstructorComplete.vue'
 import DetailFrame from './Helper/DetailFrame.vue'
 
-import { ref, toRefs } from 'vue'
+import { ref, toRefs, computed } from 'vue'
 import { getCurrentTerm, termValidator } from '../../TermValidator'
 import type { Thesis } from '../../SheetTypes'
 import { getEvery } from '../../SheetsAPI'
@@ -175,56 +157,83 @@ import { storeToRefs } from 'pinia'
 import { useUpdateItem } from '../../TrackItemForUpdate'
 
 const { setPanel } = useSheetManager()
-const { Theses } = useDocumentCache()
+const { Theses, Students, Graduates } = useDocumentCache()
 const { selected: thesis } = toRefs(Theses)
 useUpdateItem(thesis)
 
 const studentPanel = getPanel('STUDENTS')
+const graduatePanel = getPanel('GRADUATES')
 
-const studentDataState = ref({
-  loading: false,
-  error: '',
-  color: getPanel('STUDENTS').color,
+const viewProfileButton = computed(() => {
+  const student = Students.list.find((student) => student.id === thesis.value.studentId)
+  const graduate = Graduates.list.find((graduate) => graduate.id === thesis.value.studentId)
+  if (!thesis.value.studentId) {
+    return {
+      text: 'No Linked Student',
+      color: studentPanel.color,
+      icon: studentPanel.icon,
+      onClick: () => {
+        const { open, close } = useDialog()
+        open({
+          body: {
+            title: 'No Linked Student',
+            description: 'This thesis has no linked student, add a student ID from an existing student or graduate.',
+            buttons: [
+              {
+                text: 'Close',
+                color: 'red',
+                onClick: () => close(),
+              },
+            ],
+          },
+        })
+      },
+    }
+  }
+
+  if (student) {
+    return {
+      text: 'View ' + studentPanel.title.singular,
+      color: studentPanel.color,
+      icon: studentPanel.icon,
+      onClick: () => jumpTo('STUDENTS'),
+    }
+  } else if (graduate) {
+    return {
+      text: 'View ' + graduatePanel.title.singular,
+      color: graduatePanel.color,
+      icon: graduatePanel.icon,
+      onClick: () => jumpTo('GRADUATES'),
+    }
+  } else {
+    return {
+      text: 'ID ' + thesis.value.studentId + ' Not Found',
+      color: 'red',
+      icon: 'mdi-alert-circle',
+      onClick: () => {
+        const { open, close } = useDialog()
+        open({
+          body: {
+            title: 'ID ' + thesis.value.studentId + ' Not Found',
+            description: `This thesis has a student ID (${thesis.value.studentId}) that does not match any student or graduate. This may be because the student or graduate was deleted.`,
+            buttons: [
+              {
+                text: 'Close',
+                color: 'red',
+                onClick: () => close(),
+              },
+            ],
+          },
+        })
+      }
+    }
+  }
 })
 
-async function setStudentData() {
-  studentDataState.value.loading = true
-  const students = await getEvery('Students')
-  const mappedStudents = await getPanel('STUDENTS').mappers.map(students)
-  const student = mappedStudents.find(s => s.id === thesis.value.studentId)
-  if (!student) {
-    studentDataState.value.error = 'Student not found'
-    studentDataState.value.color = 'red'
-    studentDataState.value.loading = false
-    return
-  }
-  thesis.value.name = student.name
-  thesis.value.email = student.email
-  studentDataState.value.loading = false
-  studentDataState.value.color = getPanel('STUDENTS').color
-}
-
-const jumpToStudent = () => {
-  const _thesis = JSON.parse(JSON.stringify(thesis.value)) as Thesis
-  const { open, close } = useDialog()
-  setPanel('STUDENTS', {
+const jumpTo = (panel: 'STUDENTS' | 'GRADUATES') => {
+  setPanel(panel, {
     key: 'id',
-    value: _thesis.studentId,
-    fallbackFn: () => {
-      open({
-        body: {
-          title: 'Student not found',
-          description: `Could not find student with id ${_thesis.studentId}`,
-          buttons: [
-            {
-              text: 'Close',
-              color: 'red',
-              onClick: () => close(),
-            },
-          ]
-        }
-      })
-    }
+    value: thesis.value.studentId
   })
 }
 </script>

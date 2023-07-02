@@ -105,7 +105,7 @@
 </template>
 
 <script setup lang="ts">
-import { useStudentModuleMatcher } from './ModuleStudentMatch'
+import { useStudentMatcher } from './useStudentMatcher'
 import { computed } from 'vue'
 import type { ComputedRef } from 'vue'
 import { Module } from '../../SheetTypes'
@@ -214,5 +214,5 @@ const term = computed(() => {
   }
 })
 
-const { studentMatch } = useStudentModuleMatcher(props.item)
+const { studentMatch } = useStudentMatcher(props.item.studentId)
 </script>

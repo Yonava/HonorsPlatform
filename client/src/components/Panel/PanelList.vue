@@ -59,28 +59,32 @@
 </template>
 
 <script setup lang="ts">
-import { getPanel } from '../../Panels'
+import { getPanel, Panel } from '../../Panels'
 import { useDocumentCache } from '../../store/useDocumentCache'
 import { useSheetManager } from '../../store/useSheetManager'
 import { useIncrementalRender } from '../../useIncrementalRender'
 import { storeToRefs } from 'pinia'
 
-const { setSelectedItem, getSelectedItem, dueForRefresh, refreshCache } = useDocumentCache()
+const { setSelectedItem, getSelectedItem } = useDocumentCache()
 
 const sheetManager = useSheetManager()
 const { filteredItems, loadingItems, panel, searchFilter, getActivePanel } = storeToRefs(sheetManager)
+const { fetchItems } = sheetManager
 
 const { incrementallyRenderedItems } = useIncrementalRender(filteredItems)
 
-const studentPanel = getPanel('STUDENTS')
-const graduatePanel = getPanel('GRADUATES')
-const isActivePanelAModule = getActivePanel.value.sheetRange === 'Modules' || getActivePanel.value.sheetRange === 'Completed Modules'
-if (isActivePanelAModule && dueForRefresh(studentPanel)) {
-  refreshCache(studentPanel, false)
-}
-
-if (isActivePanelAModule && dueForRefresh(graduatePanel)) {
-  refreshCache(graduatePanel, false)
+const dependsOnStudentIDMatching: Panel['sheetRange'][] = ['Theses', 'Completed Modules', 'Modules']
+if (dependsOnStudentIDMatching.includes(getActivePanel.value.sheetRange)) {
+  fetchItems({
+    panelObject: getPanel('STUDENTS'),
+    fetchEmbeddedPanelData: false,
+    showLoading: false
+  })
+  fetchItems({
+    panelObject: getPanel('GRADUATES'),
+    fetchEmbeddedPanelData: false,
+    showLoading: false
+  })
 }
 
 const isSelected = item => {

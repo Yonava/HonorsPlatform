@@ -1,15 +1,33 @@
 <template>
   <div>
     <div class="d-flex flex-row">
-      <div style="font-weight: 900; font-size: 1.5em; line-height: 1">
-        {{ item.name || '(No Name)' }}
-        <span style="font-weight: 300; font-size: 0.6em">
-          {{ item.studentId || '(No ID)' }}
-          <v-tooltip
-            :disabled="smAndDown"
-            activator="parent"
-            location="bottom"
-          >Student ID</v-tooltip>
+      <div
+        class="d-flex flex-row align-baseline flex-wrap"
+        style="font-weight: 900; font-size: 1.5em; line-height: 1; gap: 6px;"
+      >
+        {{ item.title || '(No Title)' }}
+        <span
+          style="font-weight: 300; font-size: 0.6em"
+        >
+          <div
+            :style="studentMatch.style"
+            class="d-flex flew-row align-center"
+          >
+            <v-icon
+              class="mr-1"
+              style="opacity: 0.75"
+            >
+              {{ studentMatch.icon }}
+            </v-icon>
+            <p>
+              {{ studentMatch.text }}
+            </p>
+            <v-tooltip
+              :disabled="smAndDown"
+              activator="parent"
+              location="bottom"
+            >{{ studentMatch.tooltip }}</v-tooltip>
+          </div>
         </span>
       </div>
       <v-spacer></v-spacer>
@@ -83,9 +101,10 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { Thesis, ThesisDecision } from '../../SheetTypes'
+import { Thesis } from '../../SheetTypes'
 import { termValidator } from '../../TermValidator'
 import { useDisplay } from 'vuetify'
+import { useStudentMatcher } from './useStudentMatcher'
 
 const props = defineProps<{
   item: Thesis
@@ -117,19 +136,19 @@ const termStyle = computed(() => {
 
 const decisionStatus = computed(() => {
   const decision = props.item.decision
-  if (decision === ThesisDecision.APPROVED) {
+  if (decision === 'Approved') {
     return {
       color: 'green',
       icon: 'mdi-check',
       text: 'Approved'
     }
-  } else if (decision === ThesisDecision.REJECTED) {
+  } else if (decision === 'Rejected') {
     return {
       color: 'red',
       icon: 'mdi-close',
       text: 'Rejected'
     }
-  } else if (decision === ThesisDecision.PENDING) {
+  } else if (decision === 'Pending') {
     return {
       color: 'grey',
       icon: 'mdi-minus',
@@ -143,4 +162,6 @@ const decisionStatus = computed(() => {
     }
   }
 })
+
+const { studentMatch } = useStudentMatcher(props.item.studentId)
 </script>

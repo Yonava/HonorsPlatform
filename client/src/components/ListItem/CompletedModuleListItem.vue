@@ -73,7 +73,7 @@
 </template>
 
 <script setup lang="ts">
-import { useStudentModuleMatcher } from './ModuleStudentMatch'
+import { useStudentMatcher } from './useStudentMatcher'
 import { computed } from 'vue'
 import { useDisplay } from 'vuetify'
 import { CompletedModule } from '../../SheetTypes'
@@ -101,5 +101,5 @@ const term = computed(() => {
   }
 })
 
-const { studentMatch } = useStudentModuleMatcher(props.item)
+const { studentMatch } = useStudentMatcher(props.item.studentId)
 </script>
