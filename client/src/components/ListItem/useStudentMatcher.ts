@@ -1,9 +1,11 @@
 import { useDocumentCache } from '../../store/useDocumentCache'
+import { useSheetManager } from '../../store/useSheetManager'
 import { getPanel } from '../../Panels'
 import { computed } from 'vue'
 
 export function useStudentMatcher(studentId: string) {
 
+  const { getActivePanel } = useSheetManager()
   const studentPanel = getPanel('STUDENTS')
   const graduatePanel = getPanel('GRADUATES')
 
@@ -46,17 +48,27 @@ export function useStudentMatcher(studentId: string) {
           color: 'red',
           fontWeight: 900
         },
-        tooltip: `${graduatePanel.title.singular} Name - ${idText.value}`,
+        tooltip: `This Student Has Graduated - ${idText.value}`,
         icon: graduatePanel.icon
       }
-    } else {
+    } else if (studentId) {
       return {
-        text: 'No Student Linked',
+        text: 'No Student Found',
         style: {
           color: 'red',
           fontWeight: 900
         },
-        tooltip: idText.value,
+        tooltip: `No ${studentPanel.title.singular} or ${graduatePanel.title.singular} Found For ${idText.value}`,
+        icon: 'mdi-alert-circle'
+      }
+    } else {
+      return {
+        text: 'No Student ID',
+        style: {
+          color: 'red',
+          fontWeight: 900
+        },
+        tooltip: `This ${getActivePanel.title.singular} Does Not Have A Student ID Set`,
         icon: 'mdi-account-off'
       }
     }

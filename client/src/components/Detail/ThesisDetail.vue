@@ -169,15 +169,15 @@ const viewProfileButton = computed(() => {
   const graduate = Graduates.list.find((graduate) => graduate.id === thesis.value.studentId)
   if (!thesis.value.studentId) {
     return {
-      text: 'No Linked Student',
-      color: studentPanel.color,
-      icon: studentPanel.icon,
+      text: 'No Student Linked',
+      color: 'red-darken-4',
+      icon: 'mdi-account-off',
       onClick: () => {
         const { open, close } = useDialog()
         open({
           body: {
-            title: 'No Linked Student',
-            description: 'This thesis has no linked student, add a student ID from an existing student or graduate.',
+            title: 'No Student Linked',
+            description: 'This thesis has no linked student. Add a student ID from an existing student or graduate.',
             buttons: [
               {
                 text: 'Close',
@@ -208,7 +208,7 @@ const viewProfileButton = computed(() => {
   } else {
     return {
       text: 'ID ' + thesis.value.studentId + ' Not Found',
-      color: 'red',
+      color: 'red-darken-4',
       icon: 'mdi-alert-circle',
       onClick: () => {
         const { open, close } = useDialog()
