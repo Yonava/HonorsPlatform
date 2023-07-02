@@ -63,6 +63,56 @@ const rationaleToString = (rationale: string[]) => {
   return string.length > 0 ? string + "." : string
 }
 
+const gradEngagementDeletions = async () => {
+  const { fetchItems } = useSheetManager()
+  const {
+    "Grad Engagements": GradEngagements,
+    Graduates,
+  } = useDocumentCache()
+
+  const requiredPanels: Panel[] = [
+    getPanel("GRADUATES"),
+    getPanel("GRADUATE_ENGAGEMENTS")
+  ]
+
+  for await (const panel of requiredPanels) {
+    await fetchItems({
+      panelObject: panel,
+      showLoading: false,
+      fetchEmbeddedPanelData: false
+    })
+  }
+
+  const gradEngagements = GradEngagements.list
+  const graduates = Graduates.list
+
+  return gradEngagements.map(gradEngagement => {
+    const deletionData: Deletion<GradEngagement> = {
+      item: gradEngagement,
+      status: null,
+      flaggedBecause: []
+    }
+
+    if (!gradEngagement.event) {
+      deletionData.status = "danger"
+      deletionData.flaggedBecause.push("the event does not have a name")
+    }
+
+    if (!gradEngagement.gradId) {
+      deletionData.status = "danger"
+      deletionData.flaggedBecause.push("it is not linked to a graduate")
+    } else {
+      const graduate = graduates.find(graduate => graduate.id === gradEngagement.gradId)
+      if (!graduate) {
+        deletionData.status = "danger"
+        deletionData.flaggedBecause.push("there is no graduate with the ID it is linked to")
+      }
+    }
+
+    return deletionData
+  })
+}
+
 const thesisDeletions = async () => {
   const { fetchItems } = useSheetManager()
   const {
@@ -444,6 +494,9 @@ export const getSuggestedDeletions = async (panelObject?: Panel) => {
       break
     case "Theses":
       output = await thesisDeletions()
+      break
+    case "Grad Engagements":
+      output = await gradEngagementDeletions()
       break
     default:
       return []

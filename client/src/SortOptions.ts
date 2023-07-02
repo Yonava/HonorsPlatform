@@ -209,6 +209,14 @@ export const sortOptions = {
   ],
   GRADUATE_ENGAGEMENTS: [
     {
+      label: 'Event',
+      icon: {
+        asc: 'mdi-sort-alphabetical-ascending',
+        desc: 'mdi-sort-alphabetical-descending'
+      },
+      func: (a: GradEngagement, b: GradEngagement) => a.event.localeCompare(b.event)
+    },
+    {
       label: 'ID',
       icon: {
         asc: 'mdi-card-account-details',
