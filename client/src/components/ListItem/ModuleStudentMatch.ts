@@ -2,39 +2,64 @@ import { Module, CompletedModule } from '../../SheetTypes'
 import { useDocumentCache } from '../../store/useDocumentCache'
 import { computed } from 'vue'
 
-export function useStudentModuleMatcher(modules: Module | CompletedModule) {
+export function useStudentModuleMatcher(module: Module | CompletedModule) {
 
-  const { Students } = useDocumentCache()
+  const { Students, Graduates } = useDocumentCache()
 
   const student = computed(() => {
-    const studentMatch = Students.list.find(s => s.id === modules.studentId)
+    const studentMatch = Students.list.find(s => s.id === module.studentId)
     if (!studentMatch?.id) {
       return null
     }
     return studentMatch ?? null
   })
 
-  const studentId = computed(() => {
-    if (student.value || Students.list.length === 0) {
+  const graduate = computed(() => {
+    const graduateMatch = Graduates.list.find(g => g.id === module.studentId)
+    if (!graduateMatch?.id) {
+      return null
+    }
+    return graduateMatch ?? null
+  })
+
+  const idText = computed(() => {
+    return module.studentId ? `ID ${module.studentId}` : 'No ID'
+  })
+
+  const studentMatch = computed(() => {
+    if (student.value) {
       return {
-        tooltip: 'Student ID',
+        text: student.value.name || 'No Name',
         style: {
           fontWeight: 400
-        }
+        },
+        tooltip: 'Student Name - ' + idText.value,
+        icon: 'mdi-account'
       }
-    } else {
+    } else if (graduate.value) {
       return {
-        tooltip: 'No Student Linked',
+        text: graduate.value.name || 'No Name',
         style: {
           color: 'red',
           fontWeight: 900
-        }
+        },
+        tooltip: 'Graduate Name - ' + idText.value,
+        icon: 'mdi-account-school'
+      }
+    } else {
+      return {
+        text: 'No Student Linked',
+        style: {
+          color: 'red',
+          fontWeight: 900
+        },
+        tooltip: idText.value,
+        icon: 'mdi-account-off'
       }
     }
   })
 
   return {
-    student,
-    studentId
+    studentMatch
   }
 }

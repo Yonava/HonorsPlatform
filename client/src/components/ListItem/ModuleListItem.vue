@@ -81,42 +81,23 @@
         </div>
         <v-spacer></v-spacer>
         <div
-          v-if="student"
           class="d-flex flew-row align-center"
+          :style="studentMatch.style"
         >
           <p>
-            {{ student.name || '(No Student Name)' }}
+            {{ studentMatch.text }}
           </p>
           <v-icon
             class="ml-1"
             style="opacity: 0.75"
           >
-            mdi-account
+            {{ studentMatch.icon }}
           </v-icon>
           <v-tooltip
             :disabled="smAndDown"
             activator="parent"
             location="bottom"
-          >Student Name</v-tooltip>
-        </div>
-        <div
-          v-else
-          class="d-flex flew-row align-center"
-        >
-          <p :style="studentId.style">
-            {{ item.studentId || '(No Student ID)' }}
-          </p>
-          <v-icon
-            class="ml-1"
-            style="opacity: 0.75"
-          >
-            mdi-card-account-details
-          </v-icon>
-          <v-tooltip
-            :disabled="smAndDown"
-            activator="parent"
-            location="bottom"
-          >{{ studentId.tooltip }}</v-tooltip>
+          >{{ studentMatch.tooltip }}</v-tooltip>
         </div>
       </div>
     </div>
@@ -188,7 +169,7 @@ const daysSinceDate = (date: string) => {
 }
 
 const docuSignStatus: ComputedRef<DocuSignStatus> = computed(() => {
-  if (props.item.docuSignCreated && props.item.docuSignCompleted) {
+  if (props.item.docuSignCompleted) {
     return {
       icon: 'mdi-file-document-check-outline',
       text: 'Completed',
@@ -202,19 +183,12 @@ const docuSignStatus: ComputedRef<DocuSignStatus> = computed(() => {
       color: 'blue',
       tooltip: `DocuSign Created ${daysSinceDate(props.item.docuSignCreated)} (${props.item.docuSignCreated})`
     }
-  } else if (!(props.item.docuSignCompleted || props.item.docuSignCreated)) {
+  } else {
     return {
       icon: 'mdi-file-document-alert-outline',
       text: 'Not Started',
       color: 'red',
       tooltip: 'DocuSign Not Started'
-    }
-  } else {
-    return {
-      icon: 'mdi-file-document-remove-outline',
-      text: 'Missing Start Date',
-      color: 'purple',
-      tooltip: 'DocuSign Missing Start Date'
     }
   }
 })
@@ -240,5 +214,5 @@ const term = computed(() => {
   }
 })
 
-const { student, studentId } = useStudentModuleMatcher(props.item)
+const { studentMatch } = useStudentModuleMatcher(props.item)
 </script>

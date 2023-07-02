@@ -49,42 +49,23 @@
         </div>
         <v-spacer></v-spacer>
         <div
-          v-if="student"
           class="d-flex flew-row align-center"
+          :style="studentMatch.style"
         >
           <p>
-            {{ student.name || '(No Student Name)' }}
+            {{ studentMatch.text }}
           </p>
           <v-icon
             class="ml-1"
             style="opacity: 0.75"
           >
-            mdi-account
+            {{ studentMatch.icon }}
           </v-icon>
           <v-tooltip
             :disabled="smAndDown"
             activator="parent"
             location="bottom"
-          >Student Name</v-tooltip>
-        </div>
-        <div
-          v-else
-          class="d-flex flew-row align-center"
-        >
-          <p :style="studentId.style">
-            {{ item.studentId || '(No Student ID)' }}
-          </p>
-          <v-icon
-            class="ml-1"
-            style="opacity: 0.75"
-          >
-            mdi-card-account-details
-          </v-icon>
-          <v-tooltip
-            :disabled="smAndDown"
-            activator="parent"
-            location="bottom"
-          >{{ studentId.tooltip }}</v-tooltip>
+          >{{ studentMatch.tooltip }}</v-tooltip>
         </div>
       </div>
     </div>
@@ -120,5 +101,5 @@ const term = computed(() => {
   }
 })
 
-const { student, studentId } = useStudentModuleMatcher(props.item)
+const { studentMatch } = useStudentModuleMatcher(props.item)
 </script>

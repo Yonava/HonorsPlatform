@@ -63,6 +63,58 @@ const rationaleToString = (rationale: string[]) => {
   return string.length > 0 ? string + "." : string
 }
 
+const completedModuleDeletions = async () => {
+  const { fetchItems } = useSheetManager()
+  const {
+    Students,
+    Graduates,
+    "Completed Modules": CompletedModules
+  } = useDocumentCache()
+
+  const requiredPanels: Panel[] = [
+    getPanel("STUDENTS"),
+    getPanel("GRADUATES"),
+    getPanel("COMPLETED_MODULES")
+  ]
+
+  for await (const panel of requiredPanels) {
+    await fetchItems({
+      panelObject: panel,
+      showLoading: false,
+      fetchEmbeddedPanelData: false
+    })
+  }
+
+  const completedModules = CompletedModules.list
+  const students = Students.list
+  const graduates = Graduates.list
+
+  return completedModules.map(module => {
+    const deletionData: Deletion<CompletedModule> = {
+      item: module,
+      status: null,
+      flaggedBecause: []
+    }
+
+    if (!module.studentId) {
+      deletionData.status = "danger"
+      deletionData.flaggedBecause.push("it is not linked to a student")
+    } else {
+      const student = students.find(student => student.id === module.studentId)
+      const graduate = graduates.find(graduate => graduate.id === module.studentId)
+      if (!student && !graduate) {
+        deletionData.status = "danger"
+        deletionData.flaggedBecause.push("it is linked to a student that does not exist")
+      } else if (graduate && !student) {
+        deletionData.status = "danger"
+        deletionData.flaggedBecause.push("it is linked to a student who has graduated")
+      }
+    }
+
+    return deletionData
+  })
+}
+
 const moduleDeletions = async () => {
   const { fetchItems } = useSheetManager()
   const {
@@ -107,7 +159,7 @@ const moduleDeletions = async () => {
         deletionData.flaggedBecause.push("it is linked to a student that does not exist")
       } else if (graduate && !student) {
         deletionData.status = "danger"
-        deletionData.flaggedBecause.push("it is linked to a graduate")
+        deletionData.flaggedBecause.push("it is linked to a student who has graduated")
       }
     }
 
@@ -257,6 +309,9 @@ export const getSuggestedDeletions = async (panelObject?: Panel) => {
       break
     case "Modules":
       output = await moduleDeletions()
+      break
+    case "Completed Modules":
+      output = await completedModuleDeletions()
       break
     default:
       return []
