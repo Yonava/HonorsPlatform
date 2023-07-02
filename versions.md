@@ -1,4 +1,12 @@
-# Current Version: prerelease 0.82
+# Current Version: prerelease 0.83.9
+
+### prerelease 0.83 (Jul. 2)
+- Feature: Live updating smart suggestions to quickly flag and delete any unwanted entities in the system. Tests against dozens of criteria and forms a "rationale" paragraph along with two levels of recommendation ("warn" for consider, and "danger" for strongly recommended) based on how urgent the problem being flagged is deemed
+- Removed “Missing Start Date” DocuSign Status on module list item in favor of displaying “DocuSign Completed” no matter if there is a start date or not
+- Brand new useStudentMatch composable added to link together any component with a studentId to a student (with graduate fallback). Displays human readable errors when student is found but in graduates, if student is not found in either students or graduates, or when a studentId is missing from the entity
+- Thesis "view ..." (jump to) button can now if it can jump to a student, or if the destination for the jump is a graduate. Has 4 different states for users: No student linked (no id), no student found (no grad or student matching id), "View Student" when student exists, and "View Graduate" if the ID links to a grad
+- Student panel icon switched from mdi-account-group to mdi-account
+- Added new sort option to Grad Engagements: “Event”
 
 ### prerelease 0.82 (Jun. 24)
 - Graduate engageements added as a full service panel with list item and detail
