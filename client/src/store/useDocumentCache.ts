@@ -7,6 +7,12 @@ import { warn } from "../Warn";
 import { useSyncState } from "./useSyncState";
 import { storeToRefs } from "pinia";
 
+type RefreshCache = {
+  panel?: Panel;
+  fetchEmbeddedPanelData?: boolean;
+  data?: string[][];
+}
+
 type SetSelectedItem = {
   item?: types.SheetItem;
   panel?: Panel;
@@ -110,12 +116,15 @@ export const useDocumentCache = defineStore("documentCache", {
         console.log(data)
       }
     },
-    async refreshCache(panelObject?: Panel, fetchEmbeddedPanelData = true) {
+    async refreshCache(options: RefreshCache = {}) {
+      const {
+        fetchEmbeddedPanelData = false,
+        panel = useSheetManager().panel,
+        data = await getEvery(panel.sheetRange),
+      } = options;
 
-      const { panel: activePanel } = useSheetManager();
-      const panel = panelObject ?? activePanel;
       const range = panel.sheetRange;
-      const data = await getEvery(range);
+
       const documents = await panel.mappers.map(data);
       this[range].list = documents;
 
@@ -133,13 +142,15 @@ export const useDocumentCache = defineStore("documentCache", {
 
       // DANGER! This implementation may become a bit "loop-ey" 🤪
       if (panel?.embedded && fetchEmbeddedPanelData) {
-        await this.refreshCache(getPanel(panel.embedded.panel));
+        await this.refreshCache({
+          panel: getPanel(panel.embedded),
+        });
       }
       return documents;
     },
     async refreshAll() {
       for (const panel of Object.keys(panels) as (keyof typeof panels)[]) {
-        await this.refreshCache(panels[panel]);
+        // await this.refreshCache(panels[panel]);
       }
     },
     setSelectedItem(options: SetSelectedItem = {}) {

@@ -123,7 +123,10 @@ export const useSheetManager = defineStore('sheetManager', {
       }
 
       if (dueForRefresh(panelObject) || forceCacheRefresh) {
-        await refreshCache(panelObject, fetchEmbeddedPanelData);
+        await refreshCache({
+          panel: panelObject,
+          fetchEmbeddedPanelData
+        });
       }
 
       this.setSort()

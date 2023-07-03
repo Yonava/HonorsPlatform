@@ -175,8 +175,12 @@ export async function incrementStudentYear() {
   const headerRow = await getHeaderRowCache('Students')
   await replaceRange('Students', [headerRow, ...data])
 
-  await refreshCache(getPanel('STUDENTS'))
-  await refreshCache(getPanel('GRADUATES'))
+  await refreshCache({
+    panel: getPanel('STUDENTS'),
+  })
+  await refreshCache({
+    panel: getPanel('GRADUATES'),
+  })
 
   return {
     graduatingSeniors,
