@@ -37,6 +37,15 @@ module.exports = class GoogleSheet {
     return response.data.values;
   }
 
+  async getRanges(ranges) {
+    const response = await this.sheets.spreadsheets.values.batchGet({
+      spreadsheetId: this.spreadsheetId,
+      ranges,
+    });
+
+    return response.data.valueRanges;
+  }
+
   async clearByRow(range, row) {
     await this.sheets.spreadsheets.values.clear({
       spreadsheetId: this.spreadsheetId,

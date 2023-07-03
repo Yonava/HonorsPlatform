@@ -125,6 +125,19 @@ app.get("/api/range/:range", async (req, res) => {
   }
 });
 
+app.post("/api/ranges", async (req, res) => {
+  try {
+    const accessToken = await validateToken(req);
+    const { ranges } = req.body;
+    const data = await sheetInstances[accessToken].getRanges(ranges);
+    res.json(data);
+  } catch (e) {
+    console.log(e);
+    removeTokenFromCache(req)
+    res.status(401).json({ error: 'Forbidden' });
+  }
+});
+
 app.put("/api/range/:range/:row", async (req, res) => {
   try {
     const accessToken = await validateToken(req);

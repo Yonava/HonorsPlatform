@@ -39,6 +39,38 @@ export async function getEvery(range: Range, addResponseDelay = true): Promise<s
   }
 }
 
+export async function getFullSheetData(): Promise<{ [key in string]: string[][] }[]> {
+  try {
+    const ranges: Range[] = [
+      "Students",
+      "Modules",
+      "Graduates",
+      "Completed Modules",
+      "Grad Engagements",
+      "Theses",
+      "Announcements"
+    ]
+
+    type ExpectedReturn = {
+      range: Range,
+      values: string[][]
+      majorDimension: "ROWS"
+    }
+
+    const { data } = (await axios.post(`/api/ranges/`, { ranges }, requestHeaders())) as { data: ExpectedReturn[] };
+    return data.map(({ values }, i) => {
+      const range = ranges[i];
+      headerRowMemo[range as Range] = values.shift();
+      return {
+        [range]: values
+      }
+    });
+  } catch {
+    await useAuth().authorize();
+    return getFullSheetData();
+  }
+}
+
 export async function clearByRow(range: Range, row: number) {
   try {
     await axios.delete(`/api/range/${range}/${row}`, requestHeaders());

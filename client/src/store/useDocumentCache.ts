@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { getEvery, clearByRow, updateByRow, postInRange } from '../SheetsAPI';
+import { getEvery, clearByRow, updateByRow, postInRange, getFullSheetData } from '../SheetsAPI';
 import { getPanel, panels, Panel } from "../Panels";
 import * as types from "../SheetTypes";
 import { useSheetManager } from "./useSheetManager";
@@ -77,6 +77,7 @@ export const useDocumentCache = defineStore("documentCache", {
       list: [],
       selected: null,
     } as PanelState<types.Thesis>,
+    Announcements: [] as string[]
   }),
   getters: {
     getPanelListData: (state) => (panelObject?: Panel) => {
@@ -102,6 +103,13 @@ export const useDocumentCache = defineStore("documentCache", {
     }
   },
   actions: {
+    async init() {
+      const fullSheetData = await getFullSheetData();
+      // console.log('fullSheetData', fullSheetData[0]);
+      for (const data of fullSheetData) {
+        console.log(data)
+      }
+    },
     async refreshCache(panelObject?: Panel, fetchEmbeddedPanelData = true) {
 
       const { panel: activePanel } = useSheetManager();
