@@ -62,6 +62,7 @@ export const panels = {
       map: mapStudents,
       unmap: unmapStudents
     },
+    dependencies: ['MODULES', 'COMPLETED_MODULES', 'GRADUATES', 'THESES'],
     embedded: {
       panel: 'MODULES',
       text: {
@@ -100,6 +101,7 @@ export const panels = {
       map: mapModules,
       unmap: unmapModules
     },
+    dependencies: ['STUDENTS', 'GRADUATES', 'COMPLETED_MODULES'],
     sortOptions: sortOptions.MODULES
   },
   COMPLETED_MODULES: {
@@ -119,6 +121,7 @@ export const panels = {
       map: mapCompletedModules,
       unmap: unmapCompletedModules
     },
+    dependencies: ['STUDENTS', 'GRADUATES', 'MODULES'],
     sortOptions: sortOptions.COMPLETED_MODULES,
   },
   THESES: {
@@ -139,6 +142,7 @@ export const panels = {
       map: mapTheses,
       unmap: unmapTheses
     },
+    dependencies: ['STUDENTS', 'GRADUATES'],
     sortOptions: sortOptions.THESES
   },
   GRADUATES: {
@@ -159,6 +163,7 @@ export const panels = {
       map: mapGraduates,
       unmap: unmapGraduates
     },
+    dependencies: ['GRADUATE_ENGAGEMENTS'],
     embedded: {
       panel: "GRADUATE_ENGAGEMENTS",
       text: {
@@ -197,6 +202,7 @@ export const panels = {
       map: mapGradEngagements,
       unmap: unmapGradEngagements
     },
+    dependencies: ['GRADUATES'],
     sortOptions: sortOptions.GRADUATE_ENGAGEMENTS
   },
 } as const;

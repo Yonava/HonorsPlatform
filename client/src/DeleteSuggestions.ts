@@ -64,24 +64,10 @@ const rationaleToString = (rationale: string[]) => {
 }
 
 const gradEngagementDeletions = async () => {
-  const { fetchItems } = useSheetManager()
   const {
     "Grad Engagements": GradEngagements,
     Graduates,
   } = useDocumentCache()
-
-  const requiredPanels: Panel[] = [
-    getPanel("GRADUATES"),
-    getPanel("GRADUATE_ENGAGEMENTS")
-  ]
-
-  for await (const panel of requiredPanels) {
-    await fetchItems({
-      panelObject: panel,
-      showLoading: false,
-      fetchEmbeddedPanelData: false
-    })
-  }
 
   const gradEngagements = GradEngagements.list
   const graduates = Graduates.list
@@ -114,26 +100,11 @@ const gradEngagementDeletions = async () => {
 }
 
 const thesisDeletions = async () => {
-  const { fetchItems } = useSheetManager()
   const {
     Theses,
     Graduates,
     Students,
   } = useDocumentCache()
-
-  const requiredPanels: Panel[] = [
-    getPanel("THESES"),
-    getPanel("GRADUATES"),
-    getPanel("STUDENTS")
-  ]
-
-  for await (const panel of requiredPanels) {
-    await fetchItems({
-      panelObject: panel,
-      showLoading: false,
-      fetchEmbeddedPanelData: false
-    })
-  }
 
   const theses = Theses.list
   const graduates = Graduates.list
@@ -188,24 +159,10 @@ const thesisDeletions = async () => {
 
 
 const graduateDeletions = async () => {
-  const { fetchItems } = useSheetManager()
   const {
     Graduates,
     "Grad Engagements": GraduateEngagements,
   } = useDocumentCache()
-
-  const requiredPanels: Panel[] = [
-    getPanel("GRADUATES"),
-    getPanel("GRADUATE_ENGAGEMENTS")
-  ]
-
-  for await (const panel of requiredPanels) {
-    await fetchItems({
-      panelObject: panel,
-      showLoading: false,
-      fetchEmbeddedPanelData: false
-    })
-  }
 
   const graduates = Graduates.list
   const graduateEngagements = GraduateEngagements.list
@@ -240,26 +197,11 @@ const graduateDeletions = async () => {
 }
 
 const completedModuleDeletions = async () => {
-  const { fetchItems } = useSheetManager()
   const {
     Students,
     Graduates,
     "Completed Modules": CompletedModules
   } = useDocumentCache()
-
-  const requiredPanels: Panel[] = [
-    getPanel("STUDENTS"),
-    getPanel("GRADUATES"),
-    getPanel("COMPLETED_MODULES")
-  ]
-
-  for await (const panel of requiredPanels) {
-    await fetchItems({
-      panelObject: panel,
-      showLoading: false,
-      fetchEmbeddedPanelData: false
-    })
-  }
 
   const completedModules = CompletedModules.list
   const students = Students.list
@@ -292,26 +234,11 @@ const completedModuleDeletions = async () => {
 }
 
 const moduleDeletions = async () => {
-  const { fetchItems } = useSheetManager()
   const {
     Modules,
     Students,
     Graduates
   } = useDocumentCache()
-
-  const requiredPanels: Panel[] = [
-    getPanel("MODULES"),
-    getPanel("STUDENTS"),
-    getPanel("GRADUATES")
-  ]
-
-  for await (const panel of requiredPanels) {
-    await fetchItems({
-      panelObject: panel,
-      showLoading: false,
-      fetchEmbeddedPanelData: false
-    })
-  }
 
   const modules = Modules.list
   const students = Students.list
@@ -360,27 +287,12 @@ const moduleDeletions = async () => {
 
 
 const studentDeletions = async () => {
-  const { fetchItems } = useSheetManager()
   const {
     Students,
     Modules,
     Graduates,
     "Completed Modules": CompletedModules
   } = useDocumentCache()
-  const requiredPanels: Panel[] = [
-    getPanel("STUDENTS"),
-    getPanel("MODULES"),
-    getPanel("GRADUATES"),
-    getPanel("COMPLETED_MODULES")
-  ]
-
-  for await (const panel of requiredPanels) {
-    await fetchItems({
-      panelObject: panel,
-      showLoading: false,
-      fetchEmbeddedPanelData: false
-    })
-  }
 
   const students = Students.list
   const modules = Modules.list

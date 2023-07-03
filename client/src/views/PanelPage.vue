@@ -169,9 +169,9 @@ import { useDialog } from '../store/useDialog'
 import { storeToRefs } from 'pinia'
 import { getPanel, panels, version } from '../Panels'
 
-const { setPanel, fetchItems } = useSheetManager()
+const { setPanel } = useSheetManager()
 const { getActivePanel } = storeToRefs(useSheetManager())
-const { getSelectedItem, setSelectedItem } = useDocumentCache()
+const { getSelectedItem, setSelectedItem, getAllDocuments } = useDocumentCache()
 const { setPanelCover } = useDialog()
 const { getPanelCover } = storeToRefs(useDialog())
 
@@ -182,7 +182,6 @@ if (route.query.type) {
   if (panelIndex !== -1) setPanel(panelKeys[panelIndex])
 } else {
   document.title = getActivePanel.value.title.plural + ' - Honors Program'
-  fetchItems()
 }
 
 const {
@@ -210,7 +209,7 @@ const panelHopBindings = () => {
 }
 
 useKeyBindings({
-  'r': () => fetchItems({ forceCacheRefresh: true }),
+  'r': () => getAllDocuments({ forceCacheRefresh: true }),
   ...panelHopBindings(),
   ' ': () => {
     if (getPanelCover.value.show) {

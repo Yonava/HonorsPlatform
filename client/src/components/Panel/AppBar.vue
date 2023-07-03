@@ -39,7 +39,7 @@
         Add {{ getActivePanel.title.singular }}
       </v-btn>
       <v-btn
-        @click="fetchItems({ forceCacheRefresh: true })"
+        @click="getAllDocuments"
         :loading="loadingItems"
         style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240)"
         class="mt-3"
@@ -173,7 +173,7 @@
       </v-btn>
       <v-btn
         v-if="smAndUp"
-        @click="fetchItems({ forceCacheRefresh: true })"
+        @click="getAllDocuments"
         :loading="loadingItems"
         class="ml-3"
         style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240)"
@@ -253,9 +253,9 @@ import { useDocumentCache } from "../../store/useDocumentCache";
 import { storeToRefs } from "pinia";
 
 const { show: dialogOpen } = storeToRefs(useDialog())
-const { getSelectedItem } = useDocumentCache();
+const { getSelectedItem, getAllDocuments } = useDocumentCache();
 const { searchFilter, getActivePanel, loadingItems, filteredItems } = storeToRefs(useSheetManager());
-const { setPanel, fetchItems, setSearchFilter } = useSheetManager();
+const { setPanel, setSearchFilter } = useSheetManager();
 
 const searchText = computed({
   get: () => searchFilter.value,

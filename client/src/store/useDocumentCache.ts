@@ -7,10 +7,21 @@ import { warn } from "../Warn";
 import { useSyncState } from "./useSyncState";
 import { storeToRefs } from "pinia";
 
+type GetAllDocuments = {
+  showLoading?: boolean;
+  forceCacheRefresh?: boolean;
+  panel?: Panel;
+}
+
 type RefreshCache = {
   panel?: Panel;
   fetchEmbeddedPanelData?: boolean;
   data?: string[][];
+}
+
+type DueForRefresh = {
+  panel?: Panel;
+  checkDependentPanels?: boolean;
 }
 
 type SetSelectedItem = {
@@ -97,21 +108,65 @@ export const useDocumentCache = defineStore("documentCache", {
       const panel = panelObject ?? activePanel;
       return state[panel.sheetRange].selected;
     },
-    dueForRefresh: (state) => (panelObject?: Panel) => {
-      const { panel: activePanel } = useSheetManager();
-      const panel = panelObject ?? activePanel;
+    dueForRefresh: (state) => (options: DueForRefresh = {}) => {
+      const {
+        panel = useSheetManager().panel,
+        checkDependentPanels = true,
+      } = options;
       const lastRefresh = state.refreshLog[panel.sheetRange];
+
+      const timesSinceLastRefresh = []
+
       if (!lastRefresh) {
         return true;
+      } else {
+        timesSinceLastRefresh.push(lastRefresh);
       }
 
-      // return true if last refresh was more than refreshAfter milliseconds ago
-      return Date.now() - lastRefresh.getTime() > state.refreshAfter;
+      if (checkDependentPanels) {
+        const dependentPanelNames = panel.dependencies;
+        for (const dependentPanelName of dependentPanelNames) {
+          const dependentPanel = panels[dependentPanelName];
+          const dependentLastRefresh = state.refreshLog[dependentPanel.sheetRange];
+          if (!dependentLastRefresh) {
+            return true;
+          } else {
+            timesSinceLastRefresh.push(dependentLastRefresh);
+          }
+        }
+      }
+
+      const now = new Date();
+      return timesSinceLastRefresh.some((time) => {
+        const timeSinceLastRefresh = now.getTime() - time.getTime();
+        return timeSinceLastRefresh > state.refreshAfter;
+      });
     }
   },
   actions: {
-    init() {
+    getAllDocuments(options: GetAllDocuments = {}) {
+      const { setLoadingItems, setSort, getActivePanel } = useSheetManager();
+      const {
+        showLoading = true,
+        forceCacheRefresh = false,
+        panel = getActivePanel,
+      } = options;
+      if (showLoading) {
+        setLoadingItems(true);
+      }
+
+      const shouldRefresh = this.dueForRefresh({ panel });
+      if (!forceCacheRefresh && !shouldRefresh) {
+        setLoadingItems(false);
+        setSort();
+        return;
+      }
       this.cacheRefreshInProgress = this.refreshEntireCache();
+      this.cacheRefreshInProgress.then(() => {
+        this.cacheRefreshInProgress = null;
+        setLoadingItems(false);
+        setSort();
+      })
     },
     async refreshEntireCache() {
       if (this.cacheRefreshInProgress) {
@@ -147,8 +202,6 @@ export const useDocumentCache = defineStore("documentCache", {
           data: rangeDataObj[panels[panelKey].sheetRange]
         })
       }
-
-      this.cacheRefreshInProgress = null;
     },
     async refreshCache(options: RefreshCache = {}) {
       const {
@@ -182,13 +235,6 @@ export const useDocumentCache = defineStore("documentCache", {
       }
 
       this.refreshLog[range] = new Date();
-
-      // DANGER! This implementation may become a bit "loop-ey" 🤪
-      if (panel?.embedded && fetchEmbeddedPanelData) {
-        await this.refreshCache({
-          panel: getPanel(panel.embedded.panel),
-        });
-      }
       return documents;
     },
     setSelectedItem(options: SetSelectedItem = {}) {

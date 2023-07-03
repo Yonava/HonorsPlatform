@@ -16,13 +16,6 @@ export type SortOption = {
   ascending: boolean
 }
 
-type FetchItems = {
-  showLoading?: boolean,
-  forceCacheRefresh?: boolean,
-  panelObject?: Panel,
-  fetchEmbeddedPanelData?: boolean,
-}
-
 export const useSheetManager = defineStore('sheetManager', {
   state: () => ({
     panelSwitchDebounce: 250,
@@ -97,8 +90,6 @@ export const useSheetManager = defineStore('sheetManager', {
         }
       });
 
-      await this.fetchItems();
-
       if (jumpTo) {
         this.jumpToItem(jumpTo);
       }
@@ -106,31 +97,6 @@ export const useSheetManager = defineStore('sheetManager', {
       setTimeout(() => {
         this.canPanelSwitch = true;
       }, this.panelSwitchDebounce);
-    },
-    async fetchItems(options: FetchItems = {}) {
-      const {
-        showLoading = true,
-        forceCacheRefresh = false,
-        panelObject = this.panel,
-        fetchEmbeddedPanelData = true
-      } = options;
-
-      const documents = useDocumentCache();
-      const { refreshCache, dueForRefresh } = documents;
-
-      if (showLoading) {
-        this.loadingItems = true;
-      }
-
-      if (dueForRefresh(panelObject) || forceCacheRefresh) {
-        await refreshCache({
-          panel: panelObject,
-          fetchEmbeddedPanelData
-        });
-      }
-
-      this.setSort()
-      this.loadingItems = false;
     },
     async jumpToItem({ key = 'sysId', value, fallbackFn = () => null }: JumpObject) {
       // allows the UI to update on mobile and tablet breakpoints before jumping
@@ -150,6 +116,9 @@ export const useSheetManager = defineStore('sheetManager', {
     },
     newSysId() {
       return Math.random().toString(36).substring(2, 15);
+    },
+    setLoadingItems(loading: boolean) {
+      this.loadingItems = loading;
     },
     setSort(sortObject?: SortOption) {
 

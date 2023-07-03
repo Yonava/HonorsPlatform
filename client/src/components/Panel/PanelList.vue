@@ -59,7 +59,6 @@
 </template>
 
 <script setup lang="ts">
-import { getPanel, Panel } from '../../Panels'
 import { useDocumentCache } from '../../store/useDocumentCache'
 import { useSheetManager } from '../../store/useSheetManager'
 import { useIncrementalRender } from '../../useIncrementalRender'
@@ -68,24 +67,9 @@ import { storeToRefs } from 'pinia'
 const { setSelectedItem, getSelectedItem } = useDocumentCache()
 
 const sheetManager = useSheetManager()
-const { filteredItems, loadingItems, panel, searchFilter, getActivePanel } = storeToRefs(sheetManager)
-const { fetchItems } = sheetManager
+const { filteredItems, loadingItems, panel, searchFilter } = storeToRefs(sheetManager)
 
 const { incrementallyRenderedItems } = useIncrementalRender(filteredItems)
-
-const dependsOnStudentIDMatching: Panel['sheetRange'][] = ['Theses', 'Completed Modules', 'Modules']
-if (dependsOnStudentIDMatching.includes(getActivePanel.value.sheetRange)) {
-  fetchItems({
-    panelObject: getPanel('STUDENTS'),
-    fetchEmbeddedPanelData: false,
-    showLoading: false
-  })
-  fetchItems({
-    panelObject: getPanel('GRADUATES'),
-    fetchEmbeddedPanelData: false,
-    showLoading: false
-  })
-}
 
 const isSelected = item => {
   if (!getSelectedItem()) return false

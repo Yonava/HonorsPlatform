@@ -32,4 +32,6 @@ createApp(App)
   .use(vuetify)
   .mount('#app')
 
-useDocumentCache().init()
+useDocumentCache().getAllDocuments({
+  showLoading: true
+})
