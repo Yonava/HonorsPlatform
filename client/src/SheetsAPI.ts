@@ -24,6 +24,7 @@ function requestHeaders() {
 
 export async function getEvery(range: Range): Promise<string[][]> {
   try {
+    console.log("Hitting API For: ", range)
     const { data } = (await axios.get(`/api/range/${range}`, requestHeaders()));
     headerRowMemo[range] = data.shift();
     return data;

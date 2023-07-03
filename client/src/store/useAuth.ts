@@ -36,6 +36,8 @@ export const useAuth = defineStore('auth', {
       window.location.replace(url)
     },
     async authorize() {
+      await new Promise(resolve => setTimeout(resolve, 100));
+
       if (this.pendingAuthorization) {
         await this.pendingAuthorization
         return

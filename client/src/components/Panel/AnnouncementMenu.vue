@@ -76,8 +76,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, computed } from 'vue'
+import { ref, watch, computed, onMounted } from 'vue'
 import { getEvery } from '../../SheetsAPI'
+import { useDocumentCache } from '../../store/useDocumentCache'
 import { useDisplay } from 'vuetify'
 
 const { mdAndUp, smAndDown } = useDisplay()
@@ -90,18 +91,20 @@ const read = ref(false)
 watch(active, async (val) => {
   if (val) {
     read.value = true
-    await fetchAnnouncements()
   }
 })
 
-async function fetchAnnouncements() {
+onMounted(async () => {
   loading.value = true
-  announcements.value = []
-  const res = await getEvery('Announcements')
-  announcements.value = res.map(row => row[0])
+  if (useDocumentCache().cacheRefreshInProgress) {
+    await useDocumentCache().cacheRefreshInProgress
+  } else {
+    read.value = true
+  }
+  announcements.value = useDocumentCache().Announcements.map(row => row[0])
     .filter(announcement => announcement)
   loading.value = false
-}
+})
 
 const tooltipText = computed(() => {
   if (announcements.value.length && !read.value) {
@@ -110,8 +113,6 @@ const tooltipText = computed(() => {
     return 'No New Announcements'
   }
 })
-
-fetchAnnouncements()
 </script>
 
 <style scoped>

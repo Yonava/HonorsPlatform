@@ -57,6 +57,7 @@ type PanelState<T> = {
 
 export const useDocumentCache = defineStore("documentCache", {
   state: () => ({
+    cacheRefreshInProgress: null as Promise<void> | null,
     refreshLog: {} as Record<string, Date>,
     refreshAfter: 1000 * 60 * 5, // 5 minutes
     Students: {
@@ -83,7 +84,7 @@ export const useDocumentCache = defineStore("documentCache", {
       list: [],
       selected: null,
     } as PanelState<types.Thesis>,
-    Announcements: [] as string[]
+    Announcements: [[]] as string[][],
   }),
   getters: {
     getPanelListData: (state) => (panelObject?: Panel) => {
@@ -109,21 +110,63 @@ export const useDocumentCache = defineStore("documentCache", {
     }
   },
   actions: {
-    async init() {
-      const fullSheetData = await getFullSheetData();
-      // console.log('fullSheetData', fullSheetData[0]);
-      for (const data of fullSheetData) {
-        console.log(data)
+    init() {
+      this.cacheRefreshInProgress = this.refreshEntireCache();
+    },
+    async refreshEntireCache() {
+      if (this.cacheRefreshInProgress) {
+        console.log("useDocumentCache.init: cache refresh already in progress")
+        return
       }
+
+      const fullSheetData = await getFullSheetData();
+
+      const announcementsData = fullSheetData.find((rangeDataObject) => {
+        const range = Object.keys(rangeDataObject)[0]
+        return range === "Announcements"
+      })
+
+      this.Announcements = announcementsData?.Announcements ?? [[]];
+
+      const panelKeys = Object.keys(panels) as (keyof typeof panels)[];
+      for (const panelKey of panelKeys) {
+
+        // type rangeDataObject = { Range: string[][] }
+        const rangeDataObj = fullSheetData.find((rangeDataObject) => {
+          const range = Object.keys(rangeDataObject)[0]
+          return range === panels[panelKey].sheetRange
+        });
+
+        if (!rangeDataObj) {
+          console.warn(`useDocumentCache.init: no data found for ${panels[panelKey].sheetRange}`)
+          continue
+        }
+
+        this.refreshCache({
+          panel: panels[panelKey],
+          data: rangeDataObj[panels[panelKey].sheetRange]
+        })
+      }
+
+      this.cacheRefreshInProgress = null;
     },
     async refreshCache(options: RefreshCache = {}) {
       const {
         fetchEmbeddedPanelData = false,
         panel = useSheetManager().panel,
-        data = await getEvery(panel.sheetRange),
       } = options;
 
       const range = panel.sheetRange;
+
+      if (!options.data) {
+        if (this.cacheRefreshInProgress) {
+          await this.cacheRefreshInProgress;
+          return;
+        }
+        options.data = await getEvery(panel.sheetRange);
+      }
+
+      const { data } = options;
 
       const documents = await panel.mappers.map(data);
       this[range].list = documents;
@@ -143,15 +186,10 @@ export const useDocumentCache = defineStore("documentCache", {
       // DANGER! This implementation may become a bit "loop-ey" 🤪
       if (panel?.embedded && fetchEmbeddedPanelData) {
         await this.refreshCache({
-          panel: getPanel(panel.embedded),
+          panel: getPanel(panel.embedded.panel),
         });
       }
       return documents;
-    },
-    async refreshAll() {
-      for (const panel of Object.keys(panels) as (keyof typeof panels)[]) {
-        // await this.refreshCache(panels[panel]);
-      }
     },
     setSelectedItem(options: SetSelectedItem = {}) {
       const { panel: activePanel } = useSheetManager();
