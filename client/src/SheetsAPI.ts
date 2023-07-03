@@ -4,9 +4,6 @@ import { useAuth } from "./store/useAuth";
 
 export type Range = "Students" | "Modules" | "Graduates" | "Completed Modules" | "Announcements" | "Grad Engagements" | "Registrar List" | "Theses" | "Temporary Data";
 
-// response delay to allow for Google Sheets API to update
-const responseDelay = 100;
-
 // memoized to avoid API calls on every update
 export type HeaderRows = { [key in Range]?: string[] }
 export const headerRowMemo: HeaderRows = {}
@@ -25,17 +22,14 @@ function requestHeaders() {
   }
 }
 
-export async function getEvery(range: Range, addResponseDelay = true): Promise<string[][]> {
+export async function getEvery(range: Range): Promise<string[][]> {
   try {
-    if (addResponseDelay) {
-      await new Promise(resolve => setTimeout(resolve, responseDelay));
-    }
     const { data } = (await axios.get(`/api/range/${range}`, requestHeaders()));
     headerRowMemo[range] = data.shift();
     return data;
   } catch {
     await useAuth().authorize();
-    return getEvery(range, addResponseDelay);
+    return getEvery(range);
   }
 }
 

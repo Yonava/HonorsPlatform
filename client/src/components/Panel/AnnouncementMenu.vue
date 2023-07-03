@@ -97,7 +97,7 @@ watch(active, async (val) => {
 async function fetchAnnouncements() {
   loading.value = true
   announcements.value = []
-  const res = await getEvery('Announcements', false)
+  const res = await getEvery('Announcements')
   announcements.value = res.map(row => row[0])
     .filter(announcement => announcement)
   loading.value = false

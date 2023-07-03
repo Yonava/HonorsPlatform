@@ -30,7 +30,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { headerRowMemo, getEvery, replaceRange } from '../SheetsAPI'
+import { headerRowMemo, replaceRange } from '../SheetsAPI'
 import { useDialog } from '../store/useDialog'
 import { useSheetManager } from '../store/useSheetManager'
 
