@@ -1,4 +1,10 @@
-# Current Version: prerelease 0.83.9
+# Current Version: prerelease 0.84
+
+### prerelease 0.84 (Jul. 4)
+- Improved loading times across every panel
+- Changed model for loading data by adding the "Dependencies" property to each panel
+- Wrote batchGet API integrations to fetch data much faster and much more efficiently
+- Removed "fetchItems" API in favor of getAllDocuments for managing batchGet endpoint and cache refresh API
 
 ### prerelease 0.83 (Jul. 2)
 - Feature: Live updating smart suggestions to quickly flag and delete any unwanted entities in the system. Tests against dozens of criteria and forms a "rationale" paragraph along with two levels of recommendation ("warn" for consider, and "danger" for strongly recommended) based on how urgent the problem being flagged is deemed
