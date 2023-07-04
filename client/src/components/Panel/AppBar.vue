@@ -39,7 +39,7 @@
         Add {{ getActivePanel.title.singular }}
       </v-btn>
       <v-btn
-        @click="getAllDocuments"
+        @click="refreshAction"
         :loading="loadingItems"
         style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240)"
         class="mt-3"
@@ -173,7 +173,7 @@
       </v-btn>
       <v-btn
         v-if="smAndUp"
-        @click="getAllDocuments"
+        @click="refreshAction"
         :loading="loadingItems"
         class="ml-3"
         style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240)"
@@ -264,6 +264,12 @@ const searchText = computed({
 
 const navDrawer = ref(false);
 const searchMode = ref(false);
+
+const refreshAction = () => {
+  getAllDocuments({
+    forceCacheRefresh: true,
+  });
+};
 
 const add = ref({
   loading: false,

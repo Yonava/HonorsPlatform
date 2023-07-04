@@ -15,7 +15,6 @@ type GetAllDocuments = {
 
 type RefreshCache = {
   panel?: Panel;
-  fetchEmbeddedPanelData?: boolean;
   data?: string[][];
 }
 
@@ -151,6 +150,11 @@ export const useDocumentCache = defineStore("documentCache", {
         forceCacheRefresh = false,
         panel = getActivePanel,
       } = options;
+
+      if (this.cacheRefreshInProgress) {
+        return
+      }
+
       if (showLoading) {
         setLoadingItems(true);
       }
@@ -170,7 +174,6 @@ export const useDocumentCache = defineStore("documentCache", {
     },
     async refreshEntireCache() {
       if (this.cacheRefreshInProgress) {
-        console.log("useDocumentCache.init: cache refresh already in progress")
         return
       }
 
@@ -205,7 +208,6 @@ export const useDocumentCache = defineStore("documentCache", {
     },
     async refreshCache(options: RefreshCache = {}) {
       const {
-        fetchEmbeddedPanelData = false,
         panel = useSheetManager().panel,
       } = options;
 

@@ -70,7 +70,7 @@ export const useSheetManager = defineStore('sheetManager', {
 
       this.canPanelSwitch = false;
 
-      const { setSelectedItem } = useDocumentCache();
+      const { setSelectedItem, getAllDocuments } = useDocumentCache();
       setSelectedItem();
       this.panel = getPanel(panelName);
 
@@ -81,6 +81,8 @@ export const useSheetManager = defineStore('sheetManager', {
         func: null,
         ascending: true
       };
+
+      getAllDocuments()
 
       document.title = this.panel.title.plural + ' - Honors Program';
       router.push({
@@ -99,8 +101,6 @@ export const useSheetManager = defineStore('sheetManager', {
       }, this.panelSwitchDebounce);
     },
     async jumpToItem({ key = 'sysId', value, fallbackFn = () => null }: JumpObject) {
-      // allows the UI to update on mobile and tablet breakpoints before jumping
-      await new Promise(resolve => setTimeout(resolve, 100));
       const { setSelectedItemByKeyValue } = useDocumentCache();
       const success = setSelectedItemByKeyValue({
         key,

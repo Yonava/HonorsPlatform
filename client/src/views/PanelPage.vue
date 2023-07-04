@@ -130,8 +130,7 @@
     </v-main>
     <ServeDialog />
     <v-navigation-drawer
-      v-if="smAndDown"
-      v-model="showDetailDrawer"
+      v-model="showNavDrawer"
       temporary
       touchless
       rounded
@@ -150,7 +149,8 @@
 import {
   ref,
   computed,
-  onMounted
+  onMounted,
+  watchEffect
 } from 'vue'
 import { useRoute } from 'vue-router'
 import PanelCoverAppBar from '../components/Panel/PanelCoverAppBar.vue'
@@ -191,12 +191,23 @@ const {
   smAndDown
 } = useDisplay()
 
-const showDetailDrawer = computed({
+const isItemSelected = computed({
   get: () => !!getSelectedItem(),
   set: (v) => {
     if (!v) {
       setSelectedItem()
     }
+  }
+})
+
+const showNavDrawer = ref(false)
+watchEffect(() => {
+  if (isItemSelected.value && smAndDown.value) {
+    setTimeout(() => {
+      showNavDrawer.value = true
+    }, 100)
+  } else {
+    showNavDrawer.value = false
   }
 })
 
