@@ -130,6 +130,7 @@
     </v-main>
     <ServeDialog />
     <v-navigation-drawer
+      v-if="smAndDown"
       v-model="showNavDrawer"
       temporary
       touchless
