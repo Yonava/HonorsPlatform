@@ -82,7 +82,9 @@ export const useSheetManager = defineStore('sheetManager', {
         ascending: true
       };
 
-      getAllDocuments()
+      getAllDocuments({
+        showLoading: false
+      })
 
       document.title = this.panel.title.plural + ' - Honors Program';
       router.push({
@@ -101,7 +103,12 @@ export const useSheetManager = defineStore('sheetManager', {
       }, this.panelSwitchDebounce);
     },
     async jumpToItem({ key = 'sysId', value, fallbackFn = () => null }: JumpObject) {
-      const { setSelectedItemByKeyValue } = useDocumentCache();
+      const { setSelectedItemByKeyValue, cacheRefreshInProgress } = useDocumentCache();
+
+      if (cacheRefreshInProgress) {
+        await cacheRefreshInProgress;
+      }
+
       const success = setSelectedItemByKeyValue({
         key,
         value

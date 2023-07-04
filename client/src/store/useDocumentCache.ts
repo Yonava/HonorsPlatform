@@ -69,7 +69,7 @@ export const useDocumentCache = defineStore("documentCache", {
   state: () => ({
     cacheRefreshInProgress: null as Promise<void> | null,
     refreshLog: {} as Record<string, Date>,
-    refreshAfter: 1000 * 60 * 5, // 5 minutes
+    refreshAfter: 1, // 5 minutes
     Students: {
       list: [],
       selected: null,
