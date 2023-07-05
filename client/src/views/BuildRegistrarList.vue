@@ -13,14 +13,14 @@
         Create Registrar List
       </h1>
       <v-btn
-        v-if="!term"
-        @click="term = getCurrentTerm()"
+        v-if="!userEnteredTerm"
+        @click="userEnteredTerm = getCurrentTerm()"
         color="blue-darken-2"
         size="x-small"
         class="mb-3"
       >Current Term</v-btn>
       <v-text-field
-        v-model="term"
+        v-model="userEnteredTerm"
         @keyup.enter="generateRegistrarList"
         :rules="[(v) => termValidator(v) || 'Potentially invalid term']"
         variant="outlined"
@@ -29,7 +29,7 @@
       <v-btn
         @click="generateRegistrarList"
         :loading="loading"
-        :disabled="!term"
+        :disabled="!userEnteredTerm"
         :color="button.color"
         size="x-large"
         block
@@ -57,13 +57,14 @@
 </template>
 
 <script setup lang="ts">
-import { getEvery, replaceRange } from "../SheetsAPI";
+import { getRange, replaceRange } from "../SheetsAPI";
+import { panels } from "../Panels"
+import { useDocumentCache } from "../store/useDocumentCache";
 import { ref, computed, watch } from "vue";
 import { termValidator, getCurrentTerm } from "../TermValidator";
 
-const sheet = ref(null);
 const loading = ref(false);
-const term = ref("");
+const userEnteredTerm = ref("");
 const success = ref(false);
 
 // if the user has successfully generated at least one registrar list
@@ -71,15 +72,21 @@ const hasSucceeded = ref(false);
 
 async function generateRegistrarList() {
   loading.value = true;
-  const students = await getEvery('Students');
-  const completedModules = await getEvery('Completed Modules')
-  const termColumn = 4;
-  const modulesInTerm = completedModules.filter((module) => {
-    if (!module[termColumn]) return false
-    return module[termColumn].toLowerCase() === term.value.toLowerCase();
+
+  const { Students, "Completed Modules": CompletedModules } = useDocumentCache();
+  const { unmap: studentUnmap } = panels['STUDENTS'].mappers
+  const { unmap: moduleUnmap } = panels['COMPLETED_MODULES'].mappers
+  const unmappedStudents = await studentUnmap(Students.list);
+
+  const modulesInTerm = CompletedModules.list.filter((module) => {
+    if (!module.term) return false
+    return module.term.toLowerCase() === userEnteredTerm.value.toLowerCase();
   });
-  const output = modulesInTerm.map(module => {
-    let student = students.find(student => student[1] === module[1]);
+
+  const unmappedModules = moduleUnmap(modulesInTerm);
+
+  const output = unmappedModules.map(module => {
+    let student = unmappedStudents.find(student => student[1] === module[1]);
     student ??= ["", "", ""];
     return [
       student[1],
@@ -93,7 +100,7 @@ async function generateRegistrarList() {
     "Name",
     "Email",
     "Course Code",
-    `Generated on ${new Date().toLocaleString('en-US')} for ${term.value.toUpperCase()}`
+    `Generated on ${new Date().toLocaleString('en-US')} for ${userEnteredTerm.value.toUpperCase()}`
   ]);
   await replaceRange('Registrar List', output);
   loading.value = false;
@@ -127,7 +134,7 @@ watch(success, (val) => {
   }
 });
 
-watch(term, () => {
+watch(userEnteredTerm, () => {
   success.value = false;
 });
 </script>

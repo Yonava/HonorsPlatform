@@ -70,6 +70,7 @@
         <div
           ref="panelList"
           :style="{
+            height: getPanelCover.show ? 'calc(100vh - 64px)' : '',
             overflow: getPanelCover.show ? 'hidden' : 'auto',
             minWidth: mdAndUp ? `${panelListWidth}px` : '',
             maxWidth: mdAndUp ? `${panelListWidth}px` : '',

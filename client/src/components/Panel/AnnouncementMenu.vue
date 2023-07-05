@@ -77,7 +77,6 @@
 
 <script setup lang="ts">
 import { ref, watch, computed, onMounted } from 'vue'
-import { getEvery } from '../../SheetsAPI'
 import { useDocumentCache } from '../../store/useDocumentCache'
 import { useDisplay } from 'vuetify'
 

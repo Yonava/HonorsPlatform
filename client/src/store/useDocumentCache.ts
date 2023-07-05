@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
-import { getEvery, clearByRow, updateByRow, postInRange, getFullSheetData } from '../SheetsAPI';
-import { getPanel, panels, Panel } from "../Panels";
+import { getRange, clearByRow, updateByRow, postInRange, getRanges } from '../SheetsAPI';
+import { panels, Panel } from "../Panels";
 import * as types from "../SheetTypes";
 import { useSheetManager } from "./useSheetManager";
 import { warn } from "../Warn";
@@ -69,7 +69,7 @@ export const useDocumentCache = defineStore("documentCache", {
   state: () => ({
     cacheRefreshInProgress: null as Promise<void> | null,
     refreshLog: {} as Record<string, Date>,
-    refreshAfter: 1, // 5 minutes
+    refreshAfter: 1000 * 60 * 5, // 5 minutes
     Students: {
       list: [],
       selected: null,
@@ -177,7 +177,7 @@ export const useDocumentCache = defineStore("documentCache", {
         return
       }
 
-      const fullSheetData = await getFullSheetData();
+      const fullSheetData = await getRanges();
 
       const announcementsData = fullSheetData.find((rangeDataObject) => {
         const range = Object.keys(rangeDataObject)[0]
@@ -218,7 +218,7 @@ export const useDocumentCache = defineStore("documentCache", {
           await this.cacheRefreshInProgress;
           return;
         }
-        options.data = await getEvery(panel.sheetRange);
+        options.data = await getRange(panel.sheetRange);
       }
 
       const { data } = options;

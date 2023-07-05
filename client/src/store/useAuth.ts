@@ -36,8 +36,6 @@ export const useAuth = defineStore('auth', {
       window.location.replace(url)
     },
     async authorize() {
-      await new Promise(resolve => setTimeout(resolve, 100));
-
       if (this.pendingAuthorization) {
         await this.pendingAuthorization
         return
@@ -48,6 +46,7 @@ export const useAuth = defineStore('auth', {
       // handles phones that don't support popups
       if (!window.open(url, '_blank')) {
         this.forceAuthorize(url)
+        return
       }
 
       this.setToken(null)
@@ -80,7 +79,7 @@ export const useAuth = defineStore('auth', {
               this.authTimedOut = false
             }
           }
-        }, 1000)
+        }, 100)
 
         setTimeout(() => {
           if (!this.pendingAuthorization) {

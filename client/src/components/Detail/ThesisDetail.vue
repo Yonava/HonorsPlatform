@@ -142,7 +142,6 @@ import DetailFrame from './Helper/DetailFrame.vue'
 import { ref, toRefs, computed } from 'vue'
 import { getCurrentTerm, termValidator } from '../../TermValidator'
 import type { Thesis } from '../../SheetTypes'
-import { getEvery } from '../../SheetsAPI'
 import { getPanel } from '../../Panels'
 import {
   emailValidator,

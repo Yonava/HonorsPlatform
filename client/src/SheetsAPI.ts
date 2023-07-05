@@ -1,18 +1,11 @@
 import axios from "axios";
-import router from "./router";
+// import router from "./router";
 import { useAuth } from "./store/useAuth";
 
 export type Range = "Students" | "Modules" | "Graduates" | "Completed Modules" | "Announcements" | "Grad Engagements" | "Registrar List" | "Theses" | "Temporary Data";
 
-// memoized to avoid API calls on every update
 export type HeaderRows = { [key in Range]?: string[] }
 export const headerRowMemo: HeaderRows = {}
-
-function catchAction() {
-  router.push({
-    name: "auth"
-  })
-}
 
 function requestHeaders() {
   return {
@@ -22,30 +15,28 @@ function requestHeaders() {
   }
 }
 
-export async function getEvery(range: Range): Promise<string[][]> {
+export async function getRange(range: Range): Promise<string[][]> {
   try {
-    console.log("Hitting API For: ", range)
     const { data } = (await axios.get(`/api/range/${range}`, requestHeaders()));
     headerRowMemo[range] = data.shift();
     return data;
   } catch {
     await useAuth().authorize();
-    return getEvery(range);
+    return getRange(range);
   }
 }
 
-export async function getFullSheetData(): Promise<{ [key in string]: string[][] }[]> {
-  try {
-    const ranges: Range[] = [
-      "Students",
-      "Modules",
-      "Graduates",
-      "Completed Modules",
-      "Grad Engagements",
-      "Theses",
-      "Announcements"
-    ]
+export async function getRanges(ranges: Range[] = [
+  "Students",
+  "Modules",
+  "Graduates",
+  "Completed Modules",
+  "Grad Engagements",
+  "Theses",
+  "Announcements"
+]): Promise<{ [key in string]: string[][] }[]> {
 
+  try {
     type ExpectedReturn = {
       range: Range,
       values: string[][]
@@ -62,7 +53,7 @@ export async function getFullSheetData(): Promise<{ [key in string]: string[][] 
     });
   } catch {
     await useAuth().authorize();
-    return getFullSheetData();
+    return getRanges();
   }
 }
 
@@ -94,38 +85,11 @@ export async function postInRange(range: Range, data: string[][]) {
   }
 }
 
-export async function getHeaderRow(range: Range): Promise<string[]> {
-  try {
-    const headerRow = (await axios.get(`/api/range/${range}!A1:Z1`, requestHeaders())).data;
-    headerRowMemo[range] = headerRow[0];
-    return headerRow[0];
-  } catch {
-    await useAuth().authorize();
-    return getHeaderRow(range);
+export function getHeaderRowCache(range: Range) {
+  if (!headerRowMemo[range]) {
+    throw new Error("Header row cache miss for: " + range)
   }
-}
-
-export async function getHeaderRowCache(range: Range) {
-  return headerRowMemo[range] ?? await getHeaderRow(range);
-}
-
-export async function getNonSensitiveData(endpointExtension: string) {
-  try {
-    return (await axios.get(`/api/open/${endpointExtension}`, requestHeaders())).data;
-  } catch {
-    catchAction();
-    return [];
-  }
-}
-
-export async function moveRowToRange(fromRange: Range, toRange: Range, row: number, data: string[][]) {
-  try {
-    await postInRange(toRange, data);
-    await clearByRow(fromRange, row);
-  } catch {
-    await useAuth().authorize();
-    await moveRowToRange(fromRange, toRange, row, data);
-  }
+  return headerRowMemo[range] || [];
 }
 
 export async function replaceRange(range: Range, data: string[][]) {
