@@ -31,14 +31,17 @@
       style="font-size: 0.9em;"
     >
       <div class="d-flex flex-row">
-        <div class="d-flex flex-row align-center">
+        <div
+          :style="term.style"
+          class="d-flex flex-row align-center"
+        >
           <v-icon
             class="mr-1"
             style="opacity: 0.75"
           >
             mdi-calendar
           </v-icon>
-          <p :style="term.style">
+          <p>
             {{ item.term || '(No Term)' }}
           </p>
           <v-tooltip

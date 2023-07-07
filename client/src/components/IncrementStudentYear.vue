@@ -10,8 +10,8 @@
         <h3>Select students to exclude: </h3>
         <v-spacer></v-spacer>
         <v-btn
-          @click="studentsToIncrement = copyOfStudents"
-          :disabled="studentsToIncrement.length === copyOfStudents.length"
+          @click="studentsToIncrement = [...Students.list]"
+          :disabled="studentsToIncrement.length === Students.list.length"
           size="small"
           color="green"
           variant="outlined"
@@ -25,11 +25,11 @@
         >Exclude All</v-btn>
       </div>
       <p style="font-size: 0.85rem">
-        {{ studentsToIncrement.length }} out of {{ copyOfStudents.length }} students included
+        {{ studentsToIncrement.length }} out of {{ Students.list.length }} students included
       </p>
       <div style="overflow: auto; height: 600px;">
         <v-sheet
-          v-for="student in copyOfStudents.sort((a, b) => a.name.localeCompare(b.name))"
+          v-for="student in [...Students.list].sort((a, b) => a.name.localeCompare(b.name))"
           :key="student.sysId"
           @click="toggleStudentToIncrement(student)"
           :color="isStudentOnIncrementList(student) ? 'blue-darken-1' : 'white'"
@@ -146,8 +146,7 @@ const success = ref(false);
 const initiationConfirmed = ref(false);
 const loading = ref(false);
 const { Students } = useDocumentCache()
-const copyOfStudents = [...Students.list];
-const studentsToIncrement = ref<Student[]>(copyOfStudents);
+const studentsToIncrement = ref<Student[]>([...Students.list]);
 
 watch(studentsToIncrement, (newStudents, oldStudent) => {
   if (newStudents.length !== oldStudent.length) {
@@ -197,7 +196,7 @@ const initiateIncrement = async () => {
     const {
     failedToIncrement: failed,
     graduatingSeniors: graduated
-    } = await incrementStudentYear(studentsToIncrement.value);
+    } = await incrementStudentYear([...studentsToIncrement.value]);
     graduatingSeniors.value = graduated;
     failedToIncrement.value = failed;
     success.value = true;

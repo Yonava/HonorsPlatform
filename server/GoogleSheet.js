@@ -60,18 +60,22 @@ module.exports = class GoogleSheet {
   }
 
   async postInRange(range, data) {
-    console.log(range, data)
-    if (data.length > 1) {
-      await this.sheets.spreadsheets.values.append(
-        this.writable(range, data)
-      )
-      return;
-    }
     const rangeData = await this.getRange(range);
+
+    if (data.length > 1) {
+      await this.sheets.spreadsheets.values.update(
+        this.writable(range, [
+          ...rangeData,
+          ...data,
+        ])
+      );
+      return rangeData.length + 1;
+    }
+
     let insertRow = rangeData.findIndex(row => row.join('') === '');
     insertRow = insertRow === -1 ? rangeData.length + 1 : insertRow + 1;
     await this.sheets.spreadsheets.values.update(
-      this.writable(`${range}!A${insertRow}:Z${insertRow}`, data)
+      this.writable(`${range}!A${insertRow}:Z${data.length}`, data)
     );
 
     return insertRow;
