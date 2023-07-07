@@ -1,16 +1,9 @@
 import { useDialog } from './store/useDialog'
-import { warn } from './Warn'
 import IncrementStudentYearDialog from './components/IncrementStudentYear.vue'
 import CreateTempSheet from './components/CreateTempSheet.vue'
 
-import { useDocumentCache } from './store/useDocumentCache'
-
 export const tools = {
   STUDENTS: [
-    {
-      name: 'Initialize Document Cache',
-      handler: () => { useDocumentCache().init() }
-    },
     {
       name: 'Suggested Deletions',
       handler: () => { useDialog().setPanelCover('open') }
@@ -18,7 +11,6 @@ export const tools = {
     {
       name: 'Increment Student Year',
       handler: async () => {
-        await warn()
         useDialog().open({
           component: IncrementStudentYearDialog
         })

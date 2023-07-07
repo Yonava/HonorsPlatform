@@ -9,7 +9,7 @@
       <v-icon>mdi-arrow-left</v-icon>
       Admin Dashboard
     </v-btn>
-    <v-sheet 
+    <v-sheet
       class="d-flex align-center justify-center flex-column"
       style="width: 90%; height: 90%; overflow: hidden;"
       elevation="10"
@@ -22,7 +22,7 @@
         v-if="smAndUp"
         style="margin: 100px"
       ></div>
-      <div 
+      <div
         v-if="!error && !loading"
         class="d-flex flex-column align-center mt-10"
       >
@@ -34,8 +34,8 @@
             class="mx-3 pa-2"
             style="border-radius: 10px; border: 1px solid black;"
             elevation="4"
-          > 
-            <h4 
+          >
+            <h4
               :style="{
                 fontSize: xs.value ? '4vw' : '2vw',
                 fontWeight: 700,
@@ -43,7 +43,7 @@
             >
               #{{ index + 1 }} with {{ students[index].points.toLocaleString() }} points
             </h4>
-            <h2 
+            <h2
               :style="{
                 fontSize: xs.value ? '6vw' : '3vw',
                 fontWeight: 700,
@@ -53,32 +53,32 @@
             </h2>
           </v-sheet>
         </div>
-        <div 
+        <div
           class="d-flex flex-column align-center"
           style="height: 50vh; width: 100%; overflow: auto"
         >
-          <div 
+          <div
             v-for="student in students.slice(3)"
             :key="student.name"
             style="width: 60%; min-width: 300px; border-bottom:"
           >
-            <div 
+            <div
               class="d-flex flex-row align-center justify-space-between"
               style="width: 100%;"
             >
-              <div 
+              <div
                 style="width: 25%;"
                 class="d-flex flex-row justify-start"
               >
                 <div>{{ student.rank }}.</div>
               </div>
-              <div 
+              <div
                 style="width: 50%"
                 class="d-flex flex-row justify-center"
               >
                 <div>{{ student.name }}</div>
               </div>
-              <div 
+              <div
                 style="width: 25%"
                 class="d-flex flex-row justify-end"
               >
@@ -94,13 +94,13 @@
       <div v-else-if="error">
         Our apologies, we are unable to retrieve the leaderboard at this time.
       </div>
-      <div 
+      <div
         v-else-if="loading"
         style="position: absolute; top: 30%;"
       >
         <v-progress-circular
           indeterminate
-          size="64" 
+          size="64"
         ></v-progress-circular>
       </div>
     </v-sheet>
@@ -108,7 +108,6 @@
 </template>
 
 <script setup lang="ts">
-import { getNonSensitiveData } from "../SheetsAPI";
 import { ref } from "vue";
 import { useDisplay } from 'vuetify'
 
@@ -125,7 +124,7 @@ type LeaderboardItem = {
 
 async function getStudents() {
   try {
-    const data: LeaderboardItem[] = await getNonSensitiveData('points');
+    const data: LeaderboardItem[] = [];
     students.value = data
       .sort((a, b) => b.points - a.points)
       .map((student, index) => ({
