@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div v-if="!getPanelCover.loading && incrementallyRenderedItems.length > 0">
+    <div v-if="incrementallyRenderedItems.length > 0">
       <v-sheet
         v-for="{ item, rationale, status } in incrementallyRenderedItems"
         :key="item"
@@ -69,16 +69,7 @@
       </v-sheet>
     </div>
     <div
-      v-else-if="getPanelCover.loading"
-      class="text-center mt-12"
-    >
-      <v-progress-circular
-        :color="getActivePanel.color + '-darken-2'"
-        indeterminate
-      ></v-progress-circular>
-    </div>
-    <div
-      v-else-if="getPanelCover.show && !getPanelCover.filter"
+      v-else-if="!getPanelCover.filter && getPanelCover.show"
       class="pa-4 d-flex justify-center"
     >
       <v-sheet
@@ -113,7 +104,7 @@
 </template>
 
 <script setup lang="ts">
-import { watchEffect, watch, computed } from "vue";
+import { watchEffect, computed } from "vue";
 import { useDialog } from "../../store/useDialog";
 import { useSheetManager } from "../../store/useSheetManager";
 import { useDocumentCache } from "../../store/useDocumentCache";
@@ -143,9 +134,7 @@ const { incrementallyRenderedItems } = useIncrementalRender(displayItems);
 
 watchEffect(async () => {
   if (getPanelCover.value.show) {
-    getPanelCover.value.loading = true;
     getPanelCover.value.deletionItems = await getSuggestedDeletions(getActivePanel.value);
-    getPanelCover.value.loading = false;
   }
 });
 

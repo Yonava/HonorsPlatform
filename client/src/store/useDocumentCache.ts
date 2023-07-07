@@ -339,7 +339,13 @@ export const useDocumentCache = defineStore("documentCache", {
       useSyncState().$reset();
     },
     async addItem(options: AddItem = {}) {
-      const { setSearchFilter, panel: activePanel, newSysId, setPinnedItem } = useSheetManager();
+      const {
+        setSearchFilter,
+        panel: activePanel,
+        newSysId,
+        setPinnedItem
+      } = useSheetManager();
+
       const {
         panel = activePanel,
         pin = true,
@@ -389,6 +395,7 @@ export const useDocumentCache = defineStore("documentCache", {
         return;
       } else if (typeof item.row !== "number") {
         setProcessing(true);
+        console.log("useDocumentCache: No row to update, posting to sheet")
         const row = await postInRange(
           panel.sheetRange,
           await panel.mappers.unmap([item])

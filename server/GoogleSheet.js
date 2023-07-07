@@ -75,7 +75,7 @@ module.exports = class GoogleSheet {
     let insertRow = rangeData.findIndex(row => row.join('') === '');
     insertRow = insertRow === -1 ? rangeData.length + 1 : insertRow + 1;
     await this.sheets.spreadsheets.values.update(
-      this.writable(`${range}!A${insertRow}:Z${data.length}`, data)
+      this.writable(`${range}!A${insertRow}:Z${insertRow}`, data)
     );
 
     return insertRow;
