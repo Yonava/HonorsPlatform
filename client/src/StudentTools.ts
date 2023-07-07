@@ -173,8 +173,6 @@ export async function incrementStudentYear(students: Student[] = useDocumentCach
   // assign data to all students minus the graduating seniors
   const allStudents = useDocumentCache().Students.list.filter(student => !graduatingSeniors.some(grad => grad.sysId === student.sysId))
 
-  console.log('StudentTools: incrementStudentYear: allStudents', allStudents)
-
   const data = await unmap(allStudents)
 
   const headerRow = await getHeaderRowCache('Students')

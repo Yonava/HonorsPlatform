@@ -113,23 +113,19 @@
 </template>
 
 <script setup lang="ts">
-import { watchEffect, ref, watch, computed } from "vue";
+import { watchEffect, watch, computed } from "vue";
 import { useDialog } from "../../store/useDialog";
 import { useSheetManager } from "../../store/useSheetManager";
 import { useDocumentCache } from "../../store/useDocumentCache";
 import { storeToRefs } from "pinia";
 import { getSuggestedDeletions } from "../../DeleteSuggestions";
-import { useSyncState } from "../../store/useSyncState";
 import { useIncrementalRender } from "../../useIncrementalRender";
-import { useDisplay } from "vuetify";
 import { filterItems } from '../../FilterObjects'
+import type { SheetItem } from "../../SheetTypes";
 
 const { getPanelCover } = storeToRefs(useDialog());
 const { getActivePanel } = storeToRefs(useSheetManager());
 const { getSelectedItem, setSelectedItem } = useDocumentCache();
-const { processing } = storeToRefs(useSyncState());
-
-const { xs } = useDisplay();
 
 const displayItems = computed(() => {
   const items = filterItems(getPanelCover.value.deletionItems.map(data => ({
@@ -145,9 +141,7 @@ const displayItems = computed(() => {
 
 const { incrementallyRenderedItems } = useIncrementalRender(displayItems);
 
-// when panel cover is toggled to showing
 watchEffect(async () => {
-  getPanelCover.value.deletionItems = [];
   if (getPanelCover.value.show) {
     getPanelCover.value.loading = true;
     getPanelCover.value.deletionItems = await getSuggestedDeletions(getActivePanel.value);
@@ -155,31 +149,10 @@ watchEffect(async () => {
   }
 });
 
-// reruns report when processing stops to target embedded item changes
-watchEffect(async () => {
-  if (getPanelCover.value.loading) return
-  if (getPanelCover.value.show && !processing.value) {
-    getPanelCover.value.deletionItems = await getSuggestedDeletions(getActivePanel.value);
-  }
-});
-
-// reruns report when an item changes
-watch(() => getSelectedItem(), async (newItem) => {
-  if (getPanelCover.value.loading) return
-  if (newItem && getPanelCover.value.show) {
-    getPanelCover.value.deletionItems = await getSuggestedDeletions(getActivePanel.value);
-  }
-}, { deep: true });
-
-// ensures the lag free closing and opening of the panel cover
-watch(getActivePanel, async (newPanel) => {
-  getPanelCover.value.deletionItems = [];
-  getPanelCover.value.deletionItems = await getSuggestedDeletions(newPanel);
-})
-
-const isSelected = item => {
-  if (!getSelectedItem()) return false
-  return getSelectedItem().sysId === item.sysId
+const isSelected = (item: SheetItem) => {
+  const selectedItem = getSelectedItem()
+  if (!selectedItem) return false
+  return selectedItem.sysId === item.sysId
 }
 </script>
 
