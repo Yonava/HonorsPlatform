@@ -15,10 +15,7 @@
           {{ mod.term }}
         </div>
         <div class="d-flex flex-row align-center mb-3">
-          <h4
-            class=""
-            style="color: rgba(255,255,255,0.9); font-size: 1.25em; line-height: 0.3;"
-          >
+          <h4 style="color: rgba(255,255,255,0.9); font-size: 1.25em; line-height: 0.3;">
             {{ mod.courseCode }}
           </h4>
           <span

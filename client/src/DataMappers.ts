@@ -11,8 +11,6 @@ import {
 } from "./SheetTypes";
 import { YearOption, StatusOption } from "./StudentTools";
 
-export const instructorCache: string[] = []
-
 function removeEmptyObjects(item: Object) {
   return Object
     .values(item)
@@ -69,9 +67,6 @@ export async function unmapStudents(students: Student[]): Promise<string[][]> {
 export function mapModules(sheetData: string[][]): Module[] {
   return sheetData
     .map((module, index) => {
-      if (module[5] && !instructorCache.includes(module[5])) {
-        instructorCache.push(module[5]);
-      }
       return {
         row: index + 2,
         sysId: module[0] ?? '',
@@ -99,9 +94,6 @@ export function unmapModules(modules: Module[]): string[][] {
 export function mapCompletedModules(sheetData: string[][]): CompletedModule[] {
   return sheetData
     .map((module, index) => {
-      if (module[5] && !instructorCache.includes(module[5])) {
-        instructorCache.push(module[5]);
-      }
       return {
         row: index + 2,
         sysId: module[0] ?? '',
@@ -186,9 +178,6 @@ export function unmapGradEngagements(engagements: GradEngagement[]): string[][] 
 export function mapTheses(sheetData: string[][]): Thesis[] {
   return sheetData
     .map((thesis, index) => {
-      if (thesis[9] && !instructorCache.includes(thesis[9])) {
-        instructorCache.push(thesis[9]);
-      }
       return {
         row: index + 2,
         sysId: thesis[0] ?? '',

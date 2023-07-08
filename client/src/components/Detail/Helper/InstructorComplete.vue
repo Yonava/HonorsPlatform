@@ -12,8 +12,10 @@
 </template>
 
 <script setup lang="ts">
-import { instructorAutoComplete } from '../../../InstructorAutoComplete'
-import { computed } from 'vue'
+import { useInstructorAutoComplete } from '../../../InstructorAutoComplete'
+import { computed ,watch} from 'vue'
+
+console.log('session started')
 
 const props = defineProps<{
   color?: string,
@@ -28,8 +30,22 @@ const buttonText = computed(() => {
   return instructorSuggestion.value || 'No Suggestions'
 })
 
+const {
+  getSuggestedInstructor,
+  init: reComputeInstructors
+} = useInstructorAutoComplete()
+
 const instructorSuggestion = computed(() => {
-  return instructorAutoComplete(props.instructor)
+  return getSuggestedInstructor(props.instructor || '')
+})
+
+watch(() => props.instructor, (newInput, oldInput) => {
+  const newLength = newInput?.length || 0
+  const oldLength = oldInput?.length || 0
+  const distance = Math.abs(newLength - oldLength)
+  if (distance > 1) {
+    reComputeInstructors()
+  }
 })
 
 const color = computed(() => {

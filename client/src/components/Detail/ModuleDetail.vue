@@ -86,7 +86,7 @@ import MoveModule from './Helper/MoveModule.vue'
 import InstructorComplete from './Helper/InstructorComplete.vue'
 import DetailFrame from './Helper/DetailFrame.vue'
 
-import { ref, toRefs } from 'vue'
+import { toRefs } from 'vue'
 import { termValidator } from '../../TermValidator'
 import { getPanel } from '../../Panels'
 
