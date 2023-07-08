@@ -4,59 +4,64 @@
       <template #main>
         <DetailHeader
           v-model="student.name"
-          :id="student.id"
           placeholder="Student Name"
         >
-          <template
-            v-if="!student.id"
-            #id
+          <v-dialog
+            v-model="idDialog"
+            width="300"
           >
-            <v-dialog
-              v-model="idDialog"
-              width="300"
-            >
-              <template #activator="{ props }">
-                <v-btn
-                  v-bind="props"
-                  size="x-small"
-                  color="red"
+            <template #activator="{ props }">
+              <v-btn
+                v-if="!student.id"
+                v-bind="props"
+                size="x-small"
+                color="blue-darken-2"
+              >
+                Add Student ID
+              </v-btn>
+              <div
+                v-else
+                v-bind="props"
+                @click="tempStudentId = student.id;"
+                class="d-flex align-center px-2 py-1 edit-student-id"
+              >
+                <div>{{ student.id }}</div>
+                <v-icon
+                  size="small"
+                  style="opacity: 0.5;"
                 >
-                  Add Student ID
-                </v-btn>
-              </template>
-              <div class="student-id-dialog pa-4">
-                <v-icon color="red">mdi-alert</v-icon>
-                <p
-                  style="color: red"
-                  class="mb-2"
-                >
-                  Warning: Student IDs are unique and cannot be changed once
-                  set!
-                </p>
-                <v-text-field
-                  v-model="tempStudentId"
-                  :rules="[studentIdRule]"
-                  variant="solo"
-                  label="Student ID"
-                  class="mb-2"
-                ></v-text-field>
-                <div class="d-flex">
-                  <v-btn
-                    @click="saveId"
-                    :disabled="typeof studentIdRule(tempStudentId) === 'string'"
-                    color="green"
-                  >
-                    Save
-                  </v-btn>
-                  <v-spacer></v-spacer>
-                  <v-btn
-                    @click="idDialog = false"
-                    color="red"
-                  > Cancel </v-btn>
-                </div>
+                  mdi-pencil
+                </v-icon>
+                <v-tooltip activator="parent">
+                  Edit Student ID
+                </v-tooltip>
               </div>
-            </v-dialog>
-          </template>
+            </template>
+            <v-sheet
+              class="student-id-dialog pa-4"
+            >
+              <v-text-field
+                v-model="tempStudentId"
+                :rules="[studentIdRule]"
+                label="Student ID"
+                class="mb-2"
+              ></v-text-field>
+              <div class="d-flex">
+                <v-btn
+                  @click="saveId"
+                  :disabled="typeof studentIdRule(tempStudentId) === 'string'"
+                  color="green"
+                >
+                  Save
+                </v-btn>
+                <v-spacer></v-spacer>
+                <v-btn
+                  @click="idDialog = false"
+                  color="red"
+                > Cancel </v-btn>
+              </div>
+            </v-sheet>
+          </v-dialog>
         </DetailHeader>
         <v-btn
           v-if="!student.email"
@@ -208,7 +213,7 @@ import { toRefs, ref, computed, Ref } from 'vue'
 import { Student } from '../../SheetTypes'
 
 const { open, close } = useDialog();
-const { setPanel, newSysId } = useSheetManager();
+const { setPanel } = useSheetManager();
 
 const { Students, Theses, addItem } = useDocumentCache();
 const { list: items, selected } = toRefs(Students);
@@ -227,12 +232,25 @@ const movingStudent = ref(false);
 const showAddNote = ref(false);
 
 function studentIdRule(studentId: string) {
-  if (!studentId) return "Enter Student ID";
+  if (!studentId) {
+    return true;
+  }
   const existingStudent = items.value.find(
     (item) => item.id === studentId
   );
-  if (existingStudent) return `Student ID already occupied by ${existingStudent.name || "(no name)"}`;
-  if (/^\d{7}$/.test(studentId)) return true;
+  if (existingStudent) {
+    if (existingStudent.sysId === student.value.sysId) {
+      return true;
+    }
+    else if (existingStudent.name) {
+      return `Student ID already in use by ${existingStudent.name}`;
+    } else {
+      return `Student ID already in use`;
+    }
+  };
+  if (/^\d{7}$/.test(studentId)) {
+    return true;
+  }
   return "Invalid Student ID";
 }
 
@@ -259,7 +277,7 @@ const thesisButton = computed(() => {
   };
 });
 
-function viewThesis() {
+const viewThesis = () => {
   if (!thesis.value) {
     addItem({
       panel: thesisPanel,
@@ -275,7 +293,7 @@ function viewThesis() {
   });
 }
 
-async function graduate() {
+const graduate = async () => {
   if (typeof student.value.row !== "number") return;
 
   const _student = JSON.parse(JSON.stringify(student.value));
@@ -332,8 +350,19 @@ function addStudentNote(event: { initials: string; note: string, date: string })
 
 <style scoped>
 .student-id-dialog {
-  background: rgb(244, 244, 244);
   border-radius: 5px;
   box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+}
+
+.edit-student-id:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.edit-student-id {
+  transition: 0.3s;
+  cursor: pointer;
+  gap: 5px;
+  border-radius: 5px;
+  transform: translateX(-6px)
 }
 </style>
