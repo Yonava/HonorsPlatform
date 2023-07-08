@@ -446,10 +446,11 @@ export const useDocumentCache = defineStore("documentCache", {
         panel: oldPanel,
         showWarning: false,
       })
-      await postInRange(
+      const row = await postInRange(
         newPanel.sheetRange,
         await newPanel.mappers.unmap([newItem])
       )
+      newItem.row = row;
       this[newPanel.sheetRange].list.unshift(newItem);
     }
   }

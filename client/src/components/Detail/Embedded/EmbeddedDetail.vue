@@ -61,7 +61,7 @@ const { getActivePanel, getActiveEmbeddedPanel } = sheetManager
 const { loadingItems } = storeToRefs(sheetManager)
 
 const documents = useDocumentCache()
-const { deleteItem, setSelectedItem, getSelectedItem, addItem } = documents
+const { deleteItem, setSelectedItem, getSelectedItem, addItem, updateItem } = documents
 
 const { filterBy, text } = getActivePanel.embedded
 
@@ -74,6 +74,12 @@ const displayedItems = computed(() => {
 })
 
 const addEmbeddedItem = async () => {
+  // edge case for when parent panel is not yet saved to the sheet
+  const parentItem = getSelectedItem()!
+  if (!parentItem.row) {
+    updateItem()
+  }
+
   await addItem({
     panel: getActiveEmbeddedPanel,
     pin: false,

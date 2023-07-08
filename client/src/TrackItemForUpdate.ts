@@ -61,4 +61,15 @@ export function useUpdateItem(item: Ref<SheetItem>, panelObject?: Panel) {
       }, updateDebounceMs);
     }
   }, { deep: true, immediate: true })
+
+  const forceUpdate = () => {
+    updateItem({
+      item: item.value,
+      panel,
+    })
+  }
+
+  return {
+    forceUpdate
+  }
 }

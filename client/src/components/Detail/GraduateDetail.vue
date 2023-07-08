@@ -124,7 +124,7 @@ async function sendBackToStudents() {
   open({
     body: {
       title: "Success!",
-      description: `${_grad.name} has been moved to students.`,
+      description: 'Grad has been moved over to students.',
       buttons: [
         {
           text: "Dismiss",
@@ -132,7 +132,7 @@ async function sendBackToStudents() {
           onClick: close,
         },
         {
-          text: `View ${_grad.name}s Student Profile`,
+          text: 'View Student Profile',
           color: `${getPanel('STUDENTS').color}`,
           onClick: () => {
             setPanel('STUDENTS', {

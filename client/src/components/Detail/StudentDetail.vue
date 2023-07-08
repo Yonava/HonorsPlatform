@@ -262,6 +262,10 @@ async function saveId() {
 const thesisPanel = getPanel("THESES");
 const thesis = computed(() => Theses.list.find((thesis) => thesis.studentSysId === student.value.sysId));
 
+const savedToSheet = () => {
+  return typeof student.value.row === "number"
+}
+
 const thesisButton = computed(() => {
   if (!thesis.value) {
     return {
@@ -270,6 +274,7 @@ const thesisButton = computed(() => {
       color: thesisPanel.color,
     };
   }
+
   return {
     text: "View Thesis",
     icon: thesisPanel.icon,
@@ -294,7 +299,9 @@ const viewThesis = () => {
 }
 
 const graduate = async () => {
-  if (typeof student.value.row !== "number") return;
+  if (!savedToSheet()) {
+    return;
+  }
 
   const _student = JSON.parse(JSON.stringify(student.value));
   movingStudent.value = true;
