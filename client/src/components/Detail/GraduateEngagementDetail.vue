@@ -3,9 +3,10 @@
     <template #main>
       <DetailHeader
         v-model="event.event"
-        :id="event.gradId"
         placeholder="Event Name"
-      />
+      >
+        <LinkStudentButton linkFrom="graduates" />
+      </DetailHeader>
       <v-text-field
         v-model="event.dateTime"
         label="Time"
@@ -21,12 +22,15 @@
 <script setup lang="ts">
 import DetailHeader from './Helper/DetailHeader.vue'
 import DetailFrame from './Helper/DetailFrame.vue'
+import LinkStudentButton from './Helper/LinkStudentButton.vue'
 
-import { toRefs } from 'vue'
+import { GradEngagement } from '../../SheetTypes'
+import { toRefs, Ref } from 'vue'
 import { useDocumentCache } from '../../store/useDocumentCache'
 import { useUpdateItem } from '../../TrackItemForUpdate'
 
 const { "Grad Engagements": gradEngagements } = useDocumentCache()
-const { selected: event } = toRefs(gradEngagements)
+const { selected } = toRefs(gradEngagements)
+const event = selected as Ref<GradEngagement>
 useUpdateItem(event)
 </script>

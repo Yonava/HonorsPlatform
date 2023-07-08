@@ -10,23 +10,23 @@
           style="font-weight: 300; font-size: 0.6em"
         >
           <div
-            :style="studentInfo.style"
+            :style="student.style"
             class="d-flex flew-row align-center"
           >
             <v-icon
               class="mr-1"
               style="opacity: 0.75"
             >
-              {{ studentInfo.icon }}
+              {{ student.icon }}
             </v-icon>
             <p>
-              {{ studentInfo.text }}
+              {{ student.text }}
             </p>
             <v-tooltip
               :disabled="smAndDown"
               activator="parent"
               location="bottom"
-            >{{ studentInfo.tooltip }}</v-tooltip>
+            >{{ student.tooltip }}</v-tooltip>
           </div>
         </span>
       </div>
@@ -163,5 +163,8 @@ const decisionStatus = computed(() => {
   }
 })
 
-const { studentInfo } = useStudentInfo(props.item.studentSysId)
+const student = computed(() => {
+  const { studentInfo } = useStudentInfo(props.item.studentSysId)
+  return studentInfo.value
+})
 </script>

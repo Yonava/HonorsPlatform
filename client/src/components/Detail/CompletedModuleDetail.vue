@@ -3,9 +3,10 @@
     <template #main>
       <DetailHeader
         v-model="completedModule.courseCode"
-        :id="completedModule.studentId"
         placeholder="Course Code"
-      />
+      >
+        <LinkStudentButton />
+      </DetailHeader>
 
       <v-text-field
         v-model="completedModule.completedDate"
@@ -75,13 +76,16 @@
 import DetailHeader from './Helper/DetailHeader.vue'
 import InstructorComplete from './Helper/InstructorComplete.vue'
 import DetailFrame from './Helper/DetailFrame.vue'
+import LinkStudentButton from './Helper/LinkStudentButton.vue'
 
-import { toRefs } from 'vue'
+import { toRefs, Ref } from 'vue'
+import type { CompletedModule } from '../../SheetTypes'
 import { useDocumentCache } from '../../store/useDocumentCache'
 import { useUpdateItem } from '../../TrackItemForUpdate'
 
 const { "Completed Modules": CompletedModules } = useDocumentCache()
-const { selected: completedModule } = toRefs(CompletedModules)
+const { selected } = toRefs(CompletedModules)
+const completedModule = selected as Ref<CompletedModule>
 useUpdateItem(completedModule)
 </script>
 

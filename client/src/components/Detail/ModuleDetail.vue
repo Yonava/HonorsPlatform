@@ -5,24 +5,7 @@
         v-model="module.courseCode"
         placeholder="Course Code"
       >
-        <div
-          @click="linkStudent"
-          :style="student.style"
-          class="d-flex flew-row align-center clickable"
-        >
-          <v-icon
-            class="mr-1"
-            style="opacity: 0.75"
-          >
-            {{ student.icon }}
-          </v-icon>
-          <p>
-            {{ student.text }}
-          </p>
-          <v-tooltip activator="parent">
-            Link Student
-          </v-tooltip>
-        </div>
+        <LinkStudentButton />
       </DetailHeader>
 
       <v-text-field
@@ -103,15 +86,14 @@ import DetailHeader from './Helper/DetailHeader.vue'
 import MoveModule from './Helper/MoveModule.vue'
 import InstructorComplete from './Helper/InstructorComplete.vue'
 import DetailFrame from './Helper/DetailFrame.vue'
-import LinkStudent from './Helper/LinkStudent.vue'
+import LinkStudentButton from './Helper/LinkStudentButton.vue'
 
-import { toRefs, Ref, computed } from 'vue'
+import { toRefs, Ref } from 'vue'
 import { Module } from '../../SheetTypes'
 import { termValidator } from '../../TermValidator'
 import { getPanel } from '../../Panels'
 
 import { useUpdateItem } from '../../TrackItemForUpdate'
-import { useStudentInfo } from '../ListItem/useStudentInfo'
 import { useDialog } from '../../store/useDialog'
 import { useDocumentCache } from '../../store/useDocumentCache'
 
@@ -125,34 +107,9 @@ const { selected } = toRefs(Modules);
 const module = selected as Ref<Module>
 useUpdateItem(module)
 
-const student = computed(() => {
-  const { studentInfo } = useStudentInfo(module.value.studentSysId)
-  return studentInfo.value
-})
-
 const moveModule = () => {
   useDialog().open({
     component: MoveModule,
   })
 }
-
-const linkStudent = () => {
-  useDialog().open({
-    component: LinkStudent,
-  })
-}
 </script>
-
-<style scoped>
-.clickable {
-  cursor: pointer;
-  transition: 0.3s;
-  transform: translateX(-8px);
-  padding: 4px 8px 4px 8px;
-  border-radius: 5px;
-}
-
-.clickable:hover {
-  background: rgba(0, 0, 0, 0.1);
-}
-</style>

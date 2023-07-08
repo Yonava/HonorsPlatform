@@ -32,21 +32,25 @@
       style="font-size: 0.9em;"
     >
       <div class="d-flex flex-row">
-        <div class="d-flex flex-row align-center">
+        <div
+          class="d-flex flew-row align-center"
+        >
           <v-icon
             class="mr-1"
             style="opacity: 0.75"
           >
-            mdi-card-account-details
+            {{ grad.icon }}
           </v-icon>
           <p>
-            {{ item.gradId || '(No ID)' }}
+            {{ grad.text }}
           </p>
           <v-tooltip
             :disabled="smAndDown"
             activator="parent"
             location="bottom"
-          >Grad ID</v-tooltip>
+          >
+            {{ grad.tooltip }}
+          </v-tooltip>
         </div>
         <v-spacer></v-spacer>
       </div>
@@ -59,6 +63,8 @@ import { useDisplay } from 'vuetify'
 import { computed } from 'vue'
 import { getPanel } from '../../Panels';
 
+import { useStudentInfo } from './useStudentInfo'
+
 const { smAndDown } = useDisplay()
 
 const props = defineProps<{
@@ -69,4 +75,8 @@ const dateTimeDisplay = computed(() => {
   return props.item.dateTime.toLowerCase().split('at')[0]
 })
 
+const grad = computed(() => {
+  const { studentInfo } = useStudentInfo(props.item.studentSysId)
+  return studentInfo.value
+})
 </script>

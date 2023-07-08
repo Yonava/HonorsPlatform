@@ -5,20 +5,7 @@
         v-model="thesis.title"
         placeholder="Thesis Title"
       >
-        <div
-          class="d-flex flew-row align-center"
-          :style="studentDisplay.style"
-        >
-          <v-icon
-            class="mr-1"
-            style="opacity: 0.75"
-          >
-            {{ studentDisplay.icon }}
-          </v-icon>
-          <p>
-            {{ studentDisplay.text }}
-          </p>
-        </div>
+        <LinkStudentButton />
       </DetailHeader>
       <v-btn
         v-if="!thesis.term"
@@ -131,12 +118,12 @@
 import DetailHeader from './Helper/DetailHeader.vue'
 import InstructorComplete from './Helper/InstructorComplete.vue'
 import DetailFrame from './Helper/DetailFrame.vue'
+import LinkStudentButton from './Helper/LinkStudentButton.vue'
 
 import { toRefs, computed, Ref } from 'vue'
 import { useStudentMatcher } from '../../StudentMatcher'
 import type { Thesis } from '../../SheetTypes'
 import { getPanel } from '../../Panels'
-import { useStudentInfo } from '../ListItem/useStudentInfo'
 import { getCurrentTerm, termValidator } from '../../TermValidator'
 import {
   emailValidator,
@@ -157,11 +144,6 @@ useUpdateItem(thesis)
 const student = computed(() => {
   const { studentMatch } = useStudentMatcher(thesis.value.studentSysId)
   return studentMatch.value
-})
-
-const studentDisplay = computed(() => {
-  const { studentInfo } = useStudentInfo(thesis.value.studentSysId)
-  return studentInfo.value
 })
 
 const studentPanel = getPanel('STUDENTS')

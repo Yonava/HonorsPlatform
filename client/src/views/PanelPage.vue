@@ -151,13 +151,11 @@
 import {
   ref,
   computed,
-  onMounted,
   watchEffect
 } from 'vue'
 import { useRoute } from 'vue-router'
 import PanelCoverAppBar from '../components/Panel/PanelCoverAppBar.vue'
 import PanelList from '../components/Panel/PanelList.vue'
-import StudentDetail from '../components/Detail/StudentDetail.vue'
 import SortPanel from '../components/Panel/SortPanel.vue'
 import AppBar from '../components/Panel/AppBar.vue'
 import ServeDialog from '../components/Panel/ServeDialog.vue'
@@ -169,7 +167,7 @@ import { useSheetManager } from '../store/useSheetManager'
 import { useDocumentCache } from '../store/useDocumentCache'
 import { useDialog } from '../store/useDialog'
 import { storeToRefs } from 'pinia'
-import { getPanel, panels, version } from '../Panels'
+import { panels, version } from '../Panels'
 
 const { setPanel } = useSheetManager()
 const { getActivePanel } = storeToRefs(useSheetManager())
@@ -189,7 +187,6 @@ if (route.query.type) {
 const {
   smAndUp,
   mdAndUp,
-  lgAndUp,
   smAndDown
 } = useDisplay()
 
