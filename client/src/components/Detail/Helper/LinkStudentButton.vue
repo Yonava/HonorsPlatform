@@ -11,7 +11,7 @@
       {{ student.icon }}
     </v-icon>
     <p>
-      {{ student.text }}
+      {{ student.text }} {{  getSelectedItem().studentSysId }}
     </p>
     <v-tooltip activator="parent">
       Link Student
