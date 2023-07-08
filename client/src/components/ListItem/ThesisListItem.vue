@@ -10,23 +10,23 @@
           style="font-weight: 300; font-size: 0.6em"
         >
           <div
-            :style="studentMatch.style"
+            :style="studentInfo.style"
             class="d-flex flew-row align-center"
           >
             <v-icon
               class="mr-1"
               style="opacity: 0.75"
             >
-              {{ studentMatch.icon }}
+              {{ studentInfo.icon }}
             </v-icon>
             <p>
-              {{ studentMatch.text }}
+              {{ studentInfo.text }}
             </p>
             <v-tooltip
               :disabled="smAndDown"
               activator="parent"
               location="bottom"
-            >{{ studentMatch.tooltip }}</v-tooltip>
+            >{{ studentInfo.tooltip }}</v-tooltip>
           </div>
         </span>
       </div>
@@ -104,7 +104,7 @@ import { computed } from 'vue'
 import { Thesis } from '../../SheetTypes'
 import { termValidator } from '../../TermValidator'
 import { useDisplay } from 'vuetify'
-import { useStudentMatcher } from './useStudentMatcher'
+import { useStudentInfo } from './useStudentInfo'
 
 const props = defineProps<{
   item: Thesis
@@ -163,5 +163,5 @@ const decisionStatus = computed(() => {
   }
 })
 
-const { studentMatch } = useStudentMatcher(props.item.studentSysId)
+const { studentInfo } = useStudentInfo(props.item.studentSysId)
 </script>

@@ -53,22 +53,22 @@
         <v-spacer></v-spacer>
         <div
           class="d-flex flew-row align-center"
-          :style="studentMatch.style"
+          :style="studentInfo.style"
         >
           <p>
-            {{ studentMatch.text }}
+            {{ studentInfo.text }}
           </p>
           <v-icon
             class="ml-1"
             style="opacity: 0.75"
           >
-            {{ studentMatch.icon }}
+            {{ studentInfo.icon }}
           </v-icon>
           <v-tooltip
             :disabled="smAndDown"
             activator="parent"
             location="bottom"
-          >{{ studentMatch.tooltip }}</v-tooltip>
+          >{{ studentInfo.tooltip }}</v-tooltip>
         </div>
       </div>
     </div>
@@ -76,7 +76,7 @@
 </template>
 
 <script setup lang="ts">
-import { useStudentMatcher } from './useStudentMatcher'
+import { useStudentInfo } from './useStudentInfo'
 import { computed } from 'vue'
 import { useDisplay } from 'vuetify'
 import { CompletedModule } from '../../SheetTypes'
@@ -104,5 +104,5 @@ const term = computed(() => {
   }
 })
 
-const { studentMatch } = useStudentMatcher(props.item.studentId)
-</script>
+const { studentInfo } = useStudentInfo(props.item.studentId)
+</script>./useStudentInfo

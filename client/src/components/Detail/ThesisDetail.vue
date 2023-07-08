@@ -3,9 +3,23 @@
     <template #main>
       <DetailHeader
         v-model="thesis.title"
-        :id="thesis.studentSysId"
         placeholder="Thesis Title"
-      />
+      >
+        <div
+          class="d-flex flew-row align-center"
+          :style="studentDisplay.style"
+        >
+          <v-icon
+            class="mr-1"
+            style="opacity: 0.75"
+          >
+            {{ studentDisplay.icon }}
+          </v-icon>
+          <p>
+            {{ studentDisplay.text }}
+          </p>
+        </div>
+      </DetailHeader>
       <v-btn
         v-if="!thesis.term"
         @click="thesis.term = getCurrentTerm()"
@@ -119,8 +133,10 @@ import InstructorComplete from './Helper/InstructorComplete.vue'
 import DetailFrame from './Helper/DetailFrame.vue'
 
 import { toRefs, computed, Ref } from 'vue'
+import { useStudentMatcher } from '../../StudentMatcher'
 import type { Thesis } from '../../SheetTypes'
 import { getPanel } from '../../Panels'
+import { useStudentInfo } from '../ListItem/useStudentInfo'
 import { getCurrentTerm, termValidator } from '../../TermValidator'
 import {
   emailValidator,
@@ -133,19 +149,26 @@ import { useDialog } from '../../store/useDialog'
 import { useUpdateItem } from '../../TrackItemForUpdate'
 
 const { setPanel } = useSheetManager()
-const { Theses, getItemBySysId, deleteItem } = useDocumentCache()
+const { Theses, deleteItem } = useDocumentCache()
 const { selected } = toRefs(Theses)
 const thesis = selected as Ref<Thesis>
 useUpdateItem(thesis)
+
+const student = computed(() => {
+  const { studentMatch } = useStudentMatcher(thesis.value.studentSysId)
+  return studentMatch.value
+})
+
+const studentDisplay = computed(() => {
+  const { studentInfo } = useStudentInfo(thesis.value.studentSysId)
+  return studentInfo.value
+})
 
 const studentPanel = getPanel('STUDENTS')
 const graduatePanel = getPanel('GRADUATES')
 
 const viewProfileButton = computed(() => {
-  const studentSysId = thesis.value.studentSysId
-  const student = getItemBySysId(studentSysId, 'STUDENTS')
-  const graduate = getItemBySysId(studentSysId, 'GRADUATES')
-  if (!studentSysId) {
+  if (student.value.error === 'NOT_LINKED') {
     return {
       text: 'No Student Linked',
       color: 'red-darken-4',
@@ -172,16 +195,16 @@ const viewProfileButton = computed(() => {
         })
       },
     }
-  } else if (student) {
+  } else if (student.value.foundIn === 'STUDENTS') {
     return {
-      text: 'View ' + studentPanel.title.singular,
+      text: 'Student Profile',
       color: studentPanel.color,
       icon: studentPanel.icon,
       onClick: () => jumpTo('STUDENTS'),
     }
-  } else if (graduate) {
+  } else if (student.value.foundIn === 'GRADUATES') {
     return {
-      text: 'View ' + graduatePanel.title.singular,
+      text: 'Grad Profile',
       color: graduatePanel.color,
       icon: graduatePanel.icon,
       onClick: () => jumpTo('GRADUATES'),

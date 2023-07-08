@@ -81,23 +81,25 @@
         </div>
         <v-spacer></v-spacer>
         <div
+          :style="studentInfo.style"
           class="d-flex flew-row align-center"
-          :style="studentMatch.style"
         >
           <p>
-            {{ studentMatch.text }}
+            {{ studentInfo.text }}
           </p>
           <v-icon
             class="ml-1"
             style="opacity: 0.75"
           >
-            {{ studentMatch.icon }}
+            {{ studentInfo.icon }}
           </v-icon>
           <v-tooltip
             :disabled="smAndDown"
             activator="parent"
             location="bottom"
-          >{{ studentMatch.tooltip }}</v-tooltip>
+          >
+            {{ studentInfo.tooltip }}
+          </v-tooltip>
         </div>
       </div>
     </div>
@@ -105,9 +107,8 @@
 </template>
 
 <script setup lang="ts">
-import { useStudentMatcher } from './useStudentMatcher'
+import { useStudentInfo } from './useStudentInfo'
 import { computed } from 'vue'
-import type { ComputedRef } from 'vue'
 import { Module } from '../../SheetTypes'
 import { termValidator } from '../../TermValidator'
 import { useDisplay } from 'vuetify'
@@ -117,12 +118,6 @@ const props = defineProps<{
 }>()
 
 const { smAndDown } = useDisplay()
-
-type DocuSignStatus = {
-  icon: string,
-  text: string,
-  color: string
-}
 
 const overOneYearInProgress = computed(() => {
 
@@ -168,7 +163,7 @@ const daysSinceDate = (date: string) => {
   }
 }
 
-const docuSignStatus: ComputedRef<DocuSignStatus> = computed(() => {
+const docuSignStatus = computed(() => {
   if (props.item.docuSignCompleted) {
     return {
       icon: 'mdi-file-document-check-outline',
@@ -214,5 +209,5 @@ const term = computed(() => {
   }
 })
 
-const { studentMatch } = useStudentMatcher(props.item.studentId)
-</script>
+const { studentInfo } = useStudentInfo(props.item.studentId)
+</script>./useStudentInfo

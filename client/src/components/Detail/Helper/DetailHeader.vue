@@ -1,5 +1,6 @@
 <template>
   <div>
+
     <v-sheet
       v-if="getPanelCover.selectedForDelete.includes(getSelectedItem().sysId)"
       color="red"
@@ -14,11 +15,12 @@
         Marked For Deletion
       </p>
     </v-sheet>
+
     <div class="d-flex flex-row align-center">
       <p style="font-weight: 200">
         {{ id }}
       </p>
-      <slot name="id"></slot>
+      <slot></slot>
       <v-spacer></v-spacer>
       <SyncStatus />
     </div>

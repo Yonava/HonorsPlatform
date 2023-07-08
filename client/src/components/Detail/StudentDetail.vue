@@ -149,7 +149,7 @@
             style="width: 49%"
           >
             <v-icon
-              class="mr-4"
+              class="mr-2"
               size="x-large"
             >
               {{ thesisButton.icon }}
@@ -164,7 +164,7 @@
             style="width: 49%"
           >
             <v-icon
-              class="mr-4"
+              class="mr-2"
               size="x-large"
             >
               {{ getPanel("GRADUATES").icon }}
