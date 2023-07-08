@@ -69,7 +69,7 @@ export function mapModules(sheetData: string[][]): Module[] {
       return {
         row: index + 2,
         sysId: module[0] ?? '',
-        studentId: module[1] ?? '',
+        studentSysId: module[1] ?? '',
         courseCode: module[2] ?? '',
         description: module[3] ?? '',
         term: module[4] ?? '',
@@ -96,7 +96,7 @@ export function mapCompletedModules(sheetData: string[][]): CompletedModule[] {
       return {
         row: index + 2,
         sysId: module[0] ?? '',
-        studentId: module[1] ?? '',
+        studentSysId: module[1] ?? '',
         courseCode: module[2] ?? '',
         description: module[3] ?? '',
         term: module[4] ?? '',
@@ -153,7 +153,7 @@ export function mapGradEngagements(sheetData: string[][]): GradEngagement[] {
       return {
         row: index + 2,
         sysId: engagement[0] ?? '',
-        gradId: engagement[1] ?? '',
+        studentSysId: engagement[1] ?? '',
         event: engagement[2] ?? '',
         dateTime: engagement[3] ?? '',
         note: engagement[4] ?? '',
@@ -166,7 +166,7 @@ export function unmapGradEngagements(engagements: GradEngagement[]): string[][] 
   return engagements.map((engagement) => {
     return [
       engagement.sysId,
-      engagement.gradId,
+      engagement.studentSysId,
       engagement.event,
       engagement.dateTime,
       engagement.note,

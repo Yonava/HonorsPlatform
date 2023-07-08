@@ -104,5 +104,5 @@ const term = computed(() => {
   }
 })
 
-const { studentInfo } = useStudentInfo(props.item.studentId)
+const { studentInfo } = useStudentInfo(props.item.studentSysId)
 </script>./useStudentInfo

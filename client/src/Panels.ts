@@ -68,15 +68,11 @@ export const panels = {
       text: {
         title: 'Modules In Progress',
         add: 'Add Module',
-        noItemsToDisplay: 'No modules currently in progress.',
-        lock: {
-          title: 'Module Tracking',
-          condition: 'student ID'
-        }
+        noItemsToDisplay: 'No modules currently in progress.'
       },
       filterBy: {
-        inner: 'studentId',
-        outer: 'id'
+        inner: 'studentSysId',
+        outer: 'sysId'
       },
       detail: markRaw(EmbeddedModuleDetail),
       list: markRaw(EmbeddedModuleList),
@@ -169,15 +165,11 @@ export const panels = {
       text: {
         title: 'Engagement Tracking',
         add: 'Add Event',
-        noItemsToDisplay: 'No engagements currently recorded.',
-        lock: {
-          title: 'Engagement Tracking',
-          condition: 'grad ID'
-        }
+        noItemsToDisplay: 'No engagements currently recorded.'
       },
       filterBy: {
-        inner: 'gradId',
-        outer: 'id'
+        inner: 'studentSysId',
+        outer: 'sysId'
       },
       detail: markRaw(EmbeddedEventDetail),
       list: markRaw(EmbeddedEventList),

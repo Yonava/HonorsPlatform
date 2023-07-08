@@ -81,24 +81,24 @@
         </div>
         <v-spacer></v-spacer>
         <div
-          :style="studentInfo.style"
+          :style="student.style"
           class="d-flex flew-row align-center"
         >
           <p>
-            {{ studentInfo.text }}
+            {{ student.text }}
           </p>
           <v-icon
             class="ml-1"
             style="opacity: 0.75"
           >
-            {{ studentInfo.icon }}
+            {{ student.icon }}
           </v-icon>
           <v-tooltip
             :disabled="smAndDown"
             activator="parent"
             location="bottom"
           >
-            {{ studentInfo.tooltip }}
+            {{ student.tooltip }}
           </v-tooltip>
         </div>
       </div>
@@ -209,5 +209,8 @@ const term = computed(() => {
   }
 })
 
-const { studentInfo } = useStudentInfo(props.item.studentId)
-</script>./useStudentInfo
+const student = computed(() => {
+  const { studentInfo } = useStudentInfo(props.item.studentSysId)
+  return studentInfo.value
+})
+</script>

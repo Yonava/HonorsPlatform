@@ -11,7 +11,7 @@ export interface SheetEntry {
 }
 
 export interface Module extends SheetEntry {
-  studentId: string;
+  studentSysId: string;
   courseCode: string;
   description: string;
   term: string;
@@ -49,7 +49,7 @@ export interface Student extends SheetEntry {
 }
 
 export interface GradEngagement extends SheetEntry {
-  gradId: string;
+  studentSysId: string;
   event: string;
   dateTime: string;
   note: string;

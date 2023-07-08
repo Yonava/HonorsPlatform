@@ -77,6 +77,11 @@
         label="Decision"
       ></v-select>
       <div class="d-flex flex-row">
+        <InstructorComplete
+          @update="thesis.mentor = $event; thesis.mentorEmail = getFacultyEmail($event)"
+          :instructor="thesis.mentor"
+          color="green"
+        />
         <v-spacer></v-spacer>
         <v-btn
           v-if="thesis.mentor && !thesis.mentorEmail"
@@ -86,11 +91,6 @@
           class="mb-2"
         >New Faculty Email</v-btn>
       </div>
-      <InstructorComplete
-        @update="thesis.mentor = $event; thesis.mentorEmail = getFacultyEmail($event)"
-        :instructor="thesis.mentor"
-        color="green"
-      />
       <div class="d-flex flex-row align-center justify-center">
         <v-text-field
           v-model="thesis.mentor"
