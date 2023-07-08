@@ -4,6 +4,7 @@
 - Overhauled "increment student year" to add the ability to include or exclude students
 - Major simplifications and efficiency improvements to suggested delete panel
 - Transitioned InstructorAutoComplete from legacy instructor caching system to new useDocumentCache api and enhanced the logic to re-assess available instructors efficiently on the fly
+- Fixed major bug with postInRange causing data to be misaligned when posting batch data
 
 ### prerelease 0.84 (Jul. 4)
 - Improved loading times across every panel
