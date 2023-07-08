@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { getRange, clearByRow, updateByRow, postInRange, getRanges } from '../SheetsAPI';
-import { panels, Panel } from "../Panels";
+import { panels, Panel, PanelName } from "../Panels";
 import * as types from "../SheetTypes";
 import { useSheetManager } from "./useSheetManager";
 import { warn } from "../Warn";
@@ -106,6 +106,14 @@ export const useDocumentCache = defineStore("documentCache", {
       const { panel: activePanel } = useSheetManager();
       const panel = panelObject ?? activePanel;
       return state[panel.sheetRange].selected;
+    },
+    getItemBySysId: (state) => (sysId: string, panelName?: PanelName) => {
+      const { panel: activePanel } = useSheetManager();
+      if (panelName) {
+        const panel = panels[panelName];
+        return state[panel.sheetRange].list.find((item) => item.sysId === sysId);
+      }
+      return state[activePanel.sheetRange].list.find((item) => item.sysId === sysId);
     },
     dueForRefresh: (state) => (options: DueForRefresh = {}) => {
       const {

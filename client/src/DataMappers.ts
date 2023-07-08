@@ -46,7 +46,6 @@ export async function mapStudents(sheetData: string[][]): Promise<Student[]> {
 export async function unmapStudents(students: Student[]): Promise<string[][]> {
   const headerRow = await getHeaderRowCache('Students');
   const categories = headerRow.slice(9);
-  // create 10 char id using base64 encoding
   return students.map((student: Student) => {
     const misc = categories.map((category: string) => student.misc[category] ?? '');
     return [
@@ -181,18 +180,16 @@ export function mapTheses(sheetData: string[][]): Thesis[] {
       return {
         row: index + 2,
         sysId: thesis[0] ?? '',
-        studentId: thesis[1] ?? '',
-        name: thesis[2] ?? '',
-        email: thesis[3] ?? '',
-        title: thesis[4] ?? '',
-        proposalReceived: thesis[5] ?? '',
-        breakoutRoom: thesis[6] ?? '',
-        decision: (thesis[7] ?? '') as ThesisDecision,
-        term: thesis[8] ?? '',
-        mentor: thesis[9] ?? '',
-        mentorEmail: thesis[10] ?? '',
-        draftReceived: thesis[11] ?? '',
-        note: thesis[12] ?? '',
+        studentSysId: thesis[1] ?? '',
+        title: thesis[2] ?? '',
+        proposalReceived: thesis[3] ?? '',
+        breakoutRoom: thesis[4] ?? '',
+        decision: (thesis[5] ?? '') as ThesisDecision,
+        term: thesis[6] ?? '',
+        mentor: thesis[7] ?? '',
+        mentorEmail: thesis[8] ?? '',
+        draftReceived: thesis[9] ?? '',
+        note: thesis[10] ?? '',
       };
     })
     .filter(removeEmptyObjects);

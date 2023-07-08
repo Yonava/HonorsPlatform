@@ -15,8 +15,6 @@
 import { useInstructorAutoComplete } from '../../../InstructorAutoComplete'
 import { computed ,watch} from 'vue'
 
-console.log('session started')
-
 const props = defineProps<{
   color?: string,
   instructor: string | null,
