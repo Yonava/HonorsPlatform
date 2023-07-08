@@ -1,4 +1,9 @@
-# Current Version: prerelease 0.84
+# Current Version: prerelease 0.84.3
+
+### prerelease 0.84.3
+- Overhauled "increment student year" to add the ability to include or exclude students
+- Major simplifications and efficiency improvements to suggested delete panel
+- Transitioned InstructorAutoComplete from legacy instructor caching system to new useDocumentCache api and enhanced the logic to re-assess available instructors efficiently on the fly
 
 ### prerelease 0.84 (Jul. 4)
 - Improved loading times across every panel
