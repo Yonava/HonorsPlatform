@@ -7,16 +7,29 @@
           :id="student.id"
           placeholder="Student Name"
         >
-          <template v-if="!student.id" #id>
-            <v-dialog v-model="idDialog" width="300">
+          <template
+            v-if="!student.id"
+            #id
+          >
+            <v-dialog
+              v-model="idDialog"
+              width="300"
+            >
               <template #activator="{ props }">
-                <v-btn v-bind="props" size="x-small" color="red">
+                <v-btn
+                  v-bind="props"
+                  size="x-small"
+                  color="red"
+                >
                   Add Student ID
                 </v-btn>
               </template>
               <div class="student-id-dialog pa-4">
                 <v-icon color="red">mdi-alert</v-icon>
-                <p style="color: red" class="mb-2">
+                <p
+                  style="color: red"
+                  class="mb-2"
+                >
                   Warning: Student IDs are unique and cannot be changed once
                   set!
                 </p>
@@ -36,7 +49,10 @@
                     Save
                   </v-btn>
                   <v-spacer></v-spacer>
-                  <v-btn @click="idDialog = false" color="red"> Cancel </v-btn>
+                  <v-btn
+                    @click="idDialog = false"
+                    color="red"
+                  > Cancel </v-btn>
                 </div>
               </div>
             </v-dialog>
@@ -129,13 +145,15 @@
           <v-btn
             @click="viewThesis"
             :color="getPanel('THESES').color"
-            :loading="unlockingThesis"
             size="large"
             style="width: 49%"
           >
-            <v-icon class="mr-4" size="x-large">{{
-              getPanel("THESES").icon
-            }}</v-icon>
+            <v-icon
+              class="mr-4"
+              size="x-large"
+            >
+              {{ getPanel("THESES").icon }}
+            </v-icon>
             View Thesis
           </v-btn>
           <v-btn
@@ -145,9 +163,12 @@
             size="large"
             style="width: 49%"
           >
-            <v-icon class="mr-4" size="x-large">{{
-              getPanel("GRADUATES").icon
-            }}</v-icon>
+            <v-icon
+              class="mr-4"
+              size="x-large"
+            >
+              {{ getPanel("GRADUATES").icon }}
+            </v-icon>
             Graduate
           </v-btn>
         </div>
@@ -180,24 +201,25 @@ import {
 } from "../../StudentTools";
 import { useSheetManager } from "../../store/useSheetManager";
 import { useDocumentCache } from "../../store/useDocumentCache";
-import { useSyncState } from "../../store/useSyncState";
 import { useDialog } from "../../store/useDialog";
 import { useUpdateItem } from "../../TrackItemForUpdate";
 import { warn } from '../../Warn'
-import { toRefs, ref, computed } from 'vue'
-
-const statusOptionIcon = computed(() => `mdi-${statusOptions.find((option) => option.label === student.value.activeStatus)?.icon ?? "help"}`);
-const statusOptionLabels = computed(() => statusOptions.map((option) => option.label));
+import { toRefs, ref, computed, Ref } from 'vue'
+import { Student } from '../../SheetTypes'
 
 const { open, close } = useDialog();
 const { setPanel, newSysId } = useSheetManager();
 
 const { Students, addItem } = useDocumentCache();
-const { list: items, selected: student } = toRefs(Students);
+const { list: items, selected } = toRefs(Students);
+const student = selected as Ref<Student>;
+
 useUpdateItem(student);
 
+const statusOptionIcon = computed(() => `mdi-${statusOptions.find((option) => option.label === student.value.activeStatus)?.icon ?? "help"}`);
+const statusOptionLabels = computed(() => statusOptions.map((option) => option.label));
+
 const tempStudentId = ref("");
-const unlockingThesis = ref(false);
 
 const idDialog = ref(false);
 const movingStudent = ref(false);
@@ -215,12 +237,8 @@ function studentIdRule(studentId: string) {
 }
 
 async function saveId() {
-  unlockingThesis.value = true;
   student.value.id = tempStudentId.value;
   idDialog.value = false;
-  // buffers to allow id changes to persist before unlocking thesis
-  await new Promise((resolve) => setTimeout(resolve, 3000))
-  unlockingThesis.value = false;
 }
 
 function viewThesis() {
@@ -248,14 +266,14 @@ function viewThesis() {
     })
     return;
   }
-  const _student = JSON.parse(JSON.stringify(student.value));
+
   setPanel('THESES', {
     key: "studentId",
-    value: _student.id,
+    value: student.value.id,
     fallbackFn: () => {
       open({
         body: {
-          title: `${_student.name} Does Not Have a Thesis`,
+          title: `${student.value.name} Does Not Have a Thesis`,
           description: ``,
           buttons: [
             {
@@ -267,9 +285,9 @@ function viewThesis() {
                   postToSheet: true,
                   columns: [
                     newSysId(),
-                    _student.id,
-                    _student.name,
-                    _student.email,
+                    student.value.id,
+                    student.value.name,
+                    student.value.email,
                   ],
                 });
                 close();
@@ -280,7 +298,7 @@ function viewThesis() {
               color: getPanel("STUDENTS").color,
               onClick: () => {
                 setPanel('STUDENTS', {
-                  value: _student.sysId,
+                  value: student.value.sysId,
                 });
                 close();
               },
@@ -294,20 +312,7 @@ function viewThesis() {
 
 async function graduate() {
   if (typeof student.value.row !== "number") return;
-  // TODO: check if student has modules once canDelete is re-implemented
-    // open({
-    //   body: {
-    //     title: "Student Still Has Modules",
-    //     description: "This student still has modules. Please remove all modules from this student before graduating them.",
-    //     buttons: [
-    //       {
-    //         text: "Resolve",
-    //         color: getPanel("STUDENTS").color,
-    //         onClick: close,
-    //       }
-    //     ]
-    //   }
-    // })
+
   const _student = JSON.parse(JSON.stringify(student.value));
   movingStudent.value = true;
   try {

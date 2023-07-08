@@ -3,46 +3,26 @@
     <template #main>
       <DetailHeader
         v-model="thesis.title"
-        :id="thesis.studentId"
+        :id="thesis.studentSysId"
         placeholder="Thesis Title"
       />
-      <v-text-field
-        v-model="thesis.name"
-        clearable
-        label="Student Name"
-        prepend-icon="mdi-account"
-      ></v-text-field>
-      <v-btn
-        v-if="thesis.name && !thesis.email"
-        @click="thesis.email = getStudentEmail(thesis.name)"
-        color="green"
-        size="x-small"
-        class="mb-2"
-      >New Student Email</v-btn>
-      <v-text-field
-        v-model="thesis.email"
-        :rules="[(v) => emailValidator(v) || 'Invalid email address']"
-        clearable
-        label="Student Email"
-        prepend-icon="mdi-email"
-      ></v-text-field>
 
       <v-divider class="mb-5"></v-divider>
 
-        <v-btn
-          v-if="!thesis.term"
-          @click="thesis.term = getCurrentTerm()"
-          class="mb-2"
-          color="green"
-          size="x-small"
-        >Current Term</v-btn>
-        <v-text-field
-          v-model="thesis.term"
-          :rules="[(v) => termValidator(v) || 'Potentially invalid term']"
-          clearable
-          label="Term"
-          prepend-icon="mdi-calendar"
-        ></v-text-field>
+      <v-btn
+        v-if="!thesis.term"
+        @click="thesis.term = getCurrentTerm()"
+        class="mb-2"
+        color="green"
+        size="x-small"
+      >Current Term</v-btn>
+      <v-text-field
+        v-model="thesis.term"
+        :rules="[(v) => termValidator(v) || 'Potentially invalid term']"
+        clearable
+        label="Term"
+        prepend-icon="mdi-calendar"
+      ></v-text-field>
 
       <div class="mb-2 d-flex flex-row ">
         <v-btn
@@ -127,7 +107,9 @@
         <v-icon
           class="mr-4"
           size="x-large"
-        >{{ viewProfileButton.icon }}</v-icon>
+        >
+          {{ viewProfileButton.icon }}
+        </v-icon>
         {{ viewProfileButton.text }}
       </v-btn>
     </template>
@@ -139,34 +121,34 @@ import DetailHeader from './Helper/DetailHeader.vue'
 import InstructorComplete from './Helper/InstructorComplete.vue'
 import DetailFrame from './Helper/DetailFrame.vue'
 
-import { ref, toRefs, computed } from 'vue'
-import { getCurrentTerm, termValidator } from '../../TermValidator'
+import { toRefs, computed, Ref } from 'vue'
 import type { Thesis } from '../../SheetTypes'
 import { getPanel } from '../../Panels'
+import { getCurrentTerm, termValidator } from '../../TermValidator'
 import {
   emailValidator,
   getFacultyEmail,
-  getStudentEmail
 } from '../../EmailUtilities'
 
 import { useSheetManager } from '../../store/useSheetManager'
 import { useDocumentCache } from '../../store/useDocumentCache'
 import { useDialog } from '../../store/useDialog'
-import { storeToRefs } from 'pinia'
 import { useUpdateItem } from '../../TrackItemForUpdate'
 
 const { setPanel } = useSheetManager()
-const { Theses, Students, Graduates } = useDocumentCache()
-const { selected: thesis } = toRefs(Theses)
+const { Theses, getItemBySysId, deleteItem } = useDocumentCache()
+const { selected } = toRefs(Theses)
+const thesis = selected as Ref<Thesis>
 useUpdateItem(thesis)
 
 const studentPanel = getPanel('STUDENTS')
 const graduatePanel = getPanel('GRADUATES')
 
 const viewProfileButton = computed(() => {
-  const student = Students.list.find((student) => student.id === thesis.value.studentId)
-  const graduate = Graduates.list.find((graduate) => graduate.id === thesis.value.studentId)
-  if (!thesis.value.studentId) {
+  const studentSysId = thesis.value.studentSysId
+  const student = getItemBySysId(studentSysId, 'STUDENTS')
+  const graduate = getItemBySysId(studentSysId, 'GRADUATES')
+  if (!studentSysId) {
     return {
       text: 'No Student Linked',
       color: 'red-darken-4',
@@ -188,9 +170,7 @@ const viewProfileButton = computed(() => {
         })
       },
     }
-  }
-
-  if (student) {
+  } else if (student) {
     return {
       text: 'View ' + studentPanel.title.singular,
       color: studentPanel.color,
@@ -206,20 +186,25 @@ const viewProfileButton = computed(() => {
     }
   } else {
     return {
-      text: 'ID ' + thesis.value.studentId + ' Not Found',
+      text: 'Problem Linking Student',
       color: 'red-darken-4',
       icon: 'mdi-alert-circle',
       onClick: () => {
         const { open, close } = useDialog()
         open({
           body: {
-            title: 'ID ' + thesis.value.studentId + ' Not Found',
-            description: `This thesis has a student ID (${thesis.value.studentId}) that does not match any student or graduate. This may be because the student or graduate was deleted.`,
+            title: 'Problem Linking Student',
+            description: 'The student that this thesis was linked to no longer exists. Please relink this thesis to a student or graduate on the Google Sheet (ask Dr. Matthews) or delete it.',
             buttons: [
               {
-                text: 'Close',
+                text: 'Delete Thesis',
+                color: 'red-darken-2',
+                onClick: () => deleteItem()
+              },
+              {
+                text: 'Dismiss',
                 color: 'red',
-                onClick: () => close(),
+                onClick: () => close()
               },
             ],
           },
@@ -231,8 +216,7 @@ const viewProfileButton = computed(() => {
 
 const jumpTo = (panel: 'STUDENTS' | 'GRADUATES') => {
   setPanel(panel, {
-    key: 'id',
-    value: thesis.value.studentId
+    value: thesis.value.studentSysId
   })
 }
 </script>

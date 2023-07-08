@@ -58,9 +58,7 @@ export interface GradEngagement extends SheetEntry {
 export type ThesisDecision = "Approved" | "Rejected" | "Pending";
 
 export interface Thesis extends SheetEntry {
-  studentId: string;
-  name: string;
-  email: string;
+  studentSysId: string;
   title: string;
   proposalReceived: string;
   breakoutRoom: string;
