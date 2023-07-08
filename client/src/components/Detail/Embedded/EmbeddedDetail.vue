@@ -87,7 +87,6 @@ const addEmbeddedItem = async () => {
     panel: getActiveEmbeddedPanel,
     pin: false,
     columns: [
-      newSysId(),
       getSelectedItem()[filterBy.outer],
     ],
   })

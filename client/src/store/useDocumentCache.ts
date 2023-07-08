@@ -325,8 +325,11 @@ export const useDocumentCache = defineStore("documentCache", {
 
       if (showWarning) {
         try {
-          await warn()
-        } catch {
+          await warn({
+            title: `Delete ${panel.title.singular}?`
+          })
+        } catch (e) {
+          console.warn(e);
           return
         }
       }
@@ -335,6 +338,7 @@ export const useDocumentCache = defineStore("documentCache", {
         await waitUntilSynced({ showDialog: true });
       }
       const { sysId, row } = item;
+
 
       setProcessing(true);
       if (typeof row === "number") {
@@ -366,7 +370,7 @@ export const useDocumentCache = defineStore("documentCache", {
       }
 
       const [newItem] = await panel.mappers.map([
-        columns ?? [newSysId()]
+        columns ? [newSysId(), ...columns] : [newSysId()]
       ]);
       newItem.row = null;
 

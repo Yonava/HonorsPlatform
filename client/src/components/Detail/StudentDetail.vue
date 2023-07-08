@@ -144,7 +144,7 @@
         <div class="d-flex flex-row justify-space-between" style="width: 100%">
           <v-btn
             @click="viewThesis"
-            :color="getPanel('THESES').color"
+            :color="thesisButton.color"
             size="large"
             style="width: 49%"
           >
@@ -152,9 +152,9 @@
               class="mr-4"
               size="x-large"
             >
-              {{ getPanel("THESES").icon }}
+              {{ thesisButton.icon }}
             </v-icon>
-            View Thesis
+            {{ thesisButton.text }}
           </v-btn>
           <v-btn
             @click="graduate"
@@ -210,7 +210,7 @@ import { Student } from '../../SheetTypes'
 const { open, close } = useDialog();
 const { setPanel, newSysId } = useSheetManager();
 
-const { Students, addItem } = useDocumentCache();
+const { Students, Theses, addItem } = useDocumentCache();
 const { list: items, selected } = toRefs(Students);
 const student = selected as Ref<Student>;
 
@@ -241,72 +241,37 @@ async function saveId() {
   idDialog.value = false;
 }
 
-function viewThesis() {
-  if (!student.value.id) {
-    open({
-      body: {
-        title: "Student Must Have ID",
-        description: "A thesis is connected to each student using their Student ID number. Please add a student ID to this student before viewing their thesis.",
-        buttons: [
-          {
-            text: "Dismiss",
-            color: "blue",
-            onClick: () => close(),
-          },
-          {
-            text: "Add ID",
-            color: "green",
-            onClick: () => {
-              idDialog.value = true;
-              close();
-            },
-          }
-        ]
-      }
-    })
-    return;
-  }
+const thesisPanel = getPanel("THESES");
+const thesis = computed(() => Theses.list.find((thesis) => thesis.studentSysId === student.value.sysId));
 
+const thesisButton = computed(() => {
+  if (!thesis.value) {
+    return {
+      text: "Create Thesis",
+      icon: "mdi-plus",
+      color: thesisPanel.color,
+    };
+  }
+  return {
+    text: "View Thesis",
+    icon: thesisPanel.icon,
+    color: thesisPanel.color,
+  };
+});
+
+function viewThesis() {
+  if (!thesis.value) {
+    addItem({
+      panel: thesisPanel,
+      postToSheet: true,
+      columns: [
+        student.value.sysId,
+      ]
+    });
+  }
   setPanel('THESES', {
-    key: "studentId",
-    value: student.value.id,
-    fallbackFn: () => {
-      open({
-        body: {
-          title: `${student.value.name} Does Not Have a Thesis`,
-          description: ``,
-          buttons: [
-            {
-              text: "Create New Thesis",
-              color: "green",
-              onClick: () => {
-                addItem({
-                  panel: getPanel("THESES"),
-                  postToSheet: true,
-                  columns: [
-                    newSysId(),
-                    student.value.id,
-                    student.value.name,
-                    student.value.email,
-                  ],
-                });
-                close();
-              },
-            },
-            {
-              text: 'Back to Student Profile',
-              color: getPanel("STUDENTS").color,
-              onClick: () => {
-                setPanel('STUDENTS', {
-                  value: student.value.sysId,
-                });
-                close();
-              },
-            },
-          ],
-        },
-      });
-    },
+    key: 'studentSysId',
+    value: student.value.sysId,
   });
 }
 
@@ -316,7 +281,10 @@ async function graduate() {
   const _student = JSON.parse(JSON.stringify(student.value));
   movingStudent.value = true;
   try {
-    await warn(null, null, `Are you sure you want to graduate ${_student.name}? Graduating a student will remove them from the student list and add them to the graduates list. This action will permanently erase data such as ${_student.name}s student email address (${_student.email || 'no email'}), points (${_student.points || 'no points'}), athletic affiliation (${_student.athletics || 'no athletics'}), and more.`)
+    await warn({
+      title: `Graduate ${_student.name}?`,
+      description: `Are you sure you want to graduate ${_student.name}? Graduating a student will remove them from the student list and add them to the graduates list. This action will permanently erase data such as ${_student.name}s student email address (${_student.email || 'no email'}), points (${_student.points || 'no points'}), athletic affiliation (${_student.athletics || 'no athletics'}), and more.`
+    })
   } catch {
     movingStudent.value = false;
     return;

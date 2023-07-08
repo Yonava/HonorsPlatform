@@ -69,7 +69,7 @@
 import DetailFrame from "./Helper/DetailFrame.vue";
 import DetailHeader from "./Helper/DetailHeader.vue";
 
-import { ref, computed, toRefs } from "vue";
+import { ref, toRefs, Ref } from "vue";
 import { unmapStudents } from "../../DataMappers";
 import {
   emailValidator,
@@ -83,10 +83,12 @@ import { useUpdateItem } from "../../TrackItemForUpdate";
 import { useDialog } from "../../store/useDialog";
 import { warn } from "../../Warn";
 import { getPanel } from "../../Panels";
+import { Graduate } from "../../SheetTypes";
 
 const { setPanel } = useSheetManager();
 const { Graduates } = useDocumentCache();
-const { selected: grad } = toRefs(Graduates)
+const { selected } = toRefs(Graduates)
+const grad = selected as Ref<Graduate>;
 useUpdateItem(grad);
 
 const { open, close } = useDialog();
@@ -100,30 +102,11 @@ async function generateGradId() {
 
 async function sendBackToStudents() {
   if (typeof grad.value.row !== "number") return;
-  // if (!canDelete.value) {
-  //   open({
-  //     body: {
-  //       title: "Cannot Move",
-  //       description:
-  //         `${grad.value.name} has engagements. Please remove them before moving ${grad.value.name} back to students.`,
-  //       buttons: [
-  //         {
-  //           text: "Ok",
-  //           color: `${getPanel('GRADUATES').color}-darken-2`,
-  //           onClick: close,
-  //         },
-  //       ],
-  //     },
-  //   });
-  //   return;
-  // }
   movingGrad.value = true;
   try {
-    await warn(
-      null,
-      null,
-      "Are you sure you want to move this graduate back to students? Information like phone number and graduation date will be permanently lost."
-    );
+    await warn({
+      description: "Are you sure you want to move this graduate back to students? Information like phone number and graduation date will be permanently lost."
+    });
   } catch (e) {
     movingGrad.value = false;
     return;

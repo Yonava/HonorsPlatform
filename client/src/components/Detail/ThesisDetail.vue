@@ -6,9 +6,6 @@
         :id="thesis.studentSysId"
         placeholder="Thesis Title"
       />
-
-      <v-divider class="mb-5"></v-divider>
-
       <v-btn
         v-if="!thesis.term"
         @click="thesis.term = getCurrentTerm()"
@@ -158,12 +155,17 @@ const viewProfileButton = computed(() => {
         open({
           body: {
             title: 'No Student Linked',
-            description: 'This thesis has no linked student. Add a student ID from an existing student or graduate.',
+            description: 'This thesis has no linked student. Add a student ID from an existing student or graduate to link them or delete this thesis.',
             buttons: [
               {
-                text: 'Close',
+                text: 'Delete Thesis',
+                color: 'red-darken-2',
+                onClick: () => deleteItem()
+              },
+              {
+                text: 'Dismiss',
                 color: 'red',
-                onClick: () => close(),
+                onClick: () => close()
               },
             ],
           },

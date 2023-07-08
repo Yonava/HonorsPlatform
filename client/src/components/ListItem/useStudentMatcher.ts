@@ -3,32 +3,24 @@ import { useSheetManager } from '../../store/useSheetManager'
 import { getPanel } from '../../Panels'
 import { computed } from 'vue'
 
-export function useStudentMatcher(studentId: string) {
+export function useStudentMatcher(studentSysId: string) {
 
   const { getActivePanel } = useSheetManager()
   const studentPanel = getPanel('STUDENTS')
   const graduatePanel = getPanel('GRADUATES')
 
-  const { Students, Graduates } = useDocumentCache()
+  const { getItemBySysId } = useDocumentCache()
 
   const student = computed(() => {
-    const studentMatch = Students.list.find(s => s.id === studentId)
-    if (!studentMatch?.id) {
-      return null
-    }
-    return studentMatch ?? null
+    return getItemBySysId(studentSysId, 'STUDENTS')
   })
 
   const graduate = computed(() => {
-    const graduateMatch = Graduates.list.find(g => g.id === studentId)
-    if (!graduateMatch?.id) {
-      return null
-    }
-    return graduateMatch ?? null
+    return getItemBySysId(studentSysId, 'GRADUATES')
   })
 
   const idText = computed(() => {
-    return studentId ? `ID ${studentId}` : 'No ID'
+    return studentSysId ? `ID ${studentSysId}` : 'No ID'
   })
 
   const studentMatch = computed(() => {
@@ -51,7 +43,7 @@ export function useStudentMatcher(studentId: string) {
         tooltip: `This Student Has Graduated - ${idText.value}`,
         icon: graduatePanel.icon
       }
-    } else if (studentId) {
+    } else if (studentSysId) {
       return {
         text: 'No Student Found',
         style: {

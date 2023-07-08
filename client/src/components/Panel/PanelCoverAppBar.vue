@@ -119,9 +119,15 @@ const dangerStatusItems = computed(() => {
 })
 
 const deleteItems = async (items: SheetItem[]) => {
-  await warn(null, null, `You are about to take a serious action that will permanently delete ${items.length} item${items.length > 1 ? 's' : ''}!`.toUpperCase())
+  await warn({
+    title: "Are You Sure?",
+    description: `You are about to take a serious action that will permanently delete ${items.length} item${items.length > 1 ? 's' : ''}!`
+  })
   await new Promise((resolve) => setTimeout(resolve, 500))
-  await warn(null, null, `are you really sure you want to permanently delete ${items.length} item${items.length > 1 ? 's' : ''}?`.toUpperCase())
+  await warn({
+    title: "One Last Chance!",
+    description: `are you really sure you want to permanently delete ${items.length} item${items.length > 1 ? 's' : ''}?`
+  })
   await new Promise((resolve) => setTimeout(resolve, 500))
   await useSyncState().waitUntilSynced()
   open({

@@ -163,5 +163,5 @@ const decisionStatus = computed(() => {
   }
 })
 
-const { studentMatch } = useStudentMatcher(props.item.studentId)
+const { studentMatch } = useStudentMatcher(props.item.studentSysId)
 </script>
