@@ -1,4 +1,14 @@
-# Current Version: prerelease 0.84.3
+# Current Version: prerelease 0.85
+
+### prerelease 0.85 (Jul. 9)
+- Improved Data Modelling: Added Student Sys ID to data layer across all panels dependent on students or graduates.
+- Fixed bug that caused items to duplicate when moved between ranges without document refresh
+- Student Match darastically improved and moved into its own composable
+- StudentLink and StudentLinkButton added to all panels dependent on students or graduates to relink on the fly
+- Student IDs can now finally be edited!
+- Students and Graduates can now hold modules and engagements without the need for an ID
+- Removed LockArea on EmbeddedDetail
+- Various other minor stability improvements
 
 ### prerelease 0.84.3 (Jul. 8)
 - Overhauled "increment student year" to add the ability to include or exclude students
