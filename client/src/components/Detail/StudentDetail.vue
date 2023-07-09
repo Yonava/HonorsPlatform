@@ -56,9 +56,11 @@
                 </v-btn>
                 <v-spacer></v-spacer>
                 <v-btn
-                  @click="idDialog = false"
+                  @click="idDialog = false; tempStudentId = student.id;"
                   color="red"
-                > Cancel </v-btn>
+                >
+                  Cancel
+                </v-btn>
               </div>
             </v-sheet>
           </v-dialog>
@@ -254,9 +256,12 @@ function studentIdRule(studentId: string) {
   return "Invalid Student ID";
 }
 
-async function saveId() {
+const saveId = () => {
   student.value.id = tempStudentId.value;
   idDialog.value = false;
+  setTimeout(() => {
+    tempStudentId.value = "";
+  }, 300);
 }
 
 const thesisPanel = getPanel("THESES");
