@@ -11,7 +11,7 @@
       {{ student.icon }}
     </v-icon>
     <p>
-      {{ student.text }} {{  getSelectedItem().studentSysId }}
+      {{ student.text }} {{ temp }}
     </p>
     <v-tooltip activator="parent">
       Link Student
@@ -27,11 +27,19 @@ import { useDialog } from '../../../store/useDialog'
 import { useDocumentCache } from '../../../store/useDocumentCache'
 import { computed } from 'vue'
 
-const { getSelectedItem } = useDocumentCache()
+const { getSelectedItem, getItemByKeyValue } = useDocumentCache()
 
 const props = defineProps<{
   linkFrom?: 'students' | 'graduates'
 }>()
+
+const temp = computed(() => {
+  return getItemByKeyValue({
+    key: 'id',
+    value: getSelectedItem()?.studentSysId,
+    panelName: 'STUDENTS',
+  }).name ?? ''
+})
 
 const student = computed(() => {
   const selectedItem = getSelectedItem()

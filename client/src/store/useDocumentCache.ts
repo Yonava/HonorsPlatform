@@ -13,6 +13,12 @@ type GetAllDocuments = {
   panel?: Panel;
 }
 
+type GetItemByKeyValue = {
+  key?: string;
+  value?: string | undefined;
+  panelName?: PanelName;
+}
+
 type RefreshCache = {
   panel?: Panel;
   data?: string[][];
@@ -114,6 +120,20 @@ export const useDocumentCache = defineStore("documentCache", {
         return state[panel.sheetRange].list.find((item) => item.sysId === sysId);
       }
       return state[activePanel.sheetRange].list.find((item) => item.sysId === sysId);
+    },
+    getItemByKeyValue: (state) => (options: GetItemByKeyValue = {}) => {
+      const {
+        key = "sysId",
+        value = "",
+        panelName,
+      } = options;
+
+      const { panel: activePanel } = useSheetManager();
+      if (panelName) {
+        const panel = panels[panelName];
+        return state[panel.sheetRange].list.find((item) => item[key] === value);
+      }
+      return state[activePanel.sheetRange].list.find((item) => item[key] === value);
     },
     dueForRefresh: (state) => (options: DueForRefresh = {}) => {
       const {
