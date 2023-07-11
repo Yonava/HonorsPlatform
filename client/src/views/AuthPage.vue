@@ -1,5 +1,8 @@
 <template>
-  <v-sheet class="d-flex align-center justify-center flex-column">
+  <v-sheet
+    class="d-flex align-center justify-center flex-column"
+    height="100%"
+  >
     <v-progress-circular
       v-if="loading"
       indeterminate
@@ -97,6 +100,7 @@ onMounted(async () => {
     throw new Error('No access token received')
   }
   setToken(token)
+  await new Promise(resolve => setTimeout(resolve, 1000))
   window.close()
   router.push({
     name: 'panel'

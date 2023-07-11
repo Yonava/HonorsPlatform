@@ -36,20 +36,7 @@ export async function getRanges(ranges: Range[] = [
   "Announcements"
 ]): Promise<{ [key in string]: string[][] }[]> {
 
-  // will be replaced with a better solution
-  await new Promise((resolve) => {
-    let numberOfTries = 0;
-    const getTokenInterval = setInterval(() => {
-      if (useAuth().getToken()) {
-        clearInterval(getTokenInterval);
-        resolve('done');
-      } else if (numberOfTries > 5) {
-        clearInterval(getTokenInterval);
-        resolve('done');
-      }
-      numberOfTries++;
-    }, 100);
-  })
+  await new Promise(resolve => setTimeout(resolve, 1000));
 
   try {
     type ExpectedReturn = {
