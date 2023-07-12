@@ -11,7 +11,7 @@
       {{ student.icon }}
     </v-icon>
     <p>
-      {{ student.text }} {{ temp }}
+      {{ student.text }}
     </p>
     <v-tooltip
       :disabled="xs"
@@ -32,23 +32,11 @@ import { computed } from 'vue'
 import { useDisplay } from 'vuetify'
 
 const { xs } = useDisplay()
-const { getSelectedItem, getItemByKeyValue } = useDocumentCache()
+const { getSelectedItem } = useDocumentCache()
 
 const props = defineProps<{
   linkFrom?: 'students' | 'graduates'
 }>()
-
-const temp = computed(() => {
-  const item = getItemByKeyValue({
-    key: 'id',
-    value: getSelectedItem()?.studentSysId,
-    panelName: 'STUDENTS',
-  })
-  if (item) {
-    return item.name
-  }
-  return ''
-})
 
 const student = computed(() => {
   const selectedItem = getSelectedItem()

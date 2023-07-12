@@ -32,7 +32,10 @@
                 >
                   mdi-pencil
                 </v-icon>
-                <v-tooltip activator="parent">
+                <v-tooltip
+                  :disable="xs"
+                  activator="parent"
+                >
                   Edit Student ID
                 </v-tooltip>
               </div>
@@ -213,6 +216,7 @@ import { useUpdateItem } from "../../TrackItemForUpdate";
 import { warn } from '../../Warn'
 import { toRefs, ref, computed, Ref } from 'vue'
 import { Student } from '../../SheetTypes'
+import { useDisplay } from 'vuetify'
 
 const { open, close } = useDialog();
 const { setPanel } = useSheetManager();
@@ -222,6 +226,8 @@ const { list: items, selected } = toRefs(Students);
 const student = selected as Ref<Student>;
 
 useUpdateItem(student);
+
+const { xs } = useDisplay();
 
 const statusOptionIcon = computed(() => `mdi-${statusOptions.find((option) => option.label === student.value.activeStatus)?.icon ?? "help"}`);
 const statusOptionLabels = computed(() => statusOptions.map((option) => option.label));
