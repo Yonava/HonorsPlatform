@@ -13,7 +13,7 @@
 
 <script setup lang="ts">
 import { useInstructorAutoComplete } from '../../../InstructorAutoComplete'
-import { computed ,watch} from 'vue'
+import { computed, watch } from 'vue'
 
 const props = defineProps<{
   color?: string,

@@ -13,7 +13,10 @@
     <p>
       {{ student.text }} {{ temp }}
     </p>
-    <v-tooltip activator="parent">
+    <v-tooltip
+      :disabled="xs"
+      activator="parent"
+    >
       Link Student
     </v-tooltip>
   </div>
@@ -26,7 +29,9 @@ import { useStudentInfo } from '../../ListItem/useStudentInfo'
 import { useDialog } from '../../../store/useDialog'
 import { useDocumentCache } from '../../../store/useDocumentCache'
 import { computed } from 'vue'
+import { useDisplay } from 'vuetify'
 
+const { xs } = useDisplay()
 const { getSelectedItem, getItemByKeyValue } = useDocumentCache()
 
 const props = defineProps<{
@@ -34,11 +39,15 @@ const props = defineProps<{
 }>()
 
 const temp = computed(() => {
-  return getItemByKeyValue({
+  const item = getItemByKeyValue({
     key: 'id',
     value: getSelectedItem()?.studentSysId,
     panelName: 'STUDENTS',
-  }).name ?? ''
+  })
+  if (item) {
+    return item.name
+  }
+  return ''
 })
 
 const student = computed(() => {

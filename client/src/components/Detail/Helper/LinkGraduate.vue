@@ -8,7 +8,7 @@
       style="overflow: auto; max-height: 600px;"
     >
       <div
-        v-for="graduate in [...Graduates.list].sort((a, b) => a.name.localeCompare(b.name))"
+        v-for="graduate in filteredItems.sort((a, b) => a.name.localeCompare(b.name))"
         :key="graduate.sysId"
         @click="graduateLinked(graduate.sysId)"
         class="d-flex flex-row align-center clickable"
@@ -20,21 +20,40 @@
           ({{ graduate.id || 'No ID' }})
         </span>
       </div>
+      <div
+        v-if="filteredItems.length === 0 && filterQuery.length > 0"
+        class="mt-1"
+      >
+        <h2 style="color: red">
+          No Graduates Found
+        </h2>
+      </div>
     </div>
   </v-sheet>
 </template>
 
 <script setup lang="ts">
+import { filterItems } from '../../../FilterObjects';
+import { ref, computed } from 'vue';
 import { useDialog } from '../../../store/useDialog'
 import { useDocumentCache } from '../../../store/useDocumentCache'
 
 const { Graduates, getSelectedItem } = useDocumentCache()
 
+const filterQuery = ref('')
+
+const filteredItems = computed(() => {
+  return filterItems(
+    [...Graduates.list].filter(item => !!item.name || !!item.id),
+    filterQuery.value
+  )
+})
+
 const graduateLinked = (sysId: string) => {
   const itemToModify = getSelectedItem()
   // if itemToModify does not have a studentSysId return and log an error
-  if (!itemToModify?.studentSysId) {
-    console.error('Link Student: No studentSysId found on itemToModify')
+  if (!itemToModify?.studentSysId === undefined) {
+    console.error('Link Graduate: No studentSysId found on itemToModify')
     return
   }
   itemToModify.studentSysId = sysId
