@@ -72,8 +72,8 @@ export const useSheetManager = defineStore('sheetManager', {
 
       this.canPanelSwitch = false;
 
-      const { setSelectedItem, getAllDocuments } = useDocumentCache();
-      setSelectedItem();
+      const { setSelectedItems, getAllDocuments } = useDocumentCache();
+      setSelectedItems();
       this.panel = getPanel(panelName);
 
       this.setPinnedItem(null);

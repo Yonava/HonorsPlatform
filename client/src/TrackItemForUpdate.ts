@@ -32,6 +32,15 @@ export function useUpdateItem(item: Ref<SheetItem>, panelObject?: Panel) {
       return
     }
 
+    if (newItem !== oldItem) {
+      // no row # means it's a new item that has never hit the server
+      if (oldItem && typeof oldItem?.row !== 'number' && !processing.value) {
+        const { sysId } = oldItem
+        removeItemFromCacheBySysId(sysId, panel)
+      }
+      return
+    }
+
     setProcessing(true)
     clearTimeout(timeout)
     timeout = setTimeout(() => {

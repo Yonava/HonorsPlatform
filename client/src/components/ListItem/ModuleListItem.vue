@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <ListItemFrame :item="item">
     <div class="d-flex flex-row">
       <div v-if="overOneYearInProgress && !item.docuSignCompleted">
         <v-icon
@@ -103,7 +103,7 @@
         </div>
       </div>
     </div>
-  </div>
+  </ListItemFrame>
 </template>
 
 <script setup lang="ts">
@@ -112,6 +112,7 @@ import { computed } from 'vue'
 import { Module } from '../../SheetTypes'
 import { termValidator } from '../../TermValidator'
 import { useDisplay } from 'vuetify'
+import ListItemFrame from './ListItemFrame.vue'
 
 const props = defineProps<{
   item: Module

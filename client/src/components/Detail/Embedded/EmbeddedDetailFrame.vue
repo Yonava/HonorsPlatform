@@ -49,7 +49,7 @@ import { useSheetManager } from '../../../store/useSheetManager'
 import ModalContent from '../../ModalContent.vue'
 
 const { getActiveEmbeddedPanel } = useSheetManager()
-const { getSelectedItem, setSelectedItem } = useDocumentCache()
+const { getSelectedItems, setSelectedItems } = useDocumentCache()
 
 const props = defineProps<{
   modelValue: string,
@@ -71,13 +71,22 @@ const title = computed({
 
 const { xs } = useDisplay()
 
+console.log('instance')
+
 const dialogCanOpen = ref(true)
 const showDialog = computed({
-  get: () => !!getSelectedItem(getActiveEmbeddedPanel) && dialogCanOpen.value,
+  get: () => getSelectedItems(getActiveEmbeddedPanel).length > 0 && dialogCanOpen.value,
   set: () => {
     dialogCanOpen.value = false
+    // setSelectedItems({
+    //     panel: getActiveEmbeddedPanel,
+    //     items: []
+    //   })
     setTimeout(() => {
-      setSelectedItem({ panel: getActiveEmbeddedPanel })
+      setSelectedItems({
+        panel: getActiveEmbeddedPanel,
+        items: []
+      })
       dialogCanOpen.value = true
     }, 300)
   }

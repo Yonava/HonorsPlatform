@@ -92,22 +92,3 @@ const setSelectedItem = (item: SheetItem) => {
   }
 }
 </script>
-
-<style scoped>
-.item-card {
-  width: 100%;
-  background: rgba(255,255,255, 0.5);
-  padding: 10px;
-  cursor: pointer;
-  transition: 350ms;
-  border-bottom: 1px solid rgba(111, 111, 111, 0.21);
-}
-
-.selected-item-card {
-  background: rgba(255,255,255, 1);
-}
-
-.item-card:hover {
-  background: rgba(255,255,255, 1);
-}
-</style>

@@ -279,11 +279,10 @@ export const useDocumentCache = defineStore("documentCache", {
     },
     setSelectedItems(options: SetSelectedItems = {}) {
       const { panel: activePanel } = useSheetManager();
-      const { panel = activePanel, items = null } = options;
-      if (items === null) {
-        console.error("useDocumentCache.setSelectedItem: item is null");
-        return;
-      }
+      const {
+        panel = activePanel,
+        items = []
+      } = options;
       this[panel.sheetRange].selected = items;
     },
     addSelectedItem(options: AddSelectedItem = {}) {

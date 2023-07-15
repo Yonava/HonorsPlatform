@@ -97,9 +97,7 @@
             left: `${proposedWidth + sortPanelWidth}px`,
           }"
         ></v-sheet>
-        <ItemDetail
-          v-if="mdAndUp"
-        />
+        <ItemDetail v-if="mdAndUp"/>
       </div>
       <div v-if="mdAndUp && !isItemSelected">
         <img

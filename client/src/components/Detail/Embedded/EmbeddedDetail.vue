@@ -42,7 +42,7 @@
       />
     </div>
     <component
-      v-if="embedSelectedItem"
+      v-if="embedSelectedItem && item.sysId === embedSelectedItem.studentSysId"
       :is="getActivePanel.embedded.detail"
     />
   </div>
@@ -65,9 +65,9 @@ const { deleteItem, setSelectedItems, getSelectedItems, addItem, updateItem } = 
 
 const { filterBy, text } = getActivePanel.embedded
 
-const parentSelectedItem = computed(() => {
-  return getSelectedItems()[0] ?? null
-})
+const props = defineProps<{
+  item: SheetItem
+}>()
 
 const embedSelectedItem = computed(() => {
   return getSelectedItems(getActiveEmbeddedPanel)[0] ?? null
@@ -77,13 +77,13 @@ const { list: items } = toRefs(documents[getActiveEmbeddedPanel.sheetRange])
 useUpdateItem(embedSelectedItem, getActiveEmbeddedPanel)
 
 const displayedItems = computed(() => {
-  if (!parentSelectedItem.value[filterBy.outer]) return []
-  return items.value.filter(e => e[filterBy.inner] === parentSelectedItem.value[filterBy.outer])
+  if (!props.item[filterBy.outer]) return []
+  return items.value.filter(e => e[filterBy.inner] === props.item[filterBy.outer])
 })
 
 const addEmbeddedItem = async () => {
   // edge case for when parent panel is not yet saved to the sheet
-  if (!parentSelectedItem.value.row) {
+  if (!props.item.row) {
     updateItem()
   }
 
@@ -91,7 +91,7 @@ const addEmbeddedItem = async () => {
     panel: getActiveEmbeddedPanel,
     pin: false,
     columns: [
-      parentSelectedItem.value[filterBy.outer],
+      props.item[filterBy.outer],
     ],
   })
 }

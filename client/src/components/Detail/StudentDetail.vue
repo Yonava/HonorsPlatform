@@ -7,6 +7,7 @@
       <template #main>
         <DetailHeader
           v-model="student.name"
+          :item="student"
           placeholder="Student Name"
         >
           <v-dialog

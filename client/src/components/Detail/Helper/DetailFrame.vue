@@ -1,12 +1,5 @@
 <template>
   <div @click="useSheetManager().focusedItem = item">
-    <v-icon
-      class="pa-4"
-      @click.stop="removeFromSelected"
-      style="cursor: pointer;"
-    >
-      mdi-close
-    </v-icon>
     <div
       ref="el"
       :class="[
@@ -17,7 +10,10 @@
     >
       <div>
         <slot name="main"></slot>
-        <EmbeddedDetail v-if="getActivePanel.embedded" />
+        <EmbeddedDetail
+          v-if="getActivePanel.embedded"
+          :item="item"
+        />
       </div>
       <v-divider
         v-if="sm"
@@ -128,12 +124,6 @@ const attemptDelete = () => {
     return
   }
   deleteItem({
-    item: props.item,
-  })
-}
-
-const removeFromSelected = () => {
-  removeSelectedItem({
     item: props.item,
   })
 }

@@ -48,10 +48,11 @@
 <script setup lang="ts">
 import { useDialog } from '../../../store/useDialog'
 import { useDocumentCache } from '../../../store/useDocumentCache'
+import { useSheetManager } from '../../../store/useSheetManager'
 import { filterItems } from '../../../FilterObjects'
 import { ref, computed } from 'vue'
 
-const { Students, getSelectedItem } = useDocumentCache()
+const { Students } = useDocumentCache()
 
 const filterQuery = ref('')
 
@@ -63,12 +64,14 @@ const filteredItems = computed(() => {
 })
 
 const studentLinked = (sysId: string) => {
-  const itemToModify = getSelectedItem()
+  const itemToModify = useSheetManager().focusedItem
+
   // if itemToModify does not have a studentSysId return and log an error
   if (!itemToModify?.studentSysId === undefined) {
     console.error('Link Student: No studentSysId found on itemToModify')
     return
   }
+
   itemToModify.studentSysId = sysId
   useDialog().close()
 }

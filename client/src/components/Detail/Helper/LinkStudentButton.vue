@@ -27,20 +27,18 @@ import LinkStudent from './LinkStudent.vue'
 import LinkGraduate from './LinkGraduate.vue'
 import { useStudentInfo } from '../../ListItem/useStudentInfo'
 import { useDialog } from '../../../store/useDialog'
-import { useDocumentCache } from '../../../store/useDocumentCache'
 import { computed } from 'vue'
 import { useDisplay } from 'vuetify'
 
 const { xs } = useDisplay()
-const { getSelectedItem } = useDocumentCache()
 
 const props = defineProps<{
+  item: Object & { studentSysId: string },
   linkFrom?: 'students' | 'graduates'
 }>()
 
 const student = computed(() => {
-  const selectedItem = getSelectedItem()
-  const { studentInfo } = useStudentInfo(selectedItem.studentSysId)
+  const { studentInfo } = useStudentInfo(props.item.studentSysId)
   return studentInfo.value
 })
 

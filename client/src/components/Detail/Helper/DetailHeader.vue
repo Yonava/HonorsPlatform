@@ -16,6 +16,14 @@
     </v-sheet>
 
     <div class="d-flex flex-row align-center">
+      <v-icon
+        v-if="getSelectedItems().length > 1"
+        class="mr-2"
+        @click.stop="removeFromSelected"
+        style="cursor: pointer;"
+      >
+        mdi-close
+      </v-icon>
       <p style="font-weight: 200">
         {{ id }}
       </p>
@@ -44,7 +52,7 @@ import { SheetItem } from '../../../SheetTypes';
 import SyncStatus from "./SyncStatus.vue";
 
 const { getPanelCover } = storeToRefs(useDialog());
-const { getSelectedItems } = useDocumentCache();
+const { getSelectedItems, removeSelectedItem } = useDocumentCache();
 
 const includedInDelete = computed(() => {
   const selectedItems = getSelectedItems();
@@ -57,6 +65,7 @@ const includedInDelete = computed(() => {
 
 const props = defineProps<{
   modelValue: string;
+  item: SheetItem;
   placeholder?: string;
   id?: string;
 }>();
@@ -79,6 +88,12 @@ const placeholder = computed(() => {
 const id = computed(() => {
   return props.id ?? "";
 });
+
+const removeFromSelected = () => {
+  removeSelectedItem({
+    item: props.item,
+  })
+}
 </script>
 
 <style scoped>

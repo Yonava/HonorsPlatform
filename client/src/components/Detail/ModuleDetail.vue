@@ -1,11 +1,17 @@
 <template>
-  <DetailFrame v-model="module.description">
+  <DetailFrame
+    v-model="module.description"
+    :item="module"
+  >
     <template #main>
       <DetailHeader
         v-model="module.courseCode"
+        :item="module"
         placeholder="Course Code"
       >
-        <LinkStudentButton />
+        <LinkStudentButton
+          :item="module"
+        />
       </DetailHeader>
 
       <v-text-field
@@ -88,23 +94,25 @@ import InstructorComplete from './Helper/InstructorComplete.vue'
 import DetailFrame from './Helper/DetailFrame.vue'
 import LinkStudentButton from './Helper/LinkStudentButton.vue'
 
-import { toRefs, Ref } from 'vue'
-import { Module } from '../../SheetTypes'
+import { computed } from 'vue'
+import type { Module } from '../../SheetTypes'
 import { termValidator } from '../../TermValidator'
 import { getPanel } from '../../Panels'
 
 import { useUpdateItem } from '../../TrackItemForUpdate'
 import { useDialog } from '../../store/useDialog'
-import { useDocumentCache } from '../../store/useDocumentCache'
 
-const { Modules } = useDocumentCache();
 const completedModulesPanel = getPanel('COMPLETED_MODULES')
 const modulesPanel = getPanel('MODULES')
 
 const color = modulesPanel.color + '-darken-2'
 
-const { selected } = toRefs(Modules);
-const module = selected as Ref<Module>
+const props = defineProps<{
+  item: Module
+}>()
+
+const module = computed(() => props.item)
+
 useUpdateItem(module)
 
 const moveModule = () => {

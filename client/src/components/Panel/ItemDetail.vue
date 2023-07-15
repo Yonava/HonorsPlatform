@@ -40,11 +40,12 @@ import { useSheetManager } from '../../store/useSheetManager';
 import { useDocumentCache } from '../../store/useDocumentCache';
 import { SheetItem } from '../../SheetTypes';
 import { ref } from 'vue';
+import { storeToRefs } from 'pinia'
 
 const dragState = ref(false)
 
 const sheetManager = useSheetManager()
-const { getActivePanel } = sheetManager
+const { getActivePanel } = storeToRefs(sheetManager)
 
 const { getSelectedItems, addSelectedItem } = useDocumentCache()
 

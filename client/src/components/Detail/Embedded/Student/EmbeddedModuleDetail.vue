@@ -74,15 +74,19 @@
 import EmbeddedDetailFrame from '../EmbeddedDetailFrame.vue'
 import { useSheetManager } from '../../../../store/useSheetManager'
 import { useDocumentCache } from '../../../../store/useDocumentCache'
-import { toRefs } from 'vue'
+import { toRefs, computed } from 'vue'
 import { useDialog } from '../../../../store/useDialog'
 import { termValidator, getCurrentTerm } from '../../../../TermValidator'
 import MoveModule from '../../Helper/MoveModule.vue'
 import InstructorComplete from '../../Helper/InstructorComplete.vue'
 
 const { getActiveEmbeddedPanel } = useSheetManager()
-const { Modules, setSelectedItem } = useDocumentCache()
-const { selected: selectedModule } = toRefs(Modules)
+const { Modules } = useDocumentCache()
+const { selected } = toRefs(Modules)
+
+const selectedModule = computed(() => {
+  return selected.value[0]
+})
 
 const openMoveDialog = () => {
   useDialog().open({
