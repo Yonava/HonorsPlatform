@@ -1,4 +1,10 @@
-# Current Version: prerelease 0.85
+# Current Version: prerelease 0.86
+
+### prerelease 0.86 (Jul. 15)
+- Feature: Multi-panel mode — Drag and drop items from the item list to create a custom workspace
+- Improvement: added search to student and graduate link dialogs
+- Minor UI improvements to AuthPage
+- Added "getItemByKeyValue" method to useDocumentCache
 
 ### prerelease 0.85 (Jul. 9)
 - Improved Data Modelling: Added Student Sys ID to data layer across all panels dependent on students or graduates.
