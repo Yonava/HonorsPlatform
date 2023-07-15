@@ -29,11 +29,15 @@
 import EmbeddedDetailFrame from '../EmbeddedDetailFrame.vue'
 import { useSheetManager } from '../../../../store/useSheetManager'
 import { useDocumentCache } from '../../../../store/useDocumentCache'
-import { toRefs } from 'vue'
+import { toRefs, computed } from 'vue'
 
 const { getActiveEmbeddedPanel } = useSheetManager()
-const { "Grad Engagements": gradEngagements, setSelectedItem } = useDocumentCache()
-const { selected: selectedEvent } = toRefs(gradEngagements)
+const { "Grad Engagements": gradEngagements } = useDocumentCache()
+const { selected } = toRefs(gradEngagements)
+
+const selectedEvent = computed(() => {
+  return selected.value[0]
+})
 
 const getNewDate = () => {
   const date = new Date()

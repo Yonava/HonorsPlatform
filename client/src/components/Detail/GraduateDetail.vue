@@ -1,7 +1,15 @@
 <template>
-  <DetailFrame v-model="grad.note">
+  <DetailFrame
+    v-model="grad.note"
+    :item="grad"
+  >
     <template #main>
-      <DetailHeader v-model="grad.name" :id="grad.id" placeholder="Name">
+      <DetailHeader
+        v-model="grad.name"
+        :id="grad.id"
+        :item="grad"
+        placeholder="Name"
+      >
         <template v-if="!grad.id" #id>
           <v-btn @click="generateGradId" size="x-small" color="purple-darken-2">
             Generate Grad ID
@@ -69,8 +77,7 @@
 import DetailFrame from "./Helper/DetailFrame.vue";
 import DetailHeader from "./Helper/DetailHeader.vue";
 
-import { ref, toRefs, Ref } from "vue";
-import { unmapStudents } from "../../DataMappers";
+import { ref, computed } from "vue";
 import {
   emailValidator,
   phoneValidator,
@@ -78,7 +85,6 @@ import {
 } from "../../EmailUtilities";
 import { moveToStudents } from '../../StudentTools'
 import { useSheetManager } from "../../store/useSheetManager";
-import { useDocumentCache } from "../../store/useDocumentCache";
 import { useUpdateItem } from "../../TrackItemForUpdate";
 import { useDialog } from "../../store/useDialog";
 import { warn } from "../../Warn";
@@ -86,9 +92,13 @@ import { getPanel } from "../../Panels";
 import { Graduate } from "../../SheetTypes";
 
 const { setPanel } = useSheetManager();
-const { Graduates } = useDocumentCache();
-const { selected } = toRefs(Graduates)
-const grad = selected as Ref<Graduate>;
+
+const props = defineProps<{
+  item: Graduate;
+}>();
+
+const grad = computed(() => props.item);
+
 useUpdateItem(grad);
 
 const { open, close } = useDialog();
