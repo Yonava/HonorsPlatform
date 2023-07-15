@@ -456,7 +456,11 @@ export const useDocumentCache = defineStore("documentCache", {
       ]);
       newItem.row = null;
 
-      setSelectedItem(newItem)
+      if (activePanel === panel) {
+        setSelectedItem(newItem)
+      } else {
+        this[panel.sheetRange].selected = [newItem]
+      }
 
       if (panel === activePanel) {
         useSheetManager().focusedItem = newItem;
