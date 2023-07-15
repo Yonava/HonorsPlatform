@@ -54,7 +54,7 @@
 - Removed mass add and remove from cache endpoints on useDocumentCache. On mass updates, refreshCache preferred
 - Improved the useDocument addItemToCache API and renamed it to addItem for consistency
 - Added concurrency controls to deleteItem in useDocumentCache
-- Student year now defaults to "Senior" when moved moved from graduates back to students
+- Student year now defaults to "Senior" when moved from graduates back to students
 - Tons of other smaller bug fixes and improvements
 
 ### prerelease 0.8 (Jun. 19)
