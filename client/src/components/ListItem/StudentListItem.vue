@@ -1,7 +1,7 @@
 <template>
   <div
     @dragstart="dragStart"
-    :draggable="lgAndUp"
+    :draggable="lgAndUp && !isSelected(item)"
     :class="[
       'item-card',
       'pa-3',

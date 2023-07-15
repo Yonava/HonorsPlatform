@@ -124,6 +124,7 @@
       <component
         v-if="isItemSelected"
         :is="getActivePanel.components.detail"
+        :item="selectedItem"
       />
     </v-navigation-drawer>
   </div>
@@ -154,7 +155,8 @@ import { panels, version } from '../Panels'
 
 const { setPanel } = useSheetManager()
 const { getActivePanel } = storeToRefs(useSheetManager())
-const { getSelectedItems, addSelectedItem, getAllDocuments } = useDocumentCache()
+const { addSelectedItem, getAllDocuments } = useDocumentCache()
+const { getSelectedItems } = storeToRefs(useDocumentCache())
 const { setPanelCover } = useDialog()
 const { getPanelCover } = storeToRefs(useDialog())
 
@@ -174,7 +176,7 @@ const {
 } = useDisplay()
 
 const isItemSelected = computed({
-  get: () => !!getSelectedItems().length || false,
+  get: () => !!getSelectedItems.value().length || false,
   set: (v) => {
     if (!v) {
       addSelectedItem()
@@ -191,6 +193,12 @@ watchEffect(() => {
   } else {
     showNavDrawer.value = false
   }
+})
+
+const selectedItem = computed(() => {
+  const selected = getSelectedItems.value()
+  if (selected.length) return selected[0]
+  return null
 })
 
 const panelHopBindings = () => {

@@ -39,6 +39,11 @@ type SetSelectedItems = {
   panel?: Panel;
 }
 
+type RemoveSelectedItem = {
+  item?: types.SheetItem;
+  panel?: Panel;
+}
+
 type SetSelectedItemByKeyValue = {
   key?: string;
   value?: string | undefined;
@@ -293,21 +298,31 @@ export const useDocumentCache = defineStore("documentCache", {
       }
       this[panel.sheetRange].selected.push(item);
     },
-    removeSelectedItem(options: SetSelectedItems = {}) {
+    removeSelectedItem(options: RemoveSelectedItem = {}) {
       const { panel: activePanel } = useSheetManager();
-      const { panel = activePanel, item = null } = options;
-      if (item === null) {
-        console.error("useDocumentCache.removeSelectedItem: item is null");
+
+      const {
+        panel = activePanel,
+        item = useSheetManager().focusedItem
+      } = options;
+
+      if (!item) {
+        console.error("useDocumentCache.removeSelectedItem: item is undefined");
         return;
       }
+
       if (panel === activePanel && item.sysId === useSheetManager().focusedItem?.sysId) {
         const focusedItemIndex = this[panel.sheetRange].selected.findIndex((selectedItem) => selectedItem.sysId === item.sysId);
 
         if (this[panel.sheetRange].selected.length > 1) {
           const nextFocusedItem = this[panel.sheetRange].selected[focusedItemIndex + 1] ?? this[panel.sheetRange].selected[focusedItemIndex - 1];
-          useSheetManager().focusedItem = nextFocusedItem;
+
+          setTimeout(() => {
+            useSheetManager().focusedItem = nextFocusedItem;
+          }, 0);
         }
       }
+
       const index = this[panel.sheetRange].selected.findIndex((selectedItem) => selectedItem.sysId === item.sysId);
       this[panel.sheetRange].selected.splice(index, 1);
     },
@@ -349,11 +364,18 @@ export const useDocumentCache = defineStore("documentCache", {
       const panel = panelObject ?? activePanel;
       const index = this[panel.sheetRange].list.findIndex(item => item.sysId === sysId);
 
+      const selectedItem = this[panel.sheetRange].selected.find(item => item.sysId === sysId);
+
       if (index !== -1) {
         this[panel.sheetRange].list.splice(index, 1);
       }
 
-      this[panel.sheetRange].selected = this[panel.sheetRange].selected.filter(item => item.sysId !== sysId);
+      if (selectedItem) {
+        this.removeSelectedItem({
+          item: selectedItem,
+          panel
+        });
+      }
     },
     async deleteItem(options: DeleteItem = {}) {
       const { panel: activePanel } = useSheetManager();
@@ -432,6 +454,11 @@ export const useDocumentCache = defineStore("documentCache", {
       newItem.row = null;
 
       this[panel.sheetRange].selected.push(newItem);
+
+      if (panel === activePanel) {
+        useSheetManager().focusedItem = newItem;
+      }
+
       this[panel.sheetRange].list.unshift(newItem);
 
       if (pin) {

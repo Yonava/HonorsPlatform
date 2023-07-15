@@ -8,21 +8,21 @@
     style="height: 100%; width: 100%; overflow: auto;"
     class="d-flex flex-grow-1 flex-row align-center"
   >
-    <div
+    <v-sheet
       v-for="item in getSelectedItems()"
       :key="item.sysId"
       :style="{
         width: '100%',
         height: '100%',
         overflow: 'auto',
-        border: isFocused(item) ? '1px solid black' : ''
+        background: isFocused(item) ? '' : 'rgba(0,0,0,0.05)',
       }"
     >
       <component
         :is="getActivePanel.components.detail"
         :item="item"
       />
-    </div>
+    </v-sheet>
     <div
       v-if="!getSelectedItems().length"
       class="justify-center d-flex"

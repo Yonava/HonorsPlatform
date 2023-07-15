@@ -231,7 +231,7 @@ const props = defineProps<{
   item: Student;
 }>();
 
-const student = ref(props.item);
+const student = computed(() => props.item);
 
 useUpdateItem(student);
 
