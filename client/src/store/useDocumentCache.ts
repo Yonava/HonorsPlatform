@@ -342,6 +342,9 @@ export const useDocumentCache = defineStore("documentCache", {
       const item = this[panel.sheetRange].list.find(item => item[key] === value);
       if (item) {
         this[panel.sheetRange].selected = [item];
+        setTimeout(() => {
+          useSheetManager().focusedItem = item
+        }, 0)
         return item;
       } else {
         return null;

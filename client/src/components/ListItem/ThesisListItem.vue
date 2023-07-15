@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <ListItemFrame :item="item">
     <div class="d-flex flex-row">
       <div
         class="d-flex flex-row align-baseline flex-wrap"
@@ -96,7 +96,7 @@
         </div>
       </div>
     </div>
-  </div>
+  </ListItemFrame>
 </template>
 
 <script setup lang="ts">
@@ -105,6 +105,7 @@ import { Thesis } from '../../SheetTypes'
 import { termValidator } from '../../TermValidator'
 import { useDisplay } from 'vuetify'
 import { useStudentInfo } from './useStudentInfo'
+import ListItemFrame from './ListItemFrame.vue'
 
 const props = defineProps<{
   item: Thesis

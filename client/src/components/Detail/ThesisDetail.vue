@@ -1,11 +1,17 @@
 <template>
-  <DetailFrame v-model="thesis.note">
+  <DetailFrame
+    v-model="thesis.note"
+    :item="thesis"
+  >
     <template #main>
       <DetailHeader
         v-model="thesis.title"
+        :item="thesis"
         placeholder="Thesis Title"
       >
-        <LinkStudentButton />
+        <LinkStudentButton
+          :item="thesis"
+        />
       </DetailHeader>
       <v-btn
         v-if="!thesis.term"
@@ -120,7 +126,7 @@ import InstructorComplete from './Helper/InstructorComplete.vue'
 import DetailFrame from './Helper/DetailFrame.vue'
 import LinkStudentButton from './Helper/LinkStudentButton.vue'
 
-import { toRefs, computed, Ref } from 'vue'
+import { computed } from 'vue'
 import { useStudentMatcher } from '../../StudentMatcher'
 import type { Thesis } from '../../SheetTypes'
 import { getPanel } from '../../Panels'
@@ -134,11 +140,15 @@ import { useSheetManager } from '../../store/useSheetManager'
 import { useDocumentCache } from '../../store/useDocumentCache'
 import { useDialog } from '../../store/useDialog'
 import { useUpdateItem } from '../../TrackItemForUpdate'
-
 const { setPanel } = useSheetManager()
-const { Theses, deleteItem } = useDocumentCache()
-const { selected } = toRefs(Theses)
-const thesis = selected as Ref<Thesis>
+const { deleteItem } = useDocumentCache()
+
+const props = defineProps<{
+  item: Thesis
+}>()
+
+const thesis = computed(() => props.item)
+
 useUpdateItem(thesis)
 
 const student = computed(() => {
