@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <ListItemFrame :item="item">
     <div class="d-flex flex-row">
       <div style="font-weight: 900; font-size: 1.5em; line-height: 1">
         {{ item.courseCode || '(No Course Code)' }}
@@ -72,7 +72,7 @@
         </div>
       </div>
     </div>
-  </div>
+  </ListItemFrame>
 </template>
 
 <script setup lang="ts">
@@ -81,6 +81,7 @@ import { computed } from 'vue'
 import { useDisplay } from 'vuetify'
 import { CompletedModule } from '../../SheetTypes'
 import { termValidator } from '../../TermValidator'
+import ListItemFrame from './ListItemFrame.vue'
 
 const props = defineProps<{
   item: CompletedModule

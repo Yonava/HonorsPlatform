@@ -1,11 +1,17 @@
 <template>
-  <DetailFrame v-model="completedModule.description">
+  <DetailFrame
+    v-model="completedModule.description"
+    :item="completedModule"
+  >
     <template #main>
       <DetailHeader
         v-model="completedModule.courseCode"
+        :item="completedModule"
         placeholder="Course Code"
       >
-        <LinkStudentButton />
+        <LinkStudentButton
+          :item="completedModule"
+        />
       </DetailHeader>
 
       <v-text-field
@@ -77,15 +83,16 @@ import DetailHeader from './Helper/DetailHeader.vue'
 import InstructorComplete from './Helper/InstructorComplete.vue'
 import DetailFrame from './Helper/DetailFrame.vue'
 import LinkStudentButton from './Helper/LinkStudentButton.vue'
-
-import { toRefs, Ref } from 'vue'
 import type { CompletedModule } from '../../SheetTypes'
-import { useDocumentCache } from '../../store/useDocumentCache'
+import { computed } from 'vue'
 import { useUpdateItem } from '../../TrackItemForUpdate'
 
-const { "Completed Modules": CompletedModules } = useDocumentCache()
-const { selected } = toRefs(CompletedModules)
-const completedModule = selected as Ref<CompletedModule>
+const props = defineProps<{
+  item: CompletedModule
+}>()
+
+const completedModule = computed(() => props.item)
+
 useUpdateItem(completedModule)
 </script>
 
