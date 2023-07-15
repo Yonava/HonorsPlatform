@@ -54,21 +54,18 @@ import SyncStatus from "./SyncStatus.vue";
 const { getPanelCover } = storeToRefs(useDialog());
 const { getSelectedItems, removeSelectedItem } = useDocumentCache();
 
-const includedInDelete = computed(() => {
-  const selectedItems = getSelectedItems();
-  return getPanelCover.value.selectedForDelete.some((sysId: string) => {
-    return selectedItems.some((item: SheetItem) => {
-      return item.sysId === sysId;
-    });
-  });
-});
-
 const props = defineProps<{
   modelValue: string;
   item: SheetItem;
   placeholder?: string;
   id?: string;
 }>();
+
+const includedInDelete = computed(() => {
+  return getPanelCover.value.selectedForDelete.some((sysId: string) => {
+    return props.item.sysId === sysId
+  });
+});
 
 const emits = defineEmits([
   "update:modelValue",

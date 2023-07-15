@@ -16,6 +16,7 @@
     <div
       v-else
       @dragstart="dragStart"
+      @dragend="useSheetManager().listItemBeingDragged = null"
       :draggable="lgAndUp && !isSelected(item)"
     >
       <slot></slot>
