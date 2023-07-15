@@ -132,7 +132,8 @@
 import {
   ref,
   computed,
-  watchEffect
+  watchEffect,
+  watch
 } from 'vue'
 import { useRoute } from 'vue-router'
 import PanelCoverAppBar from '../components/Panel/PanelCoverAppBar.vue'
@@ -153,7 +154,7 @@ import { panels, version } from '../Panels'
 
 const { setPanel } = useSheetManager()
 const { getActivePanel } = storeToRefs(useSheetManager())
-const { addSelectedItem, getAllDocuments } = useDocumentCache()
+const { setSelectedItems, getAllDocuments } = useDocumentCache()
 const { getSelectedItems } = storeToRefs(useDocumentCache())
 const { setPanelCover } = useDialog()
 const { getPanelCover } = storeToRefs(useDialog())
@@ -173,14 +174,13 @@ const {
   smAndDown
 } = useDisplay()
 
-const isItemSelected = computed({
-  get: () => !!getSelectedItems.value().length || false,
-  set: (v) => {
-    if (!v) {
-      addSelectedItem()
-    }
-  }
+const selectedItem = computed(() => {
+  const selected = getSelectedItems.value()
+  if (selected.length) return selected[0]
+  return null
 })
+
+const isItemSelected = computed(() => !!selectedItem.value)
 
 const showNavDrawer = ref(false)
 watchEffect(() => {
@@ -188,15 +188,13 @@ watchEffect(() => {
     setTimeout(() => {
       showNavDrawer.value = true
     }, 100)
-  } else {
-    showNavDrawer.value = false
   }
 })
 
-const selectedItem = computed(() => {
-  const selected = getSelectedItems.value()
-  if (selected.length) return selected[0]
-  return null
+watch(showNavDrawer, (newVal) => {
+  if (!newVal) {
+    setSelectedItems()
+  }
 })
 
 const panelHopBindings = () => {

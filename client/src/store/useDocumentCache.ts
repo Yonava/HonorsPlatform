@@ -6,6 +6,7 @@ import { useSheetManager } from "./useSheetManager";
 import { warn } from "../Warn";
 import { useSyncState } from "./useSyncState";
 import { storeToRefs } from "pinia";
+import { setSelectedItem } from '../components/Panel/SetSelectedItem'
 
 type GetAllDocuments = {
   showLoading?: boolean;
@@ -455,7 +456,7 @@ export const useDocumentCache = defineStore("documentCache", {
       ]);
       newItem.row = null;
 
-      this[panel.sheetRange].selected.push(newItem);
+      setSelectedItem(newItem)
 
       if (panel === activePanel) {
         useSheetManager().focusedItem = newItem;
