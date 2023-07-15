@@ -1,8 +1,7 @@
 <template>
   <div>
-
     <v-sheet
-      v-if="getPanelCover.selectedForDelete.includes(getSelectedItem().sysId)"
+      v-if="includedInDelete"
       color="red"
       elevation="2"
       class="px-4 mb-2 d-flex flex-row align-center"
@@ -41,10 +40,20 @@ import { computed } from "vue";
 import { useDialog } from '../../../store/useDialog';
 import { useDocumentCache } from '../../../store/useDocumentCache';
 import { storeToRefs } from "pinia";
+import { SheetItem } from '../../../SheetTypes';
 import SyncStatus from "./SyncStatus.vue";
 
 const { getPanelCover } = storeToRefs(useDialog());
-const { getSelectedItem } = useDocumentCache();
+const { getSelectedItems } = useDocumentCache();
+
+const includedInDelete = computed(() => {
+  const selectedItems = getSelectedItems();
+  return getPanelCover.value.selectedForDelete.some((sysId: string) => {
+    return selectedItems.some((item: SheetItem) => {
+      return item.sysId === sysId;
+    });
+  });
+});
 
 const props = defineProps<{
   modelValue: string;

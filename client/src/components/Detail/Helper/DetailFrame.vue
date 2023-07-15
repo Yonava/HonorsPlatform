@@ -1,59 +1,68 @@
 <template>
-  <div
-    ref="el"
-    :class="[
-      'pa-5',
-      'd-flex',
-      sm ? 'flex-column' : 'flex-row'
-    ]"
-  >
-    <div>
-      <slot name="main"></slot>
-      <EmbeddedDetail v-if="getActivePanel.embedded" />
-    </div>
-    <v-divider
-      v-if="sm"
-      class="my-2"
-    ></v-divider>
-     <div
-      :class="[
-        sm ? '' : 'ml-5',
-        'd-flex',
-        'flex-column',
-        'align-center'
-      ]"
-      :style="sm ? '' : 'width: 55%; max-width: 450px'"
+  <div @click="useSheetManager().focusedItem = item">
+    <v-icon
+      class="pa-4"
+      @click.stop="removeFromSelected"
+      style="cursor: pointer;"
     >
-      <div style="width: 100%;">
-        <slot name="notes-button"></slot>
-        <v-textarea
-          v-model="notepad"
-          auto-grow
-          variant="outlined"
-          clearable
-          label="Notes"
-        ></v-textarea>
+      mdi-close
+    </v-icon>
+    <div
+      ref="el"
+      :class="[
+        'pa-5',
+        'd-flex',
+        sm ? 'flex-column' : 'flex-row'
+      ]"
+    >
+      <div>
+        <slot name="main"></slot>
+        <EmbeddedDetail v-if="getActivePanel.embedded" />
       </div>
+      <v-divider
+        v-if="sm"
+        class="my-2"
+      ></v-divider>
       <div
         :class="[
+          sm ? '' : 'ml-5',
           'd-flex',
-          'flex-column'
+          'flex-column',
+          'align-center'
         ]"
-        style="width: 100%"
+        :style="sm ? '' : 'width: 55%; max-width: 450px'"
       >
-        <slot name="buttons"></slot>
-        <v-btn
-          @click="attemptDelete"
-          size="large"
-          color="red"
-          class="mt-3"
+        <div style="width: 100%;">
+          <slot name="notes-button"></slot>
+          <v-textarea
+            v-model="notepad"
+            auto-grow
+            variant="outlined"
+            clearable
+            label="Notes"
+          ></v-textarea>
+        </div>
+        <div
+          :class="[
+            'd-flex',
+            'flex-column'
+          ]"
+          style="width: 100%"
         >
-          <v-icon
-            class="mr-4"
-            size="x-large"
-          >mdi-delete</v-icon>
-          remove
-        </v-btn>
+          <slot name="buttons"></slot>
+          <v-btn
+            @click="attemptDelete"
+            size="large"
+            color="red"
+            class="mt-3"
+          >
+            <v-icon
+              class="mr-4"
+              size="x-large"
+            >mdi-delete</v-icon>
+            remove
+          </v-btn>
+        </div>
       </div>
     </div>
   </div>
@@ -62,14 +71,15 @@
 <script setup lang="ts">
 import EmbeddedDetail from '../Embedded/EmbeddedDetail.vue'
 import { computed, ref, watch } from 'vue'
-import { get, useElementSize } from '@vueuse/core'
+import { useElementSize } from '@vueuse/core'
 import { useSheetManager } from '../../../store/useSheetManager'
 import { useDialog } from '../../../store/useDialog'
 import { useDocumentCache } from '../../../store/useDocumentCache'
 import { storeToRefs } from 'pinia'
+import { SheetItem } from '../../../SheetTypes'
 
 const { open, close } = useDialog()
-const { deleteItem } = useDocumentCache()
+const { deleteItem, removeSelectedItem } = useDocumentCache()
 const { getActivePanel } = storeToRefs(useSheetManager())
 
 const sm = ref(false)
@@ -82,6 +92,7 @@ watch(width, (newWidth) => {
 
 const props = defineProps<{
   modelValue: string,
+  item: SheetItem,
   disableDelete?: boolean,
   disableReason?: string,
 }>()
@@ -116,6 +127,14 @@ const attemptDelete = () => {
     })
     return
   }
-  deleteItem()
+  deleteItem({
+    item: props.item,
+  })
+}
+
+const removeFromSelected = () => {
+  removeSelectedItem({
+    item: props.item,
+  })
 }
 </script>

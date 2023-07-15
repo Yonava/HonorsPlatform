@@ -101,7 +101,7 @@
           v-if="mdAndUp"
         />
       </div>
-      <div v-if="mdAndUp && !getSelectedItem()">
+      <div v-if="mdAndUp && !isItemSelected">
         <img
           src="../assets/honorsLogo.jpeg"
           class="honors-logo"
@@ -122,7 +122,7 @@
       style="width: 100%; height: calc(100vh - 175px);"
     >
       <component
-        v-if="getSelectedItem()"
+        v-if="isItemSelected"
         :is="getActivePanel.components.detail"
       />
     </v-navigation-drawer>
@@ -154,7 +154,7 @@ import { panels, version } from '../Panels'
 
 const { setPanel } = useSheetManager()
 const { getActivePanel } = storeToRefs(useSheetManager())
-const { getSelectedItem, setSelectedItem, getAllDocuments } = useDocumentCache()
+const { getSelectedItems, addSelectedItem, getAllDocuments } = useDocumentCache()
 const { setPanelCover } = useDialog()
 const { getPanelCover } = storeToRefs(useDialog())
 
@@ -174,10 +174,10 @@ const {
 } = useDisplay()
 
 const isItemSelected = computed({
-  get: () => !!getSelectedItem(),
+  get: () => !!getSelectedItems().length || false,
   set: (v) => {
     if (!v) {
-      setSelectedItem()
+      addSelectedItem()
     }
   }
 })

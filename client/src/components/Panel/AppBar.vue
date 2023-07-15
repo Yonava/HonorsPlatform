@@ -253,7 +253,7 @@ import { useDocumentCache } from "../../store/useDocumentCache";
 import { storeToRefs } from "pinia";
 
 const { show: dialogOpen } = storeToRefs(useDialog())
-const { getSelectedItem, getAllDocuments } = useDocumentCache();
+const { getSelectedItems, getAllDocuments } = useDocumentCache();
 const { searchFilter, getActivePanel, loadingItems, filteredItems } = storeToRefs(useSheetManager());
 const { setPanel, setSearchFilter } = useSheetManager();
 
@@ -320,7 +320,7 @@ const appBarColor = computed(() => {
 })
 
 watchEffect(() => {
-  if (dialogOpen.value || getSelectedItem()) {
+  if (dialogOpen.value || getSelectedItems().length > 0) {
     navDrawer.value = false;
   }
 });

@@ -1,5 +1,13 @@
 <template>
-  <div>
+  <div
+    @dragstart="dragStart"
+    :draggable="lgAndUp"
+    :class="[
+      'item-card',
+      'pa-3',
+      isSelected(item) ? 'selected-item-card' : ''
+    ]"
+  >
     <div class="d-flex flex-row">
       <div>
         <v-icon
@@ -100,16 +108,20 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { Student } from '../../SheetTypes'
+import { Student, SheetItem } from '../../SheetTypes'
 import { athleticOptions, statusOptions } from '../../StudentTools'
 import { emailValidator } from '../../EmailUtilities'
 import { useDisplay } from 'vuetify'
+import { useDocumentCache } from '../../store/useDocumentCache'
+import { useSheetManager } from '../../store/useSheetManager'
+
+const { getSelectedItems } = useDocumentCache()
 
 const props = defineProps<{
   item: Student
 }>()
 
-const { smAndDown } = useDisplay()
+const { smAndDown, lgAndUp } = useDisplay()
 
 const statusColor = computed<typeof statusOptions[number]['color']>(() => {
   return statusOptions.find((option) => option.label === props.item.activeStatus)?.color ?? 'grey'
@@ -121,4 +133,14 @@ const points = computed(() => {
 })
 
 const emailValid = computed(() => emailValidator(props.item.email))
+
+const isSelected = (item: SheetItem) => {
+  const selectedItems = getSelectedItems()
+  if (!selectedItems) return false
+  return selectedItems.map((item) => item.sysId).includes(item.sysId)
+}
+
+const dragStart = () => {
+  useSheetManager().listItemBeingDragged = props.item
+}
 </script>

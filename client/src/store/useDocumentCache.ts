@@ -29,8 +29,13 @@ type DueForRefresh = {
   checkDependentPanels?: boolean;
 }
 
-type SetSelectedItem = {
+type AddSelectedItem = {
   item?: types.SheetItem;
+  panel?: Panel;
+}
+
+type SetSelectedItems = {
+  items?: types.SheetItem[];
   panel?: Panel;
 }
 
@@ -68,7 +73,7 @@ type MoveItemBetweenLists = {
 
 type PanelState<T> = {
   list: T[];
-  selected: T | null;
+  selected: T[];
 }
 
 export const useDocumentCache = defineStore("documentCache", {
@@ -78,27 +83,27 @@ export const useDocumentCache = defineStore("documentCache", {
     refreshAfter: 1000 * 60 * 5, // 5 minutes
     Students: {
       list: [],
-      selected: null,
+      selected: [],
     } as PanelState<types.Student>,
     Graduates: {
       list: [],
-      selected: null,
+      selected: [],
     } as PanelState<types.Graduate>,
     "Grad Engagements": {
       list: [],
-      selected: null,
+      selected: [],
     } as PanelState<types.GradEngagement>,
     Modules: {
       list: [],
-      selected: null,
+      selected: [],
     } as PanelState<types.Module>,
     "Completed Modules": {
       list: [],
-      selected: null,
+      selected: [],
     } as PanelState<types.CompletedModule>,
     Theses: {
       list: [],
-      selected: null,
+      selected: [],
     } as PanelState<types.Thesis>,
     Announcements: [[]] as string[][],
   }),
@@ -108,7 +113,7 @@ export const useDocumentCache = defineStore("documentCache", {
       const panel = panelObject ?? activePanel;
       return state[panel.sheetRange].list;
     },
-    getSelectedItem: (state) => (panelObject?: Panel) => {
+    getSelectedItems: (state) => (panelObject?: Panel) => {
       const { panel: activePanel } = useSheetManager();
       const panel = panelObject ?? activePanel;
       return state[panel.sheetRange].selected;
@@ -254,23 +259,57 @@ export const useDocumentCache = defineStore("documentCache", {
       const documents = await panel.mappers.map(data);
       this[range].list = documents;
 
-      // clean up selected item
-      if (this[range].selected) {
-        const selectedItemInNewData = documents.find(item => item.sysId === this[range].selected?.sysId);
+      // clean up selected items
+      this[range].selected.forEach((selectedItem, index) => {
+        const selectedItemInNewData = documents.find(item => item.sysId === selectedItem.sysId);
         if (!selectedItemInNewData) {
-          this[range].selected = null;
+          this[range].selected.splice(index, 1);
         } else {
-          this[range].selected = selectedItemInNewData;
+          this[range].selected[index] = selectedItemInNewData;
         }
-      }
+      })
 
       this.refreshLog[range] = new Date();
       return documents;
     },
-    setSelectedItem(options: SetSelectedItem = {}) {
+    setSelectedItems(options: SetSelectedItems = {}) {
+      const { panel: activePanel } = useSheetManager();
+      const { panel = activePanel, items = null } = options;
+      if (items === null) {
+        console.error("useDocumentCache.setSelectedItem: item is null");
+        return;
+      }
+      this[panel.sheetRange].selected = items;
+    },
+    addSelectedItem(options: AddSelectedItem = {}) {
       const { panel: activePanel } = useSheetManager();
       const { panel = activePanel, item = null } = options;
-      this[panel.sheetRange].selected = item;
+      if (item === null) {
+        console.error("useDocumentCache.addSelectedItem: item is null");
+        return;
+      }
+      if (panel === activePanel) {
+        useSheetManager().focusedItem = item;
+      }
+      this[panel.sheetRange].selected.push(item);
+    },
+    removeSelectedItem(options: SetSelectedItems = {}) {
+      const { panel: activePanel } = useSheetManager();
+      const { panel = activePanel, item = null } = options;
+      if (item === null) {
+        console.error("useDocumentCache.removeSelectedItem: item is null");
+        return;
+      }
+      if (panel === activePanel && item.sysId === useSheetManager().focusedItem?.sysId) {
+        const focusedItemIndex = this[panel.sheetRange].selected.findIndex((selectedItem) => selectedItem.sysId === item.sysId);
+
+        if (this[panel.sheetRange].selected.length > 1) {
+          const nextFocusedItem = this[panel.sheetRange].selected[focusedItemIndex + 1] ?? this[panel.sheetRange].selected[focusedItemIndex - 1];
+          useSheetManager().focusedItem = nextFocusedItem;
+        }
+      }
+      const index = this[panel.sheetRange].selected.findIndex((selectedItem) => selectedItem.sysId === item.sysId);
+      this[panel.sheetRange].selected.splice(index, 1);
     },
     setSelectedItemByKeyValue(options: SetSelectedItemByKeyValue = {}) {
       const { panel: activePanel } = useSheetManager();
@@ -288,7 +327,7 @@ export const useDocumentCache = defineStore("documentCache", {
 
       const item = this[panel.sheetRange].list.find(item => item[key] === value);
       if (item) {
-        this[panel.sheetRange].selected = item;
+        this[panel.sheetRange].selected = [item];
         return item;
       } else {
         return null;
@@ -299,7 +338,7 @@ export const useDocumentCache = defineStore("documentCache", {
       const panel = panelObject ?? activePanel;
       const item = this[panel.sheetRange].list.find(item => item.sysId === sysId);
       if (item) {
-        this[panel.sheetRange].selected = item;
+        this[panel.sheetRange].selected = [item];
         return item;
       } else {
         return null;
@@ -314,9 +353,7 @@ export const useDocumentCache = defineStore("documentCache", {
         this[panel.sheetRange].list.splice(index, 1);
       }
 
-      if (this[panel.sheetRange].selected?.sysId === sysId) {
-        this[panel.sheetRange].selected = null;
-      }
+      this[panel.sheetRange].selected = this[panel.sheetRange].selected.filter(item => item.sysId !== sysId);
     },
     async deleteItem(options: DeleteItem = {}) {
       const { panel: activePanel } = useSheetManager();
@@ -325,8 +362,8 @@ export const useDocumentCache = defineStore("documentCache", {
       const { processing } = storeToRefs(syncState);
 
       const {
+        item,
         panel = activePanel,
-        item = this[panel.sheetRange].selected,
         showWarning = true,
         concurrent = false
       } = options;
@@ -394,7 +431,7 @@ export const useDocumentCache = defineStore("documentCache", {
       ]);
       newItem.row = null;
 
-      this[panel.sheetRange].selected = newItem;
+      this[panel.sheetRange].selected.push(newItem);
       this[panel.sheetRange].list.unshift(newItem);
 
       if (pin) {

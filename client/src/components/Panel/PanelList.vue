@@ -8,13 +8,8 @@
         <div
           v-for="item in incrementallyRenderedItems"
           :key="item"
-          @click="setSelectedItem({ item })"
-          :draggable="lgAndUp"
-          :class="[
-            'item-card',
-            'pa-3',
-            isSelected(item) ? 'selected-item-card' : ''
-          ]"
+          @click="setSelectedItem(item)"
+          style="width: 100%"
         >
           <component
             :is="panel.components.list"
@@ -63,20 +58,38 @@
 import { useDocumentCache } from '../../store/useDocumentCache'
 import { useSheetManager } from '../../store/useSheetManager'
 import { useIncrementalRender } from '../../useIncrementalRender'
+import { SheetItem } from '../../SheetTypes'
 import { storeToRefs } from 'pinia'
-import { useDisplay } from 'vuetify'
 
-const { lgAndUp } = useDisplay()
-const { setSelectedItem, getSelectedItem } = useDocumentCache()
+const { addSelectedItem, getSelectedItems, setSelectedItems } = useDocumentCache()
 
 const sheetManager = useSheetManager()
 const { filteredItems, loadingItems, panel, searchFilter } = storeToRefs(sheetManager)
 
 const { incrementallyRenderedItems } = useIncrementalRender(filteredItems)
 
-const isSelected = item => {
-  if (!getSelectedItem()) return false
-  return getSelectedItem().sysId === item.sysId
+const setSelectedItem = (item: SheetItem) => {
+  const focusedItem = useSheetManager().focusedItem
+  const selectedItems = getSelectedItems()
+  const focusedItemIndex = selectedItems.findIndex(i => i.sysId === focusedItem?.sysId)
+  const selectedItemIndex = selectedItems.findIndex(i => i.sysId === item.sysId)
+
+  // if the item is already selected, focus it
+  if (selectedItemIndex !== -1) {
+    useSheetManager().focusedItem = item
+    return
+  }
+
+  if (focusedItemIndex === -1) {
+    addSelectedItem({ item })
+  } else {
+    const newSelectedItems = [...selectedItems]
+    newSelectedItems[focusedItemIndex] = item
+    setSelectedItems({
+      items: newSelectedItems
+    })
+    useSheetManager().focusedItem = item
+  }
 }
 </script>
 

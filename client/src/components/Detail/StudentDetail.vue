@@ -1,6 +1,9 @@
 <template>
   <div>
-    <DetailFrame v-model="student.note">
+    <DetailFrame
+      v-model="student.note"
+      :item="student"
+    >
       <template #main>
         <DetailHeader
           v-model="student.name"
@@ -215,7 +218,7 @@ import { useDocumentCache } from "../../store/useDocumentCache";
 import { useDialog } from "../../store/useDialog";
 import { useUpdateItem } from "../../TrackItemForUpdate";
 import { warn } from '../../Warn'
-import { toRefs, ref, computed, Ref } from 'vue'
+import { ref, computed } from 'vue'
 import { Student } from '../../SheetTypes'
 import { useDisplay } from 'vuetify'
 
@@ -223,8 +226,12 @@ const { open, close } = useDialog();
 const { setPanel } = useSheetManager();
 
 const { Students, Theses, addItem } = useDocumentCache();
-const { list: items, selected } = toRefs(Students);
-const student = selected as Ref<Student>;
+
+const props = defineProps<{
+  item: Student;
+}>();
+
+const student = ref(props.item);
 
 useUpdateItem(student);
 
@@ -244,7 +251,7 @@ function studentIdRule(studentId: string) {
   if (!studentId) {
     return true;
   }
-  const existingStudent = items.value.find(
+  const existingStudent = Students.list.find(
     (item) => item.id === studentId
   );
   if (existingStudent) {

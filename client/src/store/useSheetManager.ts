@@ -28,6 +28,8 @@ export const useSheetManager = defineStore('sheetManager', {
       func: null as ((a: SheetItem, b: SheetItem) => number) | null,
       ascending: true
     } as SortOption,
+    listItemBeingDragged: null as SheetItem | null,
+    focusedItem: null as SheetItem | null,
   }),
   getters: {
     filteredItems(state) {

@@ -42,7 +42,7 @@
       />
     </div>
     <component
-      v-if="getSelectedItem(getActiveEmbeddedPanel)"
+      v-if="embedSelectedItem"
       :is="getActivePanel.embedded.detail"
     />
   </div>
@@ -61,22 +61,29 @@ const { getActivePanel, getActiveEmbeddedPanel } = sheetManager
 const { loadingItems } = storeToRefs(sheetManager)
 
 const documents = useDocumentCache()
-const { deleteItem, setSelectedItem, getSelectedItem, addItem, updateItem } = documents
+const { deleteItem, setSelectedItems, getSelectedItems, addItem, updateItem } = documents
 
 const { filterBy, text } = getActivePanel.embedded
 
-const { list: items, selected } = toRefs(documents[getActiveEmbeddedPanel.sheetRange])
-useUpdateItem(selected, getActiveEmbeddedPanel)
+const parentSelectedItem = computed(() => {
+  return getSelectedItems()[0] ?? null
+})
+
+const embedSelectedItem = computed(() => {
+  return getSelectedItems(getActiveEmbeddedPanel)[0] ?? null
+})
+
+const { list: items } = toRefs(documents[getActiveEmbeddedPanel.sheetRange])
+useUpdateItem(embedSelectedItem, getActiveEmbeddedPanel)
 
 const displayedItems = computed(() => {
-  if (!getSelectedItem()[filterBy.outer]) return []
-  return items.value.filter(e => e[filterBy.inner] === getSelectedItem()[filterBy.outer])
+  if (!parentSelectedItem.value[filterBy.outer]) return []
+  return items.value.filter(e => e[filterBy.inner] === parentSelectedItem.value[filterBy.outer])
 })
 
 const addEmbeddedItem = async () => {
   // edge case for when parent panel is not yet saved to the sheet
-  const parentItem = getSelectedItem()!
-  if (!parentItem.row) {
+  if (!parentSelectedItem.value.row) {
     updateItem()
   }
 
@@ -84,14 +91,14 @@ const addEmbeddedItem = async () => {
     panel: getActiveEmbeddedPanel,
     pin: false,
     columns: [
-      getSelectedItem()[filterBy.outer],
+      parentSelectedItem.value[filterBy.outer],
     ],
   })
 }
 
 const setSelectedEmbeddedItem = (item: SheetItem) => {
-  setSelectedItem({
-    item,
+  setSelectedItems({
+    items: [item],
     panel: getActiveEmbeddedPanel,
   })
 }

@@ -116,7 +116,7 @@ import type { SheetItem } from "../../SheetTypes";
 
 const { getPanelCover } = storeToRefs(useDialog());
 const { getActivePanel } = storeToRefs(useSheetManager());
-const { getSelectedItem, setSelectedItem } = useDocumentCache();
+const { getSelectedItems, setSelectedItems } = useDocumentCache();
 
 const displayItems = computed(() => {
   const items = filterItems(getPanelCover.value.deletionItems.map(data => ({
