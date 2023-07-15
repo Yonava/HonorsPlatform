@@ -3,6 +3,7 @@
     <div
       v-if="styled"
       @dragstart="dragStart"
+      @dragend="useSheetManager().listItemBeingDragged = null"
       :draggable="lgAndUp && !isSelected(item)"
       :class="[
         'item-card',

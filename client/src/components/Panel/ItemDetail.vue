@@ -1,13 +1,21 @@
 <template>
   <v-sheet
-    @dragenter="dragState = true"
-    @dragleave="dragState = false"
-    @dragover="dragOver"
-    @drop="drop"
-    :color="dragState ? `${getActivePanel.color}-lighten-4` : ''"
     style="height: 100%; width: 100%; overflow: auto;"
     class="d-flex flex-grow-1 flex-row align-center"
   >
+    <div
+      @dragenter="dragState = true"
+      @dragleave="dragState = false"
+      @dragover="dragOver"
+      @drop="drop"
+      :style="{
+        height: '100%',
+        width: '100%',
+        position: 'absolute',
+        zIndex: '99',
+        pointerEvents: allowPointerEvents ? 'all' : 'none'
+      }"
+    ></div>
     <v-sheet
       v-for="item in getSelectedItems()"
       :key="item.sysId"
@@ -23,8 +31,22 @@
         :item="item"
       />
     </v-sheet>
+    <v-sheet
+      v-if="dragState"
+      :color="getActivePanel.color"
+      :style="{
+        width: '100%',
+        height: '100%',
+        opacity: '0.75'
+      }"
+      class="d-flex justify-center align-center"
+    >
+      <v-icon size="20rem">
+        {{ getActivePanel.icon }}
+      </v-icon>
+    </v-sheet>
     <div
-      v-if="!getSelectedItems().length"
+      v-if="!getSelectedItems().length && !dragState"
       class="justify-center d-flex"
       style="width: 100%; height: 100%;"
     >
@@ -39,7 +61,7 @@
 import { useSheetManager } from '../../store/useSheetManager';
 import { useDocumentCache } from '../../store/useDocumentCache';
 import { SheetItem } from '../../SheetTypes';
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { storeToRefs } from 'pinia'
 
 const dragState = ref(false)
@@ -65,4 +87,8 @@ const isFocused = (item: SheetItem) => {
   const focusedItem = useSheetManager().focusedItem
   return focusedItem && focusedItem.sysId === item.sysId
 }
+
+const allowPointerEvents = computed(() => {
+  return useSheetManager().listItemBeingDragged
+})
 </script>
