@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <ListItemFrame :item="item">
     <div class="d-flex flex-row">
       <div style="font-weight: 800; font-size: 1.35em; line-height: 1">
         {{ item.event || '(No Event Name)' }}
@@ -55,15 +55,15 @@
         <v-spacer></v-spacer>
       </div>
     </div>
-  </div>
+  </ListItemFrame>
 </template>
 
 <script setup lang="ts">
 import { useDisplay } from 'vuetify'
 import { computed } from 'vue'
 import { getPanel } from '../../Panels';
-
 import { useStudentInfo } from './useStudentInfo'
+import ListItemFrame from './ListItemFrame.vue';
 
 const { smAndDown } = useDisplay()
 

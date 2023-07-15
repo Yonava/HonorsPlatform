@@ -37,8 +37,9 @@ import { filterItems } from '../../../FilterObjects';
 import { ref, computed } from 'vue';
 import { useDialog } from '../../../store/useDialog'
 import { useDocumentCache } from '../../../store/useDocumentCache'
+import { useSheetManager } from '../../../store/useSheetManager'
 
-const { Graduates, getSelectedItem } = useDocumentCache()
+const { Graduates } = useDocumentCache()
 
 const filterQuery = ref('')
 
@@ -50,7 +51,7 @@ const filteredItems = computed(() => {
 })
 
 const graduateLinked = (sysId: string) => {
-  const itemToModify = getSelectedItem()
+  const itemToModify = useSheetManager().focusedItem
   // if itemToModify does not have a studentSysId return and log an error
   if (!itemToModify?.studentSysId === undefined) {
     console.error('Link Graduate: No studentSysId found on itemToModify')
