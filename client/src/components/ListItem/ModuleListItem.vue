@@ -1,5 +1,8 @@
 <template>
-  <ListItemFrame :item="item">
+  <ListItemFrame
+    :item="item"
+    :styled="styled"
+  >
     <div class="d-flex flex-row">
       <div v-if="overOneYearInProgress && !item.docuSignCompleted">
         <v-icon
@@ -115,7 +118,8 @@ import { useDisplay } from 'vuetify'
 import ListItemFrame from './ListItemFrame.vue'
 
 const props = defineProps<{
-  item: Module
+  item: Module,
+  styled: boolean
 }>()
 
 const { smAndDown } = useDisplay()

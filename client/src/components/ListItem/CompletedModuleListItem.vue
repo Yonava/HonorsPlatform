@@ -1,5 +1,7 @@
 <template>
-  <ListItemFrame :item="item">
+  <ListItemFrame
+    :item="item"
+  >
     <div class="d-flex flex-row">
       <div style="font-weight: 900; font-size: 1.5em; line-height: 1">
         {{ item.courseCode || '(No Course Code)' }}
@@ -84,7 +86,7 @@ import { termValidator } from '../../TermValidator'
 import ListItemFrame from './ListItemFrame.vue'
 
 const props = defineProps<{
-  item: CompletedModule
+  item: CompletedModule,
 }>()
 
 const { smAndDown } = useDisplay()

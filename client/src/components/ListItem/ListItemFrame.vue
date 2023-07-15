@@ -1,14 +1,24 @@
 <template>
-  <div
-    @dragstart="dragStart"
-    :draggable="lgAndUp && !isSelected(item)"
-    :class="[
-      'item-card',
-      'pa-3',
-      isSelected(item) ? 'selected-item-card' : ''
-    ]"
-  >
-    <slot></slot>
+  <div>
+    <div
+      v-if="styled"
+      @dragstart="dragStart"
+      :draggable="lgAndUp && !isSelected(item)"
+      :class="[
+        'item-card',
+        'pa-4',
+        isSelected(item) ? 'selected-item-card' : ''
+      ]"
+    >
+      <slot></slot>
+    </div>
+    <div
+      v-else
+      @dragstart="dragStart"
+      :draggable="lgAndUp && !isSelected(item)"
+    >
+      <slot></slot>
+    </div>
   </div>
 </template>
 
@@ -23,7 +33,8 @@ const { lgAndUp } = useDisplay()
 const { getSelectedItems } = useDocumentCache()
 
 const props = defineProps<{
-  item: SheetItem
+  item: SheetItem,
+  styled?: boolean
 }>()
 
 const isSelected = (item: SheetItem) => {

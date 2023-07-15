@@ -1,5 +1,8 @@
 <template>
-  <ListItemFrame :item="item">
+  <ListItemFrame
+    :item="item"
+    :styled="styled"
+  >
     <div class="d-flex flex-row">
       <div>
         <v-icon
@@ -107,7 +110,8 @@ import { useDisplay } from 'vuetify'
 import ListItemFrame from './ListItemFrame.vue'
 
 const props = defineProps<{
-  item: Student
+  item: Student,
+  styled?: boolean
 }>()
 
 const { smAndDown } = useDisplay()

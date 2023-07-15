@@ -4,9 +4,9 @@
       <v-sheet
         v-for="{ item, rationale, status } in incrementallyRenderedItems"
         :key="item"
-        @click="setSelectedItem({ item })"
+        @click="setSelectedItem(item)"
         :color="getPanelCover.selectedForDelete.includes(item.sysId) ? 'red-lighten-4' : ''"
-        :class="[
+         :class="[
           'item-card',
           'px-4 pb-4',
           isSelected(item) ? 'selected-item-card' : '',
@@ -14,7 +14,6 @@
       >
         <div
           class="pa-5 d-flex flex-row align-center"
-          style="width: 100%"
         >
           <div style="width: 10%">
             <v-icon
@@ -107,16 +106,15 @@
 import { watchEffect, computed } from "vue";
 import { useDialog } from "../../store/useDialog";
 import { useSheetManager } from "../../store/useSheetManager";
-import { useDocumentCache } from "../../store/useDocumentCache";
 import { storeToRefs } from "pinia";
 import { getSuggestedDeletions } from "../../DeleteSuggestions";
 import { useIncrementalRender } from "../../useIncrementalRender";
 import { filterItems } from '../../FilterObjects'
-import type { SheetItem } from "../../SheetTypes";
+import { setSelectedItem } from "./SetSelectedItem";
+import { useDocumentCache } from "../../store/useDocumentCache";
 
 const { getPanelCover } = storeToRefs(useDialog());
 const { getActivePanel } = storeToRefs(useSheetManager());
-const { getSelectedItems, setSelectedItems } = useDocumentCache();
 
 const displayItems = computed(() => {
   const items = filterItems(getPanelCover.value.deletionItems.map(data => ({
@@ -138,10 +136,10 @@ watchEffect(async () => {
   }
 });
 
-const isSelected = (item: SheetItem) => {
-  const selectedItem = getSelectedItem()
-  if (!selectedItem) return false
-  return selectedItem.sysId === item.sysId
+const isSelected = (item: any) => {
+  const selectedItems = useDocumentCache().getSelectedItems()
+  if (!selectedItems) return false
+  return selectedItems.map((item) => item.sysId).includes(item.sysId)
 }
 </script>
 
@@ -152,7 +150,6 @@ const isSelected = (item: SheetItem) => {
   cursor: pointer;
   transition: 350ms;
   overflow: auto;
-  border-bottom: 1px solid rgba(111, 111, 111, 0.21);
 }
 
 .selected-item-card {

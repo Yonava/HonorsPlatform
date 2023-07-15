@@ -1,5 +1,8 @@
 <template>
-  <ListItemFrame :item="item">
+  <ListItemFrame
+    :item="item"
+    :styled="styled"
+  >
     <div class="d-flex flex-row">
       <div style="font-weight: 900; font-size: 1.5em; line-height: 1">
         {{ item.name || '(No Name)' }}
@@ -79,7 +82,8 @@ import { emailValidator, phoneValidator } from '../../EmailUtilities'
 import ListItemFrame from './ListItemFrame.vue'
 
 const props = defineProps<{
-  item: Graduate
+  item: Graduate,
+  styled: boolean
 }>()
 
 const { smAndDown } = useDisplay()
