@@ -38,7 +38,7 @@
 - Added new sort option to Grad Engagements: “Event”
 
 ### prerelease 0.82 (Jun. 24)
-- Graduate engageements added as a full service panel with list item and detail
+- Graduate engagements added as a full service panel with list item and detail
 - Fixed sort panel not updating sort options on panel switch
 - Reordered panels and refactored panel key bindings to dynamically rebind when panels re-order
 - useUpdateItem now terminates impending update request when user reverts item back to former state
