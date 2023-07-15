@@ -97,27 +97,9 @@
             left: `${proposedWidth + sortPanelWidth}px`,
           }"
         ></v-sheet>
-        <v-sheet
+        <ItemDetail
           v-if="mdAndUp"
-          :color="`white`"
-          style="height: 100%; overflow: auto;"
-          class="d-flex flex-grow-1 flex-column align-center"
-        >
-          <div
-            v-if="getSelectedItem()"
-            style="width: 100%"
-          >
-            <component :is="getActivePanel.components.detail" />
-          </div>
-          <div
-            v-else
-            class="d-flex flex-column align-center justify-center"
-          >
-            <v-icon style="font-size: 35vw; opacity: 0.1;">
-              {{ getActivePanel.icon }}
-            </v-icon>
-          </div>
-        </v-sheet>
+        />
       </div>
       <div v-if="mdAndUp && !getSelectedItem()">
         <img
@@ -160,6 +142,7 @@ import SortPanel from '../components/Panel/SortPanel.vue'
 import AppBar from '../components/Panel/AppBar.vue'
 import ServeDialog from '../components/Panel/ServeDialog.vue'
 import PanelCover from '../components/Panel/PanelCover.vue'
+import ItemDetail from '../components/Panel/ItemDetail.vue'
 import { useKeyBindings } from '../KeyBindings'
 import { useDisplay } from 'vuetify'
 

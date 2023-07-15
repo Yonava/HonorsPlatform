@@ -36,8 +36,8 @@ import { useSheetManager } from '../store/useSheetManager'
 
 const activePanel = useSheetManager().panel
 
-const headerRow = headerRowMemo[activePanel.sheetRange]
-const selectedHeaders = ref([])
+const headerRow = headerRowMemo[activePanel.sheetRange] ?? []
+const selectedHeaders = ref<string[]>([])
 const creatingTempSheet = ref(false)
 
 const createTempSheet = async () => {

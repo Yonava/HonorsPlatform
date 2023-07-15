@@ -14,6 +14,7 @@
               <v-btn
                 v-if="!student.id"
                 v-bind="props"
+                @click="tempStudentId = ''"
                 size="x-small"
                 color="blue-darken-2"
               >
@@ -265,9 +266,6 @@ function studentIdRule(studentId: string) {
 const saveId = () => {
   student.value.id = tempStudentId.value;
   idDialog.value = false;
-  setTimeout(() => {
-    tempStudentId.value = "";
-  }, 300);
 }
 
 const thesisPanel = getPanel("THESES");

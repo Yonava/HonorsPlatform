@@ -359,8 +359,8 @@ export const useDocumentCache = defineStore("documentCache", {
       }
       const { sysId, row } = item;
 
-
       setProcessing(true);
+
       if (typeof row === "number") {
         this.removeItemFromCacheBySysId(sysId, panel);
         await clearByRow(panel.sheetRange, row);
@@ -370,7 +370,7 @@ export const useDocumentCache = defineStore("documentCache", {
 
       useSyncState().$reset();
     },
-    async addItem(options: AddItem = {}) {
+    async addItem(options: AddItem = {}): Promise<types.SheetItem> {
       const {
         setSearchFilter,
         panel: activePanel,

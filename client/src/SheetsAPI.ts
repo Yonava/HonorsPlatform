@@ -1,5 +1,4 @@
 import axios from "axios";
-// import router from "./router";
 import { useAuth } from "./store/useAuth";
 
 export type Range = "Students" | "Modules" | "Graduates" | "Completed Modules" | "Announcements" | "Grad Engagements" | "Registrar List" | "Theses" | "Temporary Data";

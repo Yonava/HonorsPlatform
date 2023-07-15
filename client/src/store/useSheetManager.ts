@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { SheetItem } from '../SheetTypes';
-import { getPanel, PanelName, panels, Panel } from '../Panels';
+import { getPanel, PanelName, panels } from '../Panels';
 import router from '../router';
 import { filterItems } from '../FilterObjects';
 import { useDocumentCache } from './useDocumentCache';

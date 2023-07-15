@@ -9,6 +9,7 @@
           v-for="item in incrementallyRenderedItems"
           :key="item"
           @click="setSelectedItem({ item })"
+          :draggable="lgAndUp"
           :class="[
             'item-card',
             'pa-3',
@@ -63,7 +64,9 @@ import { useDocumentCache } from '../../store/useDocumentCache'
 import { useSheetManager } from '../../store/useSheetManager'
 import { useIncrementalRender } from '../../useIncrementalRender'
 import { storeToRefs } from 'pinia'
+import { useDisplay } from 'vuetify'
 
+const { lgAndUp } = useDisplay()
 const { setSelectedItem, getSelectedItem } = useDocumentCache()
 
 const sheetManager = useSheetManager()
