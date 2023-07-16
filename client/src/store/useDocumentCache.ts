@@ -269,6 +269,7 @@ export const useDocumentCache = defineStore("documentCache", {
       const oldSelectedItems = [...this[range].selected]
       const oldFocusedItem = JSON.parse(JSON.stringify((useSheetManager().focusedItem)))
       this[range].selected = []
+
       for (const oldSelectedItem of oldSelectedItems) {
         const itemInNewData = this[range].list.find((item) => {
           return item.sysId === oldSelectedItem.sysId
@@ -287,6 +288,15 @@ export const useDocumentCache = defineStore("documentCache", {
 
       if (focusedItemInNewData) {
         useSheetManager().focusedItem = focusedItemInNewData
+      }
+
+      // clean up pinned items
+      if (panel.sheetRange === useSheetManager().getActivePanel.sheetRange) {
+        useSheetManager().pinnedSysIds = useSheetManager().pinnedSysIds.filter((sysId) => {
+          return this[range].list.some((item) => {
+            return item.sysId === sysId
+          })
+        })
       }
 
       this.refreshLog[range] = new Date();
@@ -387,6 +397,11 @@ export const useDocumentCache = defineStore("documentCache", {
         this[panel.sheetRange].list.splice(index, 1);
       }
 
+      const pinnedSysIdIndex = useSheetManager().pinnedSysIds.indexOf(sysId)
+      if (pinnedSysIdIndex !== -1) {
+        useSheetManager().pinnedSysIds.splice(pinnedSysIdIndex, 1)
+      }
+
       if (selectedItem) {
         this.removeSelectedItem({
           item: selectedItem,
@@ -451,12 +466,12 @@ export const useDocumentCache = defineStore("documentCache", {
         setSearchFilter,
         panel: activePanel,
         newSysId,
-        setPinnedItem
+        addPinnedItem
       } = useSheetManager();
 
       const {
         panel = activePanel,
-        pin = true,
+        pin = false,
         postToSheet = false,
         columns = null,
       } = options;
@@ -483,7 +498,7 @@ export const useDocumentCache = defineStore("documentCache", {
       this[panel.sheetRange].list.unshift(newItem);
 
       if (pin) {
-        setPinnedItem(newItem);
+        addPinnedItem(newItem);
       }
 
       if (postToSheet) {

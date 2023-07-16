@@ -2,21 +2,23 @@
   <div>
     <div v-if="!loadingItems">
       <div
-        style="position: relative; width: 100%"
+        style="position: relative; width: 100%;"
         class="d-flex flex-column align-center"
       >
-        <div
-          v-for="item in incrementallyRenderedItems"
-          :key="item"
-          @click="setSelectedItem(item)"
-          style="width: 100%"
-        >
-          <component
-            :is="panel.components.list"
-            :item="item"
-            :styled="true"
-          />
-        </div>
+        <TransitionGroup :name="useSheetManager().transitioningPanel ? '' : 'list'">
+          <div
+            v-for="item in incrementallyRenderedItems"
+            :key="item"
+            @click="setSelectedItem(item)"
+            style="width: 100%; height: 100%; position: relative;"
+          >
+            <component
+              :is="panel.components.list"
+              :item="item"
+              :styled="true"
+            />
+          </div>
+        </TransitionGroup>
       </div>
       <v-sheet
         v-if="filteredItems.length === 0"
@@ -66,3 +68,17 @@ const { filteredItems, loadingItems, panel, searchFilter } = storeToRefs(sheetMa
 
 const { incrementallyRenderedItems } = useIncrementalRender(filteredItems)
 </script>
+
+<style scoped>
+.list-move, /* apply transition to moving elements */
+.list-enter-active,
+.list-leave-active {
+  transition: all 0.5s ease;
+}
+
+/* ensure leaving items are taken out of layout flow so that moving
+   animations can be calculated correctly. */
+.list-leave-active {
+  position: absolute;
+}
+</style>

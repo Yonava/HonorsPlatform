@@ -18,11 +18,11 @@ export type SortOption = {
 
 export const useSheetManager = defineStore('sheetManager', {
   state: () => ({
-    panelSwitchDebounce: 250,
+    panelSwitchDebounce: 2000,
     canPanelSwitch: true,
     panel: getPanel(Object.keys(panels)[0] as PanelName),
     searchFilter: '',
-    pinnedItem: null as SheetItem | null,
+    pinnedSysIds: [] as string[],
     loadingItems: false,
     sort: {
       func: null as ((a: SheetItem, b: SheetItem) => number) | null,
@@ -30,24 +30,31 @@ export const useSheetManager = defineStore('sheetManager', {
     } as SortOption,
     listItemBeingDragged: null as SheetItem | null,
     focusedItem: null as SheetItem | null,
+    transitioningPanel: false
   }),
   getters: {
     filteredItems(state) {
       if (state.loadingItems) {
         return [];
       }
+
       const documents = useDocumentCache();
       const outputArray = [...documents[state.panel.sheetRange].list];
-      if (state.pinnedItem) {
-        const indexOfPinnedItem = outputArray.findIndex(item => item.sysId === state.pinnedItem?.sysId);
-        if (indexOfPinnedItem !== -1) {
-          outputArray.splice(indexOfPinnedItem, 1);
-          outputArray.unshift(state.pinnedItem);
+
+      for (const pinnedSysId of state.pinnedSysIds) {
+        const pinnedItemIndex = outputArray.findIndex((item) => pinnedSysId === item.sysId)
+        if (pinnedItemIndex === -1) {
+          continue
         }
+        const pinnedItem = outputArray[pinnedItemIndex]
+        outputArray.splice(pinnedItemIndex, 1)
+        outputArray.unshift(pinnedItem)
       }
+
       if (state.searchFilter === '') {
         return outputArray;
       }
+
       return filterItems(outputArray, state.searchFilter);
     },
     activeSort(state) {
@@ -59,6 +66,9 @@ export const useSheetManager = defineStore('sheetManager', {
     getActiveEmbeddedPanel(state) {
       const embeddedPanel = getPanel(state.panel.embedded.panel)
       return embeddedPanel ?? null
+    },
+    getPinnedItem: (state) => (item: SheetItem) => {
+      return state.pinnedSysIds.find((sysId) => item.sysId === sysId)
     }
   },
   actions: {
@@ -70,13 +80,13 @@ export const useSheetManager = defineStore('sheetManager', {
         return;
       }
 
+      this.transitioningPanel = true
       this.canPanelSwitch = false;
 
       const { setSelectedItems, getAllDocuments } = useDocumentCache();
       setSelectedItems();
       this.panel = getPanel(panelName);
-
-      this.setPinnedItem(null);
+      this.pinnedSysIds = localStorage.getItem(`pinned${this.panel.title.plural}`)?.split(',') || []
       this.setSearchFilter('');
 
       this.sort = {
@@ -102,6 +112,7 @@ export const useSheetManager = defineStore('sheetManager', {
 
       setTimeout(() => {
         this.canPanelSwitch = true;
+        this.transitioningPanel = false
       }, this.panelSwitchDebounce);
     },
     async jumpToItem({ key = 'sysId', value, fallbackFn = () => null }: JumpObject) {
@@ -120,8 +131,21 @@ export const useSheetManager = defineStore('sheetManager', {
         fallbackFn()
       }
     },
-    setPinnedItem(item: SheetItem | null) {
-      this.pinnedItem = item;
+    setPinnedItem({ items = [] }: { items: SheetItem[] }) {
+      this.pinnedSysIds = items.map((item) => item.sysId);
+    },
+    addPinnedItem(item: SheetItem) {
+      this.pinnedSysIds.push(item.sysId)
+    },
+    removePinnedItem(item: SheetItem) {
+      const pinnedItemIndex = this.pinnedSysIds.findIndex((sysId) => {
+        return item.sysId === sysId
+      })
+      if (pinnedItemIndex === -1) {
+        console.warn(`useSheetManager removePinnedItem: ${item.sysId} does not exist in pinned items`)
+        return
+      }
+      this.pinnedSysIds.splice(pinnedItemIndex, 1)
     },
     newSysId() {
       return Math.random().toString(36).substring(2, 15);
@@ -143,7 +167,6 @@ export const useSheetManager = defineStore('sheetManager', {
       }
 
       this.sort = sortObject;
-      this.setPinnedItem(null);
 
       itemsOnActivePanel.sort(sortObject.func);
 
