@@ -2,14 +2,14 @@
   <div>
     <div v-if="!loadingItems">
       <div
-        style="position: relative; width: 100%"
+        style="position: relative; width: 100%;"
         class="d-flex flex-column align-center"
       >
         <div
           v-for="item in incrementallyRenderedItems"
           :key="item"
           @click="setSelectedItem(item)"
-          style="width: 100%"
+          style="width: 100%; height: 100%; position: relative;"
         >
           <component
             :is="panel.components.list"
