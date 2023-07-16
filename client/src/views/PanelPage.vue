@@ -153,7 +153,7 @@ import { storeToRefs } from 'pinia'
 import { panels, version } from '../Panels'
 
 const { setPanel } = useSheetManager()
-const { getActivePanel } = storeToRefs(useSheetManager())
+const { getActivePanel, pinnedSysIds } = storeToRefs(useSheetManager())
 const { setSelectedItems, getAllDocuments } = useDocumentCache()
 const { getSelectedItems } = storeToRefs(useDocumentCache())
 const { setPanelCover } = useDialog()
@@ -166,6 +166,7 @@ if (route.query.type) {
   if (panelIndex !== -1) setPanel(panelKeys[panelIndex])
 } else {
   document.title = getActivePanel.value.title.plural + ' - Honors Program'
+  pinnedSysIds.value = localStorage.getItem(`pinned${getActivePanel.value.title.plural}`)?.split(',') || []
 }
 
 const {
@@ -253,6 +254,11 @@ const resizeEnd = (e: MouseEvent) => {
   document.removeEventListener('mousemove', resizeMove)
   document.removeEventListener('mouseup', resizeEnd)
 }
+
+watch(pinnedSysIds, (newIds) => {
+  const storableIds = newIds.join(',')
+  localStorage.setItem(`pinned${getActivePanel.value.title.plural}`, storableIds)
+}, { deep: true })
 </script>
 
 <style scoped>

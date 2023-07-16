@@ -5,7 +5,7 @@
         style="position: relative; width: 100%;"
         class="d-flex flex-column align-center"
       >
-        <TransitionGroup name="list">
+        <TransitionGroup :name="useSheetManager().transitioningPanel ? '' : 'list'">
           <div
             v-for="item in incrementallyRenderedItems"
             :key="item"
