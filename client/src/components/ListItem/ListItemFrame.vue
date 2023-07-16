@@ -6,11 +6,11 @@
       @dragend="useSheetManager().listItemBeingDragged = null"
       @mouseover="setHovered(true)"
       @mouseleave="setHovered(false)"
-      :draggable="lgAndUp && !isSelected(item)"
+      :draggable="lgAndUp && !isSelected"
       :class="[
         'item-card',
         'pa-4',
-        isSelected(item) ? 'selected-item-card' : '',
+        isSelected ? 'selected-item-card' : '',
         'd-flex',
         'flex-row'
       ]"
@@ -18,34 +18,55 @@
     >
       <div
         :style="{
-          transition: hovered ? '300ms ease-in-out' : '100ms',
-          transitionDelay: hovered ? '100ms' : '0',
+          transition: hovered || isPinned ? '300ms ease-in-out' : '100ms',
+          transitionDelay: hovered || isPinned ? '100ms' : '0',
           width: '30px',
           height: '65px',
           position: 'absolute',
-          opacity: hovered ? '1' : '0'
+          opacity: hovered || isPinned ? '1' : '0'
         }"
       >
         <div
           class="d-flex flex-column"
           style="position: relative; height: 100%; gap: 2px; transform: translateY(-5px)"
         >
-          <v-icon>
-            mdi-pin-outline
-          </v-icon>
-          <v-icon v-if="canEmail">
-            mdi-email-fast-outline
-          </v-icon>
-          <v-icon>
-            mdi-delete-outline
-          </v-icon>
+          <div
+            @click.stop="togglePin"
+            @mouseover="hoverData['pin'] = true"
+            @mouseleave="hoverData['pin'] = false"
+          >
+            <v-icon>
+              mdi-pin{{ hoverData['pin'] || isPinned ? '' : '-outline' }}
+            </v-icon>
+            <v-tooltip activator="parent">
+              {{ isPinned ? 'Unpin' : 'Pin' }}
+            </v-tooltip>
+          </div>
+          <div
+            v-for="{ icon, onClick, tooltip, condition = () => true } in sideActionButtons"
+            :key="icon"
+            @click.stop="onClick"
+            @mouseover="hoverData[icon] = true"
+            @mouseleave="hoverData[icon] = false"
+          >
+            <v-icon
+              v-if="condition()"
+            >
+              {{ icon }}{{ hoverData[icon] ? '' : '-outline' }}
+            </v-icon>
+            <v-tooltip
+              activator="parent"
+            >
+              {{ tooltip }}
+            </v-tooltip>
+          </div>
         </div>
       </div>
       <v-spacer></v-spacer>
       <div
         :style="{
           transition: '300ms ease-in-out',
-          width: hovered ? 'calc(100% - 35px)' : '100%'
+          width: hovered || isPinned ? 'calc(100% - 35px)' : '100%'
         }"
       >
         <slot></slot>
@@ -55,7 +76,7 @@
       v-else
       @dragstart="dragStart"
       @dragend="useSheetManager().listItemBeingDragged = null"
-      :draggable="lgAndUp && !isSelected(item)"
+      :draggable="lgAndUp && !isSelected"
     >
       <slot></slot>
     </div>
@@ -64,7 +85,7 @@
 
 <script setup lang="ts">
 import { SheetItem } from '../../SheetTypes'
-import { emailValidator } from '../../EmailUtilities'
+import { emailValidator, sendEmail } from '../../EmailUtilities'
 import { useSheetManager } from '../../store/useSheetManager'
 import { useDocumentCache } from '../../store/useDocumentCache'
 import { useDisplay } from 'vuetify'
@@ -72,7 +93,7 @@ import { ref, computed } from 'vue'
 
 const { lgAndUp, smAndDown } = useDisplay()
 
-const { getSelectedItems } = useDocumentCache()
+const { getSelectedItems, deleteItem } = useDocumentCache()
 
 const hovered = ref(false)
 
@@ -81,10 +102,22 @@ const props = defineProps<{
   styled?: boolean
 }>()
 
-const isSelected = (item: SheetItem) => {
+const isSelected = computed(() => {
   const selectedItems = getSelectedItems()
   if (!selectedItems) return false
-  return selectedItems.map((item) => item.sysId).includes(item.sysId)
+  return selectedItems.map((item) => item.sysId).includes(props.item.sysId)
+})
+
+const isPinned = computed(() => {
+  return !!useSheetManager().getPinnedItem(props.item)
+})
+
+const togglePin = () => {
+  if (isPinned.value) {
+    useSheetManager().removePinnedItem(props.item)
+  } else {
+    useSheetManager().addPinnedItem(props.item)
+  }
 }
 
 const dragStart = () => {
@@ -102,6 +135,27 @@ const setHovered = (v: boolean) => {
   }
   hovered.value = v
 }
+
+const hoverData = ref<{ [key in string]: boolean }>({})
+const sideActionButtons = [
+  {
+    condition: () => canEmail.value,
+    icon: 'mdi-email-fast',
+    tooltip: 'Email ' + useSheetManager().getActivePanel.title.singular,
+    onClick: () => {
+      sendEmail(props.item?.email)
+    }
+  },
+  {
+    icon: 'mdi-delete',
+    tooltip: 'Delete ' + useSheetManager().getActivePanel.title.singular,
+    onClick: () => {
+      deleteItem({
+        item: props.item
+      })
+    }
+  }
+]
 </script>
 
 <style scoped>

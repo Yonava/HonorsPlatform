@@ -451,12 +451,12 @@ export const useDocumentCache = defineStore("documentCache", {
         setSearchFilter,
         panel: activePanel,
         newSysId,
-        setPinnedItem
+        addPinnedItem
       } = useSheetManager();
 
       const {
         panel = activePanel,
-        pin = true,
+        pin = false,
         postToSheet = false,
         columns = null,
       } = options;
@@ -483,7 +483,7 @@ export const useDocumentCache = defineStore("documentCache", {
       this[panel.sheetRange].list.unshift(newItem);
 
       if (pin) {
-        setPinnedItem(newItem);
+        addPinnedItem(newItem);
       }
 
       if (postToSheet) {
