@@ -1,4 +1,10 @@
-# Current Version: prerelease 0.86
+# Current Version: prerelease 0.86.2
+
+### prerelease 0.86.2 (Jul. 16)
+- Improvement: Registrar list builder will now try to find graduate match for module if student is not found
+- Efficiency improvement on mass delete. Replaces range as opposed to deleting one-by-one
+- Fixed tooltip message for useStudentInfo
+- Fixed bug that caused selected panels to not propogate updates properly
 
 ### prerelease 0.86 (Jul. 15)
 - Feature: Multi-panel mode — Drag and drop items from the item list to create a custom workspace
