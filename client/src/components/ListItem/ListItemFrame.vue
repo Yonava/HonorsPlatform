@@ -93,6 +93,7 @@ import { ref, computed } from 'vue'
 
 const { lgAndUp, smAndDown } = useDisplay()
 
+const { getActivePanel } = useSheetManager()
 const { getSelectedItems, deleteItem } = useDocumentCache()
 
 const hovered = ref(false)
@@ -116,7 +117,17 @@ const togglePin = () => {
   if (isPinned.value) {
     useSheetManager().removePinnedItem(props.item)
   } else {
-    useSheetManager().addPinnedItem(props.item)
+    // const allItems = useDocumentCache()[getActivePanel.sheetRange].list
+    // const indexOfItem = allItems.findIndex((item) => item.sysId === props.item.sysId)
+    // if (indexOfItem === -1) {
+    //   console.warn('ListItemFrame togglePin: Item not found in item list exception')
+    //   return
+    // }
+    // allItems.splice(indexOfItem, 1)
+    // setTimeout(() => {
+      // allItems.unshift(props.item)
+      useSheetManager().addPinnedItem(props.item)
+    // }, 500)
   }
 }
 
