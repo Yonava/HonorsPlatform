@@ -79,19 +79,20 @@ import { storeToRefs } from "pinia";
 import { useDocumentCache } from '../../store/useDocumentCache';
 import { useSyncState } from '../../store/useSyncState'
 import type { SheetItem } from '../../SheetTypes'
+import { headerRowMemo, replaceRange } from '../../SheetsAPI';
 import { warn } from '../../Warn'
 
 import { useDisplay } from 'vuetify'
 
 const { setPanelCover, open, close } = useDialog();
 const { getPanelCover, getListOfFlaggedItems } = storeToRefs(useDialog());
-const { getPanelListData, deleteItem } = useDocumentCache()
+const { getPanelListData, getAllDocuments } = useDocumentCache()
 const { getActivePanel } = storeToRefs(useSheetManager());
 
 const { mdAndDown } = useDisplay()
 
 const selectedItems = computed(() => {
-  const selected = []
+  const selected: SheetItem[] = []
   const selectedSysIds = getPanelCover.value.selectedForDelete
   selectedSysIds.forEach((sysId) => {
     const itemCorrespondingToSysId = getPanelListData().find((itemInPanel) => {
@@ -118,15 +119,15 @@ const dangerStatusItems = computed(() => {
     .map(item => item.item)
 })
 
-const deleteItems = async (items: SheetItem[]) => {
+const deleteItems = async (itemsToDelete: SheetItem[]) => {
   await warn({
     title: "Are You Sure?",
-    description: `You are about to take a serious action that will permanently delete ${items.length} item${items.length > 1 ? 's' : ''}!`
+    description: `You are about to take a serious action that will permanently delete ${itemsToDelete.length} item${itemsToDelete.length > 1 ? 's' : ''}!`
   })
   await new Promise((resolve) => setTimeout(resolve, 500))
   await warn({
     title: "One Last Chance!",
-    description: `are you really sure you want to permanently delete ${items.length} item${items.length > 1 ? 's' : ''}?`
+    description: `are you really sure you want to permanently delete ${itemsToDelete.length} item${itemsToDelete.length > 1 ? 's' : ''}?`
   })
   await new Promise((resolve) => setTimeout(resolve, 500))
   await useSyncState().waitUntilSynced()
@@ -136,14 +137,29 @@ const deleteItems = async (items: SheetItem[]) => {
       description: "Hang tight as we process your request, this may take a moment."
     }
   })
-  for (const item of items) {
-    await deleteItem({
-      item,
-      showWarning: false,
-      concurrent: true
-    })
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-  }
+
+  const allItemsOnPanel = [...useDocumentCache()[getActivePanel.value.sheetRange].list]
+
+  // filter out all items that were selected for delete
+  const newData = allItemsOnPanel.filter((item) => !itemsToDelete.some((deleteItem) => {
+    return deleteItem.sysId === item.sysId
+  }))
+
+  const { sheetRange } = getActivePanel.value
+  const { unmap } = getActivePanel.value.mappers
+  const newSheetData = await unmap(newData)
+  const headerRow = headerRowMemo[sheetRange] || []
+
+  await replaceRange(sheetRange, [
+    headerRow,
+    ...newSheetData
+  ])
+
+  await getAllDocuments({
+    showLoading: false,
+    forceCacheRefresh: true
+  })
+
   close()
 }
 </script>

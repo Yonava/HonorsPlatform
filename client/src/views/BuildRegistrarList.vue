@@ -57,8 +57,7 @@
 </template>
 
 <script setup lang="ts">
-import { getRange, replaceRange } from "../SheetsAPI";
-import { panels } from "../Panels"
+import { replaceRange } from "../SheetsAPI";
 import { useDocumentCache } from "../store/useDocumentCache";
 import { ref, computed, watch } from "vue";
 import { termValidator, getCurrentTerm } from "../TermValidator";
@@ -73,36 +72,31 @@ const hasSucceeded = ref(false);
 async function generateRegistrarList() {
   loading.value = true;
 
-  const { Students, "Completed Modules": CompletedModules } = useDocumentCache();
-  const { unmap: studentUnmap } = panels['STUDENTS'].mappers
-  const { unmap: moduleUnmap } = panels['COMPLETED_MODULES'].mappers
-  const unmappedStudents = await studentUnmap(Students.list);
+  const { "Completed Modules": CompletedModules, getItemBySysId } = useDocumentCache();
 
   const modulesInTerm = CompletedModules.list.filter((module) => {
     if (!module.term) return false
     return module.term.toLowerCase() === userEnteredTerm.value.toLowerCase();
+  }).map((module) => {
+    const student = getItemBySysId(module.studentSysId, 'STUDENTS') ?? getItemBySysId(module.studentSysId, 'GRADUATES')
+    return [
+      student.id,
+      student.name,
+      student.email,
+      module.courseCode
+    ]
   });
 
-  const unmappedModules = moduleUnmap(modulesInTerm);
-
-  const output = unmappedModules.map(module => {
-    let student = unmappedStudents.find(student => student[1] === module[1]);
-    student ??= ["", "", ""];
-    return [
-      student[1],
-      student[2],
-      student[3],
-      module[2],
-    ]
-  })
-  output.unshift([
+  modulesInTerm.unshift([
     "Student ID",
     "Name",
     "Email",
     "Course Code",
     `Generated on ${new Date().toLocaleString('en-US')} for ${userEnteredTerm.value.toUpperCase()}`
   ]);
-  await replaceRange('Registrar List', output);
+
+  await replaceRange('Registrar List', modulesInTerm);
+
   loading.value = false;
   success.value = true;
   hasSucceeded.value = true;

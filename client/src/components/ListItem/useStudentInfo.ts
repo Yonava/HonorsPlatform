@@ -10,7 +10,7 @@ export function useStudentInfo(studentSysId: string) {
   const graduatePanel = getPanel('GRADUATES')
 
   const idText = computed(() => {
-    if (studentMatch.value) {
+    if (studentMatch.value.id) {
       return `ID ${studentMatch.value.id}`
     } else {
       return 'No ID'

@@ -266,14 +266,32 @@ export const useDocumentCache = defineStore("documentCache", {
       this[range].list = documents;
 
       // clean up selected items
-      this[range].selected.forEach((selectedItem, index) => {
-        const selectedItemInNewData = documents.find(item => item.sysId === selectedItem.sysId);
-        if (!selectedItemInNewData) {
-          this[range].selected.splice(index, 1);
-        } else {
-          this[range].selected[index] = selectedItemInNewData;
+      const oldSelectedItems = [...this[range].selected]
+      const oldFocusedItem = JSON.parse(JSON.stringify((useSheetManager().focusedItem)))
+      this[range].selected = []
+      for (const oldSelectedItem of oldSelectedItems) {
+        const itemInNewData = this[range].list.find((item) => {
+          return item.sysId === oldSelectedItem.sysId
+        })
+
+        if (itemInNewData) {
+          this.addSelectedItem({
+            item: itemInNewData
+          })
         }
+
+        console.log(itemInNewData)
+      }
+
+      const focusedItemInNewData = this[range].list.find((item) => {
+        return item.sysId === oldFocusedItem?.sysId
       })
+
+      console.log(focusedItemInNewData)
+
+      if (focusedItemInNewData) {
+        useSheetManager().focusedItem = focusedItemInNewData
+      }
 
       this.refreshLog[range] = new Date();
       return documents;

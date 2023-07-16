@@ -35,7 +35,7 @@ export async function getRanges(ranges: Range[] = [
   "Announcements"
 ]): Promise<{ [key in string]: string[][] }[]> {
 
-  await new Promise(resolve => setTimeout(resolve, 1000));
+  // await new Promise(resolve => setTimeout(resolve, 1000));
 
   try {
     type ExpectedReturn = {
