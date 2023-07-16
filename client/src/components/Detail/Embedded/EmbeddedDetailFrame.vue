@@ -71,8 +71,6 @@ const title = computed({
 
 const { xs } = useDisplay()
 
-console.log('instance')
-
 const dialogCanOpen = ref(true)
 const showDialog = computed({
   get: () => getSelectedItems(getActiveEmbeddedPanel).length > 0 && dialogCanOpen.value,

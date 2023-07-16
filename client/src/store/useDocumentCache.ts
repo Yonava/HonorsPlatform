@@ -279,15 +279,11 @@ export const useDocumentCache = defineStore("documentCache", {
             item: itemInNewData
           })
         }
-
-        console.log(itemInNewData)
       }
 
       const focusedItemInNewData = this[range].list.find((item) => {
         return item.sysId === oldFocusedItem?.sysId
       })
-
-      console.log(focusedItemInNewData)
 
       if (focusedItemInNewData) {
         useSheetManager().focusedItem = focusedItemInNewData
