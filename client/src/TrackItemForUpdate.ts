@@ -29,6 +29,7 @@ export function useUpdateItem(item: Ref<SheetItem>, panelObject?: Panel) {
 
     // user just selected this item
     if (!oldItem) {
+      currentItem = JSON.stringify(newItem)
       return
     }
 

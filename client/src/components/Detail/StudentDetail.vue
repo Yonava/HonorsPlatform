@@ -119,11 +119,11 @@
             :items="yearOptions"
             label="Year"
             style="width: 15%"
-            prepend-icon="mdi-calendar"
+            prepend-icon="mdi-briefcase"
           >
           </v-select>
         </div>
-        <!-- clearable on this auto-complete is incompatible with state syncing to google drive -->
+        <!-- clearable on this auto-completes incompatible with state syncing to google drive -->
         <v-autocomplete
           v-model="student.athletics"
           :items="Object.keys(athleticOptions)"
@@ -238,10 +238,14 @@ useUpdateItem(student);
 
 const { xs } = useDisplay();
 
-const statusOptionIcon = computed(() => `mdi-${statusOptions.find((option) => option.label === student.value.activeStatus)?.icon ?? "help"}`);
-const statusOptionLabels = computed(() => statusOptions.map((option) => option.label));
+const statusOptionIcon = computed(() => {
+  const optionIcon = statusOptions.find((option) => option.label === student.value.activeStatus)?.icon
+  const fallbackIcon = 'help'
+  const icon = optionIcon ?? fallbackIcon
+  return `mdi-${icon}`
+});
 
-const tempStudentId = ref("");
+const statusOptionLabels = computed(() => statusOptions.map((option) => option.label));
 
 const idDialog = ref(false);
 const movingStudent = ref(false);
@@ -271,6 +275,7 @@ function studentIdRule(studentId: string) {
   return "Invalid Student ID";
 }
 
+const tempStudentId = ref("");
 const saveId = () => {
   student.value.id = tempStudentId.value;
   idDialog.value = false;

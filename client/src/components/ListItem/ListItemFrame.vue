@@ -93,7 +93,7 @@ import { ref, computed } from 'vue'
 
 const { lgAndUp, smAndDown } = useDisplay()
 
-const { getActivePanel } = useSheetManager()
+const { getActivePanel, activateListTransition } = useSheetManager()
 const { getSelectedItems, deleteItem } = useDocumentCache()
 
 const hovered = ref(false)
@@ -115,19 +115,11 @@ const isPinned = computed(() => {
 
 const togglePin = () => {
   if (isPinned.value) {
+    activateListTransition()
     useSheetManager().removePinnedItem(props.item)
   } else {
-    // const allItems = useDocumentCache()[getActivePanel.sheetRange].list
-    // const indexOfItem = allItems.findIndex((item) => item.sysId === props.item.sysId)
-    // if (indexOfItem === -1) {
-    //   console.warn('ListItemFrame togglePin: Item not found in item list exception')
-    //   return
-    // }
-    // allItems.splice(indexOfItem, 1)
-    // setTimeout(() => {
-      // allItems.unshift(props.item)
-      useSheetManager().addPinnedItem(props.item)
-    // }, 500)
+    activateListTransition()
+    useSheetManager().addPinnedItem(props.item)
   }
 }
 
@@ -152,14 +144,14 @@ const sideActionButtons = [
   {
     condition: () => canEmail.value,
     icon: 'mdi-email-fast',
-    tooltip: 'Email ' + useSheetManager().getActivePanel.title.singular,
+    tooltip: 'Email ' + getActivePanel.title.singular,
     onClick: () => {
       sendEmail(props.item?.email)
     }
   },
   {
     icon: 'mdi-delete',
-    tooltip: 'Delete ' + useSheetManager().getActivePanel.title.singular,
+    tooltip: 'Delete ' + getActivePanel.title.singular,
     onClick: () => {
       deleteItem({
         item: props.item

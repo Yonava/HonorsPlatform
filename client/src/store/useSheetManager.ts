@@ -18,7 +18,7 @@ export type SortOption = {
 
 export const useSheetManager = defineStore('sheetManager', {
   state: () => ({
-    panelSwitchDebounce: 2000,
+    panelSwitchDebounce: 250,
     canPanelSwitch: true,
     panel: getPanel(Object.keys(panels)[0] as PanelName),
     searchFilter: '',
@@ -30,7 +30,7 @@ export const useSheetManager = defineStore('sheetManager', {
     } as SortOption,
     listItemBeingDragged: null as SheetItem | null,
     focusedItem: null as SheetItem | null,
-    transitioningPanel: false
+    listTransitionActive: false
   }),
   getters: {
     filteredItems(state) {
@@ -72,6 +72,13 @@ export const useSheetManager = defineStore('sheetManager', {
     }
   },
   actions: {
+    activateListTransition(activeDurationInMs = 0) {
+      this.listTransitionActive = true
+      // deactivates after one event loop cycle
+      setTimeout(() => {
+        this.listTransitionActive = false
+      }, activeDurationInMs)
+    },
     setSearchFilter(filter: string) {
       this.searchFilter = filter;
     },
@@ -80,7 +87,6 @@ export const useSheetManager = defineStore('sheetManager', {
         return;
       }
 
-      this.transitioningPanel = true
       this.canPanelSwitch = false;
 
       const { setSelectedItems, getAllDocuments } = useDocumentCache();
@@ -112,7 +118,6 @@ export const useSheetManager = defineStore('sheetManager', {
 
       setTimeout(() => {
         this.canPanelSwitch = true;
-        this.transitioningPanel = false
       }, this.panelSwitchDebounce);
     },
     async jumpToItem({ key = 'sysId', value, fallbackFn = () => null }: JumpObject) {
@@ -168,6 +173,7 @@ export const useSheetManager = defineStore('sheetManager', {
 
       this.sort = sortObject;
 
+      this.activateListTransition()
       itemsOnActivePanel.sort(sortObject.func);
 
       if (!sortObject.ascending) {

@@ -6,22 +6,26 @@ import { useDocumentCache } from './store/useDocumentCache'
 
 export const statusOptions = [
   {
-    label: 'Active',
+    status: 'Active',
+    tooltip: 'Actively Engaging In Program',
     icon: 'account-check',
     color: 'green',
   },
   {
-    label: 'Inactive',
+    status: 'Inactive',
+    tooltip: 'Currently Inactive In Program',
     icon: 'account-remove',
     color: 'red',
   },
   {
-    label: 'Pending',
+    status: 'Pending',
+    tooltip: 'Student Is Not Yet Active In Program',
     icon: 'account-question',
     color: 'grey',
   },
   {
-    label: 'Request Delete',
+    status: 'Request Delete',
+    tooltip: 'This Student Has Been Flagged For Removal',
     icon: 'account-off',
     color: 'purple',
   }

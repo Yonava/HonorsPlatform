@@ -33,7 +33,7 @@
       </div>
       <v-spacer></v-spacer>
       <v-sheet
-        :color="statusColor"
+        :color="status.color"
         :style="{
           height: '25px',
           color: 'white',
@@ -44,12 +44,14 @@
         class="px-2"
         elevation="1"
       >
-        {{ item.activeStatus || 'No Status' }}
+        {{ status.status }}
         <v-tooltip
           :disabled="smAndDown"
           activator="parent"
           location="bottom"
-        >Status</v-tooltip>
+        >
+          {{ status.tooltip }}
+        </v-tooltip>
       </v-sheet>
     </div>
     <div
@@ -82,19 +84,21 @@
         <v-spacer></v-spacer>
         <div class="d-flex">
           <p>
-            {{ points }}
+            {{ item.year || '(No Class Year)' }}
           </p>
           <v-icon
             class="ml-1"
             style="opacity: 0.75"
           >
-            mdi-ticket
+            mdi-briefcase
           </v-icon>
-          <v-tooltip
+          <!-- <v-tooltip
             :disabled="smAndDown"
             activator="parent"
             location="bottom"
-          >Points</v-tooltip>
+          >
+            Class Year
+          </v-tooltip> -->
         </div>
       </div>
     </div>
@@ -116,10 +120,15 @@ const props = defineProps<{
 
 const { smAndDown } = useDisplay()
 
-const statusColor = computed<typeof statusOptions[number]['color']>(() => {
-  return statusOptions.find((option) => option.label === props.item.activeStatus)?.color ?? 'grey'
+const status = computed(() => {
+  return statusOptions.find((option) => option.status === props.item.activeStatus) ?? {
+    color: 'grey',
+    tooltip: props.item.activeStatus ? 'Invalid Status' : 'No Status Assigned',
+    status: props.item.activeStatus || 'No Status'
+  }
 })
 
+// save logic for when list item property toggle is added
 const points = computed(() => {
   if (!props.item.points) return 0
   return props.item.points.toLocaleString()

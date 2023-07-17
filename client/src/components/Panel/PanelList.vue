@@ -5,7 +5,7 @@
         style="position: relative; width: 100%;"
         class="d-flex flex-column align-center"
       >
-        <TransitionGroup :name="useSheetManager().transitioningPanel ? '' : 'list'">
+        <TransitionGroup :name="listTransitionActive ? 'list' : ''">
           <div
             v-for="item in incrementallyRenderedItems"
             :key="item"
@@ -64,7 +64,7 @@ import { useIncrementalRender } from '../../useIncrementalRender'
 import { storeToRefs } from 'pinia'
 
 const sheetManager = useSheetManager()
-const { filteredItems, loadingItems, panel, searchFilter } = storeToRefs(sheetManager)
+const { filteredItems, loadingItems, panel, searchFilter, listTransitionActive } = storeToRefs(sheetManager)
 
 const { incrementallyRenderedItems } = useIncrementalRender(filteredItems)
 </script>

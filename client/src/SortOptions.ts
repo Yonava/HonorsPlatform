@@ -191,14 +191,6 @@ export const sortOptions = {
       func: (a: Thesis, b: Thesis) => a.term.localeCompare(b.term)
     },
     {
-      label: 'Student Name',
-      icon: {
-        asc: 'mdi-sort-alphabetical-ascending',
-        desc: 'mdi-sort-alphabetical-descending'
-      },
-      func: (a: Thesis, b: Thesis) => a.name.localeCompare(b.name)
-    },
-    {
       label: 'Faculty Mentor',
       icon: {
         asc: 'mdi-human-male-board',
@@ -215,14 +207,6 @@ export const sortOptions = {
         desc: 'mdi-sort-alphabetical-descending'
       },
       func: (a: GradEngagement, b: GradEngagement) => a.event.localeCompare(b.event)
-    },
-    {
-      label: 'ID',
-      icon: {
-        asc: 'mdi-card-account-details',
-        desc: 'mdi-card-account-details'
-      },
-      func: (a: GradEngagement, b: GradEngagement) => a.gradId.localeCompare(b.gradId)
     }
   ]
 }
