@@ -43,7 +43,7 @@
             </v-tooltip>
           </div>
           <div
-            v-for="{ icon, onClick, tooltip, condition = () => true } in sideActionButtons"
+            v-for="{ icon, onClick, tooltip, condition = () => true } in sidebarActionButtons"
             :key="icon"
             @click.stop="onClick"
             @mouseover="hoverData[icon] = true"
@@ -90,10 +90,12 @@ import { useSheetManager } from '../../store/useSheetManager'
 import { useDocumentCache } from '../../store/useDocumentCache'
 import { useDisplay } from 'vuetify'
 import { ref, computed } from 'vue'
+import { useStudentMatcher } from '../../StudentMatcher'
+import { getPanel, PanelName } from '../../Panels'
 
 const { lgAndUp, smAndDown } = useDisplay()
 
-const { getActivePanel, activateListTransition } = useSheetManager()
+const { getActivePanel, activateListTransition, setPanel } = useSheetManager()
 const { getSelectedItems, deleteItem } = useDocumentCache()
 
 const hovered = ref(false)
@@ -102,6 +104,8 @@ const props = defineProps<{
   item: SheetItem,
   styled?: boolean
 }>()
+
+const { studentMatch } = useStudentMatcher(props.item?.studentSysId)
 
 const isSelected = computed(() => {
   const selectedItems = getSelectedItems()
@@ -140,25 +144,90 @@ const setHovered = (v: boolean) => {
 }
 
 const hoverData = ref<{ [key in string]: boolean }>({})
-const sideActionButtons = [
-  {
+
+type SidebarActionButton = {
+  icon: string,
+  tooltip: string,
+  onClick: () => void,
+  condition?: () => boolean
+}
+
+const panelSpecificActions: { [key in PanelName]: SidebarActionButton } = {
+  'STUDENTS': {
     condition: () => canEmail.value,
     icon: 'mdi-email-fast',
-    tooltip: 'Email ' + getActivePanel.title.singular,
+    tooltip: 'Email',
     onClick: () => {
       sendEmail(props.item?.email)
     }
   },
-  {
-    icon: 'mdi-delete',
-    tooltip: 'Delete ' + getActivePanel.title.singular,
+  'GRADUATES': {
+    condition: () => canEmail.value,
+    icon: 'mdi-email-fast',
+    tooltip: 'Email',
     onClick: () => {
-      deleteItem({
-        item: props.item
+      sendEmail(props.item?.email)
+    }
+  },
+  'MODULES': {
+    condition: () => !studentMatch.value.error,
+    icon: getPanel(studentMatch.value.foundIn || 'STUDENTS').icon,
+    tooltip: `View ${studentMatch.value.name || getPanel(studentMatch.value.foundIn || 'STUDENTS').title.singular}`,
+    onClick: () => {
+      if (!studentMatch.value.sysId) return
+      setPanel(studentMatch.value.foundIn, {
+        value: studentMatch.value.sysId,
+      })
+    }
+  },
+  'COMPLETED_MODULES': {
+    condition: () => !studentMatch.value.error,
+    icon: getPanel(studentMatch.value.foundIn || 'STUDENTS').icon,
+    tooltip: `View ${studentMatch.value.name || getPanel(studentMatch.value.foundIn || 'STUDENTS').title.singular}`,
+    onClick: () => {
+      if (!studentMatch.value.sysId) return
+      setPanel(studentMatch.value.foundIn, {
+        value: studentMatch.value.sysId,
+      })
+    }
+  },
+  'THESES': {
+    condition: () => !studentMatch.value.error,
+    icon: getPanel(studentMatch.value.foundIn || 'STUDENTS').icon,
+    tooltip: `View ${studentMatch.value.name || getPanel(studentMatch.value.foundIn || 'STUDENTS').title.singular}`,
+    onClick: () => {
+      if (!studentMatch.value.sysId) return
+      setPanel(studentMatch.value.foundIn, {
+        value: studentMatch.value.sysId,
+      })
+    }
+  },
+  'GRADUATE_ENGAGEMENTS': {
+    condition: () => !studentMatch.value.error,
+    icon: getPanel(studentMatch.value.foundIn || 'STUDENTS').icon,
+    tooltip: `View ${studentMatch.value.name || getPanel(studentMatch.value.foundIn || 'STUDENTS').title.singular}`,
+    onClick: () => {
+      if (!studentMatch.value.sysId) return
+      setPanel(studentMatch.value.foundIn, {
+        value: studentMatch.value.sysId,
       })
     }
   }
-]
+}
+
+const sidebarActionButtons = computed(() => {
+  const panelSpecificAction = panelSpecificActions[getActivePanel.panelName]
+
+  const deleteAction = {
+    icon: 'mdi-delete',
+    tooltip: 'Delete',
+    onClick: () => {
+      deleteItem(props.item)
+    }
+  }
+
+  return panelSpecificAction ? [panelSpecificAction, deleteAction] : [deleteAction]
+})
 </script>
 
 <style scoped>

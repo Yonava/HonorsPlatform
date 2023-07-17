@@ -45,6 +45,7 @@ import {
 
 export const panels = {
   STUDENTS: {
+    panelName: 'STUDENTS',
     add: addActions.STUDENTS,
     tools: tools.STUDENTS,
     components: {
@@ -83,6 +84,7 @@ export const panels = {
     }
   },
   MODULES: {
+    panelName: 'MODULES',
     add: addActions.MODULES,
     tools: tools.MODULES,
     components: {
@@ -107,6 +109,7 @@ export const panels = {
     }
   },
   COMPLETED_MODULES: {
+    panelName: 'COMPLETED_MODULES',
     tools: tools.COMPLETED_MODULES,
     components: {
       detail: markRaw(CompletedModuleDetail),
@@ -130,6 +133,7 @@ export const panels = {
     }
   },
   THESES: {
+    panelName: 'THESES',
     add: addActions.THESES,
     tools: tools.THESES,
     components: {
@@ -154,6 +158,7 @@ export const panels = {
     }
   },
   GRADUATES: {
+    panelName: 'GRADUATES',
     add: addActions.GRADUATES,
     tools: tools.GRADUATES,
     components: {
@@ -192,6 +197,7 @@ export const panels = {
     }
   },
   GRADUATE_ENGAGEMENTS: {
+    panelName: 'GRADUATE_ENGAGEMENTS',
     add: addActions.GRADUATE_ENGAGEMENTS,
     tools: [],
     components: {
@@ -225,4 +231,4 @@ export type GetSheetItemType<T extends PanelRange> = T extends 'Students' ? type
 
 export type Panel = typeof panels[PanelName];
 export const getPanel = (panelName: PanelName) => panels[panelName];
-export const version = 'prerelease v0.86.5 (beta)'
+export const version = 'prerelease v0.86.6 (beta)'

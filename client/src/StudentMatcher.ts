@@ -14,6 +14,12 @@ export function useStudentMatcher(studentSysId: string) {
   })
 
   const studentMatch = computed(() => {
+    if (studentSysId === undefined) {
+      return {
+        error: 'STUDENT_SYSID_UNDEFINED'
+      } as const
+    }
+
     if (student.value) {
       return {
         sysId: student.value.sysId,
