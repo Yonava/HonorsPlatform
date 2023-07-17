@@ -467,7 +467,8 @@ export const useDocumentCache = defineStore("documentCache", {
         setSearchFilter,
         panel: activePanel,
         newSysId,
-        addPinnedItem
+        addPinnedItem,
+        activateListTransition
       } = useSheetManager();
 
       const {
@@ -494,6 +495,7 @@ export const useDocumentCache = defineStore("documentCache", {
 
       if (panel === activePanel) {
         useSheetManager().focusedItem = newItem;
+        activateListTransition();
       }
 
       this[panel.sheetRange].list.unshift(newItem);

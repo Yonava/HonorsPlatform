@@ -222,7 +222,9 @@ const sidebarActionButtons = computed(() => {
     icon: 'mdi-delete',
     tooltip: 'Delete',
     onClick: () => {
-      deleteItem(props.item)
+      deleteItem({
+        item: props.item
+      })
     }
   }
 
