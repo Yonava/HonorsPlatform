@@ -173,7 +173,6 @@ export const useSheetManager = defineStore('sheetManager', {
 
       this.sort = sortObject;
 
-      this.activateListTransition()
       itemsOnActivePanel.sort(sortObject.func);
 
       if (!sortObject.ascending) {
