@@ -5,6 +5,8 @@ import Auth from '../views/AuthPage.vue'
 import Registrar from '../views/BuildRegistrarList.vue'
 import Email from '../views/ComposeMassEmail.vue'
 
+import { useDocumentCache } from '../store/useDocumentCache'
+
 const routes = [
   {
     path: '/',
@@ -47,6 +49,11 @@ const router = createRouter({
 router.beforeEach(async (to, from) => {
   const defaultTitle = 'Honors Program'
   const name = to.name as string ?? defaultTitle
+
+  if (to.name !== 'auth') {
+    useDocumentCache().getAllDocuments()
+  }
+
   if (name === defaultTitle || to.name === 'panel') {
     return
   }

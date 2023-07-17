@@ -31,5 +31,3 @@ createApp(App)
   .use(router)
   .use(vuetify)
   .mount('#app')
-
-useDocumentCache().getAllDocuments()

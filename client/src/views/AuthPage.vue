@@ -85,7 +85,7 @@ const loading = ref(true)
 const { forceAuthorize, setToken } = useAuth()
 
 onMounted(async () => {
-  // check if google servers has redirected with a code
+  // check if google servers have redirected with a code
   const code = (route.query.code ?? '') as string
   if (!code) {
     loading.value = false
@@ -100,8 +100,8 @@ onMounted(async () => {
     throw new Error('No access token received')
   }
   setToken(token)
-  await new Promise(resolve => setTimeout(resolve, 1000))
   window.close()
+
   router.push({
     name: 'panel'
   })

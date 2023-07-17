@@ -218,7 +218,7 @@ const panelSpecificActions: { [key in PanelName]: SidebarActionButton } = {
 const sidebarActionButtons = computed(() => {
   const panelSpecificAction = panelSpecificActions[getActivePanel.panelName]
 
-  const deleteAction = {
+  const deleteAction: SidebarActionButton = {
     icon: 'mdi-delete',
     tooltip: 'Delete',
     onClick: () => {

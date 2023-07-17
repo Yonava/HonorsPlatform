@@ -199,6 +199,7 @@ export const useDocumentCache = defineStore("documentCache", {
       }
 
       const shouldRefresh = this.dueForRefresh({ panel });
+
       if (!forceCacheRefresh && !shouldRefresh) {
         setLoadingItems(false);
         setSort();
