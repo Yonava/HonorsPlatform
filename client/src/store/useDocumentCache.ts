@@ -436,8 +436,9 @@ export const useDocumentCache = defineStore("documentCache", {
 
       if (showWarning) {
         try {
+          const title = item[panel.properties.title] || panel.title.singular
           await warn({
-            title: `Delete ${panel.title.singular}?`
+            title: `Delete ${title}?`
           })
         } catch (e) {
           console.warn(e);

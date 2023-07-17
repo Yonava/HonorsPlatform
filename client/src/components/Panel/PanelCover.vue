@@ -118,8 +118,7 @@ const { getActivePanel } = storeToRefs(useSheetManager());
 
 const displayItems = computed(() => {
   const items = filterItems(getPanelCover.value.deletionItems.map(data => ({
-    // TODO: Either make filterItems more efficient or create a "primary property" for each panel
-    title: Object.values(data.item)[3],
+    title: data.item[getActivePanel.value.properties.title],
     sysId: data.item.sysId,
     rationale: data.rationale,
   })), getPanelCover.value.filter)

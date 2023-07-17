@@ -239,13 +239,13 @@ useUpdateItem(student);
 const { xs } = useDisplay();
 
 const statusOptionIcon = computed(() => {
-  const optionIcon = statusOptions.find((option) => option.label === student.value.activeStatus)?.icon
+  const optionIcon = statusOptions.find((option) => option.status === student.value.activeStatus)?.icon
   const fallbackIcon = 'help'
   const icon = optionIcon ?? fallbackIcon
   return `mdi-${icon}`
 });
 
-const statusOptionLabels = computed(() => statusOptions.map((option) => option.label));
+const statusOptionLabels = computed(() => statusOptions.map((option) => option.status));
 
 const idDialog = ref(false);
 const movingStudent = ref(false);

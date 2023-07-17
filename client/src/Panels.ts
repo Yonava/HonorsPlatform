@@ -77,7 +77,10 @@ export const panels = {
       detail: markRaw(EmbeddedModuleDetail),
       list: markRaw(EmbeddedModuleList),
     },
-    sortOptions: sortOptions.STUDENTS
+    sortOptions: sortOptions.STUDENTS,
+    properties: {
+      title: 'name',
+    }
   },
   MODULES: {
     add: addActions.MODULES,
@@ -98,7 +101,10 @@ export const panels = {
       unmap: unmapModules
     },
     dependencies: ['STUDENTS', 'GRADUATES', 'COMPLETED_MODULES'],
-    sortOptions: sortOptions.MODULES
+    sortOptions: sortOptions.MODULES,
+    properties: {
+      title: 'courseCode'
+    }
   },
   COMPLETED_MODULES: {
     tools: tools.COMPLETED_MODULES,
@@ -119,6 +125,9 @@ export const panels = {
     },
     dependencies: ['STUDENTS', 'GRADUATES', 'MODULES'],
     sortOptions: sortOptions.COMPLETED_MODULES,
+    properties: {
+      title: 'courseCode'
+    }
   },
   THESES: {
     add: addActions.THESES,
@@ -139,7 +148,10 @@ export const panels = {
       unmap: unmapTheses
     },
     dependencies: ['STUDENTS', 'GRADUATES'],
-    sortOptions: sortOptions.THESES
+    sortOptions: sortOptions.THESES,
+    properties: {
+      title: 'title'
+    }
   },
   GRADUATES: {
     add: addActions.GRADUATES,
@@ -174,7 +186,10 @@ export const panels = {
       detail: markRaw(EmbeddedEventDetail),
       list: markRaw(EmbeddedEventList),
     },
-    sortOptions: sortOptions.GRADUATES
+    sortOptions: sortOptions.GRADUATES,
+    properties: {
+      title: 'name'
+    }
   },
   GRADUATE_ENGAGEMENTS: {
     add: addActions.GRADUATE_ENGAGEMENTS,
@@ -195,7 +210,10 @@ export const panels = {
       unmap: unmapGradEngagements
     },
     dependencies: ['GRADUATES'],
-    sortOptions: sortOptions.GRADUATE_ENGAGEMENTS
+    sortOptions: sortOptions.GRADUATE_ENGAGEMENTS,
+    properties: {
+      title: 'event'
+    }
   },
 } as const;
 
