@@ -74,7 +74,6 @@
 
 <script setup lang="ts">
 import ModalContent from '../../ModalContent.vue'
-import { useDisplay } from 'vuetify'
 import { computed, onMounted, ref } from 'vue'
 
 const props = defineProps<{
@@ -105,15 +104,14 @@ const show = computed({
   }
 })
 
-const { xs } = useDisplay()
-
 const inputInitials = ref(false)
 const initials = ref('')
 const note = ref('')
 
 function setInitials() {
   inputInitials.value = false
-  localStorage.setItem('initials', initials.value.toUpperCase())
+  initials.value = initials.value.toUpperCase()
+  localStorage.setItem('initials', initials.value)
   focus()
 }
 
@@ -150,6 +148,6 @@ function addNote() {
 }
 
 onMounted(() => {
-  initials.value = localStorage.getItem('initials')
+  initials.value = localStorage.getItem('initials') || ''
 })
 </script>
