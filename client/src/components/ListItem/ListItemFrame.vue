@@ -6,7 +6,7 @@
       @dragend="useSheetManager().listItemBeingDragged = null"
       @mouseover="setHovered(true)"
       @mouseleave="setHovered(false)"
-      :draggable="lgAndUp && !isSelected"
+      :draggable="mdAndUp && !isSelected"
       :class="[
         'item-card',
         'pa-4',
@@ -76,7 +76,7 @@
       v-else
       @dragstart="dragStart"
       @dragend="useSheetManager().listItemBeingDragged = null"
-      :draggable="lgAndUp && !isSelected"
+      :draggable="mdAndUp && !isSelected"
     >
       <slot></slot>
     </div>
@@ -93,7 +93,7 @@ import { ref, computed } from 'vue'
 import { useStudentMatcher } from '../../StudentMatcher'
 import { getPanel, PanelName } from '../../Panels'
 
-const { lgAndUp, smAndDown } = useDisplay()
+const { mdAndUp } = useDisplay()
 
 const { getActivePanel, activateListTransition, setPanel } = useSheetManager()
 const { getSelectedItems, deleteItem } = useDocumentCache()
@@ -137,7 +137,7 @@ const canEmail = computed(() => {
 })
 
 const setHovered = (v: boolean) => {
-  if (smAndDown.value) {
+  if (!mdAndUp.value) {
     return
   }
   hovered.value = v
