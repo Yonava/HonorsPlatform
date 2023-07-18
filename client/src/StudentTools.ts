@@ -65,7 +65,7 @@ export const athleticOptions = {
   'Tennis (F)': 'tennis',
   'Track & Field (F)': 'shoe-sneaker',
   'Volleyball (F)': 'volleyball'
-}
+} as const
 
 export function studentToGraduate(student: Student): Graduate {
   return {

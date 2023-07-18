@@ -8,7 +8,7 @@
         <DetailHeader
           v-model="student.name"
           :item="student"
-          placeholder="Student Name"
+          :placeholder="`${getActivePanel.title.singular} Name`"
         >
           <v-dialog
             v-model="idDialog"
@@ -19,10 +19,10 @@
                 v-if="!student.id"
                 v-bind="props"
                 @click="tempStudentId = ''"
+                :color="getActivePanel.color"
                 size="x-small"
-                color="blue-darken-2"
               >
-                Add Student ID
+                Add {{ getActivePanel.title.singular }} ID
               </v-btn>
               <div
                 v-else
@@ -51,7 +51,7 @@
               <v-text-field
                 v-model="tempStudentId"
                 :rules="[studentIdRule]"
-                label="Student ID"
+                :label="`${getActivePanel.title.singular} ID`"
                 class="mb-2"
               ></v-text-field>
               <div class="d-flex">
@@ -76,11 +76,12 @@
         <v-btn
           v-if="!student.email"
           @click="student.email = getStudentEmail(student.name)"
+          :color="getActivePanel.color"
           size="x-small"
-          color="blue-darken-2"
           class="mb-3"
-          >new student email</v-btn
         >
+          new {{ getActivePanel.title.singular }} email
+        </v-btn>
         <div class="d-flex align-center">
           <v-text-field
             v-model="student.email"
@@ -92,9 +93,9 @@
           <v-btn
             v-if="student.email"
             @click="sendEmail(student.email)"
+            :color="getActivePanel.color"
             class="ml-4"
             size="small"
-            color="blue-darken-2"
           >
             email
           </v-btn>
@@ -149,14 +150,18 @@
       <template #notes-button>
         <v-btn
           @click="showAddNote = true"
+          :color="getActivePanel.color"
           size="x-small"
-          color="blue-darken-2"
           class="mb-3"
-          >Add Meeting Note</v-btn
-        >
+          >
+            Add Meeting Note
+          </v-btn>
       </template>
       <template #buttons>
-        <div class="d-flex flex-row justify-space-between" style="width: 100%">
+        <div
+          class="d-flex flex-row justify-space-between"
+          style="width: 100%"
+        >
           <v-btn
             @click="viewThesis"
             :color="thesisButton.color"
@@ -174,7 +179,7 @@
           <v-btn
             @click="graduate"
             :loading="movingStudent"
-            :color="getPanel('GRADUATES').color"
+            :color="graduatePanel.color"
             size="large"
             style="width: 49%"
           >
@@ -182,7 +187,7 @@
               class="mr-2"
               size="x-large"
             >
-              {{ getPanel("GRADUATES").icon }}
+              {{ graduatePanel.icon }}
             </v-icon>
             Graduate
           </v-btn>
