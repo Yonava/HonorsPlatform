@@ -1,12 +1,14 @@
 <template>
   <div
     v-if="getActivePanel.sortOptions.length > 0"
-    class="pa-2"
+    class=""
     style="width: 100%"
   >
     <div class="d-flex flex-column align-center">
       <v-icon icon="mdi-sort"></v-icon>
-      <b style="font-size: 0.9rem"> Sort By </b>
+      <p style="font-size: 0.9rem; font-weight: 900">
+        Sort By
+      </p>
       <div
         class="mt-2"
         style="background: white; width: 75%; height: 1px"
@@ -18,10 +20,10 @@
         :key="sortOption.label"
         @click="setSort(sortOption.func)"
         :style="{
-          background: isSelected(sortOption) ? 'rgba(255, 255, 255, 0.2)' : '',
-          borderRadius: '10px',
+          transition: 'background 200ms ease-in-out',
+          background: isSelected(sortOption) ? 'rgba(255, 255, 255, 0.1)' : '',
         }"
-        class="mt-1 sort-box d-flex justify-center align-center flex-column px-2"
+        class="sort-box d-flex justify-center align-center flex-column"
       >
         <v-icon v-if="isSelected(sortOption)">
           {{ activeSort.ascending ? sortOption.icon.asc : sortOption.icon.desc }}
@@ -44,7 +46,7 @@ import { ref } from "vue";
 
 const sheetManager = useSheetManager();
 const { setSort: setSortPinia } = sheetManager;
-const { activeSort, panel, getActivePanel } = storeToRefs(sheetManager);
+const { activeSort, getActivePanel } = storeToRefs(sheetManager);
 
 const ascending = ref(true);
 const setSort = (func: (a: any, b: any) => number) => {

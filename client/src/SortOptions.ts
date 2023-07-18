@@ -33,8 +33,8 @@ export const sortOptions = {
     {
       label: 'Year',
       icon: {
-        asc: 'mdi-calendar-star',
-        desc: 'mdi-calendar-remove'
+        asc: 'mdi-calendar-import',
+        desc: 'mdi-calendar-export'
       },
       func: (a: Student, b: Student) => {
         const yearMap: { [key: string]: number } = {
@@ -48,8 +48,8 @@ export const sortOptions = {
           'Associate Senior': 8,
         };
 
-        const yearA = yearMap[a.year] || Infinity;
-        const yearB = yearMap[b.year] || Infinity;
+        const yearA = yearMap[a.year] || -Infinity;
+        const yearB = yearMap[b.year] || -Infinity;
 
         return yearA - yearB;
       }
@@ -75,8 +75,8 @@ export const sortOptions = {
     {
       label: 'Grad Date',
       icon: {
-        asc: 'mdi-calendar-star',
-        desc: 'mdi-calendar-remove'
+        asc: 'mdi-calendar-import',
+        desc: 'mdi-calendar-export'
       },
       func: (a: Graduate, b: Graduate) => {
         const dateA = new Date(a.graduationDate);
@@ -138,10 +138,10 @@ export const sortOptions = {
   ],
   COMPLETED_MODULES: [
     {
-      label: 'Completed Date',
+      label: 'Date Completed',
       icon: {
-        asc: 'mdi-calendar-check',
-        desc: 'mdi-calendar-remove'
+        asc: 'mdi-calendar-import',
+        desc: 'mdi-calendar-export'
       },
       func: (a: CompletedModule, b: CompletedModule) => {
         // put empty strings last
