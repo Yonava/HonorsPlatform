@@ -12,16 +12,16 @@
           class="mb-2"
           style="color: white; opacity: 0.75; font-size: 0.75em;"
         >
-          {{ mod.term }}
+          {{ mod.term || '(No Term)' }}
         </div>
         <div class="d-flex flex-row align-center mb-3">
           <h4 style="color: rgba(255,255,255,0.9); font-size: 1.25em; line-height: 0.3;">
-            {{ mod.courseCode }}
+            {{ mod.courseCode || '(No Course)' }}
           </h4>
           <span
             class="ml-2"
             style="color: white; line-height: 0.3; font-weight: 300;"
-          >{{ mod.instructor }}</span>
+          >{{ mod.instructor || '(No Instructor)' }}</span>
         </div>
       </div>
       <v-icon

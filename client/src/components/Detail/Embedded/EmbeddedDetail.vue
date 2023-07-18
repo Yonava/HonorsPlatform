@@ -89,7 +89,6 @@ const addEmbeddedItem = async () => {
 
   await addItem({
     panel: getActiveEmbeddedPanel,
-    pin: false,
     columns: [
       props.item[filterBy.outer],
     ],

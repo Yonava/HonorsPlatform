@@ -519,12 +519,12 @@ export const useDocumentCache = defineStore("documentCache", {
       return newItem;
     },
     async updateItem(options: UpdateItem = {}) {
-      const { panel: activePanel } = useSheetManager();
+      const { panel: activePanel, focusedItem } = useSheetManager();
       const { setProcessing } = useSyncState();
 
       const {
         panel = activePanel,
-        item = this[panel.sheetRange].selected,
+        item = focusedItem,
       } = options;
 
       if (!item) {
@@ -537,6 +537,7 @@ export const useDocumentCache = defineStore("documentCache", {
           panel.sheetRange,
           await panel.mappers.unmap([item])
         )
+        console.log("useDocumentCache: Posted to row", row)
         item.row = row
         useSyncState().$reset();
         return;

@@ -76,13 +76,13 @@ export async function updateByRow(range: Range, row: number, data: string[][]) {
   }
 }
 
-export async function postInRange(range: Range, data: string[][]) {
+export async function postInRange(range: Range, data: string[][]): Promise<number> {
   try {
     const { data: res } = await axios.post(`/api/range/${range}`, data, requestHeaders());
     return res.row;
   } catch {
     await useAuth().authorize();
-    await postInRange(range, data);
+    return await postInRange(range, data);
   }
 }
 

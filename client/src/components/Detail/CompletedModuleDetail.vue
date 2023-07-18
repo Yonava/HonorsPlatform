@@ -33,7 +33,7 @@
       <InstructorComplete
         @update="completedModule.instructor = $event"
         :instructor="completedModule.instructor"
-        color="red"
+        :color="getActivePanel.color"
       />
       <v-text-field
         v-model="completedModule.instructor"
@@ -84,8 +84,11 @@ import InstructorComplete from './Helper/InstructorComplete.vue'
 import DetailFrame from './Helper/DetailFrame.vue'
 import LinkStudentButton from './Helper/LinkStudentButton.vue'
 import type { CompletedModule } from '../../SheetTypes'
+import { useSheetManager } from '../../store/useSheetManager'
 import { computed } from 'vue'
 import { useUpdateItem } from '../../TrackItemForUpdate'
+
+const { getActivePanel } = useSheetManager()
 
 const props = defineProps<{
   item: CompletedModule

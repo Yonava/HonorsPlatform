@@ -19,7 +19,14 @@ export function useUpdateItem(item: Ref<SheetItem>, panelObject?: Panel) {
 
   let timeout = setTimeout(() => { }, 0)
   let currentItem = ''
+  let updateInProgress = false;
+
   watch(item, async (newItem, oldItem) => {
+
+    if (updateInProgress) {
+      return
+    }
+
     // user has reverted the item back to its original state
     if (JSON.stringify(newItem) === currentItem) {
       clearTimeout(timeout)
@@ -44,11 +51,14 @@ export function useUpdateItem(item: Ref<SheetItem>, panelObject?: Panel) {
 
     setProcessing(true)
     clearTimeout(timeout)
-    timeout = setTimeout(() => {
-      updateItem({
+
+    timeout = setTimeout(async () => {
+      updateInProgress = true
+      await updateItem({
         item: newItem,
         panel,
       })
+      updateInProgress = false
       currentItem = JSON.stringify(newItem)
     }, updateDebounceMs);
   }, { deep: true, immediate: true })

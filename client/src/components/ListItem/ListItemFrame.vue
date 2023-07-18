@@ -20,6 +20,7 @@
         :style="{
           transition: hovered || isPinned ? '300ms ease-in-out' : '100ms',
           transitionDelay: hovered || isPinned ? '100ms' : '0',
+          pointerEvents: hovered || isPinned ? 'all' : 'none',
           width: '30px',
           height: '65px',
           position: 'absolute',
