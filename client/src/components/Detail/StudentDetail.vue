@@ -224,7 +224,7 @@ import { Student } from '../../SheetTypes'
 import { useDisplay } from 'vuetify'
 
 const { open, close } = useDialog();
-const { setPanel } = useSheetManager();
+const { setPanel, getActivePanel } = useSheetManager();
 
 const { Students, Theses, addItem } = useDocumentCache();
 
@@ -264,15 +264,15 @@ function studentIdRule(studentId: string) {
       return true;
     }
     else if (existingStudent.name) {
-      return `Student ID already in use by ${existingStudent.name}`;
+      return `${getActivePanel.title.singular} ID already in use by ${existingStudent.name}`;
     } else {
-      return `Student ID already in use`;
+      return `${getActivePanel.title.singular} ID already in use`;
     }
   };
   if (/^\d{7}$/.test(studentId)) {
     return true;
   }
-  return "Invalid Student ID";
+  return `Invalid ${getActivePanel.title.singular} ID`;
 }
 
 const tempStudentId = ref("");
@@ -281,7 +281,9 @@ const saveId = () => {
   idDialog.value = false;
 }
 
+const graduatePanel = getPanel("GRADUATES");
 const thesisPanel = getPanel("THESES");
+
 const thesis = computed(() => Theses.list.find((thesis) => thesis.studentSysId === student.value.sysId));
 
 const savedToSheet = () => {
@@ -291,14 +293,14 @@ const savedToSheet = () => {
 const thesisButton = computed(() => {
   if (!thesis.value) {
     return {
-      text: "Create Thesis",
+      text: `Create ${thesisPanel.title.singular}`,
       icon: "mdi-plus",
       color: thesisPanel.color,
     };
   }
 
   return {
-    text: "View Thesis",
+    text: `View ${thesisPanel.title.singular}`,
     icon: thesisPanel.icon,
     color: thesisPanel.color,
   };
@@ -314,7 +316,7 @@ const viewThesis = () => {
       ]
     });
   }
-  setPanel('THESES', {
+  setPanel(thesisPanel.panelName, {
     key: 'studentSysId',
     value: student.value.sysId,
   });
@@ -328,9 +330,10 @@ const graduate = async () => {
   const _student = JSON.parse(JSON.stringify(student.value));
   movingStudent.value = true;
   try {
+    const name = _student.name || `this ${getActivePanel.title.singular.toLowerCase()}`;
     await warn({
-      title: `Graduate ${_student.name}?`,
-      description: `Are you sure you want to graduate ${_student.name}? Graduating a student will remove them from the student list and add them to the graduates list. This action will permanently erase data such as ${_student.name}s student email address (${_student.email || 'no email'}), points (${_student.points || 'no points'}), athletic affiliation (${_student.athletics || 'no athletics'}), and more.`
+      title: `Graduate ${name}?`,
+      description: `Are you sure you want to graduate ${name}? Graduating ${name} will remove them from the ${getActivePanel.title.singular.toLowerCase()} list and add them to the ${graduatePanel.title.plural.toLowerCase()} list. This action will permanently erase data such as ${name}s student email address (${_student.email || 'no email'}), points (${_student.points || 'no points'}), athletic affiliation (${_student.athletics || 'no athletics'}), and more.`
     })
   } catch {
     movingStudent.value = false;
@@ -347,19 +350,19 @@ const graduate = async () => {
 
   open({
     body: {
-      title: "Student Graduated",
-      description: `${_student.name} has been successfully graduated.`,
+      title: `${_student.name || getActivePanel.title.singular} Graduated`,
+      description: `${_student.name || getActivePanel.title.singular} has been successfully moved to ${graduatePanel.title.plural}.`,
       buttons: [
         {
           text: "Dismiss",
-          color: "blue",
+          color: getActivePanel.color,
           onClick: close,
         },
         {
-          text: `View new graduate profile`,
-          color: getPanel("GRADUATES").color,
+          text: `View new ${graduatePanel.title.singular} profile`,
+          color: graduatePanel.color,
           onClick: () => {
-            setPanel('GRADUATES', {
+            setPanel(graduatePanel.panelName, {
               value: _student.sysId
             });
             close();
