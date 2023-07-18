@@ -411,13 +411,13 @@ export const useDocumentCache = defineStore("documentCache", {
       }
     },
     async deleteItem(options: DeleteItem = {}) {
-      const { panel: activePanel } = useSheetManager();
+      const { panel: activePanel, focusedItem } = useSheetManager();
       const syncState = useSyncState();
       const { setProcessing, waitUntilSynced } = syncState;
       const { processing } = storeToRefs(syncState);
 
       const {
-        item,
+        item = focusedItem,
         panel = activePanel,
         showWarning = true,
         concurrent = false
@@ -437,7 +437,8 @@ export const useDocumentCache = defineStore("documentCache", {
 
       if (showWarning) {
         try {
-          const title = item[panel.properties.title] || panel.title.singular
+          let title = item[panel.properties.title]
+          title = title ? `"${title}"` : panel.title.singular
           await warn({
             title: `Delete ${title}?`
           })

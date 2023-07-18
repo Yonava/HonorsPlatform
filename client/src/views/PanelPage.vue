@@ -258,7 +258,7 @@ const resizeEnd = (e: MouseEvent) => {
 
 watch(pinnedSysIds, (newIds) => {
   const storableIds = newIds.join(',')
-  localStorage.setItem(`pinned${getActivePanel.value.title.plural}`, storableIds)
+  localStorage.setItem(`PINNED_${getActivePanel.value.panelName}`, storableIds)
 }, { deep: true })
 </script>
 

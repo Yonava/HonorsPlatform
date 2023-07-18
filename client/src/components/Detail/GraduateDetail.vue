@@ -10,8 +10,15 @@
         :item="grad"
         placeholder="Name"
       >
-        <template v-if="!grad.id" #id>
-          <v-btn @click="generateGradId" size="x-small" color="purple-darken-2">
+        <template
+          v-if="!grad.id"
+          #id
+        >
+          <v-btn
+            @click="generateGradId"
+            :color="getActivePanel.color"
+            size="x-small"
+          >
             Generate Grad ID
           </v-btn>
         </template>
@@ -28,9 +35,9 @@
         <v-btn
           v-if="grad.email"
           @click="sendEmail(grad.email)"
+          :color="getActivePanel.color"
           size="small"
           class="ml-4"
-          color="purple-darken-2"
         >
           email
         </v-btn>
@@ -47,8 +54,8 @@
       <v-btn
         v-if="!grad.graduationDate"
         @click="grad.graduationDate = new Date().toLocaleString().split(',')[0]"
+        :color="getActivePanel.color"
         size="x-small"
-        color="purple-darken-2"
         class="mb-2"
         >Today</v-btn
       >
@@ -63,10 +70,15 @@
       <v-btn
         @click="sendBackToStudents"
         :loading="movingGrad"
-        color="purple-darken-2"
+        :color="studentPanel.color"
         size="large"
       >
-        <v-icon class="mr-4" size="x-large">mdi-account-arrow-right</v-icon>
+        <v-icon
+          class="mr-4"
+          size="x-large"
+        >
+          mdi-account-arrow-right
+        </v-icon>
         Move Back to Students
       </v-btn>
     </template>
@@ -91,11 +103,13 @@ import { warn } from "../../Warn";
 import { getPanel } from "../../Panels";
 import { Graduate } from "../../SheetTypes";
 
-const { setPanel } = useSheetManager();
+const { setPanel, getActivePanel } = useSheetManager();
 
 const props = defineProps<{
   item: Graduate;
 }>();
+
+const studentPanel = getPanel('STUDENTS');
 
 const grad = computed(() => props.item);
 
@@ -115,7 +129,7 @@ async function sendBackToStudents() {
   movingGrad.value = true;
   try {
     await warn({
-      description: "Are you sure you want to move this graduate back to students? Information like phone number and graduation date will be permanently lost."
+      description: `Are you sure you want to move this ${getActivePanel.title.singular.toLowerCase()} back to ${getActivePanel.title.plural.toLowerCase()}? Information like phone number and graduation date will be permanently lost.`
     });
   } catch (e) {
     movingGrad.value = false;
@@ -123,6 +137,7 @@ async function sendBackToStudents() {
   }
 
   const _grad = JSON.parse(JSON.stringify(grad.value));
+
   try {
     await moveToStudents(_grad)
   } catch (e) {
@@ -134,18 +149,18 @@ async function sendBackToStudents() {
   open({
     body: {
       title: "Success!",
-      description: 'Grad has been moved over to students.',
+      description: `${_grad.name || getActivePanel.title.singular} has been moved over to ${studentPanel.title.plural}.`,
       buttons: [
         {
           text: "Dismiss",
-          color: `${getPanel('GRADUATES').color}`,
+          color: getActivePanel.color,
           onClick: close,
         },
         {
-          text: 'View Student Profile',
-          color: `${getPanel('STUDENTS').color}`,
+          text: `View ${studentPanel.title.singular} Profile`,
+          color: studentPanel.color,
           onClick: () => {
-            setPanel('STUDENTS', {
+            setPanel(studentPanel.panelName, {
               value: _grad.sysId,
             });
             close();

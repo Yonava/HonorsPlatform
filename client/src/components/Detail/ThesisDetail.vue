@@ -7,7 +7,7 @@
       <DetailHeader
         v-model="thesis.title"
         :item="thesis"
-        placeholder="Thesis Title"
+        :placeholder="`${getActivePanel.title.singular} Title`"
       >
         <LinkStudentButton
           :item="thesis"
@@ -16,8 +16,8 @@
       <v-btn
         v-if="!thesis.term"
         @click="thesis.term = getCurrentTerm()"
+        :color="getActivePanel.color"
         class="mb-2"
-        color="green"
         size="x-small"
       >Current Term</v-btn>
       <v-text-field
@@ -32,14 +32,14 @@
         <v-btn
           v-if="!thesis.draftReceived"
           @click="thesis.draftReceived = new Date().toLocaleString().split(',')[0]"
-          color="green"
+          :color="getActivePanel.color"
           size="x-small"
         >Today</v-btn>
         <v-spacer></v-spacer>
         <v-btn
           v-if="!thesis.proposalReceived"
           @click="thesis.proposalReceived = new Date().toLocaleString().split(',')[0]"
-          color="green"
+          :color="getActivePanel.color"
           size="x-small"
         >Today</v-btn>
       </div>
@@ -73,13 +73,13 @@
         <InstructorComplete
           @update="thesis.mentor = $event; thesis.mentorEmail = getFacultyEmail($event)"
           :instructor="thesis.mentor"
-          color="green"
+          :color="getActivePanel.color"
         />
         <v-spacer></v-spacer>
         <v-btn
           v-if="thesis.mentor && !thesis.mentorEmail"
           @click="thesis.mentorEmail = getFacultyEmail(thesis.mentor)"
-          color="green"
+          :color="getActivePanel.color"
           size="x-small"
           class="mb-2"
         >New Faculty Email</v-btn>
@@ -125,6 +125,7 @@ import DetailHeader from './Helper/DetailHeader.vue'
 import InstructorComplete from './Helper/InstructorComplete.vue'
 import DetailFrame from './Helper/DetailFrame.vue'
 import LinkStudentButton from './Helper/LinkStudentButton.vue'
+import LinkStudent from './Helper/LinkStudent.vue'
 
 import { computed } from 'vue'
 import { useStudentMatcher } from '../../StudentMatcher'
@@ -140,7 +141,7 @@ import { useSheetManager } from '../../store/useSheetManager'
 import { useDocumentCache } from '../../store/useDocumentCache'
 import { useDialog } from '../../store/useDialog'
 import { useUpdateItem } from '../../TrackItemForUpdate'
-const { setPanel } = useSheetManager()
+const { setPanel, getActivePanel } = useSheetManager()
 const { deleteItem } = useDocumentCache()
 
 const props = defineProps<{
@@ -162,18 +163,25 @@ const graduatePanel = getPanel('GRADUATES')
 const viewProfileButton = computed(() => {
   if (student.value.error === 'NOT_LINKED') {
     return {
-      text: 'No Student Linked',
+      text: `No ${studentPanel.title.singular} Linked`,
       color: 'red-darken-4',
       icon: 'mdi-account-off',
       onClick: () => {
         const { open, close } = useDialog()
         open({
           body: {
-            title: 'No Student Linked',
-            description: 'This thesis has no linked student. Add a student ID from an existing student or graduate to link them or delete this thesis.',
+            title: `No ${studentPanel.title.singular} Linked`,
+            description: `This ${getActivePanel.title.singular.toLowerCase()} is not linked to a ${studentPanel.title.singular.toLowerCase()}. Link a ${studentPanel.title.singular.toLowerCase()} or delete.`,
             buttons: [
               {
-                text: 'Delete Thesis',
+                text: `Link ${studentPanel.title.singular}`,
+                color: studentPanel.color,
+                onClick: () => {
+                  open({ component: LinkStudent })
+                },
+              },
+              {
+                text: 'Delete',
                 color: 'red-darken-2',
                 onClick: () => deleteItem()
               },
@@ -187,36 +195,43 @@ const viewProfileButton = computed(() => {
         })
       },
     }
-  } else if (student.value.foundIn === 'STUDENTS') {
+  } else if (student.value.foundIn === studentPanel.panelName) {
     return {
-      text: 'Student Profile',
+      text: `${studentPanel.title.singular} Profile`,
       color: studentPanel.color,
       icon: studentPanel.icon,
-      onClick: () => jumpTo('STUDENTS'),
+      onClick: () => jumpTo(studentPanel.panelName),
     }
-  } else if (student.value.foundIn === 'GRADUATES') {
+  } else if (student.value.foundIn === graduatePanel.panelName) {
     return {
-      text: 'Grad Profile',
+      text: `${graduatePanel.title.singular} Profile`,
       color: graduatePanel.color,
       icon: graduatePanel.icon,
-      onClick: () => jumpTo('GRADUATES'),
+      onClick: () => jumpTo(graduatePanel.panelName),
     }
   } else {
     return {
-      text: 'Problem Linking Student',
+      text: `Problem Linking ${studentPanel.title.singular}`,
       color: 'red-darken-4',
       icon: 'mdi-alert-circle',
       onClick: () => {
         const { open, close } = useDialog()
         open({
           body: {
-            title: 'Problem Linking Student',
-            description: 'The student that this thesis was linked to no longer exists. Please relink this thesis to a student or graduate on the Google Sheet (ask Dr. Matthews) or delete it.',
+            title: `Problem Linking ${studentPanel.title.singular}`,
+            description: `The ${studentPanel.title.singular} that this ${getActivePanel.title.singular} was linked to no longer exists. Please relink or delete.`,
             buttons: [
               {
-                text: 'Delete Thesis',
+                text: 'Delete',
                 color: 'red-darken-2',
                 onClick: () => deleteItem()
+              },
+              {
+                text: 'Relink',
+                color: studentPanel.color,
+                onClick: () => {
+                  open({ component: LinkStudent })
+                },
               },
               {
                 text: 'Dismiss',

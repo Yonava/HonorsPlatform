@@ -92,7 +92,7 @@ export const useSheetManager = defineStore('sheetManager', {
       const { setSelectedItems, getAllDocuments } = useDocumentCache();
       setSelectedItems();
       this.panel = getPanel(panelName);
-      this.pinnedSysIds = localStorage.getItem(`pinned${this.panel.title.plural}`)?.split(',') || []
+      this.pinnedSysIds = localStorage.getItem(`PINNED_${this.panel.panelName}`)?.split(',') || []
       this.setSearchFilter('');
 
       this.sort = {

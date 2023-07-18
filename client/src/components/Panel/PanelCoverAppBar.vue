@@ -134,7 +134,6 @@ const deleteItems = async (itemsToDelete: SheetItem[]) => {
   open({
     body: {
       title: "Your Wish is My Command!",
-      description: "Hang tight as we process your request, this may take a moment."
     }
   })
 
@@ -148,7 +147,17 @@ const deleteItems = async (itemsToDelete: SheetItem[]) => {
   const { sheetRange } = getActivePanel.value
   const { unmap } = getActivePanel.value.mappers
   const newSheetData = await unmap(newData)
-  const headerRow = headerRowMemo[sheetRange] || []
+  const headerRow = headerRowMemo[sheetRange]
+
+  if (!headerRow) {
+    open({
+      body: {
+        title: "Uh Oh!",
+        description: "Sorry, but something went wrong. Please refresh the page and try again."
+      }
+    })
+    throw new Error(`No header row found for sheet range ${sheetRange}`)
+  }
 
   await replaceRange(sheetRange, [
     headerRow,
