@@ -44,7 +44,9 @@ const student = computed(() => {
 
 const linkStudent = () => {
   useDialog().open({
-    component: props.linkFrom === 'graduates' ? LinkGraduate : LinkStudent,
+    component: {
+      render: props.linkFrom === 'graduates' ? LinkGraduate : LinkStudent
+    },
   })
 }
 </script>

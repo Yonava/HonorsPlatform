@@ -23,10 +23,15 @@ import { storeToRefs } from 'pinia'
 
 const dialogState = useDialog()
 const { close } = dialogState
-const { show, component, body } = storeToRefs(dialogState)
+const { show, component, body, persistent } = storeToRefs(dialogState)
 
 const showDialog = computed({
   get: () => show.value,
-  set: () => close()
+  set: () => {
+    if (persistent.value) {
+      return
+    }
+    close()
+  }
 })
 </script>

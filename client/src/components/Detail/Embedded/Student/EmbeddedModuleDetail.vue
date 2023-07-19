@@ -90,7 +90,9 @@ const selectedModule = computed(() => {
 
 const openMoveDialog = () => {
   useDialog().open({
-    component: MoveModule,
+    component: {
+      render: MoveModule,
+    },
   })
 }
 </script>

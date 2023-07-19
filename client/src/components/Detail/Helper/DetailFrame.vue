@@ -75,7 +75,7 @@ import { storeToRefs } from 'pinia'
 import { SheetItem } from '../../../SheetTypes'
 
 const { open, close } = useDialog()
-const { deleteItem, removeSelectedItem } = useDocumentCache()
+const { deleteItem } = useDocumentCache()
 const { getActivePanel } = storeToRefs(useSheetManager())
 
 const sm = ref(false)

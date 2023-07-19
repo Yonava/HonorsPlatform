@@ -84,17 +84,6 @@ const gradEngagementDeletions = async () => {
       deletionData.flaggedBecause.push("the event does not have a name")
     }
 
-    if (!gradEngagement.gradId) {
-      deletionData.status = "danger"
-      deletionData.flaggedBecause.push("it is not linked to a graduate")
-    } else {
-      const graduate = graduates.find(graduate => graduate.id === gradEngagement.gradId)
-      if (!graduate) {
-        deletionData.status = "danger"
-        deletionData.flaggedBecause.push("there is no graduate with the ID it is linked to")
-      }
-    }
-
     return deletionData
   })
 }
@@ -115,21 +104,6 @@ const thesisDeletions = async () => {
       item: thesis,
       status: null,
       flaggedBecause: []
-    }
-
-    if (!thesis.studentId) {
-      deletionData.status = "danger"
-      deletionData.flaggedBecause.push("it is not linked to a student")
-    } else {
-      const student = students.find(student => student.id === thesis.studentId)
-      const graduate = graduates.find(graduate => graduate.id === thesis.studentId)
-      if (!student && !graduate) {
-        deletionData.status = "danger"
-        deletionData.flaggedBecause.push("there is no student or graduate with the ID it is linked to")
-      } else if (!student && graduate) {
-        deletionData.status ??= "warn"
-        deletionData.flaggedBecause.push("it is linked to a student who has graduated")
-      }
     }
 
     if (!thesis.title) {
@@ -182,9 +156,6 @@ const graduateDeletions = async () => {
     if (!graduate.id) {
       deletionData.status ??= "warn"
       deletionData.flaggedBecause.push("they do not have an ID")
-    } else if (!graduateEngagements.some(engagement => engagement.gradId === graduate.id)) {
-      deletionData.status ??= "warn"
-      deletionData.flaggedBecause.push("they have not taken part in any engagements")
     }
 
     if (graduate.email.toLowerCase().endsWith("@yahoo.com")) {
@@ -214,21 +185,6 @@ const completedModuleDeletions = async () => {
       flaggedBecause: []
     }
 
-    if (!module.studentId) {
-      deletionData.status = "danger"
-      deletionData.flaggedBecause.push("it is not linked to a student")
-    } else {
-      const student = students.find(student => student.id === module.studentId)
-      const graduate = graduates.find(graduate => graduate.id === module.studentId)
-      if (!student && !graduate) {
-        deletionData.status = "danger"
-        deletionData.flaggedBecause.push("it is linked to a student that does not exist")
-      } else if (graduate && !student) {
-        deletionData.status = "danger"
-        deletionData.flaggedBecause.push("it is linked to a student who has graduated")
-      }
-    }
-
     return deletionData
   })
 }
@@ -249,21 +205,6 @@ const moduleDeletions = async () => {
       item: module,
       status: null,
       flaggedBecause: []
-    }
-
-    if (!module.studentId) {
-      deletionData.status = "danger"
-      deletionData.flaggedBecause.push("it is not linked to a student")
-    } else {
-      const student = students.find(student => student.id === module.studentId)
-      const graduate = graduates.find(graduate => graduate.id === module.studentId)
-      if (!student && !graduate) {
-        deletionData.status = "danger"
-        deletionData.flaggedBecause.push("it is linked to a student that does not exist")
-      } else if (graduate && !student) {
-        deletionData.status = "danger"
-        deletionData.flaggedBecause.push("it is linked to a student who has graduated")
-      }
     }
 
     if (module.docuSignCreated && !module.docuSignCompleted) {
@@ -335,15 +276,6 @@ const studentDeletions = async () => {
       if (otherGraduatesWithSameId.length > 0) {
         deletionData.status ??= "warn"
         deletionData.flaggedBecause.push("there is a graduate with the same id")
-      }
-
-      const completedModulesForThisStudent = completedModules.filter(completedModule => completedModule.studentId === student.id)
-
-      const modulesForThisStudent = modules.filter(module => module.studentId === student.id)
-
-      if (completedModulesForThisStudent.length === 0 && modulesForThisStudent.length === 0) {
-        deletionData.status ??= "warn"
-        deletionData.flaggedBecause.push("this student has never attempted a module")
       }
     }
 

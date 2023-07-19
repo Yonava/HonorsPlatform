@@ -123,7 +123,14 @@
           </v-sheet>
         </div>
       </div>
-      <v-btn @click="close" color="blue" class="mt-3" block> Done </v-btn>
+      <v-btn
+        @click="close"
+        color="blue"
+        class="mt-3"
+        block
+      >
+        Done
+      </v-btn>
     </v-sheet>
   </v-sheet>
 </template>

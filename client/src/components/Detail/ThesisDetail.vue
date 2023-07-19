@@ -177,7 +177,9 @@ const viewProfileButton = computed(() => {
                 text: `Link ${studentPanel.title.singular}`,
                 color: studentPanel.color,
                 onClick: () => {
-                  open({ component: LinkStudent })
+                  open({ component: {
+                    render: LinkStudent
+                  } })
                 },
               },
               {
@@ -230,7 +232,9 @@ const viewProfileButton = computed(() => {
                 text: 'Relink',
                 color: studentPanel.color,
                 onClick: () => {
-                  open({ component: LinkStudent })
+                  open({ component: {
+                    render: LinkStudent
+                  }})
                 },
               },
               {

@@ -12,7 +12,9 @@ export const tools = {
       name: 'Increment Student Year',
       handler: async () => {
         useDialog().open({
-          component: IncrementStudentYearDialog
+          component: {
+            render: IncrementStudentYearDialog
+          }
         })
       }
     },
@@ -20,7 +22,9 @@ export const tools = {
       name: 'Create Temporary Sheet',
       handler: async () => {
         useDialog().open({
-          component: CreateTempSheet
+          component: {
+            render: CreateTempSheet
+          }
         })
       }
     }
@@ -34,7 +38,9 @@ export const tools = {
       name: 'Create Temporary Sheet',
       handler: async () => {
         useDialog().open({
-          component: CreateTempSheet
+          component: {
+            render: CreateTempSheet
+          }
         })
       }
     }
@@ -48,7 +54,9 @@ export const tools = {
       name: 'Create Temporary Sheet',
       handler: async () => {
         useDialog().open({
-          component: CreateTempSheet
+          component: {
+            render: CreateTempSheet
+          }
         })
       }
     }
@@ -62,7 +70,9 @@ export const tools = {
       name: 'Create Temporary Sheet',
       handler: async () => {
         useDialog().open({
-          component: CreateTempSheet
+          component: {
+            render: CreateTempSheet
+          }
         })
       }
     }
@@ -76,7 +86,9 @@ export const tools = {
       name: 'Create Temporary Sheet',
       handler: async () => {
         useDialog().open({
-          component: CreateTempSheet
+          component: {
+            render: CreateTempSheet
+          }
         })
       }
     }

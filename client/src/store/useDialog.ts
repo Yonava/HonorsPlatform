@@ -49,10 +49,8 @@ export const useDialog = defineStore("dialog", {
       description: "",
       buttons: []
     } as DialogBody,
-    component: {
-      render: null,
-      props: {}
-    } as DialogComponent | null,
+    component: null as DialogComponent | null,
+    persistent: false,
     contentTimeout: null as any
   }),
   getters: {
@@ -66,6 +64,9 @@ export const useDialog = defineStore("dialog", {
     }
   },
   actions: {
+    setPersistent(persistent: boolean) {
+      this.persistent = persistent;
+    },
     setPanelCover(action: 'open' | 'close', panelObject?: Panel) {
       const { getActivePanel } = useSheetManager();
       const panel = panelObject ?? getActivePanel;
@@ -75,7 +76,8 @@ export const useDialog = defineStore("dialog", {
         this.panelCover[panel.title.plural] =  defaultPanelCover();
       }
     },
-    open(options?: { body?: DialogBody; component?: DialogComponent }) {
+    open(options?: { body?: DialogBody; component?: DialogComponent, persistent?: boolean }) {
+      this.setPersistent(options?.persistent ?? false);
       if (this.show) {
         this.close();
         setTimeout(() => {

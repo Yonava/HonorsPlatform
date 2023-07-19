@@ -8,7 +8,7 @@
     </p>
     <v-btn
       v-for="button in body.buttons"
-      :key="button.buttonText"
+      :key="button.text"
       @click="button.onClick"
       :color="button.color"
       class="mr-3 mb-3"
