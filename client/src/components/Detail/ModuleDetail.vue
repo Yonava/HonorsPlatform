@@ -117,7 +117,12 @@ useUpdateItem(module)
 
 const moveModule = () => {
   useDialog().open({
-    component: MoveModule,
+    component: {
+      render: MoveModule,
+      props: {
+        module: module.value
+      }
+    }
   })
 }
 </script>

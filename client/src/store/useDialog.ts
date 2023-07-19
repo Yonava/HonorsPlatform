@@ -27,6 +27,11 @@ export type DialogBody = {
   buttons?: DialogButton[];
 };
 
+export type DialogComponent = {
+  render: any;
+  props?: any;
+};
+
 type PanelCoverData = {
   show: boolean;
   filter: string;
@@ -44,7 +49,10 @@ export const useDialog = defineStore("dialog", {
       description: "",
       buttons: []
     } as DialogBody,
-    component: null,
+    component: {
+      render: null,
+      props: {}
+    } as DialogComponent | null,
     contentTimeout: null as any
   }),
   getters: {
@@ -67,7 +75,7 @@ export const useDialog = defineStore("dialog", {
         this.panelCover[panel.title.plural] =  defaultPanelCover();
       }
     },
-    open(options?: { body?: DialogBody; component?: any }) {
+    open(options?: { body?: DialogBody; component?: DialogComponent }) {
       if (this.show) {
         this.close();
         setTimeout(() => {
@@ -77,7 +85,10 @@ export const useDialog = defineStore("dialog", {
       }
       clearTimeout(this.contentTimeout);
       if (options?.component) {
-        this.component = markRaw(options.component);
+        this.component = {
+          render: markRaw(options.component.render),
+          props: options.component?.props ?? {}
+        }
       } else if (options?.body) {
         this.body = options.body;
       }

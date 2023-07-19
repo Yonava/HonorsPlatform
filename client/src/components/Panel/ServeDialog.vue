@@ -4,7 +4,8 @@
   >
     <component
       v-if="component"
-      :is="component"
+      :is="component.render"
+      :props="component.props"
     />
     <DefaultDialogContent
       v-else
