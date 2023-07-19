@@ -1,4 +1,16 @@
-# Current Version: prerelease 0.86.2
+# Current Version: prerelease 0.87
+
+### prerelease 0.87 (Jul. 19)
+- Feature: Pinned items allow users to pin items in the sidebar list which persist between sessions
+- Feature: List Item Actions let users access frequently used actions just one click away
+- Improvement: Completed Modules can now be moved back to the Modules panel
+- Sidebar list now animates when user pins items or an item is added to the list
+- Expanded the useDialog API to include options for props and persistence
+- Added easter egg icons 🦄
+- Tweaked the UI and calendar icons for the Sort Panel
+- Replaced "Points" with "Class Year" on student list item, and changed the Class Year icon to "mdi-breifcase"
+- Added custom tooltips for each student "Status"
+- Added the "properties" object to each panel to standardize the utilities of variously named properties within each panels unique SheetItem
 
 ### prerelease 0.86.2 (Jul. 16)
 - Improvement: Registrar list builder will now try to find graduate match for module if student is not found
