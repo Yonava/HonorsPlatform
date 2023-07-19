@@ -13,7 +13,13 @@
           :item="module"
         />
       </DetailHeader>
-
+      <v-btn
+        v-if="!module.term"
+        @click="module.term = getCurrentTerm()"
+        :color="color"
+        size="x-small"
+        class="mb-3"
+      >Current Term</v-btn>
       <v-text-field
         v-model="module.term"
         :rules="[(v) => termValidator(v) || 'Potentially invalid term']"
@@ -96,7 +102,7 @@ import LinkStudentButton from './Helper/LinkStudentButton.vue'
 
 import { computed } from 'vue'
 import type { Module } from '../../SheetTypes'
-import { termValidator } from '../../TermValidator'
+import { termValidator, getCurrentTerm } from '../../TermValidator'
 import { getPanel } from '../../Panels'
 
 import { useUpdateItem } from '../../TrackItemForUpdate'

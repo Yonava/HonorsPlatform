@@ -22,6 +22,7 @@
       </v-text-field>
     </template>
     <template #buttons>
+
     </template>
   </DetailFrame>
 </template>
