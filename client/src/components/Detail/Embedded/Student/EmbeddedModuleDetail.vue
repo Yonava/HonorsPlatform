@@ -92,6 +92,9 @@ const openMoveDialog = () => {
   useDialog().open({
     component: {
       render: MoveModule,
+      props: {
+        module: selectedModule.value,
+      },
     },
   })
 }

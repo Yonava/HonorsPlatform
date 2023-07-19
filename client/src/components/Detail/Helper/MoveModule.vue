@@ -80,7 +80,7 @@ async function moveModule() {
     return useDialog().open({
       body: {
         title: "Try Adding Something First",
-        description: `You cannot complete a ${modulePanel.title.singular} with nothing on it 🤪. Play around with it, have fun, ENJOY LIFE, then come back when you are actually ready to move something!`,
+        description: `You cannot complete a ${modulePanel.title.singular.toLowerCase()} with nothing on it 🤪. Play around with it, have fun, ENJOY LIFE, then come back when you are actually ready to move something!`,
         buttons: [
           {
             text: "Sounds Good",
@@ -94,6 +94,13 @@ async function moveModule() {
               const panelKeys = Object.keys(panels)
               panelKeys.forEach(panel => {
                 panels[panel].color = 'pink'
+
+                panels['MODULES'].icon = 'mdi-unicorn-variant'
+                panels['STUDENTS'].icon = 'mdi-butterfly'
+                panels['GRADUATES'].icon = 'mdi-heart'
+                panels['THESES'].icon = 'mdi-flower-tulip'
+                panels['GRADUATE_ENGAGEMENTS'].icon = 'mdi-candy'
+                panels['COMPLETED_MODULES'].icon = 'mdi-dolphin'
               })
 
               setPanel(modulePanel.panelName)
@@ -125,7 +132,7 @@ async function moveModule() {
     return useDialog().open({
       body: {
         title: "Error",
-        description: `There was an error moving this ${modulePanel.title.singular}. Please try again later.`
+        description: `There was an error moving this ${modulePanel.title.singular.toLowerCase()}. Please try again later.`
       }
     })
   }
