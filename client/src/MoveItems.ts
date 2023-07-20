@@ -3,12 +3,12 @@ import {
   type PanelName,
   type Panel
 } from './Panels'
-import type { SheetItem, Student } from './SheetTypes'
+import type { SheetItem, Student, Graduate, Module, CompletedModule } from './SheetTypes'
 
 import { useDialog } from './store/useDialog'
 import { useSheetManager } from './store/useSheetManager'
 import { warn } from './Warn'
-import { moveToGraduates } from './StudentTools'
+import { moveToGraduates, moveToStudents } from './StudentTools'
 
 type MovementFn = (item: SheetItem) => Promise<void>
 
@@ -77,12 +77,67 @@ export const movementHandlers = {
         ],
       },
     });
+  },
+  GRADUATES: async (item: SheetItem) => {
+
+    const graduatePanel = getPanel('GRADUATES')
+    const studentPanel = getPanel('STUDENTS')
+    const { open, close } = useDialog()
+    const { setPanel } = useSheetManager()
+
+    if (!savedToSheet(item)) {
+      return;
+    }
+
+    try {
+      await warn({
+        description: `Are you sure you want to move this ${graduatePanel.title.singular.toLowerCase()} back to ${graduatePanel.title.plural.toLowerCase()}? Information like phone number and graduation date will be permanently lost.`
+      });
+    } catch (e) {
+      throw new Error('Student move cancelled.')
+    }
+
+    const grad = JSON.parse(JSON.stringify(item)) as Graduate;
+
+    try {
+      await moveToStudents(grad)
+    } catch (e) {
+      throw new Error(`Failed to move ${grad.name || graduatePanel.title.singular.toLowerCase()}.`)
+    }
+
+    open({
+      body: {
+        title: "Success!",
+        description: `${grad.name || graduatePanel.title.singular} has been moved over to ${studentPanel.title.plural}.`,
+        buttons: [
+          {
+            text: "Dismiss",
+            color: graduatePanel.color,
+            onClick: close,
+          },
+          {
+            text: `View ${studentPanel.title.singular} Profile`,
+            color: studentPanel.color,
+            onClick: () => {
+              setPanel(studentPanel.panelName, {
+                value: grad.sysId,
+              });
+              close();
+            },
+          }
+        ],
+      },
+    });
   }
 }
 
-export const moveItem = () => ({
+export const getMoveItem = () => ({
   'STUDENTS': {
     to: getPanel('GRADUATES'),
     handler: movementHandlers.STUDENTS
+  },
+  'GRADUATES': {
+    to: getPanel('STUDENTS'),
+    handler: movementHandlers.GRADUATES
   }
 })

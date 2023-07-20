@@ -179,7 +179,7 @@
           <v-btn
             @click="move"
             :loading="movingStudent"
-            :color="moveItem().STUDENTS.to.color"
+            :color="moveItem.STUDENTS.to.color"
             size="large"
             style="width: 49%"
           >
@@ -187,7 +187,7 @@
               class="mr-2"
               size="x-large"
             >
-              {{ moveItem().STUDENTS.to.icon }}
+              {{ moveItem.STUDENTS.to.icon }}
             </v-icon>
             Graduate
           </v-btn>
@@ -224,7 +224,7 @@ import { useUpdateItem } from "../../TrackItemForUpdate";
 import { ref, computed } from 'vue'
 import { Student } from '../../SheetTypes'
 import { useDisplay } from 'vuetify'
-import { moveItem } from '../../MoveItems'
+import { getMoveItem } from '../../MoveItems'
 
 const { setPanel, getActivePanel } = useSheetManager();
 const { Students, Theses, addItem } = useDocumentCache();
@@ -324,10 +324,11 @@ const addStudentNote = (event: { initials: string; note: string, date: string })
   student.value.note += `${initials} (${date}): ${note}`;
 }
 
+const moveItem = getMoveItem();
 const move = async () => {
   movingStudent.value = true;
   try {
-    await moveItem().STUDENTS.handler(student.value);
+    await moveItem.STUDENTS.handler(student.value);
   } catch (error) {
     console.error(error);
   } finally {

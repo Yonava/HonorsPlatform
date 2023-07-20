@@ -70,7 +70,7 @@
       <v-btn
         @click="sendBackToStudents"
         :loading="movingGrad"
-        :color="studentPanel.color"
+        :color="moveItem.GRADUATES.to.color"
         size="large"
       >
         <v-icon
@@ -79,7 +79,7 @@
         >
           mdi-account-arrow-right
         </v-icon>
-        Move Back to Students
+        Move Back to {{ moveItem.GRADUATES.to.title.plural }}
       </v-btn>
     </template>
   </DetailFrame>
@@ -95,27 +95,20 @@ import {
   phoneValidator,
   sendEmail,
 } from "../../EmailUtilities";
-import { moveToStudents } from '../../StudentTools'
-import { useSheetManager } from "../../store/useSheetManager";
 import { useUpdateItem } from "../../TrackItemForUpdate";
-import { useDialog } from "../../store/useDialog";
-import { warn } from "../../Warn";
-import { getPanel } from "../../Panels";
-import { Graduate } from "../../SheetTypes";
+import type { Graduate } from "../../SheetTypes";
+import { useSheetManager } from "../../store/useSheetManager";
+import { getMoveItem } from "../../MoveItems";
 
-const { setPanel, getActivePanel } = useSheetManager();
+const { getActivePanel } = useSheetManager();
 
 const props = defineProps<{
   item: Graduate;
 }>();
 
-const studentPanel = getPanel('STUDENTS');
-
 const grad = computed(() => props.item);
 
 useUpdateItem(grad);
-
-const { open, close } = useDialog();
 
 const movingGrad = ref(false);
 
@@ -124,50 +117,15 @@ async function generateGradId() {
   grad.value.id = newId;
 }
 
-async function sendBackToStudents() {
-  if (typeof grad.value.row !== "number") return;
+const moveItem = getMoveItem()
+const sendBackToStudents = async () => {
   movingGrad.value = true;
   try {
-    await warn({
-      description: `Are you sure you want to move this ${getActivePanel.title.singular.toLowerCase()} back to ${getActivePanel.title.plural.toLowerCase()}? Information like phone number and graduation date will be permanently lost.`
-    });
-  } catch (e) {
+    await moveItem.GRADUATES.handler(grad.value);
+  } catch (error) {
+    console.error(error);
+  } finally {
     movingGrad.value = false;
-    return;
   }
-
-  const _grad = JSON.parse(JSON.stringify(grad.value));
-
-  try {
-    await moveToStudents(_grad)
-  } catch (e) {
-    movingGrad.value = false;
-    console.error(e);
-    return;
-  }
-
-  open({
-    body: {
-      title: "Success!",
-      description: `${_grad.name || getActivePanel.title.singular} has been moved over to ${studentPanel.title.plural}.`,
-      buttons: [
-        {
-          text: "Dismiss",
-          color: getActivePanel.color,
-          onClick: close,
-        },
-        {
-          text: `View ${studentPanel.title.singular} Profile`,
-          color: studentPanel.color,
-          onClick: () => {
-            setPanel(studentPanel.panelName, {
-              value: _grad.sysId,
-            });
-            close();
-          },
-        }
-      ],
-    },
-  });
 }
 </script>
