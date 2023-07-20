@@ -77,7 +77,8 @@
     </template>
     <template #buttons>
       <v-btn
-        @click="moveModule"
+        @click="moveItem(module)"
+        :loading="movingItem"
         :color="color"
         size="large"
       >
@@ -85,7 +86,7 @@
           class="mr-2"
           size="x-large"
         >
-          {{ completedModulesPanel.icon }}
+          {{ panelOnceMoved.icon }}
         </v-icon>
         Complete Module
       </v-btn>
@@ -95,7 +96,6 @@
 
 <script setup lang="ts">
 import DetailHeader from './Helper/DetailHeader.vue'
-import MoveModule from './Helper/MoveModule.vue'
 import InstructorComplete from './Helper/InstructorComplete.vue'
 import DetailFrame from './Helper/DetailFrame.vue'
 import LinkStudentButton from './Helper/LinkStudentButton.vue'
@@ -104,11 +104,9 @@ import { computed } from 'vue'
 import type { Module } from '../../SheetTypes'
 import { termValidator, getCurrentTerm } from '../../TermValidator'
 import { getPanel } from '../../Panels'
-
+import { useMoveItem } from '../../MoveItems'
 import { useUpdateItem } from '../../TrackItemForUpdate'
-import { useDialog } from '../../store/useDialog'
 
-const completedModulesPanel = getPanel('COMPLETED_MODULES')
 const modulesPanel = getPanel('MODULES')
 
 const color = modulesPanel.color + '-darken-2'
@@ -121,14 +119,5 @@ const module = computed(() => props.item)
 
 useUpdateItem(module)
 
-const moveModule = () => {
-  useDialog().open({
-    component: {
-      render: MoveModule,
-      props: {
-        module: module.value
-      }
-    }
-  })
-}
+const { moveItem, movingItem, panelOnceMoved } = useMoveItem()
 </script>

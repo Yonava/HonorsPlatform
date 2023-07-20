@@ -6,6 +6,7 @@ import {
 import type { SheetItem, Student, Graduate, Module, CompletedModule } from './SheetTypes'
 import { ref } from 'vue'
 
+import MoveModule from './components/Detail/Helper/MoveModule.vue'
 import { useDialog } from './store/useDialog'
 import { useSheetManager } from './store/useSheetManager'
 import { warn } from './Warn'
@@ -152,7 +153,21 @@ export const movementHandlers = {
         ],
       },
     });
-  }
+  },
+  MODULES: async (item: SheetItem) => {
+    await new Promise((resolve, reject) => {
+      useDialog().open({
+        component: {
+          render: MoveModule,
+          props: {
+            module: item,
+            resolve,
+            reject
+          }
+        }
+      })
+    })
+  },
 }
 
 export const useMoveItem = (panel?: Panel) => {
@@ -171,7 +186,10 @@ export const useMoveItem = (panel?: Panel) => {
       to: getPanel('STUDENTS'),
       handler: movementHandlers.GRADUATES
     } as const,
-    'MODULES': null,
+    'MODULES': {
+      to: getPanel('COMPLETED_MODULES'),
+      handler: movementHandlers.MODULES
+    },
     'COMPLETED_MODULES': null,
     'GRADUATE_ENGAGEMENTS': null,
     'THESES': null,

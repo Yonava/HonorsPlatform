@@ -37,7 +37,7 @@
 
 <script setup lang="ts">
 import { Grade, grades, Module } from "../../../SheetTypes";
-import { ref } from "vue";
+import { ref, onUnmounted } from "vue";
 import { getPanel, panels } from "../../../Panels";
 import { useDocumentCache } from '../../../store/useDocumentCache'
 import { useDialog } from '../../../store/useDialog'
@@ -47,10 +47,12 @@ import { useSyncState } from '../../../store/useSyncState'
 const props = defineProps<{
   props: {
     module: Module;
+    resolve?: (reason?: string) => void;
+    reject?: (reason?: any) => void;
   };
 }>();
 
-const { module } = props.props
+const { module, resolve = null, reject = null } = props.props
 
 const modulePanel = getPanel("MODULES");
 const completedModulePanel = getPanel("COMPLETED_MODULES");
@@ -77,6 +79,9 @@ async function moveModule() {
 
   if (typeof module.row !== 'number') {
     loading.value = false;
+    if (reject) {
+      reject("Module cannot be moved because it is not in the sheet.");
+    }
     return useDialog().open({
       body: {
         title: "Try Adding Something First",
@@ -129,12 +134,21 @@ async function moveModule() {
   } catch (e) {
     console.error(e)
     await waitUntilSynced({ showDialog: true })
+    loading.value = false;
+    if (reject) {
+      reject(`There was an error moving this module. ${e}`);
+    }
     return useDialog().open({
       body: {
         title: "Error",
         description: `There was an error moving this ${modulePanel.title.singular.toLowerCase()}. Please try again later.`
       }
     })
+  }
+
+  loading.value = false;
+  if (resolve) {
+    resolve();
   }
 
   useDialog().open({
@@ -163,4 +177,10 @@ async function moveModule() {
     }
   })
 }
+
+onUnmounted(() => {
+  if (reject) {
+    reject("Module was not moved.");
+  }
+})
 </script>
