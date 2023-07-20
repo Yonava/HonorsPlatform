@@ -1,18 +1,19 @@
 <template>
   <v-sheet
-    style="height: 100%; width: 100%; overflow: auto;"
+    style="height: 100%; width: 100%; overflow: auto; position: relative;"
     class="d-flex flex-grow-1 flex-row align-center"
   >
     <div
+      v-if="movementObject"
       @dragenter="dragStateMove = true"
       @dragleave="dragStateMove = false"
       @dragover="dragOver"
       @drop="dropMove"
       :style="{
-        right: '60px',
+        left: '60px',
         top: '0',
-        width: '250px',
-        height: '50px',
+        width: '375px',
+        height: '60px',
         position: 'absolute',
         zIndex: '1000',
         pointerEvents: allowPointerEvents ? 'all' : 'none',
@@ -21,18 +22,20 @@
       }"
     ></div>
     <v-sheet
-      v-if="useSheetManager().listItemBeingDragged"
-      :color="panelOnceMoved.color"
+      v-if="movementObject"
+      :color="movementObject.to.color"
       :style="{
-        right: '60px',
+        transition: 'all 0.3s ease',
+        left: '60px',
         top: '0',
-        width: '250px',
-        height: '50px',
+        width: '375px',
+        height: '60px',
         position: 'absolute',
         zIndex: '999',
         borderRadius: '0 0 10px 10px',
         gap: '10px',
         overflow: 'hidden',
+        transform: moveWidgetActive ? 'translateY(0)' : 'translateY(-100%)',
       }"
       class="d-flex align-center justify-center"
     >
@@ -40,14 +43,17 @@
         :style="{
           left: '0',
           transition: 'all 0.3s ease',
-          width: dragStateMove ? '100%' : '0',
+          transitionDelay: dragStateMove ? '0' : '0.3s',
+          width: dragStateMove || movingItem ? '100%' : '0',
           height: '100%',
+          zIndex: '999',
           position: 'absolute',
         }"
         color="green"
         class="d-flex align-center justify-center"
       >
         <v-icon
+          v-if="!movingItem"
           :style="{
             transition: 'all 0.3s ease',
             transitionDelay: dragStateMove ? '0.3s' : '0',
@@ -58,15 +64,22 @@
         >
           mdi-arrow-right
         </v-icon>
+        <v-progress-circular
+          v-else
+          indeterminate
+        ></v-progress-circular>
       </v-sheet>
-        <div v-if="!dragStateMove">
-          <v-icon>
-            {{ panelOnceMoved.icon }}
-          </v-icon>
-          <b>
-            Move To {{ panelOnceMoved.title.plural }}
-          </b>
-        </div>
+      <div style="color: white">
+        <v-icon
+          size="x-large"
+          class="mb-1"
+        >
+          {{ movementObject.to.icon }}
+        </v-icon>
+        <b style="font-size: 1.5rem;">
+          Drag To {{ movementObject.to.title.plural }}
+        </b>
+      </div>
     </v-sheet>
     <div
       @dragenter="dragState = true"
@@ -138,6 +151,12 @@ const { getActivePanel } = storeToRefs(sheetManager)
 
 const { getSelectedItems, addSelectedItem } = useDocumentCache()
 
+const moveWidgetActive = computed(() => {
+  return useSheetManager().listItemBeingDragged || movingItem.value
+})
+
+const { moveItem, movingItem, movementObject } = useMoveItem()
+
 const drop = (e: DragEvent) => {
   dragState.value = false
   const item = useSheetManager().listItemBeingDragged
@@ -166,8 +185,6 @@ const isFocused = (item: SheetItem) => {
 const allowPointerEvents = computed(() => {
   return useSheetManager().listItemBeingDragged
 })
-
-const { moveItem, movingItem, panelOnceMoved } = useMoveItem()
 </script>
 
 <style scoped>

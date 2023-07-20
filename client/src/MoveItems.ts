@@ -4,7 +4,8 @@ import {
   type Panel
 } from './Panels'
 import type { SheetItem, Student, Graduate, Module, CompletedModule } from './SheetTypes'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
+import { storeToRefs } from 'pinia'
 
 import MoveModule from './components/Detail/Helper/MoveModule.vue'
 import { useDialog } from './store/useDialog'
@@ -225,10 +226,10 @@ export const movementHandlers = {
   },
 }
 
-export const useMoveItem = (panel?: Panel) => {
+export const useMoveItem = () => {
 
-  const { getActivePanel } = useSheetManager()
-  panel ??= getActivePanel
+  const sheetManager = useSheetManager()
+  const { getActivePanel } = storeToRefs(sheetManager)
 
   const movingItem = ref(false)
 
@@ -253,11 +254,9 @@ export const useMoveItem = (panel?: Panel) => {
     'THESES': null,
   }
 
-  const movementObject = movements[panel.panelName]
-
-  if (!movementObject) {
-    throw new Error(`No movement handler for ${panel.panelName}`)
-  }
+  const movementObject = computed(() => {
+    return movements[getActivePanel.value.panelName]
+  })
 
   const moveItem = async (item?: SheetItem) => {
     const { focusedItem } = useSheetManager()
@@ -272,7 +271,7 @@ export const useMoveItem = (panel?: Panel) => {
 
     movingItem.value = true
     try {
-      await movementObject.handler(item)
+      await movementObject.value?.handler(item) ?? Promise.reject(new Error(`No movement handler for ${getActivePanel.value.panelName}`))
     } catch (e) {
       console.error(e)
     } finally {
@@ -283,6 +282,7 @@ export const useMoveItem = (panel?: Panel) => {
   return {
     movingItem,
     moveItem,
-    panelOnceMoved: movementObject.to,
+    movementObject,
+    panelOnceMoved: movementObject.value?.to,
   }
 }
