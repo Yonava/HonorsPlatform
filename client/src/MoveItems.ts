@@ -276,7 +276,6 @@ export const useMoveItem = (panel?: Panel) => {
     } catch (e) {
       console.error(e)
     } finally {
-      console.log('done')
       movingItem.value = false
     }
   }

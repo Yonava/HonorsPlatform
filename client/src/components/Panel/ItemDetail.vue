@@ -4,6 +4,71 @@
     class="d-flex flex-grow-1 flex-row align-center"
   >
     <div
+      @dragenter="dragStateMove = true"
+      @dragleave="dragStateMove = false"
+      @dragover="dragOver"
+      @drop="dropMove"
+      :style="{
+        right: '60px',
+        top: '0',
+        width: '250px',
+        height: '50px',
+        position: 'absolute',
+        zIndex: '1000',
+        pointerEvents: allowPointerEvents ? 'all' : 'none',
+        borderRadius: '0 0 10px 10px',
+        gap: '10px',
+      }"
+    ></div>
+    <v-sheet
+      v-if="useSheetManager().listItemBeingDragged"
+      :color="panelOnceMoved.color"
+      :style="{
+        right: '60px',
+        top: '0',
+        width: '250px',
+        height: '50px',
+        position: 'absolute',
+        zIndex: '999',
+        borderRadius: '0 0 10px 10px',
+        gap: '10px',
+        overflow: 'hidden',
+      }"
+      class="d-flex align-center justify-center"
+    >
+      <v-sheet
+        :style="{
+          left: '0',
+          transition: 'all 0.3s ease',
+          width: dragStateMove ? '100%' : '0',
+          height: '100%',
+          position: 'absolute',
+        }"
+        color="green"
+        class="d-flex align-center justify-center"
+      >
+        <v-icon
+          :style="{
+            transition: 'all 0.3s ease',
+            transitionDelay: dragStateMove ? '0.3s' : '0',
+            opacity: dragStateMove ? '1' : '0',
+            transform: dragStateMove ? 'translateX(0)' : 'translateX(-10px)',
+          }"
+          size="x-large"
+        >
+          mdi-arrow-right
+        </v-icon>
+      </v-sheet>
+        <div v-if="!dragStateMove">
+          <v-icon>
+            {{ panelOnceMoved.icon }}
+          </v-icon>
+          <b>
+            Move To {{ panelOnceMoved.title.plural }}
+          </b>
+        </div>
+    </v-sheet>
+    <div
       @dragenter="dragState = true"
       @dragleave="dragState = false"
       @dragover="dragOver"
@@ -61,10 +126,12 @@
 import { useSheetManager } from '../../store/useSheetManager';
 import { useDocumentCache } from '../../store/useDocumentCache';
 import { SheetItem } from '../../SheetTypes';
-import { ref, computed } from 'vue';
+import { ref, computed } from 'vue'
 import { storeToRefs } from 'pinia'
+import { useMoveItem } from '../../MoveItems'
 
 const dragState = ref(false)
+const dragStateMove = ref(false)
 
 const sheetManager = useSheetManager()
 const { getActivePanel } = storeToRefs(sheetManager)
@@ -76,6 +143,14 @@ const drop = (e: DragEvent) => {
   const item = useSheetManager().listItemBeingDragged
   if (item) {
     addSelectedItem({ item })
+  }
+}
+
+const dropMove = (e: DragEvent) => {
+  dragStateMove.value = false
+  const item = useSheetManager().listItemBeingDragged
+  if (item) {
+    moveItem(item)
   }
 }
 
@@ -91,4 +166,18 @@ const isFocused = (item: SheetItem) => {
 const allowPointerEvents = computed(() => {
   return useSheetManager().listItemBeingDragged
 })
+
+const { moveItem, movingItem, panelOnceMoved } = useMoveItem()
 </script>
+
+<style scoped>
+  .slide-enter-active,
+  .slide-leave-active {
+    transition: all 0.3s ease;
+  }
+  .slide-enter,
+  .slide-leave-to {
+    transform: translateX(10px);
+    opacity: 0;
+  }
+</style>
