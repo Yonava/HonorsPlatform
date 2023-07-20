@@ -51,7 +51,8 @@ export const useDialog = defineStore("dialog", {
     } as DialogBody,
     component: null as DialogComponent | null,
     persistent: false,
-    contentTimeout: null as any
+    contentTimeout: null as any,
+    contentTimeoutDuration: 300
   }),
   getters: {
     getPanelCover(state) {
@@ -106,7 +107,7 @@ export const useDialog = defineStore("dialog", {
           description: "",
           buttons: []
         };
-      }, 300);
+      }, this.contentTimeoutDuration);
     },
     toggle(options?: { body?: DialogBody; component?: any }) {
       if (this.show) {

@@ -62,18 +62,18 @@
     </template>
     <template #buttons>
       <v-btn
-        @click="moveModuleBack"
-        :color="modulePanel.color + '-darken-2'"
-        :loading="movingModule"
+        @click="moveItem(completedModule)"
+        :color="panelOnceMoved.color + '-darken-2'"
+        :loading="movingItem"
         size="large"
       >
         <v-icon
           class="mr-2"
           size="x-large"
         >
-          {{ modulePanel.icon }}
+          {{ panelOnceMoved.icon }}
         </v-icon>
-        Move Back to {{ modulePanel.title.plural }}
+        Move Back to {{ panelOnceMoved.title.plural }}
       </v-btn>
     </template>
   </DetailFrame>
@@ -84,78 +84,21 @@ import DetailHeader from './Helper/DetailHeader.vue'
 import InstructorComplete from './Helper/InstructorComplete.vue'
 import DetailFrame from './Helper/DetailFrame.vue'
 import LinkStudentButton from './Helper/LinkStudentButton.vue'
-import type { CompletedModule, Module } from '../../SheetTypes'
+import type { CompletedModule } from '../../SheetTypes'
 import { useSheetManager } from '../../store/useSheetManager'
-import { useDocumentCache } from '../../store/useDocumentCache'
-import { useDialog } from '../../store/useDialog'
-import { computed, ref } from 'vue'
+import { useMoveItem } from '../../MoveItems'
+import { computed } from 'vue'
 import { useUpdateItem } from '../../TrackItemForUpdate'
-import { getPanel } from '../../Panels'
-import { warn } from '../../Warn'
 
-const { getActivePanel, setPanel } = useSheetManager()
-const { moveItemBetweenLists } = useDocumentCache()
-const { open, close } = useDialog()
+const { getActivePanel } = useSheetManager()
 
 const props = defineProps<{
   item: CompletedModule
 }>()
 
-const movingModule = ref(false)
-
 const completedModule = computed(() => props.item)
-const modulePanel = getPanel('MODULES')
 
-const moveModuleBack = async () => {
-  movingModule.value = true
-  const { grade, completedDate, ...rest } = completedModule.value
-  const newItem: Module = rest;
-
-  const title = completedModule.value[getActivePanel.properties.title] || `This ${getActivePanel.title.singular}`
-
-  try {
-    await warn({
-      title: `Move ${title} Back to ${modulePanel.title.plural}?`,
-      description: `Are you sure you want to move ${title.toLowerCase()} back to ${modulePanel.title.plural}? This action will remove the grade (${completedModule.value.grade || 'ungraded'}) and completed date (${completedModule.value.completedDate || 'no completion date'}) and cannot be undone.`,
-    })
-  } catch (e) {
-    movingModule.value = false
-    return
-  }
-
-  await moveItemBetweenLists({
-    oldItem: completedModule.value,
-    newItem,
-    oldPanel: getActivePanel,
-    newPanel: modulePanel,
-  })
-
-  open({
-    body: {
-      title: `${title} Moved Back Successfully`,
-      description: `${title} has been moved back to ${modulePanel.title.plural}.`,
-      buttons: [
-        {
-          text: 'Dismiss',
-          color: 'red',
-          onClick: () => close(),
-        },
-        {
-          text: `View ${modulePanel.title.singular}`,
-          color: `${modulePanel.color}-darken-2`,
-          onClick: () => {
-            setPanel(modulePanel.panelName, {
-              value: newItem.sysId
-            })
-            close()
-          },
-        }
-      ]
-    },
-  })
-
-  movingModule.value = false
-}
+const { moveItem, movingItem, panelOnceMoved } = useMoveItem()
 
 useUpdateItem(completedModule)
 </script>

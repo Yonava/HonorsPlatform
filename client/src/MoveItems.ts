@@ -11,6 +11,7 @@ import { useDialog } from './store/useDialog'
 import { useSheetManager } from './store/useSheetManager'
 import { warn } from './Warn'
 import { moveToGraduates, moveToStudents } from './StudentTools'
+import { useDocumentCache } from './store/useDocumentCache'
 
 type MovementFn = (item: SheetItem) => Promise<void>
 
@@ -168,6 +169,60 @@ export const movementHandlers = {
       })
     })
   },
+  COMPLETED_MODULES: async (item: SheetItem) => {
+
+    const modulePanel = getPanel('MODULES')
+    const completedModulePanel = getPanel('COMPLETED_MODULES')
+    const { open, close } = useDialog()
+    const { setPanel } = useSheetManager()
+    const { moveItemBetweenLists } = useDocumentCache()
+    const completedModule = item as CompletedModule
+
+    const { grade, completedDate, ...rest } = completedModule
+    const newItem: Module = rest;
+
+    const title = completedModule[completedModulePanel.properties.title] || `This ${completedModulePanel.title.singular}`
+
+    try {
+      await warn({
+        title: `Move ${title} Back to ${modulePanel.title.plural}?`,
+        description: `Are you sure you want to move ${title.toLowerCase()} back to ${modulePanel.title.plural}? This action will remove the grade (${completedModule.grade || 'ungraded'}) and completed date (${completedModule.completedDate || 'no completion date'}) and cannot be undone.`,
+      })
+    } catch (e) {
+      throw e
+    }
+
+    await moveItemBetweenLists({
+      oldItem: completedModule,
+      newItem,
+      oldPanel: completedModulePanel,
+      newPanel: modulePanel,
+    })
+
+    open({
+      body: {
+        title: `${title} Moved Back Successfully`,
+        description: `${title} has been moved back to ${modulePanel.title.plural}.`,
+        buttons: [
+          {
+            text: 'Dismiss',
+            color: 'red',
+            onClick: () => close(),
+          },
+          {
+            text: `View ${modulePanel.title.singular}`,
+            color: `${modulePanel.color}-darken-2`,
+            onClick: () => {
+              setPanel(modulePanel.panelName, {
+                value: newItem.sysId
+              })
+              close()
+            },
+          }
+        ]
+      },
+    })
+  },
 }
 
 export const useMoveItem = (panel?: Panel) => {
@@ -190,7 +245,10 @@ export const useMoveItem = (panel?: Panel) => {
       to: getPanel('COMPLETED_MODULES'),
       handler: movementHandlers.MODULES
     },
-    'COMPLETED_MODULES': null,
+    'COMPLETED_MODULES': {
+      to: getPanel('MODULES'),
+      handler: movementHandlers.COMPLETED_MODULES
+    },
     'GRADUATE_ENGAGEMENTS': null,
     'THESES': null,
   }
@@ -218,6 +276,7 @@ export const useMoveItem = (panel?: Panel) => {
     } catch (e) {
       console.error(e)
     } finally {
+      console.log('done')
       movingItem.value = false
     }
   }
