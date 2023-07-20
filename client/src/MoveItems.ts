@@ -155,13 +155,48 @@ export const movementHandlers = {
   }
 }
 
-export const getMoveItem = () => ({
-  'STUDENTS': {
-    to: getPanel('GRADUATES'),
-    handler: movementHandlers.STUDENTS
-  },
-  'GRADUATES': {
-    to: getPanel('STUDENTS'),
-    handler: movementHandlers.GRADUATES
+export const useMoveItem = (panel?: Panel) => {
+
+  const { getActivePanel } = useSheetManager()
+  panel ??= getActivePanel
+
+  const movingItem = ref(false)
+
+  const movements = {
+    'STUDENTS': {
+      to: getPanel('GRADUATES'),
+      handler: movementHandlers.STUDENTS
+    },
+    'GRADUATES': {
+      to: getPanel('STUDENTS'),
+      handler: movementHandlers.GRADUATES
+    } as const,
+    'MODULES': null,
+    'COMPLETED_MODULES': null,
+    'GRADUATE_ENGAGEMENTS': null,
+    'THESES': null,
   }
-})
+
+  const movementObject = movements[panel.panelName]
+
+  if (!movementObject) {
+    throw new Error(`No movement handler for ${panel.panelName}`)
+  }
+
+  const moveItem = async (item: SheetItem) => {
+    movingItem.value = true
+    try {
+      await movementObject.handler(item)
+    } catch (e) {
+      console.error(e)
+    } finally {
+      movingItem.value = false
+    }
+  }
+
+  return {
+    movingItemInProgress: movingItem,
+    moveItem,
+    panelOnceMoved: movementObject.to,
+  }
+}

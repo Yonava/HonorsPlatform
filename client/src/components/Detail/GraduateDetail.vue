@@ -68,9 +68,9 @@
     </template>
     <template #buttons>
       <v-btn
-        @click="move"
-        :loading="movingGrad"
-        :color="moveItem.GRADUATES.to.color"
+        @click="moveItem"
+        :loading="movingItemInProgress"
+        :color="panelOnceMoved.color"
         size="large"
       >
         <v-icon
@@ -79,7 +79,7 @@
         >
           mdi-account-arrow-right
         </v-icon>
-        Move Back to {{ moveItem.GRADUATES.to.title.plural }}
+        Move Back to {{ panelOnceMoved.title.plural }}
       </v-btn>
     </template>
   </DetailFrame>
@@ -98,7 +98,7 @@ import {
 import { useUpdateItem } from "../../TrackItemForUpdate";
 import type { Graduate } from "../../SheetTypes";
 import { useSheetManager } from "../../store/useSheetManager";
-import { getMoveItem } from "../../MoveItems";
+import { useMoveItem } from "../../MoveItems";
 
 const { getActivePanel } = useSheetManager();
 
@@ -110,22 +110,10 @@ const grad = computed(() => props.item);
 
 useUpdateItem(grad);
 
-const movingGrad = ref(false);
-
 async function generateGradId() {
   const newId = "G" + Math.random().toString().substring(2, 9);
   grad.value.id = newId;
 }
 
-const moveItem = getMoveItem()
-const move = async () => {
-  movingGrad.value = true;
-  try {
-    await moveItem.GRADUATES.handler(grad.value);
-  } catch (error) {
-    console.error(error);
-  } finally {
-    movingGrad.value = false;
-  }
-}
+const { moveItem, movingItemInProgress, panelOnceMoved } = useMoveItem()
 </script>
