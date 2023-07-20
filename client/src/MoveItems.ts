@@ -4,6 +4,7 @@ import {
   type Panel
 } from './Panels'
 import type { SheetItem, Student, Graduate, Module, CompletedModule } from './SheetTypes'
+import { ref } from 'vue'
 
 import { useDialog } from './store/useDialog'
 import { useSheetManager } from './store/useSheetManager'
@@ -19,8 +20,31 @@ type MoveItem = {
   }
 }
 
-const savedToSheet = (item: SheetItem) => {
-  return typeof item.row === "number"
+const savedToSheet = (item: SheetItem, panel?: Panel) => {
+  const { open, close } = useDialog()
+  const { getActivePanel } = useSheetManager()
+  panel ??= getActivePanel
+  const isSaved = typeof item.row === "number"
+  if (!isSaved) {
+    const secondsWasted = 5
+    open({
+      persistent: true,
+      body: {
+        title: `Nothing to Move!`,
+        description: `It isn't very practical to move nothing, is it? Try adding something to this ${panel.title.singular.toLowerCase()} before bothering me about moving it. In fact, just for that, I'm going to waste ${secondsWasted} seconds of your time.`,
+        buttons: [
+          {
+            text: `Dismiss (Wait ${secondsWasted} Seconds Once Clicked)`,
+            color: 'red',
+            onClick: () => {
+              setTimeout(close, secondsWasted * 1000)
+            }
+          }
+        ]
+      },
+    })
+  }
+  return isSaved
 }
 
 export const movementHandlers = {

@@ -68,7 +68,7 @@
     </template>
     <template #buttons>
       <v-btn
-        @click="sendBackToStudents"
+        @click="move"
         :loading="movingGrad"
         :color="moveItem.GRADUATES.to.color"
         size="large"
@@ -118,7 +118,7 @@ async function generateGradId() {
 }
 
 const moveItem = getMoveItem()
-const sendBackToStudents = async () => {
+const move = async () => {
   movingGrad.value = true;
   try {
     await moveItem.GRADUATES.handler(grad.value);
