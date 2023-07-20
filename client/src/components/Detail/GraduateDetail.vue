@@ -68,8 +68,8 @@
     </template>
     <template #buttons>
       <v-btn
-        @click="moveItem"
-        :loading="movingItemInProgress"
+        @click="moveItem(grad)"
+        :loading="movingItem"
         :color="panelOnceMoved.color"
         size="large"
       >
@@ -89,7 +89,7 @@
 import DetailFrame from "./Helper/DetailFrame.vue";
 import DetailHeader from "./Helper/DetailHeader.vue";
 
-import { ref, computed } from "vue";
+import { computed } from "vue";
 import {
   emailValidator,
   phoneValidator,
@@ -115,5 +115,5 @@ async function generateGradId() {
   grad.value.id = newId;
 }
 
-const { moveItem, movingItemInProgress, panelOnceMoved } = useMoveItem()
+const { moveItem, movingItem, panelOnceMoved } = useMoveItem()
 </script>

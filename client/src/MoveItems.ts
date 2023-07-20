@@ -183,7 +183,17 @@ export const useMoveItem = (panel?: Panel) => {
     throw new Error(`No movement handler for ${panel.panelName}`)
   }
 
-  const moveItem = async (item: SheetItem) => {
+  const moveItem = async (item?: SheetItem) => {
+    const { focusedItem } = useSheetManager()
+
+    if (!item && focusedItem) {
+      item = focusedItem
+    }
+
+    if (!item) {
+      throw new Error('No item to move.')
+    }
+
     movingItem.value = true
     try {
       await movementObject.handler(item)
@@ -195,7 +205,7 @@ export const useMoveItem = (panel?: Panel) => {
   }
 
   return {
-    movingItemInProgress: movingItem,
+    movingItem,
     moveItem,
     panelOnceMoved: movementObject.to,
   }

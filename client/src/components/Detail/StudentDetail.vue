@@ -177,9 +177,9 @@
             {{ thesisButton.text }}
           </v-btn>
           <v-btn
-            @click="move"
-            :loading="movingStudent"
-            :color="moveItem.STUDENTS.to.color"
+            @click="moveItem(student)"
+            :loading="movingItem"
+            :color="panelOnceMoved.color"
             size="large"
             style="width: 49%"
           >
@@ -187,7 +187,7 @@
               class="mr-2"
               size="x-large"
             >
-              {{ moveItem.STUDENTS.to.icon }}
+              {{ panelOnceMoved.icon }}
             </v-icon>
             Graduate
           </v-btn>
@@ -224,7 +224,7 @@ import { useUpdateItem } from "../../TrackItemForUpdate";
 import { ref, computed } from 'vue'
 import { Student } from '../../SheetTypes'
 import { useDisplay } from 'vuetify'
-import { getMoveItem } from '../../MoveItems'
+import { useMoveItem } from '../../MoveItems'
 
 const { setPanel, getActivePanel } = useSheetManager();
 const { Students, Theses, addItem } = useDocumentCache();
@@ -249,8 +249,6 @@ const statusOptionIcon = computed(() => {
 const statusOptionLabels = computed(() => statusOptions.map((option) => option.status));
 
 const idDialog = ref(false);
-const movingStudent = ref(false);
-
 const showAddNote = ref(false);
 
 function studentIdRule(studentId: string) {
@@ -324,17 +322,7 @@ const addStudentNote = (event: { initials: string; note: string, date: string })
   student.value.note += `${initials} (${date}): ${note}`;
 }
 
-const moveItem = getMoveItem();
-const move = async () => {
-  movingStudent.value = true;
-  try {
-    await moveItem.STUDENTS.handler(student.value);
-  } catch (error) {
-    console.error(error);
-  } finally {
-    movingStudent.value = false;
-  }
-}
+const { moveItem, movingItem, panelOnceMoved } = useMoveItem();
 </script>
 
 <style scoped>
