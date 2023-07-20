@@ -84,7 +84,7 @@ export function graduateToStudent(graduate: Graduate): Student {
   return {
     row: graduate.row,
     sysId: graduate.sysId,
-    id: graduate.id.startsWith("G") ? "" : graduate.id,
+    id: graduate.id,
     name: graduate.name,
     email: graduate.email,
     points: 0,

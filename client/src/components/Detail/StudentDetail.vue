@@ -177,9 +177,9 @@
             {{ thesisButton.text }}
           </v-btn>
           <v-btn
-            @click="graduate"
+            @click="move"
             :loading="movingStudent"
-            :color="graduatePanel.color"
+            :color="moveItem().STUDENTS.to.color"
             size="large"
             style="width: 49%"
           >
@@ -187,7 +187,7 @@
               class="mr-2"
               size="x-large"
             >
-              {{ graduatePanel.icon }}
+              {{ moveItem().STUDENTS.to.icon }}
             </v-icon>
             Graduate
           </v-btn>
@@ -214,23 +214,19 @@ import {
 } from "../../EmailUtilities";
 import { getPanel } from "../../Panels";
 import {
-  moveToGraduates,
   yearOptions,
   statusOptions,
   athleticOptions,
 } from "../../StudentTools";
 import { useSheetManager } from "../../store/useSheetManager";
 import { useDocumentCache } from "../../store/useDocumentCache";
-import { useDialog } from "../../store/useDialog";
 import { useUpdateItem } from "../../TrackItemForUpdate";
-import { warn } from '../../Warn'
 import { ref, computed } from 'vue'
 import { Student } from '../../SheetTypes'
 import { useDisplay } from 'vuetify'
+import { moveItem } from '../../MoveItems'
 
-const { open, close } = useDialog();
 const { setPanel, getActivePanel } = useSheetManager();
-
 const { Students, Theses, addItem } = useDocumentCache();
 
 const props = defineProps<{
@@ -286,14 +282,9 @@ const saveId = () => {
   idDialog.value = false;
 }
 
-const graduatePanel = getPanel("GRADUATES");
 const thesisPanel = getPanel("THESES");
 
 const thesis = computed(() => Theses.list.find((thesis) => thesis.studentSysId === student.value.sysId));
-
-const savedToSheet = () => {
-  return typeof student.value.row === "number"
-}
 
 const thesisButton = computed(() => {
   if (!thesis.value) {
@@ -327,61 +318,21 @@ const viewThesis = () => {
   });
 }
 
-const graduate = async () => {
-  if (!savedToSheet()) {
-    return;
-  }
-
-  const _student = JSON.parse(JSON.stringify(student.value));
-  movingStudent.value = true;
-  try {
-    const name = _student.name || `this ${getActivePanel.title.singular.toLowerCase()}`;
-    await warn({
-      title: `Graduate ${name}?`,
-      description: `Are you sure you want to graduate ${name}? Graduating ${name} will remove them from the ${getActivePanel.title.singular.toLowerCase()} list and add them to the ${graduatePanel.title.plural.toLowerCase()} list. This action will permanently erase data such as ${name}s student email address (${_student.email || 'no email'}), points (${_student.points || 'no points'}), athletic affiliation (${_student.athletics || 'no athletics'}), and more.`
-    })
-  } catch {
-    movingStudent.value = false;
-    return;
-  }
-
-  try {
-    await moveToGraduates(_student);
-  } catch (e) {
-    movingStudent.value = false;
-    console.error(e);
-    return;
-  }
-
-  open({
-    body: {
-      title: `${_student.name || getActivePanel.title.singular} Graduated`,
-      description: `${_student.name || getActivePanel.title.singular} has been successfully moved to ${graduatePanel.title.plural}.`,
-      buttons: [
-        {
-          text: "Dismiss",
-          color: getActivePanel.color,
-          onClick: close,
-        },
-        {
-          text: `View new ${graduatePanel.title.singular} profile`,
-          color: graduatePanel.color,
-          onClick: () => {
-            setPanel(graduatePanel.panelName, {
-              value: _student.sysId
-            });
-            close();
-          },
-        },
-      ],
-    },
-  });
-}
-
-function addStudentNote(event: { initials: string; note: string, date: string }) {
+const addStudentNote = (event: { initials: string; note: string, date: string }) => {
   const { initials, note, date } = event;
   if (student.value.note) student.value.note += "\n\n";
   student.value.note += `${initials} (${date}): ${note}`;
+}
+
+const move = async () => {
+  movingStudent.value = true;
+  try {
+    await moveItem().STUDENTS.handler(student.value);
+  } catch (error) {
+    console.error(error);
+  } finally {
+    movingStudent.value = false;
+  }
 }
 </script>
 

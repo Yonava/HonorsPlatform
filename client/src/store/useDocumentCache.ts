@@ -567,15 +567,15 @@ export const useDocumentCache = defineStore("documentCache", {
         return Promise.reject("useDocumentCache: Cannot move item that hasn't been saved to the sheet yet");
       }
       await waitUntilSynced({ showDialog: true });
+      const row = await postInRange(
+        newPanel.sheetRange,
+        await newPanel.mappers.unmap([newItem])
+      )
       await this.deleteItem({
         item: oldItem,
         panel: oldPanel,
         showWarning: false,
       })
-      const row = await postInRange(
-        newPanel.sheetRange,
-        await newPanel.mappers.unmap([newItem])
-      )
       newItem.row = row;
       this[newPanel.sheetRange].list.unshift(newItem);
     }
