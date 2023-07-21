@@ -101,3 +101,13 @@ export async function replaceRange(range: Range, data: string[][]) {
     await replaceRange(range, data);
   }
 }
+
+export async function getUserProfileData(): Promise<any> {
+  try {
+    const { data } = await axios.get("/api/user", requestHeaders());
+    return data;
+  } catch {
+    await useAuth().authorize();
+    return await getUserProfileData();
+  }
+}

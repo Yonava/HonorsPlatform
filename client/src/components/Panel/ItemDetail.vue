@@ -10,10 +10,9 @@
       @dragover="dragOver"
       @drop="dropMove"
       :style="{
-        left: '60px',
         top: '0',
-        width: '375px',
-        height: '60px',
+        width: '100%',
+        height: '50px',
         position: 'absolute',
         zIndex: '1000',
         pointerEvents: allowPointerEvents ? 'all' : 'none',
@@ -26,10 +25,9 @@
       :color="movementObject.to.color"
       :style="{
         transition: 'all 0.3s ease',
-        left: '60px',
         top: '0',
-        width: '375px',
-        height: '60px',
+        width: '100%',
+        height: '50px',
         position: 'absolute',
         zIndex: '999',
         borderRadius: '0 0 10px 10px',

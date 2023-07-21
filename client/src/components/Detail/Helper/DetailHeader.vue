@@ -18,7 +18,7 @@
     <div class="d-flex flex-row align-center">
       <v-icon
         v-if="getSelectedItems().length > 1"
-        class="mr-2"
+        class="mr-2 close"
         @click.stop="removeFromSelected"
         style="cursor: pointer;"
       >
@@ -103,5 +103,9 @@ input.header-input {
 
 input.header-input:focus {
   outline: none;
+}
+
+.close:hover {
+  color: red;
 }
 </style>

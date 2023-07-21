@@ -11,7 +11,11 @@ const { OAuth2 } = google.auth;
 const { GOOGLE_OAUTH_CLIENT_ID, GOOGLE_OAUTH_CLIENT_SECRET } = process.env;
 const redirectUri =  process.env.NODE_ENV ? 'https://www.snhuhonors.com/auth' : 'http://localhost:5177/auth';
 const spreadsheetId = process.env.NODE_ENV ? '1bW-aQRn-GAbTsNkV2VB9xtBFT3n-LPrSJXua_NA2G6Y' : '1Wh1rIfVQd8ekvrNloaU9vbxMkgdsDlAz2sqwH5YDLe0';
-const scope = 'https://www.googleapis.com/auth/spreadsheets';
+
+const scope = [
+  'https://www.googleapis.com/auth/userinfo.profile',
+  'https://www.googleapis.com/auth/spreadsheets'
+]
 
 const app = express();
 app.use(express.json());
@@ -69,6 +73,22 @@ async function newSheetInstance(accessToken) {
     throw "Invalid Grant: New Sheet Instance";
   }
 }
+
+// get user profile from google
+app.get('/api/user', async (req, res) => {
+  try {
+    const accessToken = await validateToken(req);
+    const auth = new OAuth2(GOOGLE_OAUTH_CLIENT_ID, GOOGLE_OAUTH_CLIENT_SECRET, redirectUri);
+    auth.setCredentials({ access_token: accessToken });
+    const oauth2 = google.oauth2({ auth, version: 'v2' });
+    const { data } = await oauth2.userinfo.get();
+    res.json(data);
+  } catch (e) {
+    console.log(e)
+    removeTokenFromCache(req)
+    res.status(401).json({ error: 'Forbidden' });
+  }
+});
 
 app.get('/api/auth/url', (req, res) => {
   res.json({ url: getAuthUrl() });
