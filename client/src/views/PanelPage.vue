@@ -38,7 +38,32 @@
         >
           <SortPanel />
           <v-spacer></v-spacer>
-          <div class="mb-4 d-flex flex-column align-center">
+          <div
+            class="mb-4 d-flex flex-column align-center"
+            style="gap: 8px"
+          >
+            <v-btn
+              v-if="!profile"
+              icon
+            >
+              <v-icon>
+                mdi-account
+              </v-icon>
+            </v-btn>
+            <div
+              v-else
+              style="width: 50px; height: 50px; position: relative;"
+            >
+              <img
+                :src="profile.picture"
+                alt="Profile Picture"
+                style="border-radius: 50%; width: 100%; height: 100%; object-fit: cover; box-shadow: 0 0 5px rgba(0, 0, 0, 0.3); border: 3px solid white; cursor: pointer;"
+              />
+              <v-tooltip
+                activator="parent"
+                location="end"
+              >{{ profile.name }}</v-tooltip>
+            </div>
             <v-btn
               @click="$router.push({ name: 'registrar' })"
               icon
@@ -54,7 +79,6 @@
             <v-btn
               @click="$router.push({ name: 'email' })"
               icon
-              class="mt-3"
             >
               <v-icon>
                 mdi-email-fast-outline
@@ -151,6 +175,8 @@ import { useDocumentCache } from '../store/useDocumentCache'
 import { useDialog } from '../store/useDialog'
 import { storeToRefs } from 'pinia'
 import { panels, version } from '../Panels'
+import { getUserProfileData } from '../SheetsAPI'
+import { get } from '@vueuse/core'
 
 const { setPanel } = useSheetManager()
 const { getActivePanel, pinnedSysIds } = storeToRefs(useSheetManager())
@@ -160,6 +186,7 @@ const { setPanelCover } = useDialog()
 const { getPanelCover } = storeToRefs(useDialog())
 
 const route = useRoute()
+
 if (route.query.type) {
   const panelIndex = Object.values(panels).findIndex((p) => p.title.plural.toLowerCase() === route.query.type)
   const panelKeys = Object.keys(panels) as (keyof typeof panels)[]
@@ -260,6 +287,11 @@ watch(pinnedSysIds, (newIds) => {
   const storableIds = newIds.join(',')
   localStorage.setItem(`PINNED_${getActivePanel.value.panelName}`, storableIds)
 }, { deep: true })
+
+const profile = ref<null | { picture: string, name: string }>(null)
+getUserProfileData().then((data) => {
+  profile.value = data
+})
 </script>
 
 <style scoped>

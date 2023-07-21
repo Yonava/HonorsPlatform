@@ -18,6 +18,12 @@ const scope = [
 ]
 
 const app = express();
+
+const server = require('http').Server(app);
+exports.server = server;
+
+require('./sockets.js');
+
 app.use(express.json());
 app.use(cors());
 let sheetInstances = {};

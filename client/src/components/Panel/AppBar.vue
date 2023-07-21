@@ -252,20 +252,10 @@ import { useSheetManager } from "../../store/useSheetManager";
 import { useDocumentCache } from "../../store/useDocumentCache";
 import { storeToRefs } from "pinia";
 
-import { getUserProfileData } from "../../SheetsAPI";
-
 const { show: dialogOpen } = storeToRefs(useDialog())
 const { getSelectedItems, getAllDocuments } = useDocumentCache();
 const { searchFilter, getActivePanel, loadingItems, filteredItems } = storeToRefs(useSheetManager());
 const { setPanel, setSearchFilter } = useSheetManager();
-
-
-const profile = ref<any>(null);
-
-const getProfile = async () => {
-  const p = await getUserProfileData();
-  profile.value = p;
-};
 
 const searchText = computed({
   get: () => searchFilter.value,
