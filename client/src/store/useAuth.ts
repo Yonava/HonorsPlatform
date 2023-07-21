@@ -2,6 +2,7 @@ import { defineStore } from "pinia";
 import axios from "axios";
 import router from "../router";
 import { useDialog } from "./useDialog";
+import { local } from "../Locals";
 
 export const useAuth = defineStore('auth', {
   state: () => ({
@@ -11,17 +12,17 @@ export const useAuth = defineStore('auth', {
   }),
   actions: {
     getToken() {
-      return localStorage.getItem('token')
+      return localStorage.getItem(local.googleOAuthAccessToken)
     },
     setAuthTimeout(timeout: number) {
       this.authTimeoutInSeconds = timeout
     },
     setToken(token: string | null) {
       if (!token) {
-        localStorage.removeItem('token')
+        localStorage.removeItem(local.googleOAuthAccessToken)
         return
       }
-      localStorage.setItem('token', token)
+      localStorage.setItem(local.googleOAuthAccessToken, token)
     },
     async getURL(): Promise<string> {
       const response = await axios.get('/api/auth/url')

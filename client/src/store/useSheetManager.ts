@@ -4,6 +4,7 @@ import { getPanel, PanelName, panels } from '../Panels';
 import router from '../router';
 import { filterItems } from '../FilterObjects';
 import { useDocumentCache } from './useDocumentCache';
+import { local } from '../Locals';
 
 export type JumpObject = {
   value: string,
@@ -92,7 +93,7 @@ export const useSheetManager = defineStore('sheetManager', {
       const { setSelectedItems, getAllDocuments } = useDocumentCache();
       setSelectedItems();
       this.panel = getPanel(panelName);
-      this.pinnedSysIds = localStorage.getItem(`PINNED_${this.panel.panelName}`)?.split(',') || []
+      this.pinnedSysIds = localStorage.getItem(local.pinned(this.panel.panelName))?.split(',') || []
       this.setSearchFilter('');
 
       this.sort = {

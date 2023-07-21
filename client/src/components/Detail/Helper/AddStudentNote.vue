@@ -74,6 +74,7 @@
 
 <script setup lang="ts">
 import ModalContent from '../../ModalContent.vue'
+import { local } from '../../../Locals'
 import { computed, onMounted, ref } from 'vue'
 
 const props = defineProps<{
@@ -111,14 +112,14 @@ const note = ref('')
 function setInitials() {
   inputInitials.value = false
   initials.value = initials.value.toUpperCase()
-  localStorage.setItem('initials', initials.value)
+  localStorage.setItem(local.initials, initials.value)
   focus()
 }
 
 function clearInitials() {
   initials.value = ''
   inputInitials.value = true
-  localStorage.removeItem('initials')
+  localStorage.removeItem(local.initials)
   focus()
 }
 
@@ -148,6 +149,6 @@ function addNote() {
 }
 
 onMounted(() => {
-  initials.value = localStorage.getItem('initials') || ''
+  initials.value = localStorage.getItem(local.initials) || ''
 })
 </script>

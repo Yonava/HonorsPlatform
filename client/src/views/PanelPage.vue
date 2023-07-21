@@ -170,7 +170,7 @@ import PanelCover from '../components/Panel/PanelCover.vue'
 import ItemDetail from '../components/Panel/ItemDetail.vue'
 import { useKeyBindings } from '../KeyBindings'
 import { useDisplay } from 'vuetify'
-
+import { local } from '../Locals'
 import { useSheetManager } from '../store/useSheetManager'
 import { useDocumentCache } from '../store/useDocumentCache'
 import { useDialog } from '../store/useDialog'
@@ -193,7 +193,7 @@ if (route.query.type) {
   if (panelIndex !== -1) setPanel(panelKeys[panelIndex])
 } else {
   document.title = getActivePanel.value.title.plural + ' - Honors Program'
-  pinnedSysIds.value = localStorage.getItem(`pinned${getActivePanel.value.title.plural}`)?.split(',') || []
+  pinnedSysIds.value = localStorage.getItem(local.pinned(getActivePanel.value.panelName))?.split(',') || []
 }
 
 const {
@@ -245,10 +245,13 @@ useKeyBindings({
   },
 })
 
-function getDefaultWidth() {
-  const local = localStorage.getItem('panelListWidth')
-  if (local) return parseInt(local)
-  return 480
+const getDefaultWidth = () => {
+  const localPanelListWidth = localStorage.getItem(local.panelListWidth)
+  if (localPanelListWidth) {
+    return parseInt(localPanelListWidth)
+  } else {
+    return 480
+  }
 }
 
 const resizing = ref(false)
@@ -258,7 +261,7 @@ const sortPanelWidth = 80
 
 const resizeStart = (e: MouseEvent) => {
   resizing.value = true
-  const panelParent = document.getElementById('panel-parent')
+  const panelParent = document.getElementById('panel-parent')!
   panelParent.style.userSelect = 'none'
   proposedWidth.value = panelListWidth.value
   document.addEventListener('mousemove', resizeMove)
@@ -273,19 +276,19 @@ const resizeMove = (e: MouseEvent) => {
   proposedWidth.value = newWidth
 }
 
-const resizeEnd = (e: MouseEvent) => {
+const resizeEnd = () => {
   resizing.value = false
   const panelParent = document.getElementById('panel-parent')
   panelParent.style.userSelect = 'auto'
   panelListWidth.value = proposedWidth.value
-  localStorage.setItem('panelListWidth', panelListWidth.value.toString())
+  localStorage.setItem(local.panelListWidth, panelListWidth.value.toString())
   document.removeEventListener('mousemove', resizeMove)
   document.removeEventListener('mouseup', resizeEnd)
 }
 
 watch(pinnedSysIds, (newIds) => {
   const storableIds = newIds.join(',')
-  localStorage.setItem(`PINNED_${getActivePanel.value.panelName}`, storableIds)
+  localStorage.setItem(local.pinned(getActivePanel.value.panelName), storableIds)
 }, { deep: true })
 
 const socketUrl = window.location.hostname === 'localhost' ? 'http://localhost:3001' : '/'
