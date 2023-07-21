@@ -18,14 +18,13 @@ const scope = [
 ]
 
 const app = express();
+app.use(cors());
+app.use(express.json());
 
 const server = require('http').Server(app);
 exports.server = server;
-
 require('./sockets.js');
 
-app.use(express.json());
-app.use(cors());
 let sheetInstances = {};
 
 // app.use("/api/open", openAccessAPI);

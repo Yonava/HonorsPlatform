@@ -57,7 +57,7 @@
               <img
                 :src="profile.picture"
                 alt="Profile Picture"
-                style="border-radius: 50%; width: 100%; height: 100%; object-fit: cover; box-shadow: 0 0 5px rgba(0, 0, 0, 0.3); border: 3px solid white; cursor: pointer;"
+                style="border-radius: 50%; width: 100%; height: 100%; object-fit: cover; box-shadow: 0 0 5px rgba(0, 0, 0, 0.3); border: 4px solid white; cursor: pointer;"
               />
               <v-tooltip
                 activator="parent"
@@ -153,6 +153,7 @@
 </template>
 
 <script setup lang="ts">
+import io from 'socket.io-client'
 import {
   ref,
   computed,
@@ -176,7 +177,6 @@ import { useDialog } from '../store/useDialog'
 import { storeToRefs } from 'pinia'
 import { panels, version } from '../Panels'
 import { getUserProfileData } from '../SheetsAPI'
-import { get } from '@vueuse/core'
 
 const { setPanel } = useSheetManager()
 const { getActivePanel, pinnedSysIds } = storeToRefs(useSheetManager())
@@ -288,9 +288,16 @@ watch(pinnedSysIds, (newIds) => {
   localStorage.setItem(`PINNED_${getActivePanel.value.panelName}`, storableIds)
 }, { deep: true })
 
+const socketUrl = window.location.hostname === 'localhost' ? 'http://localhost:3001' : '/'
+const socket = io(socketUrl)
+socket.on('connect', () => {
+  console.log('connected')
+})
+
 const profile = ref<null | { picture: string, name: string }>(null)
 getUserProfileData().then((data) => {
   profile.value = data
+  socket.emit('identity', data)
 })
 </script>
 
