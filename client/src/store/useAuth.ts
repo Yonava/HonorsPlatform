@@ -26,7 +26,9 @@ export const useAuth = defineStore('auth', {
       //   return
       // }
 
-      const socket = window.location.hostname === 'localhost' ? io('http://localhost:3001') : io()
+      const socketUrl = window.location.hostname === 'localhost' ? 'http://localhost:3001' : '/'
+      console.log('Socket URL', socketUrl)
+      const socket = io(socketUrl)
       this.socketInstance = socket
 
       await new Promise((resolve, reject) => {
