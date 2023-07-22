@@ -6,11 +6,7 @@ const http = require('http')
 app.use(cors());
 app.use(express.json());
 
-let server = app;
-// if (process.env.NODE_ENV === 'production') {
-//   server = http.createServer(app);
-// }
-
+const server = http.createServer(app);
 exports.server = server;
 require('./sockets')
 
@@ -86,7 +82,7 @@ async function newSheetInstance(accessToken) {
 }
 
 // get user profile from google
-server.get('/api/user', async (req, res) => {
+app.get('/api/user', async (req, res) => {
   try {
     const accessToken = await validateToken(req);
     const auth = new OAuth2(GOOGLE_OAUTH_CLIENT_ID, GOOGLE_OAUTH_CLIENT_SECRET, redirectUri);
@@ -101,11 +97,11 @@ server.get('/api/user', async (req, res) => {
   }
 });
 
-server.get('/api/auth/url', (req, res) => {
+app.get('/api/auth/url', (req, res) => {
   res.json({ url: getAuthUrl() });
 });
 
-server.get('/api/auth/:authCode', async (req, res) => {
+app.get('/api/auth/:authCode', async (req, res) => {
   const { authCode } = req.params;
   try {
     console.log('processing 1')
@@ -124,7 +120,7 @@ server.get('/api/auth/:authCode', async (req, res) => {
   }
 })
 
-server.get("/api/range/:range", async (req, res) => {
+app.get("/api/range/:range", async (req, res) => {
   try {
     const accessToken = await validateToken(req);
     const { range } = req.params;
@@ -159,7 +155,7 @@ server.get("/api/range/:range", async (req, res) => {
   }
 });
 
-server.post("/api/ranges", async (req, res) => {
+app.post("/api/ranges", async (req, res) => {
   try {
     const accessToken = await validateToken(req);
     const { ranges } = req.body;
@@ -172,7 +168,7 @@ server.post("/api/ranges", async (req, res) => {
   }
 });
 
-server.put("/api/range/:range/:row", async (req, res) => {
+app.put("/api/range/:range/:row", async (req, res) => {
   try {
     const accessToken = await validateToken(req);
     const { range, row } = req.params;
@@ -186,7 +182,7 @@ server.put("/api/range/:range/:row", async (req, res) => {
   }
 });
 
-server.put("/api/range/:range", async (req, res) => {
+app.put("/api/range/:range", async (req, res) => {
   try {
     const accessToken = await validateToken(req);
     const { range } = req.params;
@@ -200,7 +196,7 @@ server.put("/api/range/:range", async (req, res) => {
   }
 });
 
-server.delete("/api/range/:range/:row", async (req, res) => {
+app.delete("/api/range/:range/:row", async (req, res) => {
   try {
     const accessToken = await validateToken(req);
     const { range, row } = req.params;
@@ -213,7 +209,7 @@ server.delete("/api/range/:range/:row", async (req, res) => {
   }
 });
 
-server.post("/api/range/:range", async (req, res) => {
+app.post("/api/range/:range", async (req, res) => {
   try {
     const accessToken = await validateToken(req);
     const { range } = req.params;
@@ -230,8 +226,8 @@ server.post("/api/range/:range", async (req, res) => {
 });
 
 if (process.env.NODE_ENV === 'production') {
-  server.use(express.static(__dirname + '/public/'));
-  server.get(/.*/, (req, res) => res.sendFile(__dirname + '/public/index.html'));
+  app.use(express.static(__dirname + '/public/'));
+  app.get(/.*/, (req, res) => res.sendFile(__dirname + '/public/index.html'));
 }
 
 const port = process.env.PORT || 1010;
