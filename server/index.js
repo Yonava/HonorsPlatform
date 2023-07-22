@@ -1,11 +1,15 @@
 const express = require("express")
 const cors = require("cors");
 const app = express();
-const https = require('https')
+const http = require('http')
 
 app.use(cors());
 app.use(express.json());
-const server = https.createServer(app);
+
+let server = app;
+if (process.env.NODE_ENV === 'production') {
+  server = http.createServer(app);
+}
 
 exports.server = server;
 require('./sockets')
@@ -19,7 +23,7 @@ require('dotenv').config();
 const { OAuth2 } = google.auth;
 
 const { GOOGLE_OAUTH_CLIENT_ID, GOOGLE_OAUTH_CLIENT_SECRET } = process.env;
-const redirectUri = process.env.NODE_ENV ? 'https://honors.up.railway.app/auth' : 'http://localhost:5177/auth';
+const redirectUri = process.env.NODE_ENV ? 'https://www.snhuhonors.com/auth' : 'http://localhost:5177/auth';
 const spreadsheetId = process.env.NODE_ENV ? '1bW-aQRn-GAbTsNkV2VB9xtBFT3n-LPrSJXua_NA2G6Y' : '1Wh1rIfVQd8ekvrNloaU9vbxMkgdsDlAz2sqwH5YDLe0';
 
 const scope = [
@@ -82,7 +86,7 @@ async function newSheetInstance(accessToken) {
 }
 
 // get user profile from google
-app.get('/api/user', async (req, res) => {
+server.get('/api/user', async (req, res) => {
   try {
     const accessToken = await validateToken(req);
     const auth = new OAuth2(GOOGLE_OAUTH_CLIENT_ID, GOOGLE_OAUTH_CLIENT_SECRET, redirectUri);
@@ -97,11 +101,11 @@ app.get('/api/user', async (req, res) => {
   }
 });
 
-app.get('/api/auth/url', (req, res) => {
+server.get('/api/auth/url', (req, res) => {
   res.json({ url: getAuthUrl() });
 });
 
-app.get('/api/auth/:authCode', async (req, res) => {
+server.get('/api/auth/:authCode', async (req, res) => {
   const { authCode } = req.params;
   try {
     console.log('processing 1')
@@ -120,7 +124,7 @@ app.get('/api/auth/:authCode', async (req, res) => {
   }
 })
 
-app.get("/api/range/:range", async (req, res) => {
+server.get("/api/range/:range", async (req, res) => {
   try {
     const accessToken = await validateToken(req);
     const { range } = req.params;
@@ -155,7 +159,7 @@ app.get("/api/range/:range", async (req, res) => {
   }
 });
 
-app.post("/api/ranges", async (req, res) => {
+server.post("/api/ranges", async (req, res) => {
   try {
     const accessToken = await validateToken(req);
     const { ranges } = req.body;
@@ -168,7 +172,7 @@ app.post("/api/ranges", async (req, res) => {
   }
 });
 
-app.put("/api/range/:range/:row", async (req, res) => {
+server.put("/api/range/:range/:row", async (req, res) => {
   try {
     const accessToken = await validateToken(req);
     const { range, row } = req.params;
@@ -182,7 +186,7 @@ app.put("/api/range/:range/:row", async (req, res) => {
   }
 });
 
-app.put("/api/range/:range", async (req, res) => {
+server.put("/api/range/:range", async (req, res) => {
   try {
     const accessToken = await validateToken(req);
     const { range } = req.params;
@@ -196,7 +200,7 @@ app.put("/api/range/:range", async (req, res) => {
   }
 });
 
-app.delete("/api/range/:range/:row", async (req, res) => {
+server.delete("/api/range/:range/:row", async (req, res) => {
   try {
     const accessToken = await validateToken(req);
     const { range, row } = req.params;
@@ -209,7 +213,7 @@ app.delete("/api/range/:range/:row", async (req, res) => {
   }
 });
 
-app.post("/api/range/:range", async (req, res) => {
+server.post("/api/range/:range", async (req, res) => {
   try {
     const accessToken = await validateToken(req);
     const { range } = req.params;
@@ -226,12 +230,12 @@ app.post("/api/range/:range", async (req, res) => {
 });
 
 if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(__dirname + '/public/'));
-  app.get(/.*/, (req, res) => res.sendFile(__dirname + '/public/index.html'));
+  server.use(express.static(__dirname + '/public/'));
+  server.get(/.*/, (req, res) => res.sendFile(__dirname + '/public/index.html'));
 }
 
 const port = process.env.PORT || 1010;
 
-app.listen(port, () => {
+server.listen(port, () => {
   console.log("Rest endpoints listening on port " + port);
 });
