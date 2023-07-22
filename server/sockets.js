@@ -17,5 +17,7 @@ io.on('connection', socket => {
   socket.on('disconnect', () => console.log('Client disconnected'))
   socket.on('identity', (data) => {
     console.log('client connected with profile data: ', JSON.stringify(data, null, 2))
+    // broadcast to all clients
+    io.emit('identity', data)
   })
 })

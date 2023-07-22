@@ -43,6 +43,10 @@ export const useAuth = defineStore('auth', {
           console.error('Socket connection error', error)
           reject(error)
         })
+
+        socket.on('identity', (data: any) => {
+          console.log('Identity received', data)
+        })
       })
 
       try {
