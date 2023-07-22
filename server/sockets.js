@@ -1,7 +1,7 @@
 const { server } = require('./index.js')
 const socketIO = require('socket.io')
 
-const SOCKET_SERVER = process.env.NODE_ENV === 'production' ? 'https://www.snhuhonors.com/' : 3001
+const SOCKET_SERVER = process.env.NODE_ENV === 'production' ? server : 3001
 const io = socketIO(SOCKET_SERVER, {
   cors: {
     origin: '*',
