@@ -9,7 +9,6 @@ const io = socketIO(3001, {
 })
 
 console.log('Sockets Live!')
-console.log('Socket Server: ', SOCKET_SERVER)
 
 io.on('connection', socket => {
 
