@@ -28,9 +28,19 @@ export const useAuth = defineStore('auth', {
 
       const socketUrl = window.location.hostname === 'localhost' ? 'http://localhost:3001' : '/'
       const socket = io(socketUrl)
+      this.socketInstance = socket
 
       await new Promise((resolve) => {
-        socket.on('connect', () => resolve('Socket connected'))
+        console.log('Waiting for socket connection')
+
+        socket.on('connect_error', (error: any) => {
+          console.error('Socket connection error', error)
+        })
+        socket.on('connect', () => {
+          console.log('Socket connection established')
+        })
+
+        resolve('resolved')
       })
 
       try {
