@@ -14,9 +14,6 @@ const GoogleSheet = require("./GoogleSheet.js");
 // const openAccessAPI = require("./openAccessAPI.js");
 const { google } = require('googleapis');
 
-
-
-
 require('dotenv').config();
 
 const { OAuth2 } = google.auth;
