@@ -21,10 +21,10 @@ export const useAuth = defineStore('auth', {
         return
       }
 
-      if (!this.getToken()) {
-        console.error('Socket connection cannot be created without a token')
-        return
-      }
+      // if (!this.getToken()) {
+      //   console.error('Socket connection cannot be created without a token')
+      //   return
+      // }
 
       const socket = window.location.hostname === 'localhost' ? io('http://localhost:3001') : io()
       this.socketInstance = socket

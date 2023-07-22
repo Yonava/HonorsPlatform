@@ -21,8 +21,6 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const server = require('http').Server(app);
-exports.server = server;
 require('./sockets.js');
 
 let sheetInstances = {};
@@ -231,5 +229,5 @@ if (process.env.NODE_ENV === 'production') {
 const port = process.env.PORT || 1010;
 
 app.listen(port, () => {
-  console.log("listening on port " + port);
+  console.log("Rest endpoints listening on port " + port);
 });
