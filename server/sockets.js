@@ -10,6 +10,8 @@ const io = new Server(server, {
 })
 const PORT = process.env.PORT || 3001
 
+app.use(express.static('public'))
+
 io.on('connection', socket => {
 
   console.log('Client connected')
@@ -20,6 +22,8 @@ io.on('connection', socket => {
   })
 })
 
-server.listen(PORT, () => {
-  console.log(`Sockets listening on port ${PORT}`)
-})
+if (process.env.NODE_ENV !== 'production') {
+  server.listen(PORT, () => {
+    console.log(`Sockets listening on port ${PORT}`)
+  })
+}
