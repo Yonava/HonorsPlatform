@@ -7,9 +7,9 @@ app.use(cors());
 app.use(express.json());
 
 let server = app;
-if (process.env.NODE_ENV === 'production') {
-  server = http.createServer(app);
-}
+// if (process.env.NODE_ENV === 'production') {
+//   server = http.createServer(app);
+// }
 
 exports.server = server;
 require('./sockets')
