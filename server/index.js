@@ -1,8 +1,21 @@
 const express = require("express")
+const cors = require("cors");
+const app = express();
+const http = require('http')
+
+app.use(cors());
+app.use(express.json());
+const server = http.createServer(app);
+
+exports.server = server;
+require('./sockets')
+
 const GoogleSheet = require("./GoogleSheet.js");
 // const openAccessAPI = require("./openAccessAPI.js");
 const { google } = require('googleapis');
-const cors = require("cors");
+
+
+
 
 require('dotenv').config();
 
@@ -16,12 +29,6 @@ const scope = [
   'https://www.googleapis.com/auth/userinfo.profile',
   'https://www.googleapis.com/auth/spreadsheets'
 ]
-
-const app = express();
-app.use(cors());
-app.use(express.json());
-
-require('./sockets.js');
 
 let sheetInstances = {};
 

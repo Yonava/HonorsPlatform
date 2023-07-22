@@ -1,16 +1,15 @@
-const express = require('express')
-const app = express()
-const http = require('http')
-const server = http.createServer(app)
-const { Server } = require('socket.io')
-const io = new Server(server, {
+const { server } = require('./index.js')
+const socketIO = require('socket.io')
+
+const SOCKET_SERVER = process.env.NODE_ENV === 'production' ? 'https://www.snhuhonors.com/' : 3001
+const io = socketIO(SOCKET_SERVER, {
   cors: {
     origin: '*',
   }
 })
-const PORT = process.env.PORT || 3001
 
-app.use(express.static('public'))
+console.log('Sockets Live!')
+console.log('Socket Server: ', SOCKET_SERVER)
 
 io.on('connection', socket => {
 
@@ -21,9 +20,3 @@ io.on('connection', socket => {
     console.log('client connected with profile data: ', JSON.stringify(data, null, 2))
   })
 })
-
-if (process.env.NODE_ENV !== 'production') {
-  server.listen(PORT, () => {
-    console.log(`Sockets listening on port ${PORT}`)
-  })
-}
