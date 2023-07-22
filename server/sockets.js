@@ -8,6 +8,8 @@ const io = socketIO(SOCKET_SERVER, {
   }
 })
 
+io.set('origins', '*:*');
+
 console.log('Sockets Live!')
 console.log('Socket Server: ', SOCKET_SERVER)
 
