@@ -6,6 +6,7 @@ import Registrar from '../views/BuildRegistrarList.vue'
 import Email from '../views/ComposeMassEmail.vue'
 
 import { useDocumentCache } from '../store/useDocumentCache'
+import { useAuth } from '../store/useAuth'
 
 const routes = [
   {
@@ -38,7 +39,7 @@ const routes = [
     name: 'email',
     component: Email
   }
-]
+] as const
 
 const router = createRouter({
   history: createWebHistory(),
@@ -49,9 +50,12 @@ const router = createRouter({
 router.beforeEach(async (to, from) => {
   const defaultTitle = 'Honors Program'
   const name = to.name as string ?? defaultTitle
+  const goingTo = to.name as typeof routes[number]['name']
+  const routesWithData: typeof routes[number]['name'][] = ['panel', 'registrar', 'email']
 
-  if (to.name !== 'auth') {
+  if (routesWithData.includes(goingTo)) {
     useDocumentCache().getAllDocuments()
+    useAuth().createSocketConnection()
   }
 
   if (name === defaultTitle || to.name === 'panel') {

@@ -82,7 +82,8 @@ const route = useRoute()
 const router = useRouter()
 const loading = ref(true)
 
-const { forceAuthorize, setToken } = useAuth()
+const auth = useAuth()
+const { forceAuthorize, setToken, createSocketConnection } = auth
 
 onMounted(async () => {
   // check if google servers have redirected with a code
@@ -100,7 +101,10 @@ onMounted(async () => {
     throw new Error('No access token received')
   }
   setToken(token)
+
   window.close()
+
+  createSocketConnection()
 
   router.push({
     name: 'panel'

@@ -3,14 +3,46 @@ import axios from "axios";
 import router from "../router";
 import { useDialog } from "./useDialog";
 import { local } from "../Locals";
+import io from 'socket.io-client'
+import { getUserProfileData } from "../SheetsAPI";
 
 export const useAuth = defineStore('auth', {
   state: () => ({
     pendingAuthorization: null as Promise<string> | null,
     authTimeoutInSeconds: 60,
-    authTimedOut: false
+    authTimedOut: false,
+    socketInstance: null as any,
+    googleProfile: null as any,
   }),
   actions: {
+    async createSocketConnection() {
+      if (this.socketInstance) {
+        console.warn('Socket connection already exists')
+        return
+      }
+
+      if (!this.getToken()) {
+        console.error('Socket connection cannot be created without a token')
+        return
+      }
+
+      const socketUrl = window.location.hostname === 'localhost' ? 'http://localhost:3001' : '/'
+      const socket = io(socketUrl)
+
+      await new Promise((resolve) => {
+        socket.on('connect', () => resolve('Socket connected'))
+      })
+
+      try {
+        const googleProfileData = await getUserProfileData()
+        this.googleProfile = googleProfileData
+        socket.emit('identity', googleProfileData)
+      } catch (e) {
+        console.error('Unable to get user profile data')
+      }
+    },
+    destroySocketConnection() {
+    },
     getToken() {
       return localStorage.getItem(local.googleOAuthAccessToken)
     },
@@ -38,7 +70,6 @@ export const useAuth = defineStore('auth', {
     },
     async authorize() {
       if (this.pendingAuthorization) {
-        await this.pendingAuthorization
         return
       }
 
@@ -73,12 +104,7 @@ export const useAuth = defineStore('auth', {
             resolve('token received')
             useDialog().close()
             this.pendingAuthorization = null
-            if (this.authTimedOut) {
-              router.push({
-                name: 'panel'
-              })
-              this.authTimedOut = false
-            }
+            this.createSocketConnection()
           }
         }, 100)
 

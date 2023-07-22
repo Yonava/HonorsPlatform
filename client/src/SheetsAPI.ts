@@ -107,7 +107,6 @@ export async function getUserProfileData(): Promise<any> {
     const { data } = await axios.get("/api/user", requestHeaders());
     return data;
   } catch {
-    await useAuth().authorize();
-    return await getUserProfileData();
+    throw new Error("Unable to get user profile data");
   }
 }
