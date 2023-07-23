@@ -7,6 +7,7 @@
   >
     <div
       v-for="(account, i) in displayAccounts"
+      @click="profileClicked(account.id)"
       :key="account.id"
       :style="{
         width: '40px',
@@ -42,7 +43,9 @@ import { useAuth } from '../../store/useAuth';
 import { storeToRefs } from 'pinia';
 import { computed } from 'vue'
 import { panels } from '../../Panels';
+import { useSheetManager } from '../../store/useSheetManager';
 
+const { setPanel } = useSheetManager()
 const { connectedAccounts, googleProfile, focusData } = storeToRefs(useAuth())
 
 const displayAccounts = computed(() => {
@@ -65,6 +68,18 @@ const accountIsEditing = (googleId: string) => {
   } else {
     const { panelName, item } = userFocusData
     return item[panels[panelName].properties.title] + ' in ' + panels[panelName].title.plural
+  }
+}
+
+const profileClicked = (googleId: string) => {
+  const userFocusData = focusData.value[googleId]
+  if (!userFocusData) {
+    return
+  } else {
+    const { panelName, item } = userFocusData
+    setPanel(panelName, {
+      value: item.sysId
+    })
   }
 }
 </script>
