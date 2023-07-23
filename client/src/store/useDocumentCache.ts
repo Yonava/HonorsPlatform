@@ -609,15 +609,15 @@ export const useDocumentCache = defineStore("documentCache", {
         item.row,
         await panel.mappers.unmap([item])
       )
-      
-      const { socket } = useAuth()
-      socket.emit('userAction', {
-        action: 'update',
-        payload: {
-          item,
-          panelName: panel.panelName
-        }
-      })
+
+      // const { socket } = useAuth()
+      // socket.emit('userAction', {
+      //   action: 'update',
+      //   payload: {
+      //     item,
+      //     panelName: panel.panelName
+      //   }
+      // })
 
       useSyncState().$reset();
     },
@@ -650,7 +650,7 @@ export const useDocumentCache = defineStore("documentCache", {
       })
 
       const { socket } = useAuth()
-      
+
       socket.emit('userAction', {
         action: 'move',
         payload: {

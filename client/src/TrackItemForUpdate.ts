@@ -2,6 +2,7 @@ import { useSyncState } from "./store/useSyncState";
 import { storeToRefs } from "pinia";
 import { useDocumentCache } from "./store/useDocumentCache";
 import { useSheetManager } from "./store/useSheetManager";
+import { useAuth } from "./store/useAuth";
 import { watch, onUnmounted } from "vue";
 import type { Ref } from "vue";
 import type { SheetItem } from "./SheetTypes";
@@ -22,6 +23,17 @@ export function useUpdateItem(item: Ref<SheetItem>, panelObject?: Panel) {
   let updateInProgress = false;
 
   watch(item, async (newItem, oldItem) => {
+
+    const { socket } = useAuth()
+    if (newItem) {
+      socket.emit('userAction', {
+        action: 'update',
+        payload: {
+          item: newItem,
+          panelName: panel.panelName
+        }
+      })
+    }
 
     if (updateInProgress) {
       return
