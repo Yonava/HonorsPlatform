@@ -11,7 +11,7 @@
 
     <v-list>
       <v-list-item
-        v-for="tool in panel.tools"
+        v-for="tool in activeTools"
         :key="tool.name"
         @click="tool.handler"
         class="type-list-item"
@@ -27,16 +27,21 @@
 import { useSheetManager } from '../../store/useSheetManager'
 import { storeToRefs } from 'pinia'
 import { ref, computed } from 'vue'
+import { tools } from '../../AdditionalTools'
 
 const showing = ref(false)
 
 const sheetManager = useSheetManager()
-const { panel } = storeToRefs(sheetManager)
+const { getActivePanel } = storeToRefs(sheetManager)
+
+const activeTools = computed(() => {
+  return tools[getActivePanel.value.panelName] ?? []
+})
 
 const object = computed(() => {
   return {
     showing: showing.value,
-    toolsAvailable: panel.value.tools.length > 0
+    toolsAvailable: activeTools.value.length > 0
   }
 })
 </script>

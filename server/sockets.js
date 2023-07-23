@@ -10,14 +10,27 @@ const io = socketIO(SOCKET_SERVER, {
 
 console.log('Sockets Live!')
 
+const connectedAccounts = []
+
 io.on('connection', socket => {
 
-  console.log('Client connected')
+  console.log('Client connected', socket.id)
 
-  socket.on('disconnect', () => console.log('Client disconnected'))
-  socket.on('identity', (data) => {
-    console.log('client connected with profile data: ', JSON.stringify(data, null, 2))
-    // broadcast to all clients
-    io.emit('identity', data)
+  socket.on('disconnect', () => {
+    console.log('Client disconnected', socket.id)
+    const index = connectedAccounts.findIndex(account => account.socketId === socket.id)
+    if (index === -1) {
+      return
+    }
+    connectedAccounts.splice(index, 1)
+    io.emit('connectedAccounts', connectedAccounts)
+  })
+
+  socket.on('connectAccount', (googleAccountData) => {
+    connectedAccounts.push({
+      socketId: socket.id,
+      ...googleAccountData
+    })
+    io.emit('connectedAccounts', connectedAccounts)
   })
 })

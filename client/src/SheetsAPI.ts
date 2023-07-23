@@ -105,6 +105,9 @@ export async function replaceRange(range: Range, data: string[][]) {
 export async function getUserProfileData(): Promise<any> {
   try {
     const { data } = await axios.get("/api/user", requestHeaders());
+    if (!data) {
+      throw new Error("No user profile data received");
+    }
     return data;
   } catch {
     throw new Error("Unable to get user profile data");

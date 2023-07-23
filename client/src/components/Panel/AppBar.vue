@@ -202,14 +202,19 @@
         <Announcements />
         <AdditionalTools>
           <template #showing="{ showing, toolsAvailable }">
-            <v-btn v-if="toolsAvailable" icon>
-              <v-icon icon="mdi-hammer" size="large"></v-icon>
+            <v-btn
+              v-if="toolsAvailable"
+              icon
+            >
+              <v-icon
+                icon="mdi-hammer"
+                size="large"
+              ></v-icon>
               <v-tooltip
                 :disabled="smAndDown || showing"
                 activator="parent"
                 location="bottom"
-                >Additional Tools</v-tooltip
-              >
+              >Additional Tools</v-tooltip>
             </v-btn>
           </template>
         </AdditionalTools>
@@ -253,7 +258,7 @@ import { useDocumentCache } from "../../store/useDocumentCache";
 import { storeToRefs } from "pinia";
 
 const { show: dialogOpen } = storeToRefs(useDialog())
-const { getSelectedItems, getAllDocuments } = useDocumentCache();
+const { getSelectedItems } = useDocumentCache();
 const { searchFilter, getActivePanel, loadingItems, filteredItems } = storeToRefs(useSheetManager());
 const { setPanel, setSearchFilter } = useSheetManager();
 
@@ -264,12 +269,6 @@ const searchText = computed({
 
 const navDrawer = ref(false);
 const searchMode = ref(false);
-
-const refreshAction = () => {
-  getAllDocuments({
-    forceCacheRefresh: true,
-  });
-};
 
 const add = ref({
   loading: false,
@@ -288,7 +287,7 @@ const add = ref({
 });
 
 useKeyBindings({
-  "/": () => document.getElementById("input").focus(),
+  "/": () => document.getElementById("input")!.focus(),
   "a": () => add.value.fire(),
 });
 

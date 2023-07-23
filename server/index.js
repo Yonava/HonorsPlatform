@@ -104,11 +104,8 @@ app.get('/api/auth/url', (req, res) => {
 app.get('/api/auth/:authCode', async (req, res) => {
   const { authCode } = req.params;
   try {
-    console.log('processing 1')
     const auth = new OAuth2(GOOGLE_OAUTH_CLIENT_ID, GOOGLE_OAUTH_CLIENT_SECRET, redirectUri);
-    console.log('processing 2')
     const { tokens } = await auth.getToken(authCode);
-    console.log('processing 3')
     res.json({ accessToken: tokens.access_token });
   } catch (e) {
     console.log(e)

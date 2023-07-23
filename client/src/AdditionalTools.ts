@@ -1,4 +1,5 @@
 import { useDialog } from './store/useDialog'
+import { useDocumentCache } from './store/useDocumentCache'
 import IncrementStudentYearDialog from './components/IncrementStudentYear.vue'
 import CreateTempSheet from './components/CreateTempSheet.vue'
 
@@ -27,6 +28,14 @@ export const tools = {
           }
         })
       }
+    },
+    {
+      name: 'Refresh Data',
+      handler: () => {
+        useDocumentCache().getAllDocuments({
+          forceCacheRefresh: true,
+        });
+      }
     }
   ],
   GRADUATES: [
@@ -42,6 +51,14 @@ export const tools = {
             render: CreateTempSheet
           }
         })
+      }
+    },
+    {
+      name: 'Refresh Data',
+      handler: () => {
+        useDocumentCache().getAllDocuments({
+          forceCacheRefresh: true,
+        });
       }
     }
   ],
@@ -59,6 +76,14 @@ export const tools = {
           }
         })
       }
+    },
+    {
+      name: 'Refresh Data',
+      handler: () => {
+        useDocumentCache().getAllDocuments({
+          forceCacheRefresh: true,
+        });
+      }
     }
   ],
   COMPLETED_MODULES: [
@@ -74,6 +99,14 @@ export const tools = {
             render: CreateTempSheet
           }
         })
+      }
+    },
+    {
+      name: 'Refresh Data',
+      handler: () => {
+        useDocumentCache().getAllDocuments({
+          forceCacheRefresh: true,
+        });
       }
     }
   ],
@@ -91,6 +124,38 @@ export const tools = {
           }
         })
       }
+    },
+    {
+      name: 'Refresh Data',
+      handler: () => {
+        useDocumentCache().getAllDocuments({
+          forceCacheRefresh: true,
+        });
+      }
     }
   ],
+  GRADUATE_ENGAGEMENTS: [
+    {
+      name: 'Suggested Deletions',
+      handler: () => { useDialog().setPanelCover('open') }
+    },
+    {
+      name: 'Create Temporary Sheet',
+      handler: async () => {
+        useDialog().open({
+          component: {
+            render: CreateTempSheet
+          }
+        })
+      }
+    },
+    {
+      name: 'Refresh Data',
+      handler: () => {
+        useDocumentCache().getAllDocuments({
+          forceCacheRefresh: true,
+        });
+      }
+    }
+  ]
 }

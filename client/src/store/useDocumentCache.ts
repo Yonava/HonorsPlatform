@@ -513,10 +513,9 @@ export const useDocumentCache = defineStore("documentCache", {
 
       if (panel === activePanel) {
         useSheetManager().focusedItem = newItem;
-        activateListTransition();
       }
 
-      this[panel.sheetRange].list.unshift(newItem);
+      this.addItemCache(newItem, panel.panelName);
 
       if (pin) {
         addPinnedItem(newItem);

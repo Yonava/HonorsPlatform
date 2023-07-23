@@ -24,7 +24,6 @@ import { markRaw } from 'vue';
 
 import * as types from './SheetTypes';
 
-import { tools } from './AdditionalTools';
 import { sortOptions } from './SortOptions'
 import { addActions } from './AddActions';
 
@@ -47,7 +46,6 @@ export const panels = {
   STUDENTS: {
     panelName: 'STUDENTS',
     add: addActions.STUDENTS,
-    tools: tools.STUDENTS,
     components: {
       detail: markRaw(StudentDetail),
       list: markRaw(StudentListItem),
@@ -86,7 +84,6 @@ export const panels = {
   MODULES: {
     panelName: 'MODULES',
     add: addActions.MODULES,
-    tools: tools.MODULES,
     components: {
       detail: markRaw(ModuleDetail),
       list: markRaw(ModuleListItem)
@@ -110,7 +107,6 @@ export const panels = {
   },
   COMPLETED_MODULES: {
     panelName: 'COMPLETED_MODULES',
-    tools: tools.COMPLETED_MODULES,
     components: {
       detail: markRaw(CompletedModuleDetail),
       list: markRaw(CompletedModuleListItem),
@@ -135,7 +131,6 @@ export const panels = {
   THESES: {
     panelName: 'THESES',
     add: addActions.THESES,
-    tools: tools.THESES,
     components: {
       detail: markRaw(ThesisDetail),
       list: markRaw(ThesisListItem),
@@ -160,7 +155,6 @@ export const panels = {
   GRADUATES: {
     panelName: 'GRADUATES',
     add: addActions.GRADUATES,
-    tools: tools.GRADUATES,
     components: {
       detail: markRaw(GraduateDetail),
       list: markRaw(GraduateListItem),
@@ -199,7 +193,6 @@ export const panels = {
   GRADUATE_ENGAGEMENTS: {
     panelName: 'GRADUATE_ENGAGEMENTS',
     add: addActions.GRADUATE_ENGAGEMENTS,
-    tools: [],
     components: {
       detail: markRaw(GraduateEngagementDetail),
       list: markRaw(GraduateEngagementListItem),

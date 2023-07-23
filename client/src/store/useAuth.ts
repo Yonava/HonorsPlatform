@@ -11,12 +11,12 @@ export const useAuth = defineStore('auth', {
     pendingAuthorization: null as Promise<string> | null,
     authTimeoutInSeconds: 60,
     authTimedOut: false,
-    socketInstance: null as any,
+    socket: null as any,
     googleProfile: null as any,
   }),
   actions: {
     async createSocketConnection() {
-      if (this.socketInstance) {
+      if (this.socket) {
         console.warn('Socket connection already exists')
         return
       }
@@ -27,37 +27,39 @@ export const useAuth = defineStore('auth', {
       }
 
       const socketUrl = window.location.hostname === 'localhost' ? 'http://localhost:3001' : '/'
-      console.log('Socket URL', socketUrl)
-      const socket = io(socketUrl)
-      this.socketInstance = socket
+      this.socket = io(socketUrl)
 
       await new Promise((resolve, reject) => {
-        console.log('Waiting for socket connection')
-
-        socket.on('connect', () => {
+        this.socket.on('connect', () => {
           console.log('Socket connection established')
           resolve('socket connection established')
         })
 
-        socket.on('connect_error', (error: any) => {
+        this.socket.on('connect_error', (error: any) => {
           console.error('Socket connection error', error)
           reject(error)
         })
 
-        socket.on('identity', (data: any) => {
-          console.log('Identity received', data)
+        this.socket.on('connectedAccounts', (data: any) => {
+          console.log('connected accounts: ', data)
         })
       })
 
       try {
         const googleProfileData = await getUserProfileData()
         this.googleProfile = googleProfileData
-        socket.emit('identity', googleProfileData)
+        this.socket.emit('connectAccount', googleProfileData)
       } catch (e) {
         console.error('Unable to get user profile data')
       }
     },
     destroySocketConnection() {
+      if (!this.socket) {
+        console.warn('Socket connection does not exist')
+        return
+      }
+      this.socket.disconnect()
+      this.socket = null
     },
     getToken() {
       return localStorage.getItem(local.googleOAuthAccessToken)
@@ -97,6 +99,7 @@ export const useAuth = defineStore('auth', {
         return
       }
 
+      this.destroySocketConnection()
       this.setToken(null)
 
       useDialog().open({
