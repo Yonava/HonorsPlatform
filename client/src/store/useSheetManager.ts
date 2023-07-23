@@ -74,6 +74,7 @@ export const useSheetManager = defineStore('sheetManager', {
   },
   actions: {
     activateListTransition(activeDurationInMs = 0) {
+      console.log('activateListTransition')
       this.listTransitionActive = true
       // deactivates after one event loop cycle
       setTimeout(() => {
@@ -132,8 +133,9 @@ export const useSheetManager = defineStore('sheetManager', {
         key,
         value
       });
+
       if (!success) {
-        console.error('useStateManager: item not found');
+        console.error('jumpToItem: item not found');
         fallbackFn()
       }
     },

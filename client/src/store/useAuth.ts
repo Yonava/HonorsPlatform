@@ -6,18 +6,29 @@ import { local } from "../Locals";
 import io from 'socket.io-client'
 import { getUserProfileData } from "../SheetsAPI";
 
+type GoogleProfile = {
+  id: string,
+  name: string,
+  given_name: string,
+  family_name: string,
+  picture: string,
+  locale: string
+}
+
+type ConnectedAccount = GoogleProfile & { socketId: string }
+
 export const useAuth = defineStore('auth', {
   state: () => ({
     pendingAuthorization: null as Promise<string> | null,
     authTimeoutInSeconds: 60,
     authTimedOut: false,
     socket: null as any,
-    googleProfile: null as any,
+    googleProfile: null as GoogleProfile | null,
+    connectedAccounts: [] as ConnectedAccount[]
   }),
   actions: {
     async createSocketConnection() {
       if (this.socket) {
-        console.warn('Socket connection already exists')
         return
       }
 
@@ -40,8 +51,8 @@ export const useAuth = defineStore('auth', {
           reject(error)
         })
 
-        this.socket.on('connectedAccounts', (data: any) => {
-          console.log('connected accounts: ', data)
+        this.socket.on('connectedAccounts', (connectedAccounts: ConnectedAccount[]) => {
+          this.connectedAccounts = connectedAccounts
         })
       })
 
@@ -49,7 +60,7 @@ export const useAuth = defineStore('auth', {
         const googleProfileData = await getUserProfileData()
         this.googleProfile = googleProfileData
         this.socket.emit('connectAccount', googleProfileData)
-      } catch (e) {
+      } catch {
         console.error('Unable to get user profile data')
       }
     },

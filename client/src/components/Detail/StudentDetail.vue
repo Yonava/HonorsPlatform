@@ -165,6 +165,7 @@
           <v-btn
             @click="viewThesis"
             :color="thesisButton.color"
+            :loading="creatingThesis"
             size="large"
             style="width: 49%"
           >
@@ -281,6 +282,7 @@ const saveId = () => {
 }
 
 const thesisPanel = getPanel("THESES");
+const creatingThesis = ref(false);
 
 const thesis = computed(() => Theses.list.find((thesis) => thesis.studentSysId === student.value.sysId));
 
@@ -300,9 +302,10 @@ const thesisButton = computed(() => {
   };
 });
 
-const viewThesis = () => {
+const viewThesis = async () => {
   if (!thesis.value) {
-    addItem({
+    creatingThesis.value = true;
+    await addItem({
       panel: thesisPanel,
       postToSheet: true,
       columns: [

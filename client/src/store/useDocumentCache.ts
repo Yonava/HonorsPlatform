@@ -474,10 +474,10 @@ export const useDocumentCache = defineStore("documentCache", {
     },
     addItemCache(item: types.SheetItem, panelName: PanelName) {
       const { activateListTransition, getActivePanel } = useSheetManager();
-      const panel = panels[panelName];
-      if (panel === getActivePanel) {
+      if (panelName === getActivePanel.panelName) {
         activateListTransition();
       }
+      const panel = panels[panelName];
       this[panel.sheetRange].list.unshift(item);
     },
     async addItem(options: AddItem = {}): Promise<types.SheetItem> {

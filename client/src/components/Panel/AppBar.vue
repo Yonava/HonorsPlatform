@@ -39,16 +39,6 @@
         Add {{ getActivePanel.title.singular }}
       </v-btn>
       <v-btn
-        @click="refreshAction"
-        :loading="loadingItems"
-        style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240)"
-        class="mt-3"
-        block
-      >
-        <v-icon icon="mdi-refresh" size="large" class="mr-2"></v-icon>
-        Refresh Data
-      </v-btn>
-      <v-btn
         @click="$router.push({ name: 'registrar' })"
         style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240)"
         class="mt-3"
@@ -170,16 +160,6 @@
         <span v-if="mdAndUp" class="ml-2">
           Add {{ getActivePanel.title.singular }}
         </span>
-      </v-btn>
-      <v-btn
-        v-if="smAndUp"
-        @click="refreshAction"
-        :loading="loadingItems"
-        class="ml-3"
-        style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240)"
-      >
-        <v-icon icon="mdi-refresh" size="large"></v-icon>
-        <span v-if="mdAndUp" class="ml-2"> Refresh Data </span>
       </v-btn>
       <v-btn v-if="!mdAndUp" class="ml-3" icon>
         <v-icon
