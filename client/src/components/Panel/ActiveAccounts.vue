@@ -1,12 +1,12 @@
 <template>
   <div
-    class="d-flex align-center"
+    class="d-flex align-center mr-2"
     :style="{
-      transform: `translateX(${(displayAccounts.length - 1) * 15}px)`,
+      transform: `translateX(${(getConnectedAccounts.length - 1) * 15}px)`,
     }"
   >
     <div
-      v-for="(account, i) in displayAccounts"
+      v-for="(account, i) in getConnectedAccounts"
       @click="profileClicked(account.id)"
       :key="account.id"
       :style="{
@@ -32,42 +32,36 @@
         activator="parent"
         location="bottom"
       >
-        {{ account.given_name }} is editing {{ accountIsEditing(account.id) }}
+        {{ accountTooltip(account) }}
       </v-tooltip>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { useAuth } from '../../store/useAuth';
+import { useAuth, type ConnectedAccount } from '../../store/useAuth';
 import { storeToRefs } from 'pinia';
-import { computed } from 'vue'
 import { panels } from '../../Panels';
 import { useSheetManager } from '../../store/useSheetManager';
+import { useDocumentCache } from '../../store/useDocumentCache';
 
 const { setPanel } = useSheetManager()
-const { connectedAccounts, googleProfile, focusData } = storeToRefs(useAuth())
+const { getConnectedAccounts, focusData } = storeToRefs(useAuth())
 
-const displayAccounts = computed(() => {
-  const clientId = googleProfile.value?.id
-  const seenIds = new Set([clientId])
-  return connectedAccounts.value.filter(({ id }) => {
-    if (seenIds.has(id)) {
-      return false
-    } else {
-      seenIds.add(id)
-      return true
-    }
-  })
-})
-
-const accountIsEditing = (googleId: string) => {
-  const userFocusData = focusData.value[googleId]
+const accountTooltip = (account: ConnectedAccount) => {
+  const { getItemBySysId } = useDocumentCache()
+  const userFocusData = focusData.value[account.id]
+  const defaultMessage = `${account.given_name} is online`
   if (!userFocusData) {
-    return 'nothing'
+    return defaultMessage
   } else {
-    const { panelName, item } = userFocusData
-    return item[panels[panelName].properties.title] + ' in ' + panels[panelName].title.plural
+    const { panelName, sysId } = userFocusData
+    const item = getItemBySysId(sysId, panelName)
+    if (!item) {
+      return defaultMessage
+    }
+    const itemBeingEdited = item[panels[panelName].properties.title] + ' in ' + panels[panelName].title.plural
+    return `${account.given_name} is editing ${itemBeingEdited}`
   }
 }
 
@@ -76,9 +70,9 @@ const profileClicked = (googleId: string) => {
   if (!userFocusData) {
     return
   } else {
-    const { panelName, item } = userFocusData
+    const { panelName, sysId } = userFocusData
     setPanel(panelName, {
-      value: item.sysId
+      value: sysId
     })
   }
 }

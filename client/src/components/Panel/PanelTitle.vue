@@ -107,25 +107,15 @@ import { useDisplay } from "vuetify";
 import { panels, Panel } from "../../Panels";
 import { useAuth } from "../../store/useAuth";
 
-const { connectedAccounts, googleProfile, focusData } = storeToRefs(useAuth());
+const { getConnectedAccounts, focusData } = storeToRefs(useAuth());
 const { lgAndUp } = useDisplay();
 const { getActivePanel, loadingItems, filteredItems } = storeToRefs(useSheetManager());
 const { setPanel } = useSheetManager();
 
 const displayAccounts = (panel: Panel) => {
-  const clientId = googleProfile.value?.id;
-  const seenIds = new Set([clientId]);
-
-  return connectedAccounts.value.filter(({ id }) => {
+  return getConnectedAccounts.value.filter(({ id }) => {
     const accountPanelName = focusData.value[id]?.panelName;
-    if (accountPanelName !== panel.panelName) {
-      return false;
-    } else if (seenIds.has(id)) {
-      return false;
-    } else {
-      seenIds.add(id);
-      return true;
-    }
+    return panel.panelName === accountPanelName;
   });
 };
 

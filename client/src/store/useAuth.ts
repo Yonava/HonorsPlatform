@@ -9,7 +9,7 @@ import { useDocumentCache } from "./useDocumentCache";
 import { SheetItem } from "../SheetTypes";
 import { PanelName } from "../Panels";
 
-type GoogleProfile = {
+export type GoogleProfile = {
   id: string,
   name: string,
   given_name: string,
@@ -18,22 +18,19 @@ type GoogleProfile = {
   locale: string
 }
 
-type ConnectedAccount = GoogleProfile & { socketId: string }
+export type ConnectedAccount = GoogleProfile & { socketId: string }
 
 type ActionData = {
   action: string,
   payload: any
 }
 
-type FocusDataInput = {
-  payload: {
-    item: SheetItem
+type FocusData = {
+  [key in string]: {
+    sysId: string,
     panelName: PanelName
-  },
-  googleId: string
+  }
 }
-
-type FocusDataOutput = FocusDataInput[]
 
 export const useAuth = defineStore('auth', {
   state: () => ({
@@ -43,8 +40,26 @@ export const useAuth = defineStore('auth', {
     socket: null as any,
     googleProfile: null as GoogleProfile | null,
     connectedAccounts: [] as ConnectedAccount[],
-    focusData: [] as FocusDataOutput
+    focusData: {} as FocusData
   }),
+  getters: {
+    getConnectedAccounts(state) {
+      const excludedIds = []
+      // if (state.googleProfile) {
+      //   excludedIds.push(state.googleProfile.id)
+      // }
+      const seenIds = new Set(excludedIds);
+
+      return state.connectedAccounts.filter(({ id }) => {
+         if (seenIds.has(id)) {
+          return false;
+        } else {
+          seenIds.add(id);
+          return true;
+        }
+      });
+    }
+  },
   actions: {
     async createSocketConnection() {
       if (this.socket) {
@@ -103,7 +118,7 @@ export const useAuth = defineStore('auth', {
           }
         })
 
-        this.socket.on('userFocus', (data: FocusDataOutput) => {
+        this.socket.on('userFocus', (data: FocusData) => {
           this.focusData = data
         })
       })

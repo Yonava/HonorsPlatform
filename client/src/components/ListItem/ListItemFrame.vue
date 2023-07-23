@@ -131,29 +131,13 @@ const { mdAndUp } = useDisplay()
 
 const { getActivePanel, activateListTransition, setPanel } = useSheetManager()
 const { getSelectedItems, deleteItem } = useDocumentCache()
-const { focusData, googleProfile, connectedAccounts } = storeToRefs(useAuth())
+const { focusData, getConnectedAccounts } = storeToRefs(useAuth())
 
 const accounts = computed(() => {
-  const googleIds = Object.keys(focusData.value) as string[]
-  const payloads = Object.values(focusData.value)
-
-  // in payload -> payload.item.sysId
-
-  const accountsFocusedOnItem = []
-  for (const i in payloads) {
-    if (payloads[i].item.sysId === props.item.sysId) {
-      const googleId = googleIds[i]
-      if (googleId === googleProfile.value?.id) {
-        continue
-      }
-      const account = connectedAccounts.value.find(({ id }) => id === googleId)
-      if (account) {
-        accountsFocusedOnItem.push(account)
-      }
-    }
-  }
-
-  return accountsFocusedOnItem
+  return getConnectedAccounts.value.filter(({ id }) => {
+    const sysIdAccountIsFocusedOn = focusData.value[id]?.sysId;
+    return sysIdAccountIsFocusedOn === props.item.sysId
+  });
 })
 
 const hovered = ref(false)

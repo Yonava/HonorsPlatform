@@ -193,7 +193,7 @@ export const useSheetManager = defineStore('sheetManager', {
       socket.emit('userFocus', {
         googleId: googleProfile.id,
         payload: {
-          item,
+          sysId: item.sysId,
           panelName: this.panel.panelName
         }
       })
