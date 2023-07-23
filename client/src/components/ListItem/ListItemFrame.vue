@@ -63,42 +63,45 @@
           </div>
         </div>
       </div>
-      <div
-        v-if="account"
-        :key="account.id"
-        :style="{
-          width: '40px',
-          height: '40px',
-          borderRadius: '50%',
-          background: 'rgb(0, 0, 0)',
-          border: '2px solid rgba(255, 255, 255, 1)',
-          cursor: 'pointer',
-        }"
-      >
-        <img
-          :src="account.picture"
-          :style="{
-            width: '100%',
-            height: '100%',
-            borderRadius: '50%',
-            objectFit: 'cover',
-          }"
-        />
-        <v-tooltip
-          activator="parent"
-          location="bottom"
-        >
-          {{ account.given_name }}
-        </v-tooltip>
-      </div>
       <v-spacer></v-spacer>
       <div
+        class="d-flex align-center"
         :style="{
           transition: '300ms ease-in-out',
-          width: hovered || isPinned ? 'calc(100% - 35px)' : '100%'
+          width: hovered || isPinned ? 'calc(100% - 35px)' : '100%',
+          position: 'relative'
         }"
       >
-        <slot></slot>
+        <div
+          class="d-flex flex-column"
+          style="position: relative; height: 60px; transform: translateY(-5px)"
+        >
+          <div
+            v-for="(account, i) in accounts.slice(0, 2)"
+            :key="account.id"
+            class="mr-2"
+            :style="{
+              transform: `translateY(${i * -15}px)`,
+              width: '30px',
+              height: '100%',
+              borderRadius: '50%',
+              cursor: 'pointer',
+            }"
+          >
+            <img
+              :src="account.picture"
+              :style="{
+                width: '100%',
+                aspectRatio: '1 / 1',
+                borderRadius: '50%',
+                objectFit: 'cover',
+              }"
+            />
+          </div>
+        </div>
+        <div style="width: 100%">
+          <slot></slot>
+        </div>
       </div>
     </div>
     <div
@@ -130,7 +133,7 @@ const { getActivePanel, activateListTransition, setPanel } = useSheetManager()
 const { getSelectedItems, deleteItem } = useDocumentCache()
 const { focusData, googleProfile, connectedAccounts } = storeToRefs(useAuth())
 
-const account = computed(() => {
+const accounts = computed(() => {
   const googleIds = Object.keys(focusData.value) as string[]
   const payloads = Object.values(focusData.value)
 
@@ -140,9 +143,9 @@ const account = computed(() => {
   for (const i in payloads) {
     if (payloads[i].item.sysId === props.item.sysId) {
       const googleId = googleIds[i]
-      if (googleId === googleProfile.value?.id) {
-        continue
-      }
+      // if (googleId === googleProfile.value?.id) {
+      //   continue
+      // }
       const account = connectedAccounts.value.find(({ id }) => id === googleId)
       if (account) {
         accountsFocusedOnItem.push(account)
@@ -150,7 +153,7 @@ const account = computed(() => {
     }
   }
 
-  return accountsFocusedOnItem.length ? accountsFocusedOnItem[0] : null
+  return [...accountsFocusedOnItem, ...accountsFocusedOnItem, ...accountsFocusedOnItem]
 })
 
 const hovered = ref(false)
