@@ -11,6 +11,7 @@ const io = socketIO(SOCKET_SERVER, {
 console.log('Sockets Live!')
 
 const connectedAccounts = []
+const focusData = {}
 
 io.on('connection', socket => {
 
@@ -38,5 +39,9 @@ io.on('connection', socket => {
     console.log('userAction', data)
     // data is {action: string, payload: object}
     socket.broadcast.emit('userAction', data)
+  })
+
+  socket.on('userFocus', (data) => {
+    socket.broadcast.emit('userFocus', data)
   })
 })

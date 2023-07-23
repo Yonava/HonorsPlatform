@@ -6,6 +6,7 @@ import { local } from "../Locals";
 import io from 'socket.io-client'
 import { getUserProfileData } from "../SheetsAPI";
 import { useDocumentCache } from "./useDocumentCache";
+import { SheetItem } from "../SheetTypes";
 
 type GoogleProfile = {
   id: string,
@@ -23,6 +24,11 @@ type ActionData = {
   payload: any
 }
 
+type FocusData = {
+  googleId: string,
+  item: SheetItem
+}
+
 export const useAuth = defineStore('auth', {
   state: () => ({
     pendingAuthorization: null as Promise<string> | null,
@@ -30,7 +36,8 @@ export const useAuth = defineStore('auth', {
     authTimedOut: false,
     socket: null as any,
     googleProfile: null as GoogleProfile | null,
-    connectedAccounts: [] as ConnectedAccount[]
+    connectedAccounts: [] as ConnectedAccount[],
+    focusData: [] as FocusData[]
   }),
   actions: {
     async createSocketConnection() {
@@ -88,6 +95,10 @@ export const useAuth = defineStore('auth', {
             default:
               console.error("userAction not recognized: " + data.action)
           }
+        })
+
+        this.socket.on('userFocus', (data: FocusData[]) => {
+          this.focusData = data
         })
       })
 
