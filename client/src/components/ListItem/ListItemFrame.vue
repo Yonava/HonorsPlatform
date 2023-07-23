@@ -143,9 +143,9 @@ const accounts = computed(() => {
   for (const i in payloads) {
     if (payloads[i].item.sysId === props.item.sysId) {
       const googleId = googleIds[i]
-      // if (googleId === googleProfile.value?.id) {
-      //   continue
-      // }
+      if (googleId === googleProfile.value?.id) {
+        continue
+      }
       const account = connectedAccounts.value.find(({ id }) => id === googleId)
       if (account) {
         accountsFocusedOnItem.push(account)
@@ -153,7 +153,7 @@ const accounts = computed(() => {
     }
   }
 
-  return [...accountsFocusedOnItem, ...accountsFocusedOnItem, ...accountsFocusedOnItem]
+  return accountsFocusedOnItem
 })
 
 const hovered = ref(false)
