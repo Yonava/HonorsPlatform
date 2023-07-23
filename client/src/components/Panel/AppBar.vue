@@ -94,53 +94,17 @@
       >
         <input
           v-model="searchText"
-          :placeholder="filterPlaceholder"
+          placeholder="Search"
           class="vanilla-search-input"
           type="text"
           id="input"
         />
       </div>
-      <div v-else class="d-flex align-center">
-        <v-icon :icon="getActivePanel.icon" size="x-large" class="mr-2"></v-icon>
-        <v-menu>
-          <template v-slot:activator="{ props }">
-            <h1 v-bind="props" class="title">
-              {{ panelTitle }}
-            </h1>
-          </template>
-
-          <v-list>
-            <v-list-item
-              v-for="(listPanel, panelName) in panels"
-              :key="listPanel.title.singular"
-              @click="setPanel(panelName)"
-              class="type-list-item"
-            >
-              <v-list-item-title
-                :style="panelItemColor(listPanel)"
-                class="type-list-text"
-              >
-                <v-icon>
-                  {{ listPanel.icon }}
-                </v-icon>
-                {{ listPanel.title.plural }}
-              </v-list-item-title>
-            </v-list-item>
-          </v-list>
-        </v-menu>
-        <p
-          :style="{
-            opacity: loadingItems ? 0 : 1,
-          }"
-          class="ml-2"
-        >
-          ({{ filteredItems.length }})
-        </p>
-      </div>
+      <PanelTitle v-else />
       <input
         v-if="mdAndUp"
         v-model="searchText"
-        :placeholder="filterPlaceholder"
+        placeholder="Search"
         class="search-input"
         type="text"
         id="input"
@@ -156,12 +120,22 @@
         }"
         class="ml-3"
       >
-        <v-icon :icon="add.success ? 'mdi-check' : 'mdi-plus'" size="large"></v-icon>
-        <span v-if="mdAndUp" class="ml-2">
+        <v-icon
+          :icon="add.success ? 'mdi-check' : 'mdi-plus'"
+          size="large"
+        ></v-icon>
+        <span
+          v-if="mdAndUp"
+          class="ml-2"
+        >
           Add {{ getActivePanel.title.singular }}
         </span>
       </v-btn>
-      <v-btn v-if="!mdAndUp" class="ml-3" icon>
+      <v-btn
+        v-if="!mdAndUp"
+        class="ml-3"
+        icon
+      >
         <v-icon
           v-if="!searchMode"
           @click="searchMode = true"
@@ -226,21 +200,22 @@
 import SortPanel from "./SortPanel.vue";
 import Announcements from "./AnnouncementMenu.vue";
 import AdditionalTools from "../../components/Panel/AdditionalTools.vue";
+import PanelTitle from "./PanelTitle.vue";
 
 import { ref, computed, watchEffect } from "vue";
 import { useDisplay } from "vuetify";
 import { useKeyBindings } from "../../KeyBindings";
 import { useDialog } from '../../store/useDialog'
 
-import { panels, Panel, version } from "../../Panels";
+import { version } from "../../Panels";
 import { useSheetManager } from "../../store/useSheetManager";
 import { useDocumentCache } from "../../store/useDocumentCache";
 import { storeToRefs } from "pinia";
 
 const { show: dialogOpen } = storeToRefs(useDialog())
 const { getSelectedItems } = useDocumentCache();
-const { searchFilter, getActivePanel, loadingItems, filteredItems } = storeToRefs(useSheetManager());
-const { setPanel, setSearchFilter } = useSheetManager();
+const { searchFilter, getActivePanel } = storeToRefs(useSheetManager());
+const { setSearchFilter } = useSheetManager();
 
 const searchText = computed({
   get: () => searchFilter.value,
@@ -273,27 +248,6 @@ useKeyBindings({
 
 const { lgAndUp, mdAndUp, smAndUp, smAndDown, xs } = useDisplay();
 
-function panelItemColor(panelParam: Panel) {
-  return {
-    color:
-      getActivePanel.value.title.singular === panelParam.title.singular
-        ? getActivePanel.value.color
-        : "black",
-  };
-}
-
-const filterPlaceholder = computed(() => {
-  return `Search ${panelTitle.value.toLowerCase()}...`;
-});
-
-const panelTitle = computed(() => {
-  const title = getActivePanel.value.title.plural;
-  if (lgAndUp.value || title.split(" ").length <= 1) return title;
-  else {
-    return title.split(" ")[1];
-  }
-});
-
 const appBarColor = computed(() => {
   return getActivePanel.value.color + '-darken-2'
 })
@@ -322,21 +276,6 @@ h1.title {
   user-select: none;
   cursor: pointer;
   white-space: nowrap;
-}
-
-.type-list-item {
-  cursor: pointer;
-  transition: 0.2s ease;
-}
-
-.type-list-item:hover {
-  background: rgba(0, 0, 0, 0.1);
-}
-
-.type-list-text {
-  font-size: 1.2em;
-  font-weight: 700;
-  text-transform: capitalize;
 }
 
 .search-input {
