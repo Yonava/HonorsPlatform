@@ -24,16 +24,16 @@ export function useUpdateItem(item: Ref<SheetItem>, panelObject?: Panel) {
 
   watch(item, async (newItem, oldItem) => {
 
-    const { socket } = useAuth()
-    if (newItem) {
-      socket.emit('userAction', {
-        action: 'update',
-        payload: {
-          item: newItem,
-          panelName: panel.panelName
-        }
-      })
-    }
+    // const { socket } = useAuth()
+    // if (newItem) {
+    //   socket.emit('userAction', {
+    //     action: 'update',
+    //     payload: {
+    //       item: newItem,
+    //       panelName: panel.panelName
+    //     }
+    //   })
+    // }
 
     if (updateInProgress) {
       return
