@@ -5,6 +5,7 @@ import router from '../router';
 import { filterItems } from '../FilterObjects';
 import { useDocumentCache } from './useDocumentCache';
 import { local } from '../Locals';
+import { useAuth } from './useAuth';
 
 export type JumpObject = {
   value: string,
@@ -180,6 +181,18 @@ export const useSheetManager = defineStore('sheetManager', {
       if (!sortObject.ascending) {
         itemsOnActivePanel.reverse();
       }
+    },
+    setFocusedItem(item: SheetItem) {
+      this.focusedItem = item
+      const { socket, googleProfile } = useAuth()
+
+      socket.emit('userFocus', {
+        googleId: googleProfile?.id,
+        payload: {
+          item,
+          panelName: this.panel.panelName
+        }
+      })
     }
   }
 })

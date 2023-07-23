@@ -7,6 +7,7 @@ import io from 'socket.io-client'
 import { getUserProfileData } from "../SheetsAPI";
 import { useDocumentCache } from "./useDocumentCache";
 import { SheetItem } from "../SheetTypes";
+import { PanelName } from "../Panels";
 
 type GoogleProfile = {
   id: string,
@@ -24,10 +25,21 @@ type ActionData = {
   payload: any
 }
 
-type FocusData = {
-  googleId: string,
-  item: SheetItem
+type FocusDataInput = {
+  payload: {
+    item: SheetItem
+    panelName: PanelName
+  },
+  googleId: string
 }
+
+type FocusDataOutput = {
+  payload: {
+    item: SheetItem
+    panelName: PanelName
+  },
+  googleId: string
+}[]
 
 export const useAuth = defineStore('auth', {
   state: () => ({
@@ -97,8 +109,9 @@ export const useAuth = defineStore('auth', {
           }
         })
 
-        this.socket.on('userFocus', (data: FocusData[]) => {
+        this.socket.on('userFocus', (data: FocusDataOutput) => {
           this.focusData = data
+          
         })
       })
 
