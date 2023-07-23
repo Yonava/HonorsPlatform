@@ -4,6 +4,7 @@ export const sortOptions = {
   STUDENTS: [
     {
       label: 'Name',
+      tooltip: 'Sort by name',
       icon: {
         asc: 'mdi-sort-alphabetical-ascending',
         desc: 'mdi-sort-alphabetical-descending'
@@ -12,6 +13,7 @@ export const sortOptions = {
     },
     {
       label: 'Points',
+      tooltip: 'Sort by number of points',
       icon: {
         asc: 'mdi-sort-numeric-ascending',
         desc: 'mdi-sort-numeric-descending'
@@ -24,6 +26,7 @@ export const sortOptions = {
     },
     {
       label: 'Active Status',
+      tooltip: 'Sort by students\' status in the program',
       icon: {
         asc: 'mdi-sort-ascending',
         desc: 'mdi-sort-descending'
@@ -32,6 +35,7 @@ export const sortOptions = {
     },
     {
       label: 'Year',
+      tooltip: 'Sort by class year',
       icon: {
         asc: 'mdi-calendar-import',
         desc: 'mdi-calendar-export'
@@ -58,6 +62,7 @@ export const sortOptions = {
   GRADUATES: [
     {
       label: 'Name',
+      tooltip: 'Sort by name',
       icon: {
         asc: 'mdi-sort-alphabetical-ascending',
         desc: 'mdi-sort-alphabetical-descending'
@@ -74,6 +79,7 @@ export const sortOptions = {
     },
     {
       label: 'Grad Date',
+      tooltip: 'Sort by graduation date',
       icon: {
         asc: 'mdi-calendar-import',
         desc: 'mdi-calendar-export'
@@ -88,6 +94,7 @@ export const sortOptions = {
   MODULES: [
     {
       label: 'Course Code',
+      tooltip: 'Sort by course code',
       icon: {
         asc: 'mdi-sort-numeric-ascending',
         desc: 'mdi-sort-numeric-descending'
@@ -96,6 +103,7 @@ export const sortOptions = {
     },
     {
       label: 'Term',
+      tooltip: 'Sort by term (semester code)',
       icon: {
         asc: 'mdi-sort-alphabetical-ascending',
         desc: 'mdi-sort-alphabetical-descending'
@@ -104,6 +112,7 @@ export const sortOptions = {
     },
     {
       label: 'Instructor',
+      tooltip: 'Sort by instructor',
       icon: {
         asc: 'mdi-human-male-board',
         desc: 'mdi-human-male-board',
@@ -112,6 +121,7 @@ export const sortOptions = {
     },
     {
       label: 'DocuSign',
+      tooltip: 'Sort by DocuSign status',
       icon: {
         asc: 'mdi-file-document-outline',
         desc: 'mdi-file-document',
@@ -139,6 +149,7 @@ export const sortOptions = {
   COMPLETED_MODULES: [
     {
       label: 'Date Completed',
+      tooltip: 'Sort by date completed',
       icon: {
         asc: 'mdi-calendar-import',
         desc: 'mdi-calendar-export'
@@ -158,6 +169,7 @@ export const sortOptions = {
     },
     {
       label: 'Instructor',
+      tooltip: 'Sort by instructor',
       icon: {
         asc: 'mdi-human-male-board',
         desc: 'mdi-human-male-board',
@@ -166,16 +178,27 @@ export const sortOptions = {
     },
     {
       label: 'Course Code',
+      tooltip: 'Sort by course code',
       icon: {
         asc: 'mdi-sort-numeric-ascending',
         desc: 'mdi-sort-numeric-descending'
       },
       func: (a: CompletedModule, b: CompletedModule) => a.courseCode.localeCompare(b.courseCode)
-    }
+    },
+    {
+      label: 'Term',
+      tooltip: 'Sort by term (semester code)',
+      icon: {
+        asc: 'mdi-sort-alphabetical-ascending',
+        desc: 'mdi-sort-alphabetical-descending'
+      },
+      func: (a: CompletedModule, b: CompletedModule) => a.term.localeCompare(b.term)
+    },
   ],
   THESES: [
     {
       label: 'Decision',
+      tooltip: 'Sort by decision regarding thesis approval',
       icon: {
         asc: 'mdi-check',
         desc: 'mdi-close'
@@ -184,6 +207,7 @@ export const sortOptions = {
     },
     {
       label: 'Term',
+      tooltip: 'Sort by term (semester code)',
       icon: {
         asc: 'mdi-sort-alphabetical-ascending',
         desc: 'mdi-sort-alphabetical-descending'
@@ -192,6 +216,7 @@ export const sortOptions = {
     },
     {
       label: 'Faculty Mentor',
+      tooltip: 'Sort by faculty mentor',
       icon: {
         asc: 'mdi-human-male-board',
         desc: 'mdi-human-male-board',
@@ -202,11 +227,25 @@ export const sortOptions = {
   GRADUATE_ENGAGEMENTS: [
     {
       label: 'Event',
+      tooltip: 'Sort by name of event',
       icon: {
         asc: 'mdi-sort-alphabetical-ascending',
         desc: 'mdi-sort-alphabetical-descending'
       },
       func: (a: GradEngagement, b: GradEngagement) => a.event.localeCompare(b.event)
+    },
+    {
+      label: 'Date',
+      tooltip: 'Sort by date of event',
+      icon: {
+        asc: 'mdi-calendar-import',
+        desc: 'mdi-calendar-export'
+      },
+      func: (a: GradEngagement, b: GradEngagement) => {
+        const aDate = new Date(a.dateTime);
+        const bDate = new Date(b.dateTime);
+        return aDate.getTime() - bDate.getTime();
+      }
     }
   ]
 }

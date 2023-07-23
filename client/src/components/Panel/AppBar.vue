@@ -246,7 +246,7 @@ useKeyBindings({
   "a": () => add.value.fire(),
 });
 
-const { lgAndUp, mdAndUp, smAndUp, smAndDown, xs } = useDisplay();
+const { mdAndUp, smAndUp, smAndDown, xs } = useDisplay();
 
 const appBarColor = computed(() => {
   return getActivePanel.value.color + '-darken-2'

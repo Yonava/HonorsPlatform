@@ -1,11 +1,12 @@
 <template>
   <div
     v-if="getActivePanel.sortOptions.length > 0"
-    class=""
     style="width: 100%"
   >
     <div class="d-flex flex-column align-center">
-      <v-icon icon="mdi-sort"></v-icon>
+      <v-icon>
+        mdi-sort
+      </v-icon>
       <p style="font-size: 0.9rem; font-weight: 900">
         Sort By
       </p>
@@ -34,6 +35,12 @@
         <p style="font-size: 0.9rem; line-height: 1.1; user-select: none">
           {{ sortOption.label }}
         </p>
+        <v-tooltip
+          activator="parent"
+          :disabled="xs"
+        >
+          {{ sortOption.tooltip }}
+        </v-tooltip>
       </div>
     </div>
   </div>
@@ -42,7 +49,10 @@
 <script setup lang="ts">
 import { useSheetManager } from "../../store/useSheetManager";
 import { storeToRefs } from "pinia";
+import { useDisplay } from "vuetify";
 import { ref } from "vue";
+
+const { xs } = useDisplay();
 
 const sheetManager = useSheetManager();
 const { setSort: setSortPinia } = sheetManager;
