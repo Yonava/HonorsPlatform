@@ -38,6 +38,7 @@ export const useSyncState = defineStore('syncState', {
 
       if (showDialog) {
         open({
+          persistent: true,
           body: {
             title: "Processing Request..."
           }
@@ -53,7 +54,7 @@ export const useSyncState = defineStore('syncState', {
               close();
             }
           }
-        }, 100);
+        }, 500);
       })
     }
   }

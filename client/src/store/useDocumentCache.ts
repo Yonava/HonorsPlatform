@@ -387,7 +387,7 @@ export const useDocumentCache = defineStore("documentCache", {
         return null;
       }
     },
-    removeItemFromCacheBySysId(sysId: string, panelObject?: Panel) {
+    deleteItemCache(sysId: string, panelObject?: Panel) {
       const { panel: activePanel } = useSheetManager();
       const panel = panelObject ?? activePanel;
       const index = this[panel.sheetRange].list.findIndex(item => item.sysId === sysId);
@@ -431,7 +431,7 @@ export const useDocumentCache = defineStore("documentCache", {
       // no row means it's a new item that hasn't been saved to the sheet yet
       if (typeof item.row !== "number" && !processing.value) {
         console.log("useDocumentCache: No row to delete, not hitting API");
-        this.removeItemFromCacheBySysId(item.sysId, panel);
+        this.deleteItemCache(item.sysId, panel);
         return;
       }
 
@@ -451,12 +451,13 @@ export const useDocumentCache = defineStore("documentCache", {
       if (!concurrent && processing.value) {
         await waitUntilSynced({ showDialog: true });
       }
+
       const { sysId, row } = item;
 
       setProcessing(true);
 
       if (typeof row === "number") {
-        this.removeItemFromCacheBySysId(sysId, panel);
+        this.deleteItemCache(sysId, panel);
         await clearByRow(panel.sheetRange, row);
       } else {
         console.error("useDocumentCache: deleteItem started processing without an assigned row!");

@@ -10,7 +10,7 @@ import type { Panel } from "./Panels";
 const updateDebounceMs = 2_000
 
 export function useUpdateItem(item: Ref<SheetItem>, panelObject?: Panel) {
-  const { updateItem, removeItemFromCacheBySysId } = useDocumentCache();
+  const { updateItem, deleteItemCache } = useDocumentCache();
   const { setProcessing } = useSyncState();
   const { processing } = storeToRefs(useSyncState());
   const { getActivePanel } = storeToRefs(useSheetManager());
@@ -44,7 +44,7 @@ export function useUpdateItem(item: Ref<SheetItem>, panelObject?: Panel) {
       // no row # means it's a new item that has never hit the server
       if (oldItem && typeof oldItem?.row !== 'number' && !processing.value) {
         const { sysId } = oldItem
-        removeItemFromCacheBySysId(sysId, panel)
+        deleteItemCache(sysId, panel)
       }
       return
     }
@@ -67,7 +67,7 @@ export function useUpdateItem(item: Ref<SheetItem>, panelObject?: Panel) {
     // no row # means it's a new item that has never hit the server
     if (item.value && typeof item.value?.row !== 'number' && !processing.value) {
       const { sysId } = item.value
-      removeItemFromCacheBySysId(sysId, panel)
+      deleteItemCache(sysId, panel)
     }
   })
 
