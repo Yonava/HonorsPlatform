@@ -15,6 +15,33 @@
           >ID</v-tooltip>
         </span>
       </div>
+
+      <v-spacer></v-spacer>
+
+      <v-sheet
+        class="px-3 py-1 d-flex flex-row align-center"
+        :color="getActivePanel.color"
+        elevation="1"
+        :style="{
+          height: '25px',
+          color: 'white',
+          borderRadius: '25px',
+          whiteSpace: 'nowrap',
+          textTransform: 'capitalize',
+        }"
+      >
+        <span>
+          {{ graduationYear || 'No Grad Date' }}
+        </span>
+        <v-tooltip
+          :disabled="smAndDown || !item.graduationDate"
+          activator="parent"
+          location="bottom"
+        >
+          {{ graduationYearTooltip }}
+        </v-tooltip>
+      </v-sheet>
+
     </div>
     <div
       class="d-flex flex-column mt-5"
@@ -78,8 +105,12 @@
 <script setup lang="ts">
 import { Graduate } from '../../SheetTypes'
 import { useDisplay } from 'vuetify'
+import { computed } from 'vue'
 import { emailValidator, phoneValidator } from '../../EmailUtilities'
+import { useSheetManager } from '../../store/useSheetManager'
 import ListItemFrame from './ListItemFrame.vue'
+
+const { getActivePanel } = useSheetManager()
 
 const props = defineProps<{
   item: Graduate,
@@ -87,4 +118,30 @@ const props = defineProps<{
 }>()
 
 const { smAndDown } = useDisplay()
+
+const graduationYear = computed(() => {
+  if (!props.item.graduationDate) return null
+  const date = new Date(props.item.graduationDate)
+  if (isNaN(date.getFullYear())) return null
+  return date.getFullYear()
+})
+
+const graduationYearTooltip = computed(() => {
+  const thisYear = new Date().getFullYear()
+  if (!props.item.graduationDate) return null
+  const date = new Date(props.item.graduationDate)
+  if (isNaN(date.getFullYear())) return null
+  const yearDifference = date.getFullYear() - thisYear
+  return yearDifference === 0
+    ? 'Graduated this year'
+    : yearDifference === 1
+      ? 'Graduates next year'
+      : yearDifference > 1
+        ? `Graduates in ${yearDifference} years`
+        : yearDifference === -1
+          ? 'Graduated last year'
+          : yearDifference < -1
+            ? `Graduated ${Math.abs(yearDifference)} years ago`
+            : null
+})
 </script>

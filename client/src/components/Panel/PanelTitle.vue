@@ -27,7 +27,10 @@
         </div>
       </template>
 
-      <v-list @mouseleave="hoveredPanel = ''">
+      <v-list
+        @mouseleave="hoveredPanel = ''"
+        style="width: 325px"
+      >
         <v-sheet
           v-for="panel in panels"
           @click="setPanel(panel.panelName)"

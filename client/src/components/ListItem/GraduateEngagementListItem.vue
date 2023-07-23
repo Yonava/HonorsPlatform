@@ -4,6 +4,7 @@
       <div style="font-weight: 800; font-size: 1.35em; line-height: 1">
         {{ item.event || '(No Event Name)' }}
       </div>
+
       <v-spacer></v-spacer>
 
       <v-sheet

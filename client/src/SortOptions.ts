@@ -87,6 +87,15 @@ export const sortOptions = {
       func: (a: Graduate, b: Graduate) => {
         const dateA = new Date(a.graduationDate);
         const dateB = new Date(b.graduationDate);
+
+        if (isNaN(dateA.getTime())) {
+          return -1;
+        }
+
+        if (isNaN(dateB.getTime())) {
+          return 1;
+        }
+
         return dateA.getTime() - dateB.getTime();
       }
     }
