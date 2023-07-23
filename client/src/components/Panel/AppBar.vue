@@ -110,6 +110,42 @@
         id="input"
       />
       <v-spacer></v-spacer>
+      <div
+        class="d-flex align-center"
+        :style="{
+          transform: `translateX(${(connectedAccounts.length - 1) * 15}px)`,
+        }"
+      >
+        <div
+          v-for="(account, i) in connectedAccounts"
+          :key="account.id"
+          :style="{
+            width: '40px',
+            height: '40px',
+            borderRadius: '50%',
+            background: 'rgb(0, 0, 0)',
+            transform: `translateX(${i * -15}px)`,
+            border: '2px solid rgba(255, 255, 255, 1)',
+            cursor: 'pointer',
+          }"
+        >
+          <img
+            :src="account.picture"
+            :style="{
+              width: '100%',
+              height: '100%',
+              borderRadius: '50%',
+              objectFit: 'cover',
+            }"
+          />
+          <v-tooltip
+            activator="parent"
+            location="bottom"
+          >
+            {{ account.name }} is editing
+          </v-tooltip>
+        </div>
+      </div>
       <v-btn
         v-if="smAndUp && getActivePanel.add"
         @click="add.fire"
@@ -206,12 +242,14 @@ import { ref, computed, watchEffect } from "vue";
 import { useDisplay } from "vuetify";
 import { useKeyBindings } from "../../KeyBindings";
 import { useDialog } from '../../store/useDialog'
+import { useAuth } from "../../store/useAuth";
 
 import { version } from "../../Panels";
 import { useSheetManager } from "../../store/useSheetManager";
 import { useDocumentCache } from "../../store/useDocumentCache";
 import { storeToRefs } from "pinia";
 
+const { connectedAccounts } = storeToRefs(useAuth());
 const { show: dialogOpen } = storeToRefs(useDialog())
 const { getSelectedItems } = useDocumentCache();
 const { searchFilter, getActivePanel } = storeToRefs(useSheetManager());

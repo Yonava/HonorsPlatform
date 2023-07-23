@@ -71,6 +71,7 @@ export const sortOptions = {
     },
     {
       label: 'Phone Number',
+      tooltip: 'Sort by phone number',
       icon: {
         asc: 'mdi-sort-numeric-ascending',
         desc: 'mdi-sort-numeric-descending'
