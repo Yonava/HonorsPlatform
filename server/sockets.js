@@ -33,4 +33,9 @@ io.on('connection', socket => {
     })
     io.emit('connectedAccounts', connectedAccounts)
   })
+
+  socket.on('userAction', (data) => {
+    // data is {action: string, payload: object}
+    io.broadcast.emit('userAction', data)
+  })
 })

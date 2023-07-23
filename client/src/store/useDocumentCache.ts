@@ -7,6 +7,7 @@ import { warn } from "../Warn";
 import { useSyncState } from "./useSyncState";
 import { storeToRefs } from "pinia";
 import { setSelectedItem } from '../components/Panel/SetSelectedItem'
+import { useAuth } from "./useAuth";
 
 type GetAllDocuments = {
   showLoading?: boolean;
@@ -471,6 +472,15 @@ export const useDocumentCache = defineStore("documentCache", {
       }
 
       useSyncState().$reset();
+
+      const { socket } = useAuth()
+      socket.emit('userAction', {
+        action: 'delete',
+        payload: {
+          sysId,
+          panelObject: panel
+        }
+      })
     },
     addItemCache(item: types.SheetItem, panelName: PanelName) {
       const { activateListTransition, getActivePanel } = useSheetManager();
@@ -486,7 +496,6 @@ export const useDocumentCache = defineStore("documentCache", {
         panel: activePanel,
         newSysId,
         addPinnedItem,
-        activateListTransition
       } = useSheetManager();
 
       const {
@@ -529,6 +538,15 @@ export const useDocumentCache = defineStore("documentCache", {
         )
         newItem.row = row
         useSyncState().$reset();
+
+        const { socket } = useAuth()
+        socket.emit('userAction', {
+          action: 'add',
+          payload: {
+            item: newItem,
+            panelName: panel.panelName
+          }
+        })
       }
 
       return newItem;
@@ -565,6 +583,16 @@ export const useDocumentCache = defineStore("documentCache", {
         console.log("useDocumentCache: Posted to row", row)
         item.row = row
         useSyncState().$reset();
+
+        const { socket } = useAuth()
+        socket.emit('userAction', {
+          action: 'add',
+          payload: {
+            item,
+            panelName: panel.panelName
+          }
+        })
+
         return;
       }
 
@@ -581,6 +609,15 @@ export const useDocumentCache = defineStore("documentCache", {
         item.row,
         await panel.mappers.unmap([item])
       )
+      
+      const { socket } = useAuth()
+      socket.emit('userAction', {
+        action: 'update',
+        payload: {
+          item,
+          panelName: panel.panelName
+        }
+      })
 
       useSyncState().$reset();
     },
@@ -610,6 +647,18 @@ export const useDocumentCache = defineStore("documentCache", {
         item: oldItem,
         panel: oldPanel,
         showWarning: false,
+      })
+
+      const { socket } = useAuth()
+      
+      socket.emit('userAction', {
+        action: 'move',
+        payload: {
+          oldSysId: oldItem.sysId,
+          oldPanelName: oldPanel.panelName,
+          newItem,
+          newPanelName: newPanel.panelName
+        }
       })
     }
   }

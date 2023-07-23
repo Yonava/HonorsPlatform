@@ -5,6 +5,7 @@ import { useDialog } from "./useDialog";
 import { local } from "../Locals";
 import io from 'socket.io-client'
 import { getUserProfileData } from "../SheetsAPI";
+import { useDocumentCache } from "./useDocumentCache";
 
 type GoogleProfile = {
   id: string,
@@ -16,6 +17,11 @@ type GoogleProfile = {
 }
 
 type ConnectedAccount = GoogleProfile & { socketId: string }
+
+type ActionData = {
+  action: string,
+  payload: any
+}
 
 export const useAuth = defineStore('auth', {
   state: () => ({
@@ -53,6 +59,35 @@ export const useAuth = defineStore('auth', {
 
         this.socket.on('connectedAccounts', (connectedAccounts: ConnectedAccount[]) => {
           this.connectedAccounts = connectedAccounts
+        })
+
+        this.socket.on('userAction', (data: ActionData) => {
+          const { addItemCache, deleteItemCache, updateItemCache, moveItemBetweenListsCache } = useDocumentCache()
+          switch (data.action) {
+            case 'add':
+              addItemCache(data.payload.item, data.payload.panelName)
+              break
+    
+            case 'delete':
+              deleteItemCache(data.payload.sysId, data.payload.panelObject)
+              break
+            
+            case 'update':
+              updateItemCache(data.payload.item, data.payload.panelName)
+              break
+            
+            case 'move':
+              moveItemBetweenListsCache({
+                oldSysId: data.payload.oldSysId,
+                oldPanelName: data.payload.oldPanelName,
+                newItem: data.payload.newItem,
+                newPanelName: data.payload.newPanelName
+              })
+              break
+            
+            default:
+              console.error("userAction not recognized: " + data.action)
+          }
         })
       })
 
