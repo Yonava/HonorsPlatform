@@ -1,5 +1,5 @@
 <template>
-  <div @click="useSheetManager().focusedItem = item">
+  <div @click="setFocusedItem(item)">
     <div
       ref="el"
       :class="[
@@ -77,6 +77,7 @@ import { SheetItem } from '../../../SheetTypes'
 const { open, close } = useDialog()
 const { deleteItem } = useDocumentCache()
 const { getActivePanel } = storeToRefs(useSheetManager())
+const { setFocusedItem } = useSheetManager()
 
 const sm = ref(false)
 const el = ref(null)

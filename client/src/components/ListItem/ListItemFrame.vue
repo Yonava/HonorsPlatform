@@ -63,6 +63,34 @@
           </div>
         </div>
       </div>
+      <div
+        v-if="account"
+        :key="account.id"
+        :style="{
+          width: '40px',
+          height: '40px',
+          borderRadius: '50%',
+          background: 'rgb(0, 0, 0)',
+          border: '2px solid rgba(255, 255, 255, 1)',
+          cursor: 'pointer',
+        }"
+      >
+        <img
+          :src="account.picture"
+          :style="{
+            width: '100%',
+            height: '100%',
+            borderRadius: '50%',
+            objectFit: 'cover',
+          }"
+        />
+        <v-tooltip
+          activator="parent"
+          location="bottom"
+        >
+          {{ account.given_name }}
+        </v-tooltip>
+      </div>
       <v-spacer></v-spacer>
       <div
         :style="{
@@ -93,11 +121,37 @@ import { useDisplay } from 'vuetify'
 import { ref, computed } from 'vue'
 import { useStudentMatcher } from '../../StudentMatcher'
 import { getPanel, PanelName } from '../../Panels'
+import { useAuth } from '../../store/useAuth'
+import { storeToRefs } from 'pinia'
 
 const { mdAndUp } = useDisplay()
 
 const { getActivePanel, activateListTransition, setPanel } = useSheetManager()
 const { getSelectedItems, deleteItem } = useDocumentCache()
+const { focusData, googleProfile, connectedAccounts } = storeToRefs(useAuth())
+
+const account = computed(() => {
+  const googleIds = Object.keys(focusData.value) as string[]
+  const payloads = Object.values(focusData.value)
+
+  // in payload -> payload.item.sysId
+
+  const accountsFocusedOnItem = []
+  for (const i in payloads) {
+    if (payloads[i].item.sysId === props.item.sysId) {
+      const googleId = googleIds[i]
+      if (googleId === googleProfile.value?.id) {
+        continue
+      }
+      const account = connectedAccounts.value.find(({ id }) => id === googleId)
+      if (account) {
+        accountsFocusedOnItem.push(account)
+      }
+    }
+  }
+
+  return accountsFocusedOnItem.length ? accountsFocusedOnItem[0] : null
+})
 
 const hovered = ref(false)
 

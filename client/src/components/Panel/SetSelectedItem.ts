@@ -11,7 +11,7 @@ export const setSelectedItem = (item: SheetItem) => {
 
   // if the item is already selected, focus it
   if (selectedItemIndex !== -1) {
-    useSheetManager().focusedItem = item
+    useSheetManager().setFocusedItem(item)
     return
   }
 
@@ -23,6 +23,6 @@ export const setSelectedItem = (item: SheetItem) => {
     setSelectedItems({
       items: newSelectedItems
     })
-    useSheetManager().focusedItem = item
+    useSheetManager().setFocusedItem(item)
   }
 }

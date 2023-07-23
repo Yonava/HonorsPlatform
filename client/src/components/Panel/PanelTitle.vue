@@ -29,7 +29,7 @@
 
       <v-list
         @mouseleave="hoveredPanel = ''"
-        style="width: 325px"
+        style="width: 350px"
       >
         <v-sheet
           v-for="panel in panels"
@@ -37,7 +37,7 @@
           @mouseover="hoveredPanel = panel.panelName"
           :key="panel.title.singular"
           :color="highlightItem(panel) ? panel.color + '-darken-1' : 'white'"
-          class="py-2 px-4 panel-dropdown-item"
+          class="py-2 px-4 panel-dropdown-item d-flex align-center"
           :style="{
             transition: '0.3s ease',
           }"
@@ -56,6 +56,43 @@
             </v-icon>
             {{ panel.title.plural }}
           </span>
+          <v-spacer></v-spacer>
+          <div
+            class="d-flex align-center"
+            :style="{
+              transform: `translateX(${(displayAccounts(panel).length - 1) * 15}px)`,
+            }"
+          >
+            <div
+              v-for="(account, i) in displayAccounts(panel)"
+              :key="account.id"
+              :style="{
+                width: '40px',
+                height: '40px',
+                borderRadius: '50%',
+                background: 'rgb(0, 0, 0)',
+                transform: `translateX(${i * -15}px)`,
+                border: '2px solid rgba(255, 255, 255, 1)',
+                cursor: 'pointer',
+              }"
+            >
+              <img
+                :src="account.picture"
+                :style="{
+                  width: '100%',
+                  height: '100%',
+                  borderRadius: '50%',
+                  objectFit: 'cover',
+                }"
+              />
+              <v-tooltip
+                activator="parent"
+                location="bottom"
+              >
+                {{ account.given_name }}
+              </v-tooltip>
+            </div>
+          </div>
         </v-sheet>
       </v-list>
     </v-menu>
@@ -68,10 +105,29 @@ import { storeToRefs } from "pinia";
 import { useSheetManager } from "../../store/useSheetManager";
 import { useDisplay } from "vuetify";
 import { panels, Panel } from "../../Panels";
+import { useAuth } from "../../store/useAuth";
 
+const { connectedAccounts, googleProfile, focusData } = storeToRefs(useAuth());
 const { lgAndUp } = useDisplay();
 const { getActivePanel, loadingItems, filteredItems } = storeToRefs(useSheetManager());
 const { setPanel } = useSheetManager();
+
+const displayAccounts = (panel: Panel) => {
+  const clientId = googleProfile.value?.id;
+  const seenIds = new Set([clientId]);
+
+  return connectedAccounts.value.filter(({ id }) => {
+    const accountPanelName = focusData.value[id]?.panelName;
+    if (accountPanelName !== panel.panelName) {
+      return false;
+    } else if (seenIds.has(id)) {
+      return false;
+    } else {
+      seenIds.add(id);
+      return true;
+    }
+  });
+};
 
 const hoveredPanel = ref("");
 

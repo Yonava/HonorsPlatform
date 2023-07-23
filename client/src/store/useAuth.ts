@@ -33,13 +33,7 @@ type FocusDataInput = {
   googleId: string
 }
 
-type FocusDataOutput = {
-  payload: {
-    item: SheetItem
-    panelName: PanelName
-  },
-  googleId: string
-}[]
+type FocusDataOutput = FocusDataInput[]
 
 export const useAuth = defineStore('auth', {
   state: () => ({
@@ -49,7 +43,7 @@ export const useAuth = defineStore('auth', {
     socket: null as any,
     googleProfile: null as GoogleProfile | null,
     connectedAccounts: [] as ConnectedAccount[],
-    focusData: [] as FocusData[]
+    focusData: [] as FocusDataOutput
   }),
   actions: {
     async createSocketConnection() {
@@ -111,7 +105,6 @@ export const useAuth = defineStore('auth', {
 
         this.socket.on('userFocus', (data: FocusDataOutput) => {
           this.focusData = data
-          
         })
       })
 

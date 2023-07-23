@@ -296,7 +296,7 @@ export const useDocumentCache = defineStore("documentCache", {
       })
 
       if (focusedItemInNewData) {
-        useSheetManager().focusedItem = focusedItemInNewData
+        useSheetManager().setFocusedItem(focusedItemInNewData)
       }
 
       // clean up pinned items
@@ -327,7 +327,7 @@ export const useDocumentCache = defineStore("documentCache", {
         return;
       }
       if (panel === activePanel) {
-        useSheetManager().focusedItem = item;
+        useSheetManager().setFocusedItem(item);
       }
       this[panel.sheetRange].selected.push(item);
     },
@@ -351,7 +351,7 @@ export const useDocumentCache = defineStore("documentCache", {
           const nextFocusedItem = this[panel.sheetRange].selected[focusedItemIndex + 1] ?? this[panel.sheetRange].selected[focusedItemIndex - 1];
 
           setTimeout(() => {
-            useSheetManager().focusedItem = nextFocusedItem;
+            useSheetManager().setFocusedItem(nextFocusedItem);
           }, 0);
         }
       }
@@ -377,7 +377,7 @@ export const useDocumentCache = defineStore("documentCache", {
       if (item) {
         this[panel.sheetRange].selected = [item];
         setTimeout(() => {
-          useSheetManager().focusedItem = item
+          useSheetManager().setFocusedItem(item)
         }, 0)
         return item;
       } else {
@@ -521,7 +521,7 @@ export const useDocumentCache = defineStore("documentCache", {
       }
 
       if (panel === activePanel) {
-        useSheetManager().focusedItem = newItem;
+        useSheetManager().setFocusedItem(newItem)
       }
 
       this.addItemCache(newItem, panel.panelName);

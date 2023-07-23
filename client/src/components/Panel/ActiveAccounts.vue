@@ -31,7 +31,7 @@
         activator="parent"
         location="bottom"
       >
-        {{ account.name }} is editing
+        {{ account.given_name }} is editing {{ accountIsEditing(account.id) }}
       </v-tooltip>
     </div>
   </div>
@@ -41,8 +41,9 @@
 import { useAuth } from '../../store/useAuth';
 import { storeToRefs } from 'pinia';
 import { computed } from 'vue'
+import { panels } from '../../Panels';
 
-const { connectedAccounts, googleProfile } = storeToRefs(useAuth())
+const { connectedAccounts, googleProfile, focusData } = storeToRefs(useAuth())
 
 const displayAccounts = computed(() => {
   const clientId = googleProfile.value?.id
@@ -57,5 +58,13 @@ const displayAccounts = computed(() => {
   })
 })
 
-
+const accountIsEditing = (googleId: string) => {
+  const userFocusData = focusData.value[googleId]
+  if (!userFocusData) {
+    return 'nothing'
+  } else {
+    const { panelName, item } = userFocusData
+    return item[panels[panelName].properties.title] + ' in ' + panels[panelName].title.plural
+  }
+}
 </script>

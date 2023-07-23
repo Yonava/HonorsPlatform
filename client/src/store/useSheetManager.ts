@@ -186,8 +186,12 @@ export const useSheetManager = defineStore('sheetManager', {
       this.focusedItem = item
       const { socket, googleProfile } = useAuth()
 
+      if (!socket || !googleProfile) {
+        return
+      }
+
       socket.emit('userFocus', {
-        googleId: googleProfile?.id,
+        googleId: googleProfile.id,
         payload: {
           item,
           panelName: this.panel.panelName

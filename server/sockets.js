@@ -44,15 +44,17 @@ io.on('connection', socket => {
   socket.on('userFocus', (data) => {
     focusData[data.googleId] = data.payload
 
-    const googleIds = Object.keys(focusData)
-    const payloads = Object.values(focusData)
+    console.log('userFocus', focusData)
 
-    const outputData = googleIds.map((googleId, i) => {
-      return { 
-        googleId,
-        payload: payloads[i]
-      }
-    })
-    socket.broadcast.emit('userFocus', outputData)
+    // const googleIds = Object.keys(focusData)
+    // const payloads = Object.values(focusData)
+
+    // const outputData = googleIds.map((googleId, i) => {
+    //   return {
+    //     googleId,
+    //     payload: payloads[i]
+    //   }
+    // })
+    socket.broadcast.emit('userFocus', focusData)
   })
 })
