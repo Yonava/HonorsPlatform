@@ -67,15 +67,15 @@ export const useAuth = defineStore('auth', {
             case 'add':
               addItemCache(data.payload.item, data.payload.panelName)
               break
-    
+
             case 'delete':
               deleteItemCache(data.payload.sysId, data.payload.panelObject)
               break
-            
+
             case 'update':
               updateItemCache(data.payload.item, data.payload.panelName)
               break
-            
+
             case 'move':
               moveItemBetweenListsCache({
                 oldSysId: data.payload.oldSysId,
@@ -84,7 +84,7 @@ export const useAuth = defineStore('auth', {
                 newPanelName: data.payload.newPanelName
               })
               break
-            
+
             default:
               console.error("userAction not recognized: " + data.action)
           }

@@ -35,7 +35,8 @@ io.on('connection', socket => {
   })
 
   socket.on('userAction', (data) => {
+    console.log('userAction', data)
     // data is {action: string, payload: object}
-    io.broadcast.emit('userAction', data)
+    socket.broadcast.emit('userAction', data)
   })
 })
