@@ -77,6 +77,13 @@ type MoveItemBetweenLists = {
   newPanel: Panel;
 }
 
+type MoveItemBetweenListsCache = {
+  oldSysId: string;
+  oldPanelName: PanelName;
+  newItem: types.SheetItem;
+  newPanelName: PanelName;
+}
+
 type PanelState<T> = {
   list: T[];
   selected: T[];
@@ -388,7 +395,7 @@ export const useDocumentCache = defineStore("documentCache", {
       }
     },
     deleteItemCache(sysId: string, panelObject?: Panel) {
-      const { panel: activePanel } = useSheetManager();
+      const { panel: activePanel, pinnedSysIds } = useSheetManager();
       const panel = panelObject ?? activePanel;
       const index = this[panel.sheetRange].list.findIndex(item => item.sysId === sysId);
 
@@ -398,9 +405,9 @@ export const useDocumentCache = defineStore("documentCache", {
         this[panel.sheetRange].list.splice(index, 1);
       }
 
-      const pinnedSysIdIndex = useSheetManager().pinnedSysIds.indexOf(sysId)
+      const pinnedSysIdIndex = pinnedSysIds.indexOf(sysId)
       if (pinnedSysIdIndex !== -1) {
-        useSheetManager().pinnedSysIds.splice(pinnedSysIdIndex, 1)
+        pinnedSysIds.splice(pinnedSysIdIndex, 1)
       }
 
       if (selectedItem) {
@@ -465,6 +472,14 @@ export const useDocumentCache = defineStore("documentCache", {
 
       useSyncState().$reset();
     },
+    addItemCache(item: types.SheetItem, panelName: PanelName) {
+      const { activateListTransition, getActivePanel } = useSheetManager();
+      const panel = panels[panelName];
+      if (panel === getActivePanel) {
+        activateListTransition();
+      }
+      this[panel.sheetRange].list.unshift(item);
+    },
     async addItem(options: AddItem = {}): Promise<types.SheetItem> {
       const {
         setSearchFilter,
@@ -519,6 +534,17 @@ export const useDocumentCache = defineStore("documentCache", {
 
       return newItem;
     },
+    updateItemCache(item: types.SheetItem, panelName: PanelName) {
+      const panel = panels[panelName];
+      const itemInList = this[panel.sheetRange].list.find((listItem: types.SheetItem) => listItem.sysId === item.sysId);
+      if (itemInList) {
+        Object.assign(itemInList, item);
+      } else {
+        console.error("updateItemCache: Item not in list");
+      }
+
+      return itemInList;
+    },
     async updateItem(options: UpdateItem = {}) {
       const { panel: activePanel, focusedItem } = useSheetManager();
       const { setProcessing } = useSyncState();
@@ -533,7 +559,6 @@ export const useDocumentCache = defineStore("documentCache", {
         return;
       } else if (typeof item.row !== "number") {
         setProcessing(true);
-        console.log("useDocumentCache: No row to update, posting to sheet")
         const row = await postInRange(
           panel.sheetRange,
           await panel.mappers.unmap([item])
@@ -544,12 +569,10 @@ export const useDocumentCache = defineStore("documentCache", {
         return;
       }
 
-      const itemInList = this[panel.sheetRange].list.find((listItem) => listItem.sysId === item.sysId);
-      if (itemInList) {
-        Object.assign(itemInList, item);
-      } else {
-        console.error("useDocumentCache: Item not in list");
-        return;
+      const itemInList = this.updateItemCache(item, panel.panelName);
+
+      if (!itemInList) {
+        return
       }
 
       setProcessing(true);
@@ -562,23 +585,33 @@ export const useDocumentCache = defineStore("documentCache", {
 
       useSyncState().$reset();
     },
+    moveItemBetweenListsCache({ oldSysId, oldPanelName, newItem, newPanelName }: MoveItemBetweenListsCache) {
+      const oldPanel = panels[oldPanelName];
+      this.addItemCache(newItem, newPanelName);
+      this.deleteItemCache(oldSysId, oldPanel);
+    },
     async moveItemBetweenLists({ oldItem, newItem, oldPanel, newPanel }: MoveItemBetweenLists) {
       const { waitUntilSynced } = useSyncState();
+
       if (typeof oldItem.row !== "number") {
-        return Promise.reject("useDocumentCache: Cannot move item that hasn't been saved to the sheet yet");
+        throw new Error("useDocumentCache: Cannot move item that hasn't been saved to the sheet yet");
       }
+
       await waitUntilSynced({ showDialog: true });
+
       const row = await postInRange(
         newPanel.sheetRange,
         await newPanel.mappers.unmap([newItem])
       )
+
+      newItem.row = row;
+      this.addItemCache(newItem, newPanel.panelName);
+
       await this.deleteItem({
         item: oldItem,
         panel: oldPanel,
         showWarning: false,
       })
-      newItem.row = row;
-      this[newPanel.sheetRange].list.unshift(newItem);
     }
   }
 })
