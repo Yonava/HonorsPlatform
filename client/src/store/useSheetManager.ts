@@ -182,7 +182,7 @@ export const useSheetManager = defineStore('sheetManager', {
         itemsOnActivePanel.reverse();
       }
     },
-    setFocusedItem(item: SheetItem) {
+    setFocusedItem(item: SheetItem | null) {
       this.focusedItem = item
       const { socket, googleProfile } = useAuth()
 
@@ -192,10 +192,8 @@ export const useSheetManager = defineStore('sheetManager', {
 
       socket.emit('userFocus', {
         googleId: googleProfile.id,
-        payload: {
-          sysId: item.sysId,
-          panelName: this.panel.panelName
-        }
+        sysId: item?.sysId,
+        panelName: this.panel.panelName
       })
     }
   }

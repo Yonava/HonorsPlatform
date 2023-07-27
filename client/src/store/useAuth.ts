@@ -28,7 +28,8 @@ type ActionData = {
 type FocusData = {
   [key in string]: {
     sysId: string,
-    panelName: PanelName
+    panelName: PanelName,
+    googleId: string
   }
 }
 
@@ -102,6 +103,17 @@ export const useAuth = defineStore('auth', {
 
             case 'update':
               updateItemCache(data.payload.item, data.payload.panelName)
+              break
+
+            case 'prop-update':
+              const { sysId, panelName, prop, value } = data.payload
+              const { getItemBySysId } = useDocumentCache()
+              const item = getItemBySysId(sysId, panelName)
+              if (!item) {
+                console.error('useAuth: (prop-update) item not found')
+                return
+              }
+              item[prop] = value
               break
 
             case 'move':

@@ -136,9 +136,9 @@
       style="width: 100%; height: calc(100vh - 175px);"
     >
       <component
-        v-if="isItemSelected"
+        v-if="focusedItem"
         :is="getActivePanel.components.detail"
-        :item="selectedItem"
+        :item="focusedItem"
       />
     </v-navigation-drawer>
   </div>
@@ -170,10 +170,9 @@ import { panels, version } from '../Panels'
 import { useAuth } from '../store/useAuth'
 
 const { googleProfile } = storeToRefs(useAuth())
-const { setPanel } = useSheetManager()
-const { getActivePanel, pinnedSysIds } = storeToRefs(useSheetManager())
-const { setSelectedItems, getAllDocuments } = useDocumentCache()
-const { getSelectedItems } = storeToRefs(useDocumentCache())
+const { setPanel, setFocusedItem } = useSheetManager()
+const { getActivePanel, pinnedSysIds, focusedItem } = storeToRefs(useSheetManager())
+const { getAllDocuments } = useDocumentCache()
 const { setPanelCover } = useDialog()
 const { getPanelCover } = storeToRefs(useDialog())
 
@@ -194,17 +193,9 @@ const {
   smAndDown
 } = useDisplay()
 
-const selectedItem = computed(() => {
-  const selected = getSelectedItems.value()
-  if (selected.length) return selected[0]
-  return null
-})
-
-const isItemSelected = computed(() => !!selectedItem.value)
-
 const showNavDrawer = ref(false)
 watchEffect(() => {
-  if (isItemSelected.value && smAndDown.value) {
+  if (focusedItem.value && smAndDown.value) {
     setTimeout(() => {
       showNavDrawer.value = true
     }, 100)
@@ -213,7 +204,7 @@ watchEffect(() => {
 
 watch(showNavDrawer, (newVal) => {
   if (!newVal) {
-    setSelectedItems()
+    setFocusedItem(null)
   }
 })
 

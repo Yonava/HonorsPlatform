@@ -13,13 +13,14 @@ console.log('Sockets Live!')
 const connectedAccounts = []
 const focusData = {}
 
-io.on('connection', socket => {
+io.on('connection', (socket) => {
   socket.on('disconnect', () => {
     const index = connectedAccounts.findIndex(account => account.socketId === socket.id)
     if (index === -1) {
       return
     }
     connectedAccounts.splice(index, 1)
+    delete focusData[socket.id]
     io.emit('connectedAccounts', connectedAccounts)
   })
 
@@ -36,7 +37,7 @@ io.on('connection', socket => {
   })
 
   socket.on('userFocus', (data) => {
-    focusData[data.googleId] = data.payload
-    socket.broadcast.emit('userFocus', focusData)
+    focusData[socket.id] = data
+    io.emit('userFocus', focusData)
   })
 })

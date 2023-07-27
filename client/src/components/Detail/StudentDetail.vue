@@ -2,11 +2,13 @@
   <div>
     <DetailFrame
       v-model="student.note"
+      @input="broadcastThroughSocket('note')"
       :item="student"
     >
       <template #main>
         <DetailHeader
           v-model="student.name"
+          @input="broadcastThroughSocket('name')"
           :item="student"
           :placeholder="`${getActivePanel.title.singular} Name`"
         >
@@ -45,9 +47,7 @@
                 </v-tooltip>
               </div>
             </template>
-            <v-sheet
-              class="student-id-dialog pa-4"
-            >
+            <v-sheet class="student-id-dialog pa-4">
               <v-text-field
                 v-model="tempStudentId"
                 :rules="[studentIdRule]"
@@ -73,6 +73,7 @@
             </v-sheet>
           </v-dialog>
         </DetailHeader>
+        <v-btn @click="test">{{ numberOfUsersEditingItem }}</v-btn>
         <v-btn
           v-if="!student.email"
           @click="student.email = getStudentEmail(student.name)"
@@ -85,23 +86,15 @@
         <div class="d-flex align-center">
           <v-text-field
             v-model="student.email"
-            @input="test"
+            @input="broadcastThroughSocket('email')"
             :rules="[(v) => emailValidator(v) || 'Invalid email']"
             label="Email"
             prepend-icon="mdi-email"
           ></v-text-field>
-          <v-btn
-            v-if="student.email"
-            @click="sendEmail(student.email)"
-            :color="getActivePanel.color"
-            class="ml-4"
-            size="small"
-          >
-            email
-          </v-btn>
         </div>
         <v-text-field
           v-model.number="student.points"
+          @input="broadcastThroughSocket('points')"
           label="Points"
           type="number"
           prepend-icon="mdi-ticket"
@@ -109,6 +102,7 @@
         <div class="d-flex flex-row">
           <v-select
             v-model="student.activeStatus"
+            @update:model-value="broadcastThroughSocket('activeStatus')"
             :items="statusOptionLabels"
             :prepend-icon="statusOptionIcon"
             label="Active Status"
@@ -117,6 +111,7 @@
           ></v-select>
           <v-select
             v-model="student.year"
+            @update:model-value="broadcastThroughSocket('year')"
             :items="yearOptions"
             label="Year"
             style="width: 15%"
@@ -126,6 +121,7 @@
         </div>
         <v-autocomplete
           v-model="student.athletics"
+          @update:model-value="broadcastThroughSocket('athletics')"
           :items="Object.keys(athleticOptions)"
           :prepend-icon="`mdi-${athleticOptions[student.athletics]}`"
           label="Athletics"
@@ -141,7 +137,6 @@
             <v-text-field
               v-model="student.misc[key]"
               :label="key"
-              outlined
             ></v-text-field>
           </div>
         </div>
@@ -230,7 +225,7 @@ const { setPanel, getActivePanel } = useSheetManager();
 const { Students, Theses, addItem } = useDocumentCache();
 
 const test = () => {
-  console.log(student.value.email)
+  console.log(numberOfUsersEditingItem.value)
 }
 
 const props = defineProps<{
@@ -239,9 +234,9 @@ const props = defineProps<{
 
 const student = computed(() => props.item);
 
-useUpdateItem(student);
-
+const { broadcastThroughSocket, numberOfUsersEditingItem } = useUpdateItem(student);
 const { xs } = useDisplay();
+const { moveItem, movingItem, panelOnceMoved } = useMoveItem();
 
 const statusOptionIcon = computed(() => {
   const optionIcon = statusOptions.find((option) => option.status === student.value.activeStatus)?.icon
@@ -280,8 +275,9 @@ function studentIdRule(studentId: string) {
 
 const tempStudentId = ref("");
 const saveId = () => {
-  student.value.id = tempStudentId.value;
-  idDialog.value = false;
+  student.value.id = tempStudentId.value
+  broadcastThroughSocket('id')
+  idDialog.value = false
 }
 
 const thesisPanel = getPanel("THESES");
@@ -326,9 +322,8 @@ const addStudentNote = (event: { initials: string; note: string, date: string })
   const { initials, note, date } = event;
   if (student.value.note) student.value.note += "\n\n";
   student.value.note += `${initials} (${date}): ${note}`;
+  broadcastThroughSocket('note')
 }
-
-const { moveItem, movingItem, panelOnceMoved } = useMoveItem();
 </script>
 
 <style scoped>

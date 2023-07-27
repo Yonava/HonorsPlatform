@@ -176,7 +176,7 @@ const dragOver = (e: DragEvent) => {
 }
 
 const isFocused = (item: SheetItem) => {
-  const focusedItem = useSheetManager().focusedItem
+  const { focusedItem } = useSheetManager()
   return focusedItem && focusedItem.sysId === item.sysId
 }
 

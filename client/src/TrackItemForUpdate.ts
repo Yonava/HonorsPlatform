@@ -3,18 +3,18 @@ import { storeToRefs } from "pinia";
 import { useDocumentCache } from "./store/useDocumentCache";
 import { useSheetManager } from "./store/useSheetManager";
 import { useAuth } from "./store/useAuth";
-import { watch, onUnmounted } from "vue";
-import type { Ref } from "vue";
+import { type Ref, watch, onUnmounted, computed } from "vue";
 import type { SheetItem } from "./SheetTypes";
 import type { Panel } from "./Panels";
 
 const updateDebounceMs = 2_000
 
-export function useUpdateItem(item: Ref<SheetItem>, panelObject?: Panel) {
+export function useUpdateItem<T extends SheetItem>(item: Ref<T>, panelObject?: Panel) {
   const { updateItem, deleteItemCache } = useDocumentCache();
   const { setProcessing } = useSyncState();
   const { processing } = storeToRefs(useSyncState());
   const { getActivePanel } = storeToRefs(useSheetManager());
+  const { connectedAccounts, focusData } = storeToRefs(useAuth())
 
   const panel = panelObject ?? getActivePanel.value
 
@@ -22,22 +22,27 @@ export function useUpdateItem(item: Ref<SheetItem>, panelObject?: Panel) {
   let currentItem = ''
   let updateInProgress = false;
 
-  watch(item, async (newItem, oldItem) => {
+  const numberOfUsersEditingItem = computed(() => {
+    const { sysId } = item.value
+    let accountsEditingItem = 0
+    for (const account of connectedAccounts.value) {
+      const dataForAccount = focusData.value[account.socketId]
+      if (!dataForAccount) {
+        continue
+      }
+      if (dataForAccount.sysId === sysId) {
+        accountsEditingItem++
+      }
+    }
+    return accountsEditingItem
+  })
 
-    // const { socket } = useAuth()
-    // if (newItem) {
-    //   socket.emit('userAction', {
-    //     action: 'update',
-    //     payload: {
-    //       item: newItem,
-    //       panelName: panel.panelName
-    //     }
-    //   })
-    // }
-
+  const update = (newItem: T, oldItem: T | undefined) => {
     if (updateInProgress) {
       return
     }
+
+    return
 
     // user has reverted the item back to its original state
     if (JSON.stringify(newItem) === currentItem) {
@@ -73,6 +78,10 @@ export function useUpdateItem(item: Ref<SheetItem>, panelObject?: Panel) {
       updateInProgress = false
       currentItem = JSON.stringify(newItem)
     }, updateDebounceMs);
+  }
+
+  watch(item, async (newItem, oldItem) => {
+    update(newItem, oldItem)
   }, { deep: true, immediate: true })
 
   onUnmounted(() => {
@@ -83,14 +92,33 @@ export function useUpdateItem(item: Ref<SheetItem>, panelObject?: Panel) {
     }
   })
 
-  const forceUpdate = () => {
-    updateItem({
+  const forceUpdate = async () => {
+    updateInProgress = true
+    await updateItem({
       item: item.value,
       panel,
+    })
+    updateInProgress = false
+  }
+
+  type Primitive = string | number | boolean
+
+  const broadcastThroughSocket = (property: keyof T, value?: Primitive) => {
+    const { socket } = useAuth()
+    socket.emit('userAction', {
+      action: 'prop-update',
+      payload: {
+        panelName: panel.panelName,
+        sysId: item.value.sysId,
+        value: value ?? item.value[property],
+        prop: property,
+      }
     })
   }
 
   return {
-    forceUpdate
+    numberOfUsersEditingItem,
+    forceUpdate,
+    broadcastThroughSocket
   }
 }
