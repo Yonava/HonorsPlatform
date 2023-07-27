@@ -34,7 +34,6 @@
             v-model="notepad"
             auto-grow
             variant="outlined"
-            clearable
             label="Notes"
           ></v-textarea>
         </div>

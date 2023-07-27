@@ -85,8 +85,8 @@
         <div class="d-flex align-center">
           <v-text-field
             v-model="student.email"
+            @input="test"
             :rules="[(v) => emailValidator(v) || 'Invalid email']"
-            clearable
             label="Email"
             prepend-icon="mdi-email"
           ></v-text-field>
@@ -124,7 +124,6 @@
           >
           </v-select>
         </div>
-        <!-- clearable on this auto-completes incompatible with state syncing to google drive -->
         <v-autocomplete
           v-model="student.athletics"
           :items="Object.keys(athleticOptions)"
@@ -229,6 +228,10 @@ import { useMoveItem } from '../../MoveItems'
 
 const { setPanel, getActivePanel } = useSheetManager();
 const { Students, Theses, addItem } = useDocumentCache();
+
+const test = () => {
+  console.log(student.value.email)
+}
 
 const props = defineProps<{
   item: Student;

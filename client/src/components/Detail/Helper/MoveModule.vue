@@ -6,7 +6,6 @@
       </h1>
       <v-text-field
         v-model="completedDate"
-        clearable
         label="Date Completed"
         variant="outlined"
         prepend-inner-icon="mdi-calendar"

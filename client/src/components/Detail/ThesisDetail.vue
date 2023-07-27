@@ -23,7 +23,6 @@
       <v-text-field
         v-model="thesis.term"
         :rules="[(v) => termValidator(v) || 'Potentially invalid term']"
-        clearable
         label="Term"
         prepend-icon="mdi-calendar"
       ></v-text-field>
@@ -47,14 +46,12 @@
       <div class="d-flex flex-row">
         <v-text-field
           v-model="thesis.draftReceived"
-          clearable
           label="Draft Received"
           prepend-icon="mdi-calendar-check"
           class="mr-6"
         ></v-text-field>
         <v-text-field
           v-model="thesis.proposalReceived"
-          clearable
           label="Proposal Received"
           prepend-icon="mdi-calendar-check"
         ></v-text-field>
@@ -95,7 +92,6 @@
         <v-text-field
           v-model="thesis.mentorEmail"
           :rules="[(v) => emailValidator(v) || 'Invalid email address']"
-          clearable
           prepend-icon="mdi-email"
           label="Faculty Mentor Email"
           style="width: 45%"

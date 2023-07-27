@@ -31,7 +31,6 @@
           </div>
           <v-textarea
             v-model="note"
-            clearable
             no-resize
             ref="noteBox"
             variant="outlined"
@@ -56,7 +55,6 @@
             v-model.trim="initials"
             @keyup.enter="setInitials"
             :value="initials ? initials.toUpperCase() : ''"
-            clearable
             label="Initials"
             ref="initialsBox"
             variant="outlined"

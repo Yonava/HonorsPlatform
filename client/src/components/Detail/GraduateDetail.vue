@@ -28,7 +28,6 @@
         <v-text-field
           v-model="grad.email"
           :rules="[(v) => emailValidator(v) || 'Invalid email']"
-          clearable
           label="Email"
           prepend-icon="mdi-email"
         ></v-text-field>
@@ -46,7 +45,6 @@
       <v-text-field
         v-model="grad.phone"
         :rules="[(v) => phoneValidator(v) || 'Invalid phone number']"
-        clearable
         label="Phone"
         prepend-icon="mdi-phone"
       ></v-text-field>
@@ -61,7 +59,6 @@
       >
       <v-text-field
         v-model="grad.graduationDate"
-        clearable
         label="Graduation Date"
         prepend-icon="mdi-calendar"
       ></v-text-field>

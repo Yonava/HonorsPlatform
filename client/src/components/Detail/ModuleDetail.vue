@@ -60,7 +60,6 @@
       <div class="d-flex flex-row">
         <v-text-field
           v-model="module.docuSignCreated"
-          clearable
           prepend-icon="mdi-calendar-alert"
           style="width: 45%"
           class="mr-6"
@@ -68,7 +67,6 @@
         ></v-text-field>
         <v-text-field
           v-model="module.docuSignCompleted"
-          clearable
           style="width: 45%"
           prepend-icon="mdi-calendar-check"
           label="DocuSign Completed"
