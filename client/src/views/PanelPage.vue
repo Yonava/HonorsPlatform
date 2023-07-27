@@ -115,7 +115,7 @@
         ></v-sheet>
         <ItemDetail v-if="mdAndUp"/>
       </div>
-      <div v-if="mdAndUp && !isItemSelected">
+      <div v-if="showLogo">
         <img
           src="../assets/honorsLogo.jpeg"
           class="honors-logo"
@@ -206,6 +206,10 @@ watch(showNavDrawer, (newVal) => {
   if (!newVal) {
     setFocusedItem(null)
   }
+})
+
+const showLogo = computed(() => {
+  return mdAndUp.value && !focusedItem.value
 })
 
 const panelHopBindings = () => {
