@@ -76,8 +76,6 @@
 import { useRoute, useRouter } from 'vue-router'
 import { useAuth } from '../store/useAuth'
 import { onMounted, ref } from 'vue'
-import axios from 'axios'
-import { local } from '../Locals'
 
 const route = useRoute()
 const router = useRouter()
@@ -91,12 +89,6 @@ onMounted(async () => {
   const code = (route.query.code ?? '') as string
   if (!code) {
     loading.value = false
-    return
-  }
-
-  if (closeTab) {
-    localStorage.setItem(local.googleOAuthCode, code)
-    window.close()
     return
   }
 

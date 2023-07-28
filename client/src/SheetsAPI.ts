@@ -7,9 +7,10 @@ export type HeaderRows = { [key in Range]?: string[] }
 export const headerRowMemo: HeaderRows = {}
 
 function requestHeaders() {
+  const { getGoogleAccessToken } = useAuth();
   return {
     headers: {
-      Authorization: `Bearer ${useAuth().getToken()}`,
+      Authorization: `Bearer ${getGoogleAccessToken}`,
     }
   }
 }

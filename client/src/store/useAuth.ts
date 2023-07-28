@@ -59,6 +59,15 @@ export const useAuth = defineStore('auth', {
           return true;
         }
       });
+    },
+    getGoogleAccessToken() {
+      const googleId = this.googleProfile?.id
+      if (!googleId) {
+        console.error('Google ID not found')
+        return
+      }
+      const tokenKey = local.googleOAuthAccessToken(googleId)
+      return localStorage.getItem(tokenKey)
     }
   },
   actions: {
@@ -232,6 +241,7 @@ export const useAuth = defineStore('auth', {
 
       this.destroySocketConnection()
       this.removeGoogleAccessToken()
+      localStorage.removeItem(local.googleOAuthCode)
 
       useDialog().open({
         body: {

@@ -19,7 +19,9 @@ require('dotenv').config();
 const { OAuth2 } = google.auth;
 
 const { GOOGLE_OAUTH_CLIENT_ID, GOOGLE_OAUTH_CLIENT_SECRET } = process.env;
+
 const redirectUri = process.env.NODE_ENV ? 'https://www.snhuhonors.com/auth' : 'http://localhost:5177/auth';
+
 const spreadsheetId = process.env.NODE_ENV ? '1bW-aQRn-GAbTsNkV2VB9xtBFT3n-LPrSJXua_NA2G6Y' : '1Wh1rIfVQd8ekvrNloaU9vbxMkgdsDlAz2sqwH5YDLe0';
 
 const scope = [
@@ -62,7 +64,7 @@ function getAuthUrl(closeTabAfterAuth) {
   const auth = new OAuth2(
     GOOGLE_OAUTH_CLIENT_ID,
     GOOGLE_OAUTH_CLIENT_SECRET,
-    redirectUri + (closeTabAfterAuth ? '?close=true' : '')
+    redirectUri + (closeTabAfterAuth ? '-redirect' : '')
   );
   return auth.generateAuthUrl({
     access_type: 'offline',
