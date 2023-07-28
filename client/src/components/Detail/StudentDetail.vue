@@ -73,7 +73,6 @@
             </v-sheet>
           </v-dialog>
         </DetailHeader>
-        <v-btn @click="test">{{ numberOfUsersEditingItem }}</v-btn>
         <v-btn
           v-if="!student.email"
           @click="student.email = getStudentEmail(student.name)"
@@ -224,17 +223,13 @@ import { useMoveItem } from '../../MoveItems'
 const { setPanel, getActivePanel } = useSheetManager();
 const { Students, Theses, addItem } = useDocumentCache();
 
-const test = () => {
-  console.log(numberOfUsersEditingItem.value)
-}
-
 const props = defineProps<{
   item: Student;
 }>();
 
 const student = computed(() => props.item);
 
-const { broadcastThroughSocket, numberOfUsersEditingItem } = useUpdateItem(student);
+const { broadcastThroughSocket } = useUpdateItem(student);
 const { xs } = useDisplay();
 const { moveItem, movingItem, panelOnceMoved } = useMoveItem();
 

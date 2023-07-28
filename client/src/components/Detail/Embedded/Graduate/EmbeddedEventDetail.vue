@@ -28,16 +28,11 @@
 <script setup lang="ts">
 import EmbeddedDetailFrame from '../EmbeddedDetailFrame.vue'
 import { useSheetManager } from '../../../../store/useSheetManager'
-import { useDocumentCache } from '../../../../store/useDocumentCache'
-import { toRefs, computed } from 'vue'
+import { computed } from 'vue'
+import type { GradEngagement } from '../../../../SheetTypes';
 
-const { getActiveEmbeddedPanel } = useSheetManager()
-const { "Grad Engagements": gradEngagements } = useDocumentCache()
-const { selected } = toRefs(gradEngagements)
-
-const selectedEvent = computed(() => {
-  return selected.value[0]
-})
+const { getActiveEmbeddedPanel, focusedEmbeddedItem } = useSheetManager()
+const selectedEvent = computed(() => focusedEmbeddedItem as GradEngagement)
 
 const getNewDate = () => {
   const date = new Date()

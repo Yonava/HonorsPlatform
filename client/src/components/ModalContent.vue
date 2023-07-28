@@ -22,7 +22,7 @@
         class="xs-outer-wrapper"
       >
         <slot></slot>
-        <div style="margin-bottom: 125px"></div>
+        <div style="margin-bottom: 175px"></div>
       </v-sheet>
     </v-navigation-drawer>
     </div>
@@ -32,7 +32,6 @@
 <script setup lang="ts">
 import { useDisplay } from 'vuetify'
 import { computed, ref, watchEffect } from 'vue'
-import { useRouter } from 'vue-router'
 
 const { xs } = useDisplay()
 
@@ -42,7 +41,6 @@ const props = defineProps<{
 }>()
 
 const color = computed(() => props.bgColor || 'white')
-const router = useRouter()
 
 const emits = defineEmits([
   'update:modelValue'

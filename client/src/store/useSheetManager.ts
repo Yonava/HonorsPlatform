@@ -32,6 +32,7 @@ export const useSheetManager = defineStore('sheetManager', {
     } as SortOption,
     listItemBeingDragged: null as SheetItem | null,
     focusedItem: null as SheetItem | null,
+    focusedEmbeddedItem: null as SheetItem | null,
     listTransitionActive: false
   }),
   getters: {
@@ -193,6 +194,22 @@ export const useSheetManager = defineStore('sheetManager', {
       socket.emit('userFocus', {
         googleId: googleProfile.id,
         sysId: item?.sysId,
+        embeddedSysId: this.focusedEmbeddedItem?.sysId,
+        panelName: this.panel.panelName
+      })
+    },
+    setFocusedEmbeddedItem(item: SheetItem | null) {
+      this.focusedEmbeddedItem = item
+      const { socket, googleProfile } = useAuth()
+
+      if (!socket || !googleProfile) {
+        return
+      }
+
+      socket.emit('userFocus', {
+        googleId: googleProfile.id,
+        sysId: this.focusedItem?.sysId,
+        embeddedSysId: item?.sysId,
         panelName: this.panel.panelName
       })
     }

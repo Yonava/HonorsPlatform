@@ -86,8 +86,8 @@ export function useUpdateItem<T extends SheetItem>(item: Ref<T | null>, panelObj
   })
 
   watch(numberOfUsersEditingItem, (newNumber, oldNumber) => {
-    const onlyOneEditor = newNumber === 1 && newNumber < oldNumber
-    if (onlyOneEditor) {
+    const exitCollabMode = newNumber === 1 && newNumber < oldNumber
+    if (exitCollabMode) {
       forceUpdate()
     }
   })

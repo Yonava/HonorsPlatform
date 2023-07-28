@@ -27,7 +27,8 @@ type ActionData = {
 
 type FocusData = {
   [key in string]: {
-    sysId: string,
+    sysId: string | undefined,
+    embeddedSysId: string | undefined,
     panelName: PanelName,
     googleId: string
   }
