@@ -78,6 +78,7 @@ import { useSheetManager } from "../../store/useSheetManager";
 import { storeToRefs } from "pinia";
 import { useDocumentCache } from '../../store/useDocumentCache';
 import { useSyncState } from '../../store/useSyncState'
+import { useAuth } from '../../store/useAuth';
 import type { SheetItem } from '../../SheetTypes'
 import { headerRowMemo, replaceRange } from '../../SheetsAPI';
 import { warn } from '../../Warn'
@@ -163,6 +164,11 @@ const deleteItems = async (itemsToDelete: SheetItem[]) => {
     headerRow,
     ...newSheetData
   ])
+
+  const { socket } = useAuth()
+  socket.emit('userAction', {
+    action: 'refresh'
+  })
 
   await getAllDocuments({
     showLoading: false,

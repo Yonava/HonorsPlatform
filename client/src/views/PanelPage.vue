@@ -199,11 +199,14 @@ watchEffect(() => {
     setTimeout(() => {
       showNavDrawer.value = true
     }, 100)
+  } else if (!focusedItem.value) {
+    showNavDrawer.value = false
   }
 })
 
 watch(showNavDrawer, (newVal) => {
   if (!newVal) {
+    console.log('null')
     setFocusedItem(null)
   }
 })

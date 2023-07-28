@@ -3,6 +3,7 @@ import { unmapGraduates } from './DataMappers'
 import { replaceRange, getHeaderRowCache, postInRange } from './SheetsAPI'
 import { panels } from './Panels'
 import { useDocumentCache } from './store/useDocumentCache'
+import { useAuth } from './store/useAuth'
 
 export const statusOptions = [
   {
@@ -181,6 +182,11 @@ export async function incrementStudentYear(students: Student[] = useDocumentCach
 
   const headerRow = await getHeaderRowCache('Students')
   await replaceRange('Students', [headerRow, ...data])
+
+  const { socket } = useAuth()
+  socket.emit('userAction', {
+    action: 'refresh'
+  })
 
   await getAllDocuments({
     forceCacheRefresh: true,

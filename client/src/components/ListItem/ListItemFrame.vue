@@ -134,8 +134,8 @@ const { getSelectedItems, deleteItem } = useDocumentCache()
 const { focusData, getConnectedAccounts } = storeToRefs(useAuth())
 
 const accounts = computed(() => {
-  return getConnectedAccounts.value.filter(({ id }) => {
-    const sysIdAccountIsFocusedOn = focusData.value[id]?.sysId;
+  return getConnectedAccounts.value.filter(({ socketId }) => {
+    const sysIdAccountIsFocusedOn = focusData.value[socketId]?.sysId;
     return sysIdAccountIsFocusedOn === props.item.sysId
   });
 })

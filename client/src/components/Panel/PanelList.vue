@@ -9,7 +9,7 @@
           <div
             v-for="item in incrementallyRenderedItems"
             :key="item"
-            @click="setSelectedItem(item)"
+            @click="itemSelected(item)"
             style="width: 100%; height: 100%; position: relative;"
           >
             <component
@@ -59,9 +59,21 @@
 
 <script setup lang="ts">
 import { setSelectedItem } from './SetSelectedItem'
+import type { SheetItem } from '../../SheetTypes'
 import { useSheetManager } from '../../store/useSheetManager'
 import { useIncrementalRender } from '../../useIncrementalRender'
+import { useDisplay } from 'vuetify'
 import { storeToRefs } from 'pinia'
+
+const { smAndDown } = useDisplay()
+
+const itemSelected = (item: SheetItem) => {
+  if (smAndDown.value) {
+    useSheetManager().setFocusedItem(item)
+  } else {
+    setSelectedItem(item)
+  }
+}
 
 const sheetManager = useSheetManager()
 const { filteredItems, loadingItems, panel, searchFilter, listTransitionActive } = storeToRefs(sheetManager)

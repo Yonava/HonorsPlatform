@@ -46,7 +46,7 @@ export const useAuth = defineStore('auth', {
   }),
   getters: {
     getConnectedAccounts(state) {
-      const excludedIds = []
+      const excludedIds: string[] = []
       // if (state.googleProfile) {
       //   excludedIds.push(state.googleProfile.id)
       // }
@@ -115,6 +115,14 @@ export const useAuth = defineStore('auth', {
                 return
               }
               item[prop] = value
+              break
+
+            case 'refresh':
+              const { getAllDocuments } = useDocumentCache()
+              getAllDocuments({
+                showLoading: false,
+                forceCacheRefresh: true
+              })
               break
 
             case 'move':

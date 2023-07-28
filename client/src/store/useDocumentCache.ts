@@ -332,11 +332,11 @@ export const useDocumentCache = defineStore("documentCache", {
       this[panel.sheetRange].selected.push(item);
     },
     removeSelectedItem(options: RemoveSelectedItem = {}) {
-      const { panel: activePanel } = useSheetManager();
+      const { panel: activePanel, focusedItem, setFocusedItem } = useSheetManager();
 
       const {
         panel = activePanel,
-        item = useSheetManager().focusedItem
+        item = focusedItem
       } = options;
 
       if (!item) {
@@ -344,14 +344,18 @@ export const useDocumentCache = defineStore("documentCache", {
         return;
       }
 
-      if (panel === activePanel && item.sysId === useSheetManager().focusedItem?.sysId) {
+      if (panel.panelName === activePanel.panelName && item.sysId === focusedItem?.sysId) {
         const focusedItemIndex = this[panel.sheetRange].selected.findIndex((selectedItem) => selectedItem.sysId === item.sysId);
+
+        if (focusedItemIndex === -1) {
+          setFocusedItem(null)
+        }
 
         if (this[panel.sheetRange].selected.length > 1) {
           const nextFocusedItem = this[panel.sheetRange].selected[focusedItemIndex + 1] ?? this[panel.sheetRange].selected[focusedItemIndex - 1];
 
           setTimeout(() => {
-            useSheetManager().setFocusedItem(nextFocusedItem);
+            setFocusedItem(nextFocusedItem);
           }, 0);
         }
       }
@@ -396,11 +400,13 @@ export const useDocumentCache = defineStore("documentCache", {
       }
     },
     deleteItemCache(sysId: string, panelObject?: Panel) {
-      const { panel: activePanel, pinnedSysIds } = useSheetManager();
+      const { panel: activePanel, pinnedSysIds, focusedItem } = useSheetManager();
       const panel = panelObject ?? activePanel;
       const index = this[panel.sheetRange].list.findIndex(item => item.sysId === sysId);
 
-      const selectedItem = this[panel.sheetRange].selected.find(item => item.sysId === sysId);
+      const selectedItem = this[panel.sheetRange].selected.find(item => item.sysId === sysId) ?? focusedItem
+
+      console.log(selectedItem)
 
       if (index !== -1) {
         this[panel.sheetRange].list.splice(index, 1);
