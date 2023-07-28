@@ -46,16 +46,16 @@ export const useAuth = defineStore('auth', {
   getters: {
     getConnectedAccounts(state) {
       const excludedIds: string[] = []
-      if (state.googleProfile) {
-        excludedIds.push(state.googleProfile.id)
+      if (state.socket) {
+        excludedIds.push(state.socket.id)
       }
       const seenIds = new Set(excludedIds);
 
-      return state.connectedAccounts.filter(({ id }) => {
-         if (seenIds.has(id)) {
+      return state.connectedAccounts.filter(({ socketId }) => {
+         if (seenIds.has(socketId)) {
           return false;
         } else {
-          seenIds.add(id);
+          seenIds.add(socketId);
           return true;
         }
       });

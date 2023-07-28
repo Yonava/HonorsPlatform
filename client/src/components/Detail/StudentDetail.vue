@@ -2,7 +2,7 @@
   <div>
     <DetailFrame
       v-model="student.note"
-      @input="broadcastThroughSocket('note')"
+      @user-input="broadcastThroughSocket('note')"
       :item="student"
     >
       <template #main>

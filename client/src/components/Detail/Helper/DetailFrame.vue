@@ -32,6 +32,7 @@
           <slot name="notes-button"></slot>
           <v-textarea
             v-model="notepad"
+            @input="$emit('user-input')"
             auto-grow
             variant="outlined"
             label="Notes"
@@ -96,6 +97,7 @@ const props = defineProps<{
 // @ts-ignore
 const emits = defineEmits<{
   'update:modelValue': (value: string) => void,
+  'user-input': () => void,
 }>()
 
 const notepad = computed({
