@@ -50,7 +50,7 @@ const { getConnectedAccounts, focusData } = storeToRefs(useAuth())
 
 const accountTooltip = (account: ConnectedAccount) => {
   const { getItemBySysId } = useDocumentCache()
-  const userFocusData = focusData.value[account.id]
+  const userFocusData = focusData.value[account.socketId]
   const defaultMessage = `${account.given_name} is online`
   if (!userFocusData) {
     return defaultMessage

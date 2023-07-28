@@ -113,8 +113,8 @@ const { getActivePanel, loadingItems, filteredItems } = storeToRefs(useSheetMana
 const { setPanel } = useSheetManager();
 
 const displayAccounts = (panel: Panel) => {
-  return getConnectedAccounts.value.filter(({ id }) => {
-    const accountPanelName = focusData.value[id]?.panelName;
+  return getConnectedAccounts.value.filter(({ socketId }) => {
+    const accountPanelName = focusData.value[socketId]?.panelName;
     return panel.panelName === accountPanelName;
   });
 };

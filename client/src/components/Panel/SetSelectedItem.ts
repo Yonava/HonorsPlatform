@@ -6,15 +6,15 @@ export const setSelectedItem = (item: SheetItem) => {
   const { focusedItem } = useSheetManager()
   const { getSelectedItems, setSelectedItems, addSelectedItem } = useDocumentCache()
   const selectedItems = getSelectedItems()
-  const focusedItemIndex = selectedItems.findIndex(i => i.sysId === focusedItem?.sysId)
-  const selectedItemIndex = selectedItems.findIndex(i => i.sysId === item.sysId)
 
   // if the item is already selected, focus it
+  const selectedItemIndex = selectedItems.findIndex(i => i.sysId === item.sysId)
   if (selectedItemIndex !== -1) {
     useSheetManager().setFocusedItem(item)
     return
   }
 
+  const focusedItemIndex = selectedItems.findIndex(i => i.sysId === focusedItem?.sysId)
   if (focusedItemIndex === -1) {
     addSelectedItem({ item })
   } else {

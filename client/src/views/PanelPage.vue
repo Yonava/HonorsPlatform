@@ -172,7 +172,7 @@ import { useAuth } from '../store/useAuth'
 const { googleProfile } = storeToRefs(useAuth())
 const { setPanel, setFocusedItem } = useSheetManager()
 const { getActivePanel, pinnedSysIds, focusedItem } = storeToRefs(useSheetManager())
-const { getAllDocuments } = useDocumentCache()
+const { getAllDocuments, setSelectedItems } = useDocumentCache()
 const { setPanelCover } = useDialog()
 const { getPanelCover } = storeToRefs(useDialog())
 
@@ -206,8 +206,8 @@ watchEffect(() => {
 
 watch(showNavDrawer, (newVal) => {
   if (!newVal) {
-    console.log('null')
     setFocusedItem(null)
+    setSelectedItems()
   }
 })
 

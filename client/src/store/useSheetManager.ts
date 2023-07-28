@@ -119,6 +119,14 @@ export const useSheetManager = defineStore('sheetManager', {
         this.jumpToItem(jumpTo);
       }
 
+      const { socket, googleProfile } = useAuth()
+      socket.emit('userFocus', {
+        googleId: googleProfile?.id,
+        panelName: this.panel.panelName,
+        sysId: undefined,
+        embeddedSysId: undefined
+      })
+
       setTimeout(() => {
         this.canPanelSwitch = true;
       }, this.panelSwitchDebounce);
