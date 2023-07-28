@@ -43,13 +43,15 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { useDocumentCache } from '../../../store/useDocumentCache'
 import { useDisplay } from 'vuetify'
 import { useSheetManager } from '../../../store/useSheetManager'
 import ModalContent from '../../ModalContent.vue'
 
-const { getActiveEmbeddedPanel } = useSheetManager()
-const { getSelectedItems, setSelectedItems } = useDocumentCache()
+const {
+  getActiveEmbeddedPanel,
+  setFocusedEmbeddedItem,
+  focusedEmbeddedItem
+} = useSheetManager()
 
 const props = defineProps<{
   modelValue: string,
@@ -73,18 +75,11 @@ const { xs } = useDisplay()
 
 const dialogCanOpen = ref(true)
 const showDialog = computed({
-  get: () => getSelectedItems(getActiveEmbeddedPanel).length > 0 && dialogCanOpen.value,
+  get: () => !!focusedEmbeddedItem && dialogCanOpen.value,
   set: () => {
     dialogCanOpen.value = false
-    // setSelectedItems({
-    //     panel: getActiveEmbeddedPanel,
-    //     items: []
-    //   })
     setTimeout(() => {
-      setSelectedItems({
-        panel: getActiveEmbeddedPanel,
-        items: []
-      })
+      setFocusedEmbeddedItem(null)
       dialogCanOpen.value = true
     }, 300)
   }

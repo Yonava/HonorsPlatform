@@ -200,6 +200,7 @@ export const useSheetManager = defineStore('sheetManager', {
     },
     setFocusedEmbeddedItem(item: SheetItem | null) {
       this.focusedEmbeddedItem = item
+      console.log(this.focusedEmbeddedItem)
       const { socket, googleProfile } = useAuth()
 
       if (!socket || !googleProfile) {

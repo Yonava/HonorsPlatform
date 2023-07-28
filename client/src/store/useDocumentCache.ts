@@ -520,8 +520,11 @@ export const useDocumentCache = defineStore("documentCache", {
         this[panel.sheetRange].selected = [newItem]
       }
 
-      if (panel === activePanel) {
+      if (panel.panelName === activePanel.panelName) {
         useSheetManager().setFocusedItem(newItem)
+      } else if (panel.panelName === activePanel?.embedded.panel) {
+        console.log('embed added')
+        useSheetManager().setFocusedEmbeddedItem(newItem)
       }
 
       this.addItemCache(newItem, panel.panelName);

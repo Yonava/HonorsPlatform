@@ -34,6 +34,10 @@ import type { GradEngagement } from '../../../../SheetTypes';
 const { getActiveEmbeddedPanel, focusedEmbeddedItem } = useSheetManager()
 const selectedEvent = computed(() => focusedEmbeddedItem as GradEngagement)
 
+defineProps<{
+  broadcastThroughSocket: (prop: keyof GradEngagement, value?: string | number | boolean) => void
+}>()
+
 const getNewDate = () => {
   const date = new Date()
   const time = date.toLocaleTimeString('en-US', {

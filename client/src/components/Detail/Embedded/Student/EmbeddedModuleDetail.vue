@@ -54,7 +54,9 @@
         "
         :color="getActiveEmbeddedPanel.color + '-darken-2'"
         size="x-small"
-      >Completed Now</v-btn>
+      >
+        Completed Now
+      </v-btn>
     </div>
     <div class="d-flex flex-row">
       <v-text-field
@@ -83,7 +85,9 @@
         @click="openMoveDialog"
         variant="outlined"
         :color="getActiveEmbeddedPanel.color + '-darken-2'"
-      >complete</v-btn>
+      >
+        complete
+      </v-btn>
     </template>
   </EmbeddedDetailFrame>
 </template>
