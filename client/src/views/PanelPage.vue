@@ -168,7 +168,9 @@ import { useDialog } from '../store/useDialog'
 import { storeToRefs } from 'pinia'
 import { panels, version } from '../Panels'
 import { useAuth } from '../store/useAuth'
+import { useStalePageDetector } from '../StalePageDetector'
 
+useStalePageDetector()
 const { googleProfile } = storeToRefs(useAuth())
 const { setPanel, setFocusedItem } = useSheetManager()
 const { getActivePanel, pinnedSysIds, focusedItem } = storeToRefs(useSheetManager())

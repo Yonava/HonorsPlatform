@@ -63,7 +63,7 @@ export const useAuth = defineStore('auth', {
   },
   actions: {
     async createSocketConnection() {
-      if (this.socket) {
+      if (this.socket?.connected) {
         return
       }
 
