@@ -382,7 +382,7 @@ export const useDocumentCache = defineStore("documentCache", {
         this[panel.sheetRange].selected = [item];
         setTimeout(() => {
           useSheetManager().setFocusedItem(item)
-        }, 0)
+        }, 250)
         return item;
       } else {
         return null;

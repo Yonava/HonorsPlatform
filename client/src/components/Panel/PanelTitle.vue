@@ -60,7 +60,7 @@
           <div
             class="d-flex align-center"
             :style="{
-              transform: `translateX(${(displayAccounts(panel).length - 1) * 15}px)`,
+              transform: `translateX(${(displayAccounts(panel).length - 1) * 25}px)`,
             }"
           >
             <div
@@ -71,7 +71,7 @@
                 height: '40px',
                 borderRadius: '50%',
                 background: 'rgb(0, 0, 0)',
-                transform: `translateX(${i * -15}px)`,
+                transform: `translateX(${i * -25}px)`,
                 border: '2px solid rgba(255, 255, 255, 1)',
                 cursor: 'pointer',
               }"

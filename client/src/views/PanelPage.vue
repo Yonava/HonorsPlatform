@@ -12,7 +12,7 @@
       <div
         :style="{
           position: 'relative',
-          height: smAndUp ? 'calc(100vh - 64px)' : ''
+          height: 'calc(100vh - 64px)'
         }"
         class="d-flex flex-row"
       >
@@ -21,7 +21,7 @@
             zIndex: '99',
             position: 'absolute',
             width: mdAndUp ? (panelListWidth + 80) + 'px' : '100%',
-            height: mdAndUp ? '100%' : '100vh',
+            height: mdAndUp ? '100%' : 'calc(100vh - 64px)',
             overflow: 'auto',
             transform: getPanelCover.show ? 'translateX(0)' : 'translateX(-100%)',
             transition: 'transform 0.2s ease-in-out',

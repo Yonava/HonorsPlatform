@@ -30,6 +30,7 @@ io.on('connection', (socket) => {
       ...googleAccountData
     })
     io.emit('connectedAccounts', connectedAccounts)
+    io.emit('userFocus', focusData)
   })
 
   socket.on('userAction', (data) => {

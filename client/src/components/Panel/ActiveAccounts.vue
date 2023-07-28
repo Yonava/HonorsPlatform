@@ -2,19 +2,19 @@
   <div
     class="d-flex align-center mr-2"
     :style="{
-      transform: `translateX(${(getConnectedAccounts.length - 1) * 15}px)`,
+      transform: `translateX(${(getConnectedAccounts.length - 1) * 25}px)`,
     }"
   >
     <div
       v-for="(account, i) in getConnectedAccounts"
-      @click="profileClicked(account.id)"
+      @click="profileClicked(account)"
       :key="account.id"
       :style="{
         width: '40px',
         height: '40px',
         borderRadius: '50%',
         background: 'rgb(0, 0, 0)',
-        transform: `translateX(${i * -15}px)`,
+        transform: `translateX(${i * -25}px)`,
         border: '2px solid rgba(255, 255, 255, 1)',
         cursor: 'pointer',
       }"
@@ -56,6 +56,9 @@ const accountTooltip = (account: ConnectedAccount) => {
     return defaultMessage
   } else {
     const { panelName, sysId } = userFocusData
+    if (!sysId) {
+      return `${account.given_name} is viewing ${panels[panelName].title.plural}`
+    }
     const item = getItemBySysId(sysId, panelName)
     if (!item) {
       return defaultMessage
@@ -65,15 +68,29 @@ const accountTooltip = (account: ConnectedAccount) => {
   }
 }
 
-const profileClicked = (googleId: string) => {
-  const userFocusData = focusData.value[googleId]
+const profileClicked = (account: ConnectedAccount) => {
+  const userFocusData = focusData.value[account.socketId]
   if (!userFocusData) {
     return
-  } else {
-    const { panelName, sysId } = userFocusData
-    setPanel(panelName, {
-      value: sysId
-    })
   }
+
+  const { panelName, sysId } = userFocusData
+
+  if (!sysId) {
+    setPanel(panelName)
+    return
+  }
+
+  const { focusedItem } = useSheetManager()
+  if (focusedItem) {
+    const { sysId: focusedSysId } = focusedItem
+    if (focusedSysId === sysId) {
+      return
+    }
+  }
+
+  setPanel(panelName, {
+    value: sysId
+  })
 }
 </script>

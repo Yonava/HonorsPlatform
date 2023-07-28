@@ -77,14 +77,15 @@
           style="position: relative; height: 60px; transform: translateY(-5px)"
         >
           <div
-            v-for="(account, i) in accounts.slice(0, 2)"
+            v-for="(account, i) in accounts"
             :key="account.id"
             class="mr-2"
             :style="{
-              transform: `translateY(${i * -15}px)`,
+              transform: `translateY(${i * -20}px)`,
               width: '30px',
-              height: '100%',
+              height: '30px',
               borderRadius: '50%',
+              border: '2px solid rgba(255, 255, 255, 1)',
               cursor: 'pointer',
             }"
           >
