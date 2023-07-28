@@ -6,7 +6,6 @@ import { local } from "../Locals";
 import io from 'socket.io-client'
 import { getUserProfileData } from "../SheetsAPI";
 import { useDocumentCache } from "./useDocumentCache";
-import { SheetItem } from "../SheetTypes";
 import { PanelName } from "../Panels";
 
 export type GoogleProfile = {
@@ -47,9 +46,9 @@ export const useAuth = defineStore('auth', {
   getters: {
     getConnectedAccounts(state) {
       const excludedIds: string[] = []
-      // if (state.googleProfile) {
-      //   excludedIds.push(state.googleProfile.id)
-      // }
+      if (state.googleProfile) {
+        excludedIds.push(state.googleProfile.id)
+      }
       const seenIds = new Set(excludedIds);
 
       return state.connectedAccounts.filter(({ id }) => {
