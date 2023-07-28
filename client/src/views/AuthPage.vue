@@ -77,34 +77,31 @@ import { useRoute, useRouter } from 'vue-router'
 import { useAuth } from '../store/useAuth'
 import { onMounted, ref } from 'vue'
 import axios from 'axios'
+import { local } from '../Locals'
 
 const route = useRoute()
 const router = useRouter()
 const loading = ref(true)
 
 const auth = useAuth()
-const { forceAuthorize, setToken, createSocketConnection } = auth
+const { forceAuthorize, userLoginFlow } = auth
 
 onMounted(async () => {
   // check if google servers have redirected with a code
   const code = (route.query.code ?? '') as string
+  const closeTab = (route.query.close ?? '') as string
   if (!code) {
     loading.value = false
     return
   }
 
-  // if so, exchange code for access token and store it (useAuth will pick up on it)
-  const res = await axios.get(`/api/auth/${encodeURIComponent(code)}`)
-  const token = res.data.accessToken
-  if (!token) {
-    loading.value = false
-    throw new Error('No access token received')
+  if (closeTab) {
+    localStorage.setItem(local.googleOAuthCode, code)
+    window.close()
+    return
   }
-  setToken(token)
 
-  window.close()
-
-  createSocketConnection()
+  await userLoginFlow(code)
 
   router.push({
     name: 'panel'

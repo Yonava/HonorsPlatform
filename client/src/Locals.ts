@@ -7,6 +7,8 @@ export const local = {
   pinned: (panelName: PanelName) => `PINNED-${panelName}`,
   // temporary google token needed for all google api calls
   googleOAuthAccessToken: 'token',
+  // google oauth code
+  googleOAuthCode: 'code',
   // width of the list item container on panel page
   panelListWidth: 'panelListWidth',
 } as const

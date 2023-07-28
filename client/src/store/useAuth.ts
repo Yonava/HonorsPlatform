@@ -67,11 +67,6 @@ export const useAuth = defineStore('auth', {
         return
       }
 
-      if (!this.getToken()) {
-        console.error('Socket connection cannot be created without a token')
-        return
-      }
-
       const socketUrl = window.location.hostname === 'localhost' ? 'http://localhost:3001' : '/'
       this.socket = io(socketUrl)
 
@@ -144,9 +139,13 @@ export const useAuth = defineStore('auth', {
       })
 
       try {
-        const googleProfileData = await getUserProfileData()
-        this.googleProfile = googleProfileData
-        this.socket.emit('connectAccount', googleProfileData)
+        if (!this.googleProfile) {
+          console.error('Google profile data not found, attempting to retrieve...')
+          const googleProfileData = await getUserProfileData()
+          this.googleProfile = googleProfileData
+          return
+        }
+        this.socket.emit('connectAccount', this.googleProfile)
       } catch {
         console.error('Unable to get user profile data')
       }
@@ -172,16 +171,42 @@ export const useAuth = defineStore('auth', {
       }
       localStorage.setItem(local.googleOAuthAccessToken, token)
     },
-    async getURL(): Promise<string> {
-      const response = await axios.get('/api/auth/url')
+    setGoogleProfile(profile: GoogleProfile | null) {
+      this.googleProfile = profile
+    },
+    async getURL(closeTabAfterAuth = false): Promise<string> {
+      let requestUrl = '/api/auth/url'
+      if (closeTabAfterAuth) {
+        requestUrl += '?closeTabAfterAuth=true'
+      }
+      const response = await axios.get(requestUrl)
+      console.log('getURL response', response.data)
       if (!response.data.url) {
         throw new Error('No URL received')
       }
       const { url } = response.data
       return url
     },
-    async forceAuthorize(url?: string) {
-      url ??= await this.getURL();
+    async userLoginFlow(googleOAuthCode: string) {
+      try {
+        const { data } = await axios.get(`/api/auth/${encodeURIComponent(googleOAuthCode)}`)
+        const { accessToken, profile } = data
+
+        if (!accessToken) {
+          throw new Error('No access token received')
+        }
+
+        this.setToken(accessToken)
+        this.setGoogleProfile(profile)
+
+        await this.createSocketConnection()
+      } catch (error) {
+        console.error('userLoginFlow error', error)
+        throw error
+      }
+    },
+    async forceAuthorize() {
+      const url = await this.getURL();
       window.location.replace(url)
     },
     async authorize() {
@@ -189,16 +214,16 @@ export const useAuth = defineStore('auth', {
         return
       }
 
-      const url = await this.getURL()
+      const url = await this.getURL(true)
 
       // handles phones that don't support popups
       if (!window.open(url, '_blank')) {
-        this.forceAuthorize(url)
+        this.forceAuthorize()
         return
       }
 
       this.destroySocketConnection()
-      this.setToken(null)
+      localStorage.removeItem(local.googleOAuthCode)
 
       useDialog().open({
         body: {
@@ -208,20 +233,21 @@ export const useAuth = defineStore('auth', {
             {
               text: 'Sign In With Google',
               color: 'red',
-              onClick: () => this.forceAuthorize(url)
+              onClick: () => this.forceAuthorize()
             }
           ]
         }
       })
 
       this.pendingAuthorization = new Promise((resolve) => {
-        const interval = setInterval(() => {
-          if (this.getToken()) {
+        const interval = setInterval(async () => {
+          const code = localStorage.getItem(local.googleOAuthCode)
+          if (code) {
             clearInterval(interval)
-            resolve('token received')
             useDialog().close()
+            await this.userLoginFlow(code)
+            resolve('oauth code received')
             this.pendingAuthorization = null
-            this.createSocketConnection()
           }
         }, 100)
 

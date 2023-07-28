@@ -58,8 +58,12 @@ async function validateToken(req) {
   return accessToken;
 }
 
-function getAuthUrl() {
-  const auth = new OAuth2(GOOGLE_OAUTH_CLIENT_ID, GOOGLE_OAUTH_CLIENT_SECRET, redirectUri);
+function getAuthUrl(closeTabAfterAuth) {
+  const auth = new OAuth2(
+    GOOGLE_OAUTH_CLIENT_ID,
+    GOOGLE_OAUTH_CLIENT_SECRET,
+    redirectUri + (closeTabAfterAuth ? '?close=true' : '')
+  );
   return auth.generateAuthUrl({
     access_type: 'offline',
     login_hint: 'select_account',
@@ -81,14 +85,24 @@ async function newSheetInstance(accessToken) {
   }
 }
 
-// get user profile from google
-app.get('/api/user', async (req, res) => {
+const getGoogleProfileData = async (accessToken) => {
   try {
-    const accessToken = await validateToken(req);
     const auth = new OAuth2(GOOGLE_OAUTH_CLIENT_ID, GOOGLE_OAUTH_CLIENT_SECRET, redirectUri);
     auth.setCredentials({ access_token: accessToken });
     const oauth2 = google.oauth2({ auth, version: 'v2' });
     const { data } = await oauth2.userinfo.get();
+    return data;
+  } catch (e) {
+    console.log(e)
+    throw "Invalid Grant: Google Profile Data";
+  }
+}
+
+// get user profile from google
+app.get('/api/user', async (req, res) => {
+  try {
+    const accessToken = await validateToken(req);
+    const data = await getGoogleProfileData(accessToken);
     res.json(data);
   } catch (e) {
     console.log(e)
@@ -98,7 +112,8 @@ app.get('/api/user', async (req, res) => {
 });
 
 app.get('/api/auth/url', (req, res) => {
-  res.json({ url: getAuthUrl() });
+  const { closeTabAfterAuth = false } = req.query;
+  res.json({ url: getAuthUrl(closeTabAfterAuth) });
 });
 
 app.get('/api/auth/:authCode', async (req, res) => {
@@ -106,7 +121,12 @@ app.get('/api/auth/:authCode', async (req, res) => {
   try {
     const auth = new OAuth2(GOOGLE_OAUTH_CLIENT_ID, GOOGLE_OAUTH_CLIENT_SECRET, redirectUri);
     const { tokens } = await auth.getToken(authCode);
-    res.json({ accessToken: tokens.access_token });
+    const { access_token: accessToken } = tokens;
+    const profile = await getGoogleProfileData(accessToken);
+    res.json({
+      accessToken,
+      profile
+    });
   } catch (e) {
     console.log(e)
     res.json({

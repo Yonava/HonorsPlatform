@@ -46,15 +46,34 @@
               v-if="googleProfile"
               style="width: 50px; height: 50px; position: relative;"
             >
-              <img
-                :src="googleProfile.picture"
-                alt="Profile Picture"
-                style="border-radius: 50%; width: 100%; height: 100%; object-fit: cover; box-shadow: 0 0 5px rgba(0, 0, 0, 0.3); border: 4px solid white; cursor: pointer;"
-              />
+              <v-menu
+                :offset="[10, 0]"
+                location="top"
+              >
+                <template v-slot:activator="{ props }">
+                  <img
+                    v-bind="props"
+                    :src="googleProfile.picture"
+                    alt="Profile"
+                    style="border-radius: 50%; width: 100%; height: 100%; object-fit: cover; box-shadow: 0 0 5px rgba(0, 0, 0, 0.3); border: 3px solid white; cursor: pointer;"
+                  />
+                </template>
+                <v-sheet class="px-4 py-6">
+                  <v-btn
+                    @click="forceAuthorize()"
+                    block
+                    color="red"
+                  >
+                    Logout
+                  </v-btn>
+                </v-sheet>
+              </v-menu>
               <v-tooltip
                 activator="parent"
                 location="end"
-              >{{ googleProfile.name }}</v-tooltip>
+              >
+                {{ googleProfile.name }}
+              </v-tooltip>
             </div>
             <v-btn
               @click="$router.push({ name: 'registrar' })"
@@ -171,6 +190,7 @@ import { useAuth } from '../store/useAuth'
 import { useStalePageDetector } from '../StalePageDetector'
 
 useStalePageDetector()
+const { forceAuthorize } = useAuth()
 const { googleProfile } = storeToRefs(useAuth())
 const { setPanel, setFocusedItem } = useSheetManager()
 const { getActivePanel, pinnedSysIds, focusedItem } = storeToRefs(useSheetManager())
