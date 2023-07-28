@@ -158,21 +158,29 @@ export const useAuth = defineStore('auth', {
       this.socket.disconnect()
       this.socket = null
     },
-    getToken() {
-      return localStorage.getItem(local.googleOAuthAccessToken)
-    },
     setAuthTimeout(timeout: number) {
       this.authTimeoutInSeconds = timeout
     },
-    setToken(token: string | null) {
-      if (!token) {
-        localStorage.removeItem(local.googleOAuthAccessToken)
-        return
-      }
-      localStorage.setItem(local.googleOAuthAccessToken, token)
-    },
     setGoogleProfile(profile: GoogleProfile | null) {
       this.googleProfile = profile
+    },
+    setGoogleAccessToken(token: string) {
+      const googleId = this.googleProfile?.id
+      if (!googleId) {
+        console.error('Google ID not found')
+        return
+      }
+      const tokenKey = local.googleOAuthAccessToken(googleId)
+      localStorage.setItem(tokenKey, token)
+    },
+    removeGoogleAccessToken() {
+      const googleId = this.googleProfile?.id
+      if (!googleId) {
+        console.error('Google ID not found')
+        return
+      }
+      const tokenKey = local.googleOAuthAccessToken(googleId)
+      localStorage.removeItem(tokenKey)
     },
     async getURL(closeTabAfterAuth = false): Promise<string> {
       let requestUrl = '/api/auth/url'
@@ -196,8 +204,8 @@ export const useAuth = defineStore('auth', {
           throw new Error('No access token received')
         }
 
-        this.setToken(accessToken)
         this.setGoogleProfile(profile)
+        this.setGoogleAccessToken(accessToken)
 
         await this.createSocketConnection()
       } catch (error) {
@@ -223,7 +231,7 @@ export const useAuth = defineStore('auth', {
       }
 
       this.destroySocketConnection()
-      localStorage.removeItem(local.googleOAuthCode)
+      this.removeGoogleAccessToken()
 
       useDialog().open({
         body: {

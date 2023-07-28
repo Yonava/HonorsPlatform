@@ -89,7 +89,6 @@ const { forceAuthorize, userLoginFlow } = auth
 onMounted(async () => {
   // check if google servers have redirected with a code
   const code = (route.query.code ?? '') as string
-  const closeTab = (route.query.close ?? '') as string
   if (!code) {
     loading.value = false
     return

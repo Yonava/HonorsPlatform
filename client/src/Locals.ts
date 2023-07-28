@@ -6,7 +6,7 @@ export const local = {
   // comma separated list of pinned item sysIds for each panel
   pinned: (panelName: PanelName) => `PINNED-${panelName}`,
   // temporary google token needed for all google api calls
-  googleOAuthAccessToken: 'token',
+  googleOAuthAccessToken: (googleId: string) => 'ACCESS-TOKEN-' + googleId,
   // google oauth code
   googleOAuthCode: 'code',
   // width of the list item container on panel page
