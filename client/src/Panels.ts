@@ -224,4 +224,4 @@ export type GetSheetItemType<T extends PanelRange> = T extends 'Students' ? type
 
 export type Panel = typeof panels[PanelName];
 export const getPanel = (panelName: PanelName) => panels[panelName];
-export const version = 'prerelease v0.88.T (beta)'
+export const version = 'prerelease v0.88.T2 (beta)'
