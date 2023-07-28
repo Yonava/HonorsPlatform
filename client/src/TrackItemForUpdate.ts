@@ -78,7 +78,7 @@ export function useUpdateItem<T extends SheetItem>(item: Ref<T | null>, panelObj
       if (!dataForAccount) {
         continue
       }
-      if (dataForAccount.sysId === sysId) {
+      if (dataForAccount.sysId === sysId || dataForAccount.embeddedSysId === sysId) {
         accountsEditingItem++
       }
     }
