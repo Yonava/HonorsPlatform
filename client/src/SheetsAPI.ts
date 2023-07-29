@@ -25,8 +25,6 @@ function requestHeaders() {
     return localStorage.getItem(tokenKey)
   }
 
-  console.log("googleAccessToken", googleAccessToken())
-
   return {
     headers: {
       Authorization: `Bearer ${googleAccessToken()}`,

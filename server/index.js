@@ -188,6 +188,7 @@ app.delete("/api/range/:range/:row", async (req, res) => {
     await sheet.deleteByRow(range, row);
     res.json({ success: true });
   } catch (e) {
+    console.log(e)
     res.status(401).json({ error: 'Forbidden' });
     return;
   }

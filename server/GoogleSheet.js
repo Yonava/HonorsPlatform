@@ -57,7 +57,7 @@ module.exports = class GoogleSheet {
     return response.data.valueRanges;
   }
 
-  async clearByRow(range, row) {
+  async deleteByRow(range, row) {
     await this.sheets.spreadsheets.values.clear({
       spreadsheetId: this.spreadsheetId,
       range: `${range}!A${row}:Z${row}`,
