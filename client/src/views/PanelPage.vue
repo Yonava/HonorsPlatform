@@ -60,7 +60,7 @@
                 </template>
                 <v-sheet class="px-4 py-6">
                   <v-btn
-                    @click="forceAuthorize()"
+                    @click="userLogoutFlow"
                     block
                     color="red"
                   >
@@ -190,7 +190,7 @@ import { useAuth } from '../store/useAuth'
 import { useStalePageDetector } from '../StalePageDetector'
 
 useStalePageDetector()
-const { forceAuthorize } = useAuth()
+const { userLogoutFlow } = useAuth()
 const { googleProfile } = storeToRefs(useAuth())
 const { setPanel, setFocusedItem } = useSheetManager()
 const { getActivePanel, pinnedSysIds, focusedItem } = storeToRefs(useSheetManager())

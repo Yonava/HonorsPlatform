@@ -232,6 +232,10 @@ export const useAuth = defineStore('auth', {
         throw error
       }
     },
+    userLogoutFlow() {
+      this.removeGoogleAccessToken()
+      this.forceAuthorize()
+    },
     async forceAuthorize(url?: string) {
       const redirectUrl = url ?? await this.getURL();
       window.location.replace(redirectUrl)
