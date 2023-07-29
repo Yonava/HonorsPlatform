@@ -258,6 +258,7 @@ export const useAuth = defineStore('auth', {
       localStorage.setItem(local.closeAfterAuth, 'true')
 
       useDialog().open({
+        persistent: true,
         body: {
           title: 'Please Authorize',
           description: 'Please confirm your identity before continuing. Once completed, your session will automatically resume without any further action required.',
