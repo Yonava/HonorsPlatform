@@ -75,7 +75,10 @@
         </DetailHeader>
         <v-btn
           v-if="!student.email"
-          @click="student.email = getStudentEmail(student.name)"
+          @click="
+            student.email = getStudentEmail(student.name);
+            broadcastThroughSocket('email');
+          "
           :color="getActivePanel.color"
           size="x-small"
           class="mb-3"
@@ -173,7 +176,7 @@
           <v-btn
             @click="moveItem(student)"
             :loading="movingItem"
-            :color="panelOnceMoved.color"
+            :color="panelOnceMoved?.color"
             size="large"
             style="width: 49%"
           >
@@ -181,7 +184,7 @@
               class="mr-2"
               size="x-large"
             >
-              {{ panelOnceMoved.icon }}
+              {{ panelOnceMoved?.icon }}
             </v-icon>
             Graduate
           </v-btn>

@@ -1,38 +1,55 @@
 <template>
   <DetailFrame
     v-model="module.description"
+    @user-input="broadcastThroughSocket('description')"
     :item="module"
   >
     <template #main>
       <DetailHeader
         v-model="module.courseCode"
+        @input="broadcastThroughSocket('courseCode')"
         :item="module"
         placeholder="Course Code"
       >
         <LinkStudentButton
+          @update="broadcastThroughSocket('studentSysId')"
           :item="module"
         />
       </DetailHeader>
+
       <v-btn
         v-if="!module.term"
-        @click="module.term = getCurrentTerm()"
+        @click="
+          module.term = getCurrentTerm();
+          broadcastThroughSocket('term');
+        "
         :color="color"
         size="x-small"
         class="mb-3"
-      >Current Term</v-btn>
+      >
+        Current Term
+      </v-btn>
+
       <v-text-field
         v-model="module.term"
+        @input="broadcastThroughSocket('term')"
         :rules="[(v) => termValidator(v) || 'Potentially invalid term']"
         prepend-icon="mdi-calendar"
         label="Term"
       ></v-text-field>
+
       <InstructorComplete
-        @update="module.instructor = $event"
+        @update="
+          module.instructor = $event;
+          broadcastThroughSocket('instructor');
+        "
         :instructor="module.instructor"
         :color="color"
       />
+
       <v-text-field
         v-model="module.instructor"
+        @input="broadcastThroughSocket('instructor')"
         label="Instructor"
         prepend-icon="mdi-human-male-board"
       ></v-text-field>
@@ -42,37 +59,57 @@
       </h1>
 
       <div class="d-flex flex-row mb-2">
+
         <v-btn
           v-if="!module.docuSignCreated"
-          @click="module.docuSignCreated = new Date().toLocaleDateString()"
+          @click="
+            module.docuSignCreated = new Date().toLocaleDateString('en-US');
+            broadcastThroughSocket('docuSignCreated');
+          "
           :color="color"
           size="x-small"
-        >Now</v-btn>
+        >
+          Now
+        </v-btn>
+
         <v-spacer></v-spacer>
+
         <v-btn
           v-if="!module.docuSignCompleted"
-          @click="module.docuSignCompleted = new Date().toLocaleDateString()"
+          @click="
+            module.docuSignCompleted = new Date().toLocaleDateString('en-US');
+            broadcastThroughSocket('docuSignCompleted');
+          "
           :color="color"
           size="x-small"
-        >Now</v-btn>
+        >
+          Now
+        </v-btn>
+
       </div>
 
       <div class="d-flex flex-row">
+
         <v-text-field
           v-model="module.docuSignCreated"
+          @input="broadcastThroughSocket('docuSignCreated')"
           prepend-icon="mdi-calendar-alert"
           style="width: 45%"
           class="mr-6"
           label="DocuSign Created"
         ></v-text-field>
+
         <v-text-field
           v-model="module.docuSignCompleted"
+          @input="broadcastThroughSocket('docuSignCompleted')"
           style="width: 45%"
           prepend-icon="mdi-calendar-check"
           label="DocuSign Completed"
         ></v-text-field>
+
       </div>
     </template>
+
     <template #buttons>
       <v-btn
         @click="moveItem(module)"
@@ -84,11 +121,12 @@
           class="mr-2"
           size="x-large"
         >
-          {{ panelOnceMoved.icon }}
+          {{ panelOnceMoved?.icon }}
         </v-icon>
         Complete Module
       </v-btn>
     </template>
+
   </DetailFrame>
 </template>
 
@@ -115,7 +153,7 @@ const props = defineProps<{
 
 const module = computed(() => props.item)
 
-useUpdateItem(module)
+const { broadcastThroughSocket } = useUpdateItem(module)
 
 const { moveItem, movingItem, panelOnceMoved } = useMoveItem()
 </script>

@@ -1,27 +1,38 @@
 <template>
   <DetailFrame
     v-model="thesis.note"
+    @user-input="broadcastThroughSocket('note')"
     :item="thesis"
   >
     <template #main>
       <DetailHeader
         v-model="thesis.title"
+        @input="broadcastThroughSocket('title')"
         :item="thesis"
         :placeholder="`${getActivePanel.title.singular} Title`"
       >
         <LinkStudentButton
+          @update="broadcastThroughSocket('studentSysId')"
           :item="thesis"
         />
       </DetailHeader>
+
       <v-btn
         v-if="!thesis.term"
-        @click="thesis.term = getCurrentTerm()"
+        @click="
+          thesis.term = getCurrentTerm();
+          broadcastThroughSocket('term');
+        "
         :color="getActivePanel.color"
         class="mb-2"
         size="x-small"
-      >Current Term</v-btn>
+      >
+        Current Term
+      </v-btn>
+
       <v-text-field
         v-model="thesis.term"
+        @input="broadcastThroughSocket('term')"
         :rules="[(v) => termValidator(v) || 'Potentially invalid term']"
         label="Term"
         prepend-icon="mdi-calendar"
@@ -30,34 +41,51 @@
       <div class="mb-2 d-flex flex-row ">
         <v-btn
           v-if="!thesis.draftReceived"
-          @click="thesis.draftReceived = new Date().toLocaleString().split(',')[0]"
+          @click="
+            thesis.draftReceived = new Date().toLocaleString('en-US').split(',')[0];
+            broadcastThroughSocket('draftReceived');
+          "
           :color="getActivePanel.color"
           size="x-small"
-        >Today</v-btn>
+        >
+          Today
+        </v-btn>
         <v-spacer></v-spacer>
         <v-btn
           v-if="!thesis.proposalReceived"
-          @click="thesis.proposalReceived = new Date().toLocaleString().split(',')[0]"
+          @click="
+            thesis.proposalReceived = new Date().toLocaleString('en-US').split(',')[0];
+            broadcastThroughSocket('proposalReceived');
+          "
           :color="getActivePanel.color"
           size="x-small"
-        >Today</v-btn>
+        >
+          Today
+        </v-btn>
       </div>
 
       <div class="d-flex flex-row">
+
         <v-text-field
           v-model="thesis.draftReceived"
+          @input="broadcastThroughSocket('draftReceived')"
           label="Draft Received"
           prepend-icon="mdi-calendar-check"
           class="mr-6"
         ></v-text-field>
+
         <v-text-field
           v-model="thesis.proposalReceived"
+          @input="broadcastThroughSocket('proposalReceived')"
           label="Proposal Received"
           prepend-icon="mdi-calendar-check"
         ></v-text-field>
+
       </div>
+
       <v-select
         v-model="thesis.decision"
+        @update:model-value="broadcastThroughSocket('decision')"
         :items="[
           'Approved',
           'Rejected',
@@ -66,6 +94,7 @@
         :prepend-icon="thesis.decision === 'Approved' ? 'mdi-check-circle' : thesis.decision === 'Rejected' ? 'mdi-close-circle' : 'mdi-alert-circle'"
         label="Decision"
       ></v-select>
+
       <div class="d-flex flex-row">
         <InstructorComplete
           @update="thesis.mentor = $event; thesis.mentorEmail = getFacultyEmail($event)"
@@ -146,7 +175,7 @@ const props = defineProps<{
 
 const thesis = computed(() => props.item)
 
-useUpdateItem(thesis)
+const { broadcastThroughSocket } = useUpdateItem(thesis)
 
 const student = computed(() => {
   const { studentMatch } = useStudentMatcher(thesis.value.studentSysId)
@@ -155,6 +184,12 @@ const student = computed(() => {
 
 const studentPanel = getPanel('STUDENTS')
 const graduatePanel = getPanel('GRADUATES')
+
+const jumpTo = (panel: 'STUDENTS' | 'GRADUATES') => {
+  setPanel(panel, {
+    value: thesis.value.studentSysId
+  })
+}
 
 const viewProfileButton = computed(() => {
   if (student.value.error === 'NOT_LINKED') {
@@ -245,10 +280,4 @@ const viewProfileButton = computed(() => {
     }
   }
 })
-
-const jumpTo = (panel: 'STUDENTS' | 'GRADUATES') => {
-  setPanel(panel, {
-    value: thesis.value.studentSysId
-  })
-}
 </script>

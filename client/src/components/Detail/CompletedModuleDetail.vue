@@ -1,79 +1,104 @@
 <template>
   <DetailFrame
     v-model="completedModule.description"
+    @user-input="broadcastThroughSocket('description')"
     :item="completedModule"
   >
     <template #main>
       <DetailHeader
         v-model="completedModule.courseCode"
+        @input="broadcastThroughSocket('courseCode')"
         :item="completedModule"
         placeholder="Course Code"
       >
         <LinkStudentButton
+          @update="broadcastThroughSocket('studentSysId')"
           :item="completedModule"
         />
       </DetailHeader>
 
       <v-text-field
         v-model="completedModule.completedDate"
+        @input="broadcastThroughSocket('completedDate')"
         label="Completed Date"
         prepend-icon="mdi-check"
       ></v-text-field>
+
       <v-text-field
         v-model="completedModule.term"
+        @input="broadcastThroughSocket('term')"
         label="Term"
         prepend-icon="mdi-calendar"
       ></v-text-field>
+
       <InstructorComplete
-        @update="completedModule.instructor = $event"
+        @update="
+          completedModule.instructor = $event;
+          broadcastThroughSocket('instructor');
+        "
         :instructor="completedModule.instructor"
         :color="getActivePanel.color"
       />
+
       <v-text-field
         v-model="completedModule.instructor"
+        @input="broadcastThroughSocket('instructor')"
         label="Instructor"
         prepend-icon="mdi-human-male-board"
       ></v-text-field>
+
       <div class="d-flex flex-row">
+
         <v-text-field
           v-model="completedModule.docuSignCreated"
+          @input="broadcastThroughSocket('docuSignCreated')"
           class="mr-6"
           label="DocuSign Created"
           prepend-icon="mdi-calendar-alert"
         ></v-text-field>
+
         <v-text-field
           v-model="completedModule.docuSignCompleted"
+          @input="broadcastThroughSocket('docuSignCompleted')"
           label="DocuSign Completed"
           prepend-icon="mdi-calendar-check"
         ></v-text-field>
+
       </div>
+
       <div class="d-flex flex-column align-center">
+
         <h2>
           Final Grade
         </h2>
+
         <input
           v-model="completedModule.grade"
+          @input="broadcastThroughSocket('grade')"
           type="text"
           class="grade-input"
           placeholder="Grade"
           style="font-size: 5em; text-align: center;"
-        >
+        />
+
       </div>
     </template>
+
     <template #buttons>
       <v-btn
         @click="moveItem(completedModule)"
-        :color="panelOnceMoved.color + '-darken-2'"
+        :color="panelOnceMoved?.color + '-darken-2'"
         :loading="movingItem"
         size="large"
       >
+
         <v-icon
           class="mr-2"
           size="x-large"
         >
-          {{ panelOnceMoved.icon }}
+          {{ panelOnceMoved?.icon }}
         </v-icon>
-        Move Back to {{ panelOnceMoved.title.plural }}
+        Move Back to {{ panelOnceMoved?.title.plural }}
       </v-btn>
     </template>
   </DetailFrame>
@@ -100,7 +125,7 @@ const completedModule = computed(() => props.item)
 
 const { moveItem, movingItem, panelOnceMoved } = useMoveItem()
 
-useUpdateItem(completedModule)
+const { broadcastThroughSocket } = useUpdateItem(completedModule)
 </script>
 
 <style scoped>

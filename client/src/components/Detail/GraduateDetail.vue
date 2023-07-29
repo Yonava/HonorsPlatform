@@ -1,11 +1,13 @@
 <template>
   <DetailFrame
     v-model="grad.note"
+    @user-input="broadcastThroughSocket('note')"
     :item="grad"
   >
     <template #main>
       <DetailHeader
         v-model="grad.name"
+        @input="broadcastThroughSocket('name')"
         :id="grad.id"
         :item="grad"
         placeholder="Name"
@@ -24,26 +26,17 @@
         </template>
       </DetailHeader>
 
-      <div class="d-flex align-center">
-        <v-text-field
-          v-model="grad.email"
-          :rules="[(v) => emailValidator(v) || 'Invalid email']"
-          label="Email"
-          prepend-icon="mdi-email"
-        ></v-text-field>
-        <v-btn
-          v-if="grad.email"
-          @click="sendEmail(grad.email)"
-          :color="getActivePanel.color"
-          size="small"
-          class="ml-4"
-        >
-          email
-        </v-btn>
-      </div>
+      <v-text-field
+        v-model="grad.email"
+        @input="broadcastThroughSocket('email')"
+        :rules="[(v) => emailValidator(v) || 'Invalid email']"
+        label="Email"
+        prepend-icon="mdi-email"
+      ></v-text-field>
 
       <v-text-field
         v-model="grad.phone"
+        @input="broadcastThroughSocket('phone')"
         :rules="[(v) => phoneValidator(v) || 'Invalid phone number']"
         label="Phone"
         prepend-icon="mdi-phone"
@@ -51,23 +44,30 @@
 
       <v-btn
         v-if="!grad.graduationDate"
-        @click="grad.graduationDate = new Date().toLocaleString().split(',')[0]"
+        @click="
+          grad.graduationDate = new Date().toLocaleString('en-US').split(',')[0];
+          broadcastThroughSocket('graduationDate');
+        "
         :color="getActivePanel.color"
         size="x-small"
         class="mb-2"
-        >Today</v-btn
       >
+        Today
+      </v-btn>
+
       <v-text-field
         v-model="grad.graduationDate"
+        @input="broadcastThroughSocket('graduationDate')"
         label="Graduation Date"
         prepend-icon="mdi-calendar"
       ></v-text-field>
+
     </template>
     <template #buttons>
       <v-btn
         @click="moveItem(grad)"
         :loading="movingItem"
-        :color="panelOnceMoved.color"
+        :color="panelOnceMoved?.color"
         size="large"
       >
         <v-icon
@@ -76,7 +76,7 @@
         >
           mdi-account-arrow-right
         </v-icon>
-        Move Back to {{ panelOnceMoved.title.plural }}
+        Move Back to {{ panelOnceMoved?.title.plural }}
       </v-btn>
     </template>
   </DetailFrame>
@@ -90,7 +90,6 @@ import { computed } from "vue";
 import {
   emailValidator,
   phoneValidator,
-  sendEmail,
 } from "../../EmailUtilities";
 import { useUpdateItem } from "../../TrackItemForUpdate";
 import type { Graduate } from "../../SheetTypes";
@@ -105,7 +104,7 @@ const props = defineProps<{
 
 const grad = computed(() => props.item);
 
-useUpdateItem(grad);
+const { broadcastThroughSocket } = useUpdateItem(grad);
 
 async function generateGradId() {
   const newId = "G" + Math.random().toString().substring(2, 9);

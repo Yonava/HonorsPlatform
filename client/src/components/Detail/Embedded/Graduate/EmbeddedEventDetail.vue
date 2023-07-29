@@ -5,19 +5,28 @@
   >
     <v-btn
       v-if="!selectedEvent.dateTime"
-      @click="selectedEvent.dateTime = getNewDate()"
+      @click="
+        selectedEvent.dateTime = getNewDate();
+        broadcastThroughSocket('dateTime');
+      "
       :color="getActiveEmbeddedPanel.color + '-darken-2'"
       size="x-small"
       class="mb-3"
-    >Now</v-btn>
+    >
+      Now
+    </v-btn>
+
     <v-text-field
       v-model="selectedEvent.dateTime"
+      @input="broadcastThroughSocket('dateTime')"
       prepend-inner-icon="mdi-clock-outline"
       label="Date/Time"
       variant="outlined"
     ></v-text-field>
+
     <v-textarea
       v-model="selectedEvent.note"
+      @input="broadcastThroughSocket('note')"
       no-resize
       label="Note"
       variant="outlined"

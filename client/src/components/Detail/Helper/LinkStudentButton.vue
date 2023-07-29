@@ -37,6 +37,10 @@ const props = defineProps<{
   linkFrom?: 'students' | 'graduates'
 }>()
 
+const emits = defineEmits<{
+  'update': [void]
+}>()
+
 const student = computed(() => {
   const { studentInfo } = useStudentInfo(props.item.studentSysId)
   return studentInfo.value
@@ -45,7 +49,10 @@ const student = computed(() => {
 const linkStudent = () => {
   useDialog().open({
     component: {
-      render: props.linkFrom === 'graduates' ? LinkGraduate : LinkStudent
+      render: props.linkFrom === 'graduates' ? LinkGraduate : LinkStudent,
+      props: {
+        onUpdate: () => emits('update'),
+      }
     },
   })
 }

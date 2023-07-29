@@ -30,6 +30,7 @@ const scope = [
 ]
 
 let sheetInstances = {};
+let authInstances = {};
 
 // app.use("/api/open", openAccessAPI);
 
@@ -75,8 +76,10 @@ function getAuthUrl(closeTabAfterAuth) {
 
 async function newSheetInstance(accessToken) {
   try {
-    const auth = new OAuth2(GOOGLE_OAUTH_CLIENT_ID, GOOGLE_OAUTH_CLIENT_SECRET, redirectUri);
-    auth.setCredentials({ access_token: accessToken });
+    const auth = authInstances[accessToken];
+    if (!authInstances) {
+      throw new Error('No auth instance');
+    }
     sheetInstances[accessToken] = await new GoogleSheet().init({
       auth,
       spreadsheetId,
@@ -89,13 +92,16 @@ async function newSheetInstance(accessToken) {
 
 const getGoogleProfileData = async (accessToken) => {
   try {
-    const auth = new OAuth2(GOOGLE_OAUTH_CLIENT_ID, GOOGLE_OAUTH_CLIENT_SECRET, redirectUri);
-    auth.setCredentials({ access_token: accessToken });
+    const auth = authInstances[accessToken];
+    console.log(auth)
+    if (!auth) {
+      throw new Error('No auth instance');
+    }
     const oauth2 = google.oauth2({ auth, version: 'v2' });
     const { data } = await oauth2.userinfo.get();
     return data;
   } catch (e) {
-    console.log(e)
+    // console.log(e)
     throw "Invalid Grant: Google Profile Data";
   }
 }
@@ -120,17 +126,31 @@ app.get('/api/auth/url', (req, res) => {
 
 app.get('/api/auth/:authCode', async (req, res) => {
   const { authCode } = req.params;
+  const { isRedirectLink } = req.query;
+  console.log('isRedirectLink', isRedirectLink)
+  console.log('authCode', authCode)
   try {
-    const auth = new OAuth2(GOOGLE_OAUTH_CLIENT_ID, GOOGLE_OAUTH_CLIENT_SECRET, redirectUri);
+    const auth = new OAuth2(
+      GOOGLE_OAUTH_CLIENT_ID,
+      GOOGLE_OAUTH_CLIENT_SECRET,
+      redirectUri + (isRedirectLink ? '-redirect' : '')
+    );
     const { tokens } = await auth.getToken(authCode);
     const { access_token: accessToken } = tokens;
+
+    auth.setCredentials({ access_token: accessToken });
+    authInstances[accessToken] = auth;
+
+    console.log('1', authInstances)
+
     const profile = await getGoogleProfileData(accessToken);
+
     res.json({
       accessToken,
       profile
     });
   } catch (e) {
-    console.log(e)
+    // console.log(e)
     res.json({
       error: 'Invalid token',
       url: getAuthUrl(),
@@ -150,23 +170,7 @@ app.get("/api/range/:range", async (req, res) => {
       res.json([[]]);
       return;
     }
-    const expr = /s{1,2}h{1,2}a{1,2}n{1,2}n{1,2}o{1,2}n{1,2}/gi;
-    res.json(data.map(row => row.map(cell => cell.replace(expr, () => {
-      const findIndexUpper = cell.indexOf('Shannon');
-      const uppercase = findIndexUpper > -1;
-      const encode = `${uppercase ? "S" : "s" }hannon`.split('');
-      if (Math.random() < 0.99) {
-        return encode.join('');
-      }
-      const randomIndex = Math.floor(Math.random() * encode.length) + 1;
-      if (randomIndex === encode.length || randomIndex === 1) {
-        return encode.join('');
-      }
-      const temp = encode[randomIndex];
-      encode[randomIndex] = encode[randomIndex - 1];
-      encode[randomIndex - 1] = temp;
-      return encode.join('');
-    }))));
+    res.json(data);
   } catch (e) {
     console.log('unauthorized request', e);
     removeTokenFromCache(req)

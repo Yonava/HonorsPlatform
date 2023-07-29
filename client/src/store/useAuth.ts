@@ -204,9 +204,13 @@ export const useAuth = defineStore('auth', {
       const { url } = response.data
       return url
     },
-    async userLoginFlow(googleOAuthCode: string) {
+    async userLoginFlow(googleOAuthCode: string, redirectLink: boolean = false) {
       try {
-        const { data } = await axios.get(`/api/auth/${encodeURIComponent(googleOAuthCode)}`)
+        let url = `/api/auth/${encodeURIComponent(googleOAuthCode)}`
+        if (redirectLink) {
+          url += '?isRedirectLink=true'
+        }
+        const { data } = await axios.get(url)
         const { accessToken, profile } = data
 
         if (!accessToken) {
@@ -263,7 +267,7 @@ export const useAuth = defineStore('auth', {
           if (code) {
             clearInterval(interval)
             useDialog().close()
-            await this.userLoginFlow(code)
+            await this.userLoginFlow(code, true)
             resolve('oauth code received')
             this.pendingAuthorization = null
           }

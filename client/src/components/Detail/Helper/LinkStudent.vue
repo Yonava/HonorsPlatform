@@ -56,6 +56,12 @@ const { Students } = useDocumentCache()
 
 const filterQuery = ref('')
 
+const props = defineProps<{
+  props: {
+    onUpdate: () => void
+  }
+}>()
+
 const filteredItems = computed(() => {
   return filterItems(
     [...Students.list].filter(item => !!item.name || !!item.id),
@@ -73,6 +79,7 @@ const studentLinked = (sysId: string) => {
   }
 
   itemToModify.studentSysId = sysId
+  props.props.onUpdate()
   useDialog().close()
 }
 </script>
