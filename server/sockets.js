@@ -19,6 +19,7 @@ io.on('connection', (socket) => {
     if (index === -1) {
       return
     }
+    console.log(`${connectedAccounts[index].name} (${connectedAccounts[index].socketId}) disconnected`)
     connectedAccounts.splice(index, 1)
     delete focusData[socket.id]
     io.emit('connectedAccounts', connectedAccounts)
@@ -29,6 +30,8 @@ io.on('connection', (socket) => {
       socketId: socket.id,
       ...googleAccountData
     })
+    console.log(`${googleAccountData.name} (${socket.id}) connected`)
+    console.log('connectedAccounts', connectedAccounts)
     io.emit('connectedAccounts', connectedAccounts)
     io.emit('userFocus', focusData)
   })

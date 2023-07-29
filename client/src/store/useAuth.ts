@@ -85,6 +85,8 @@ export const useAuth = defineStore('auth', {
         return
       }
 
+      this.destroySocketConnection()
+
       const socketUrl = window.location.hostname === 'localhost' ? 'http://localhost:3001' : '/'
       this.socket = io(socketUrl)
 
@@ -168,11 +170,9 @@ export const useAuth = defineStore('auth', {
       }
     },
     destroySocketConnection() {
-      if (!this.socket) {
-        console.warn('Socket connection does not exist')
-        return
+      if (this.socket) {
+        this.socket.disconnect()
       }
-      this.socket.disconnect()
       this.socket = null
     },
     setAuthTimeout(timeout: number) {
@@ -249,7 +249,6 @@ export const useAuth = defineStore('auth', {
         return
       }
 
-      this.destroySocketConnection()
       this.removeGoogleAccessToken()
       localStorage.removeItem(local.googleOAuthCode)
       localStorage.setItem(local.closeAfterAuth, 'true')
