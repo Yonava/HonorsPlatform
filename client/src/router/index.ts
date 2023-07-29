@@ -4,7 +4,6 @@ import Leaderboard from '../views/LeaderboardPage.vue'
 import Auth from '../views/AuthPage.vue'
 import Registrar from '../views/BuildRegistrarList.vue'
 import Email from '../views/ComposeMassEmail.vue'
-import AuthRedirect from '../views/AuthRedirect.vue'
 
 import { useDocumentCache } from '../store/useDocumentCache'
 import { useAuth } from '../store/useAuth'
@@ -24,11 +23,6 @@ const routes = [
     path: '/auth',
     name: 'auth',
     component: Auth
-  },
-  {
-    path: '/auth-redirect',
-    name: 'auth-redirect',
-    component: AuthRedirect
   },
   {
     path: '/registrar',
@@ -60,8 +54,8 @@ router.beforeEach(async (to, from) => {
   const routesWithData: typeof routes[number]['name'][] = ['panel', 'registrar', 'email']
 
   if (routesWithData.includes(goingTo)) {
-    useDocumentCache().getAllDocuments()
-    useAuth().createSocketConnection()
+    await useDocumentCache().getAllDocuments()
+    await useAuth().createSocketConnection()
   }
 
   if (name === defaultTitle || to.name === 'panel') {

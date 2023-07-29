@@ -2,6 +2,15 @@ const express = require("express")
 const cors = require("cors");
 const app = express();
 const http = require('http')
+const { google } = require('googleapis');
+
+require('dotenv').config();
+
+const { OAuth2 } = google.auth;
+const { GOOGLE_OAUTH_CLIENT_ID, GOOGLE_OAUTH_CLIENT_SECRET } = process.env;
+
+const redirectUri = process.env.NODE_ENV ? 'https://www.snhuhonors.com/auth' : 'http://localhost:5177/auth';
+module.exports.redirectUri = redirectUri;
 
 app.use(cors());
 app.use(express.json());
@@ -11,62 +20,21 @@ exports.server = server;
 require('./sockets')
 
 const GoogleSheet = require("./GoogleSheet.js");
-// const openAccessAPI = require("./openAccessAPI.js");
-const { google } = require('googleapis');
-
-require('dotenv').config();
-
-const { OAuth2 } = google.auth;
-
-const { GOOGLE_OAUTH_CLIENT_ID, GOOGLE_OAUTH_CLIENT_SECRET } = process.env;
-
-const redirectUri = process.env.NODE_ENV ? 'https://www.snhuhonors.com/auth' : 'http://localhost:5177/auth';
-
-const spreadsheetId = process.env.NODE_ENV ? '1bW-aQRn-GAbTsNkV2VB9xtBFT3n-LPrSJXua_NA2G6Y' : '1Wh1rIfVQd8ekvrNloaU9vbxMkgdsDlAz2sqwH5YDLe0';
 
 const scope = [
   'https://www.googleapis.com/auth/userinfo.profile',
   'https://www.googleapis.com/auth/spreadsheets'
 ]
 
-let sheetInstances = {};
-let authInstances = {};
-
 // app.use("/api/open", openAccessAPI);
 
-function removeTokenFromCache(req) {
-  if (!req.headers.authorization) {
-    return;
-  }
-  const accessToken = req.headers.authorization.split(' ')[1];
-  delete sheetInstances[accessToken];
-}
-
-async function validateToken(req) {
-  const accessToken = req.headers.authorization.split(' ')[1];
-  if (!accessToken) {
-    throw new Error('No bearer token provided');
-  }
-
-  if (sheetInstances[accessToken]) {
-    return accessToken;
-  }
-
-  try {
-    await newSheetInstance(accessToken);
-  } catch (e) {
-    console.log(e)
-  }
-
-  return accessToken;
-}
-
-function getAuthUrl(closeTabAfterAuth) {
+function getAuthUrl() {
   const auth = new OAuth2(
     GOOGLE_OAUTH_CLIENT_ID,
     GOOGLE_OAUTH_CLIENT_SECRET,
-    redirectUri + (closeTabAfterAuth ? '-redirect' : '')
+    redirectUri
   );
+
   return auth.generateAuthUrl({
     access_type: 'offline',
     login_hint: 'select_account',
@@ -74,29 +42,14 @@ function getAuthUrl(closeTabAfterAuth) {
   });
 }
 
-async function newSheetInstance(accessToken) {
-  try {
-    const auth = authInstances[accessToken];
-    if (!authInstances) {
-      throw new Error('No auth instance');
-    }
-    sheetInstances[accessToken] = await new GoogleSheet().init({
-      auth,
-      spreadsheetId,
-    });
-  } catch (e) {
-    console.log(e)
-    throw "Invalid Grant: New Sheet Instance";
-  }
-}
-
 const getGoogleProfileData = async (accessToken) => {
   try {
-    const auth = authInstances[accessToken];
-    console.log(auth)
-    if (!auth) {
-      throw new Error('No auth instance');
-    }
+    const auth = new OAuth2(
+      GOOGLE_OAUTH_CLIENT_ID,
+      GOOGLE_OAUTH_CLIENT_SECRET,
+      redirectUri
+    );
+    auth.setCredentials({ access_token: accessToken });
     const oauth2 = google.oauth2({ auth, version: 'v2' });
     const { data } = await oauth2.userinfo.get();
     return data;
@@ -108,42 +61,38 @@ const getGoogleProfileData = async (accessToken) => {
 
 // get user profile from google
 app.get('/api/user', async (req, res) => {
+  const { authorization } = req.headers;
+  const accessToken = authorization.split(' ')[1];
+
+  console.log('hitting get user', accessToken)
+
   try {
-    const accessToken = await validateToken(req);
     const data = await getGoogleProfileData(accessToken);
     res.json(data);
   } catch (e) {
     console.log(e)
-    removeTokenFromCache(req)
     res.status(401).json({ error: 'Forbidden' });
   }
 });
 
 app.get('/api/auth/url', (req, res) => {
-  const { closeTabAfterAuth = false } = req.query;
-  res.json({ url: getAuthUrl(closeTabAfterAuth) });
+  res.json({ url: getAuthUrl() });
 });
 
 app.get('/api/auth/:authCode', async (req, res) => {
+  console.log('hitting auth route')
   const { authCode } = req.params;
-  const { isRedirectLink } = req.query;
-  console.log('isRedirectLink', isRedirectLink)
-  console.log('authCode', authCode)
   try {
     const auth = new OAuth2(
       GOOGLE_OAUTH_CLIENT_ID,
       GOOGLE_OAUTH_CLIENT_SECRET,
-      redirectUri + (isRedirectLink ? '-redirect' : '')
+      redirectUri
     );
     const { tokens } = await auth.getToken(authCode);
     const { access_token: accessToken } = tokens;
-
-    auth.setCredentials({ access_token: accessToken });
-    authInstances[accessToken] = auth;
-
-    console.log('1', authInstances)
-
     const profile = await getGoogleProfileData(accessToken);
+
+    console.assert(accessToken && profile, 'Auth entry point failed');
 
     res.json({
       accessToken,
@@ -153,98 +102,115 @@ app.get('/api/auth/:authCode', async (req, res) => {
     // console.log(e)
     res.json({
       error: 'Invalid token',
-      url: getAuthUrl(),
-      verbose: e
     });
   }
 })
 
 app.get("/api/range/:range", async (req, res) => {
+  const { range } = req.params;
+  const { authorization } = req.headers;
+  const accessToken = authorization.split(' ')[1];
+
+  console.log('hitting 1', accessToken)
+
   try {
-    const accessToken = await validateToken(req);
-    const { range } = req.params;
-    const data = await sheetInstances[accessToken].getRange(range);
-    // google returns undefined when sheet is empty
-    if (!data) {
-      console.log(`No data found in range ${range}`)
-      res.json([[]]);
-      return;
-    }
+    const sheet = new GoogleSheet(accessToken);
+    const data = await sheet.getRange(range);
     res.json(data);
   } catch (e) {
-    console.log('unauthorized request', e);
-    removeTokenFromCache(req)
     res.status(401).json({ error: 'Forbidden' });
+    return;
   }
 });
 
 app.post("/api/ranges", async (req, res) => {
+  const { ranges } = req.body;
+  const { authorization } = req.headers;
+  const accessToken = authorization.split(' ')[1];
+
+  console.log('hitting 2', accessToken)
+
   try {
-    const accessToken = await validateToken(req);
-    const { ranges } = req.body;
-    const data = await sheetInstances[accessToken].getRanges(ranges);
+    const sheet = new GoogleSheet(accessToken);
+    const data = await sheet.getRanges(ranges);
     res.json(data);
   } catch (e) {
-    console.log(e);
-    removeTokenFromCache(req)
     res.status(401).json({ error: 'Forbidden' });
+    return;
   }
 });
 
 app.put("/api/range/:range/:row", async (req, res) => {
+  const { range, row } = req.params;
+  const data = req.body;
+  const { authorization } = req.headers;
+  const accessToken = authorization.split(' ')[1];
+
+  console.log('hitting 3', accessToken)
+
   try {
-    const accessToken = await validateToken(req);
-    const { range, row } = req.params;
-    const data = req.body;
-    await sheetInstances[accessToken].updateByRow(range, row, data);
+    const sheet = new GoogleSheet(accessToken);
+    await sheet.updateByRow(range, row, data);
     res.json({ success: true });
-  } catch(e) {
-    removeTokenFromCache(req)
-    console.log(e);
+  } catch (e) {
     res.status(401).json({ error: 'Forbidden' });
+    return;
   }
 });
 
 app.put("/api/range/:range", async (req, res) => {
+  const { range } = req.params;
+  const data = req.body;
+  const { authorization } = req.headers;
+  const accessToken = authorization.split(' ')[1];
+
+  console.log('hitting 4', accessToken)
+
   try {
-    const accessToken = await validateToken(req);
-    const { range } = req.params;
-    const data = req.body;
-    await sheetInstances[accessToken].replaceRange(range, data);
+    const sheet = new GoogleSheet(accessToken);
+    await sheet.replaceRange(range, data);
     res.json({ success: true });
-  } catch(e) {
-    console.log(e);
-    removeTokenFromCache(req)
+  } catch (e) {
     res.status(401).json({ error: 'Forbidden' });
+    return;
   }
 });
 
 app.delete("/api/range/:range/:row", async (req, res) => {
+  const { range, row } = req.params;
+  const { authorization } = req.headers;
+  const accessToken = authorization.split(' ')[1];
+
+  console.log('hitting 5', accessToken)
+
   try {
-    const accessToken = await validateToken(req);
-    const { range, row } = req.params;
-    await sheetInstances[accessToken].clearByRow(range, row);
+    const sheet = new GoogleSheet(accessToken);
+    await sheet.deleteByRow(range, row);
     res.json({ success: true });
-  } catch(e) {
-    console.log(e);
-    removeTokenFromCache(req)
+  } catch (e) {
     res.status(401).json({ error: 'Forbidden' });
+    return;
   }
 });
 
 app.post("/api/range/:range", async (req, res) => {
+  const { range } = req.params;
+  const data = req.body;
+  const { authorization } = req.headers;
+  const accessToken = authorization.split(' ')[1];
+
+  console.log('hitting 6', accessToken)
+
   try {
-    const accessToken = await validateToken(req);
-    const { range } = req.params;
-    const data = req.body;
-    const rowInsertedAt = await sheetInstances[accessToken].postInRange(range, data);
+    const sheet = new GoogleSheet(accessToken);
+    const rowInsertedAt = await sheet.postInRange(range, data);
     res.json({
-      row: rowInsertedAt
+      row: rowInsertedAt,
+      success: true
     });
-  } catch(e) {
-    console.log(e);
-    removeTokenFromCache(req)
+  } catch (e) {
     res.status(401).json({ error: 'Forbidden' });
+    return;
   }
 });
 

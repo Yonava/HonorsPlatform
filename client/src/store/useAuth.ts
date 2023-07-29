@@ -63,8 +63,13 @@ export const useAuth = defineStore('auth', {
     getGoogleAccessToken() {
       const googleId = this.googleProfile?.id
       if (!googleId) {
-        console.error('Google ID not found')
-        return
+        const { accessTokenPrefix } = local
+        const tokenKey = Object.keys(localStorage).find(key => key.startsWith(accessTokenPrefix))
+        if (!tokenKey) {
+          console.error('useAuth getGoogleAccessToken: No google access token found')
+          return
+        }
+        return localStorage.getItem(tokenKey)
       }
       const tokenKey = local.googleOAuthAccessToken(googleId)
       return localStorage.getItem(tokenKey)
@@ -73,6 +78,10 @@ export const useAuth = defineStore('auth', {
   actions: {
     async createSocketConnection() {
       if (this.socket?.connected) {
+        return
+      }
+
+      if (!this.getGoogleAccessToken) {
         return
       }
 
@@ -152,7 +161,6 @@ export const useAuth = defineStore('auth', {
           console.error('Google profile data not found, attempting to retrieve...')
           const googleProfileData = await getUserProfileData()
           this.googleProfile = googleProfileData
-          return
         }
         this.socket.emit('connectAccount', this.googleProfile)
       } catch {
@@ -191,26 +199,23 @@ export const useAuth = defineStore('auth', {
       const tokenKey = local.googleOAuthAccessToken(googleId)
       localStorage.removeItem(tokenKey)
     },
-    async getURL(closeTabAfterAuth = false): Promise<string> {
-      let requestUrl = '/api/auth/url'
-      if (closeTabAfterAuth) {
-        requestUrl += '?closeTabAfterAuth=true'
-      }
-      const response = await axios.get(requestUrl)
-      console.log('getURL response', response.data)
+    async getURL(): Promise<string> {
+      const response = await axios.get('/api/auth/url')
       if (!response.data.url) {
         throw new Error('No URL received')
       }
       const { url } = response.data
       return url
     },
-    async userLoginFlow(googleOAuthCode: string, redirectLink: boolean = false) {
+    async userLoginFlow(googleOAuthCode: string) {
+
+      localStorage.removeItem(local.closeAfterAuth)
+      localStorage.removeItem(local.googleOAuthCode)
+
       try {
-        let url = `/api/auth/${encodeURIComponent(googleOAuthCode)}`
-        if (redirectLink) {
-          url += '?isRedirectLink=true'
-        }
-        const { data } = await axios.get(url)
+        let authUrl = `/api/auth/${encodeURIComponent(googleOAuthCode)}`
+        // todo: add try catch here
+        const { data } = await axios.get(authUrl)
         const { accessToken, profile } = data
 
         if (!accessToken) {
@@ -220,32 +225,34 @@ export const useAuth = defineStore('auth', {
         this.setGoogleProfile(profile)
         this.setGoogleAccessToken(accessToken)
 
+        console.log('creating socket connection...')
         await this.createSocketConnection()
       } catch (error) {
         console.error('userLoginFlow error', error)
         throw error
       }
     },
-    async forceAuthorize() {
-      const url = await this.getURL();
-      window.location.replace(url)
+    async forceAuthorize(url?: string) {
+      const redirectUrl = url ?? await this.getURL();
+      window.location.replace(redirectUrl)
     },
     async authorize() {
       if (this.pendingAuthorization) {
         return
       }
 
-      const url = await this.getURL(true)
+      const url = await this.getURL()
 
       // handles phones that don't support popups
       if (!window.open(url, '_blank')) {
-        this.forceAuthorize()
+        this.forceAuthorize(url)
         return
       }
 
       this.destroySocketConnection()
       this.removeGoogleAccessToken()
       localStorage.removeItem(local.googleOAuthCode)
+      localStorage.setItem(local.closeAfterAuth, 'true')
 
       useDialog().open({
         body: {
@@ -267,7 +274,7 @@ export const useAuth = defineStore('auth', {
           if (code) {
             clearInterval(interval)
             useDialog().close()
-            await this.userLoginFlow(code, true)
+            await this.userLoginFlow(code)
             resolve('oauth code received')
             this.pendingAuthorization = null
           }

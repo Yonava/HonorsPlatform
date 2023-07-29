@@ -31,7 +31,7 @@
         size="x-large"
       >
         <v-icon class="mr-2">mdi-google</v-icon>
-        Continue With Google
+        Continue With Google!
       </v-btn>
       <div style="max-width: 450px; width: 80%" class="mb-10">
         <v-expansion-panels variant="accordion">
@@ -76,6 +76,7 @@
 import { useRoute, useRouter } from 'vue-router'
 import { useAuth } from '../store/useAuth'
 import { onMounted, ref } from 'vue'
+import { local } from '../Locals'
 
 const route = useRoute()
 const router = useRouter()
@@ -90,6 +91,15 @@ onMounted(async () => {
   if (!code) {
     loading.value = false
     return
+  }
+
+  const close = localStorage.getItem(local.closeAfterAuth)
+  if (close) {
+    localStorage.setItem(local.googleOAuthCode, code)
+    window.close()
+    if (window.closed) {
+      return
+    }
   }
 
   await userLoginFlow(code)

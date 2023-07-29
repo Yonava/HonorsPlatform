@@ -120,12 +120,14 @@ export const useSheetManager = defineStore('sheetManager', {
       }
 
       const { socket, googleProfile } = useAuth()
-      socket.emit('userFocus', {
-        googleId: googleProfile?.id,
-        panelName: this.panel.panelName,
-        sysId: undefined,
-        embeddedSysId: undefined
-      })
+      if (socket) {
+        socket.emit('userFocus', {
+          googleId: googleProfile?.id,
+          panelName: this.panel.panelName,
+          sysId: undefined,
+          embeddedSysId: undefined
+        })
+      }
 
       setTimeout(() => {
         this.canPanelSwitch = true;

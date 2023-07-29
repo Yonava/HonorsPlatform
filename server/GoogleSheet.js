@@ -1,4 +1,12 @@
 const { google } = require("googleapis")
+const { OAuth2 } = google.auth;
+const { GOOGLE_OAUTH_CLIENT_ID, GOOGLE_OAUTH_CLIENT_SECRET } = process.env;
+const { redirectUri } = require("./index.js");
+
+const spreadsheetIds = {
+  dev: '1Wh1rIfVQd8ekvrNloaU9vbxMkgdsDlAz2sqwH5YDLe0',
+  production: '1bW-aQRn-GAbTsNkV2VB9xtBFT3n-LPrSJXua_NA2G6Y',
+}
 
 module.exports = class GoogleSheet {
   spreadsheetId;
@@ -15,17 +23,20 @@ module.exports = class GoogleSheet {
     }
   }
 
-  async init({ auth, spreadsheetId }) {
-    try {
-      this.sheets = google.sheets({
-        version: 'v4',
-        auth,
-      });
-      this.spreadsheetId = spreadsheetId;
-      return this;
-    } catch (e) {
-      throw e
-    }
+  constructor(accessToken) {
+    const auth = new OAuth2(
+      GOOGLE_OAUTH_CLIENT_ID,
+      GOOGLE_OAUTH_CLIENT_SECRET,
+      redirectUri
+    );
+    auth.setCredentials({
+      access_token: accessToken
+    });
+    this.sheets = google.sheets({
+      version: 'v4',
+      auth,
+    });
+    this.spreadsheetId = spreadsheetIds[process.env.NODE_ENV ?? 'dev'];
   }
 
   async getRange(range) {
