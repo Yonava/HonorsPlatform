@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useAuth } from "./store/useAuth";
+import { local } from "./Locals";
 
 export type Range = "Students" | "Modules" | "Graduates" | "Completed Modules" | "Announcements" | "Grad Engagements" | "Registrar List" | "Theses" | "Temporary Data";
 
@@ -7,10 +8,28 @@ export type HeaderRows = { [key in Range]?: string[] }
 export const headerRowMemo: HeaderRows = {}
 
 function requestHeaders() {
-  const { getGoogleAccessToken } = useAuth();
+
+  const { googleProfile } = useAuth();
+
+  const googleAccessToken = () => {
+    const googleId = googleProfile?.id
+    if (!googleId) {
+      const { accessTokenPrefix } = local
+      const tokenKey = Object.keys(localStorage).find(key => key.startsWith(accessTokenPrefix))
+      if (!tokenKey) {
+        return
+      }
+      return localStorage.getItem(tokenKey)
+    }
+    const tokenKey = local.googleOAuthAccessToken(googleId)
+    return localStorage.getItem(tokenKey)
+  }
+
+  console.log("googleAccessToken", googleAccessToken())
+
   return {
     headers: {
-      Authorization: `Bearer ${getGoogleAccessToken}`,
+      Authorization: `Bearer ${googleAccessToken()}`,
     }
   }
 }

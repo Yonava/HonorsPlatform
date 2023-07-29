@@ -37,7 +37,6 @@ export const useAuth = defineStore('auth', {
   state: () => ({
     pendingAuthorization: null as Promise<string> | null,
     authTimeoutInSeconds: 60,
-    authTimedOut: false,
     socket: null as any,
     googleProfile: null as GoogleProfile | null,
     connectedAccounts: [] as ConnectedAccount[],
@@ -282,13 +281,14 @@ export const useAuth = defineStore('auth', {
             resolve('oauth code received')
             this.pendingAuthorization = null
           }
-        }, 100)
+        }, 500)
 
         setTimeout(() => {
+          clearInterval(interval)
           if (!this.pendingAuthorization) {
             return
           }
-          this.authTimedOut = true
+          this.destroySocketConnection()
           console.error('Token not received. Request timed out. User redirected to auth page')
           router.push({
             name: 'auth'
