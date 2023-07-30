@@ -7,6 +7,7 @@ import io from 'socket.io-client'
 import { getUserProfileData } from "../SheetsAPI";
 import { useDocumentCache } from "./useDocumentCache";
 import { PanelName } from "../Panels";
+import { useSheetManager } from "./useSheetManager";
 
 export type GoogleProfile = {
   id: string,
@@ -112,7 +113,7 @@ export const useAuth = defineStore('auth', {
               break
 
             case 'delete':
-              deleteItemCache(data.payload.sysId, data.payload.panelObject)
+              deleteItemCache(data.payload.sysId, data.payload.panelName)
               break
 
             case 'update':
@@ -163,7 +164,15 @@ export const useAuth = defineStore('auth', {
           const googleProfileData = await getUserProfileData()
           this.googleProfile = googleProfileData
         }
-        this.socket.emit('connectAccount', this.googleProfile)
+        this.socket.emit('connectAccount', {
+          googleProfile: this.googleProfile,
+          initialFocusState: {
+            sysId: useSheetManager().focusedItemSysId,
+            embeddedSysId: useSheetManager().focusedEmbeddedItem?.sysId,
+            panelName: useSheetManager().panel.panelName,
+            googleId: this.googleProfile?.id
+          }
+        })
       } catch {
         console.error('Unable to get user profile data')
       }

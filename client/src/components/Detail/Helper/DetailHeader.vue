@@ -29,7 +29,7 @@
       </p>
       <slot></slot>
       <v-spacer></v-spacer>
-      <SyncStatus v-if="item.sysId === focusedItem?.sysId" />
+      <SyncStatus v-if="item.sysId === focusedItemSysId" />
     </div>
     <div class="d-flex flex-row align-center">
       <input
@@ -53,7 +53,7 @@ import { SheetItem } from '../../../SheetTypes';
 import SyncStatus from "./SyncStatus.vue";
 
 const { getPanelCover } = storeToRefs(useDialog());
-const { focusedItem } = storeToRefs(useSheetManager());
+const { focusedItemSysId } = storeToRefs(useSheetManager());
 const { getSelectedItems, removeSelectedItem } = useDocumentCache();
 
 const props = defineProps<{

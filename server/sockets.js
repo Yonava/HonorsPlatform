@@ -25,12 +25,14 @@ io.on('connection', (socket) => {
     io.emit('connectedAccounts', connectedAccounts)
   })
 
-  socket.on('connectAccount', (googleAccountData) => {
+  socket.on('connectAccount', (joinData) => {
+    const { googleProfile, initialFocusState } = joinData
     connectedAccounts.push({
       socketId: socket.id,
-      ...googleAccountData
+      ...googleProfile,
     })
-    console.log(`${googleAccountData.name} (${socket.id}) connected`)
+    focusData[socket.id] = initialFocusState
+    console.log(`${googleProfile.name} (${socket.id}) connected`)
     console.log('connectedAccounts', connectedAccounts)
     io.emit('connectedAccounts', connectedAccounts)
     io.emit('userFocus', focusData)

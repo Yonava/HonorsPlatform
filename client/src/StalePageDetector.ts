@@ -3,7 +3,7 @@ import { useAuth } from "./store/useAuth"
 import { onUnmounted } from "vue"
 
 export const useStalePageDetector = () => {
-  const { createSocketConnection } = useAuth()
+  const { createSocketConnection, socket, destroySocketConnection } = useAuth()
   const { getAllDocuments } = useDocumentCache()
 
   const onVisibilityChange = async () => {
@@ -12,7 +12,10 @@ export const useStalePageDetector = () => {
         showLoading: false,
       })
 
-      await createSocketConnection()
+      if (!socket?.connected) {
+        console.log("Reconnecting socket")
+        await createSocketConnection()
+      }
     }
   }
 

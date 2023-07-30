@@ -58,12 +58,12 @@ export function useUpdateItem<T extends SheetItem>(item: Ref<T | null>, panelObj
 
     timeout = setTimeout(async () => {
       updateInProgress = true
+      currentItem = JSON.stringify(newItem)
       await updateItem({
         item: newItem,
         panel,
       })
       updateInProgress = false
-      currentItem = JSON.stringify(newItem)
     }, updateDebounceMs);
   }
 
@@ -112,6 +112,7 @@ export function useUpdateItem<T extends SheetItem>(item: Ref<T | null>, panelObj
       return
     }
     updateInProgress = true
+    currentItem = JSON.stringify(item.value)
     await updateItem({
       item: item.value,
       panel,

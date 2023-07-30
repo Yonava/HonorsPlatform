@@ -1,5 +1,5 @@
 <template>
-  <div @click="setFocusedItem(item)">
+  <div @click="setFocusedItem(item.sysId)">
     <div
       ref="el"
       :class="[

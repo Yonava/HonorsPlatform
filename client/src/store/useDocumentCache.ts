@@ -32,17 +32,17 @@ type DueForRefresh = {
 }
 
 type AddSelectedItem = {
-  item?: types.SheetItem;
+  item: types.SheetItem;
   panel?: Panel;
 }
 
 type SetSelectedItems = {
-  items?: types.SheetItem[];
+  items: types.SheetItem[];
   panel?: Panel;
 }
 
 type RemoveSelectedItem = {
-  item?: types.SheetItem;
+  item: types.SheetItem;
   panel?: Panel;
 }
 
@@ -311,57 +311,62 @@ export const useDocumentCache = defineStore("documentCache", {
       this.refreshLog[range] = new Date();
       return documents;
     },
-    setSelectedItems(options: SetSelectedItems = {}) {
-      const { panel: activePanel } = useSheetManager();
+    setSelectedItems(options: SetSelectedItems) {
+      const { panel: activePanel, setFocusedItem } = useSheetManager();
+
       const {
         panel = activePanel,
-        items = []
+        items
       } = options;
+
       this[panel.sheetRange].selected = items;
+
+      const onActivePanel = panel.panelName === activePanel.panelName;
+      if (items.length > 1 && onActivePanel) {
+        setFocusedItem(items[0].sysId)
+      }
     },
-    addSelectedItem(options: AddSelectedItem = {}) {
-      const { panel: activePanel } = useSheetManager();
-      const { panel = activePanel, item = null } = options;
-      if (item === null) {
-        console.error("useDocumentCache.addSelectedItem: item is null");
-        return;
+    addSelectedItem(options: AddSelectedItem) {
+      const { panel: activePanel, setFocusedItem } = useSheetManager();
+
+      const {
+        panel = activePanel,
+        item
+      } = options;
+
+      const onActivePanel = panel.panelName === activePanel.panelName;
+
+      if (onActivePanel) {
+        setFocusedItem(item.sysId)
       }
-      if (panel === activePanel) {
-        useSheetManager().setFocusedItem(item);
-      }
+
       this[panel.sheetRange].selected.push(item);
     },
-    removeSelectedItem(options: RemoveSelectedItem = {}) {
-      const { panel: activePanel, focusedItem, setFocusedItem } = useSheetManager();
+    removeSelectedItem(options: RemoveSelectedItem) {
+      const {
+        panel: activePanel,
+        focusedItemSysId,
+        setFocusedItem
+      } = useSheetManager();
 
       const {
         panel = activePanel,
-        item = focusedItem
+        item,
       } = options;
 
-      if (!item) {
-        console.error("useDocumentCache.removeSelectedItem: item is undefined");
-        return;
+      const indexOfFocusedItemInSelected = this[panel.sheetRange].selected.findIndex((selectedItem) => selectedItem.sysId === focusedItemSysId);
+      const itemBeingRemovedIsFocused = indexOfFocusedItemInSelected !== -1;
+      const thereIsAnotherItemSelected = this[panel.sheetRange].selected.length > 1;
+
+      if (itemBeingRemovedIsFocused && thereIsAnotherItemSelected) {
+        const itemToTheLeft = this[panel.sheetRange].selected[indexOfFocusedItemInSelected - 1];
+        const itemToTheRight = this[panel.sheetRange].selected[indexOfFocusedItemInSelected + 1];
+        const nextFocusedItem = itemToTheRight || itemToTheLeft;
+        setFocusedItem(nextFocusedItem.sysId);
       }
 
-      if (panel.panelName === activePanel.panelName && item.sysId === focusedItem?.sysId) {
-        const focusedItemIndex = this[panel.sheetRange].selected.findIndex((selectedItem) => selectedItem.sysId === item.sysId);
-
-        if (focusedItemIndex === -1) {
-          setFocusedItem(null)
-        }
-
-        if (this[panel.sheetRange].selected.length > 1) {
-          const nextFocusedItem = this[panel.sheetRange].selected[focusedItemIndex + 1] ?? this[panel.sheetRange].selected[focusedItemIndex - 1];
-
-          setTimeout(() => {
-            setFocusedItem(nextFocusedItem);
-          }, 0);
-        }
-      }
-
-      const index = this[panel.sheetRange].selected.findIndex((selectedItem) => selectedItem.sysId === item.sysId);
-      this[panel.sheetRange].selected.splice(index, 1);
+      const indexOfItemInSelected = this[panel.sheetRange].selected.findIndex((selectedItem) => selectedItem.sysId === item.sysId);
+      this[panel.sheetRange].selected.splice(indexOfItemInSelected, 1);
     },
     setSelectedItemByKeyValue(options: SetSelectedItemByKeyValue = {}) {
       const { panel: activePanel } = useSheetManager();
@@ -369,60 +374,67 @@ export const useDocumentCache = defineStore("documentCache", {
       const {
         panel = activePanel,
         key = "sysId",
-        value = undefined,
+        value = null,
       } = options;
 
-      if (value === undefined) {
+      if (value === null) {
         console.error("useDocumentCache.setSelectedItemByKeyValue: value is undefined");
         return null;
       }
 
-      const item = this[panel.sheetRange].list.find(item => item[key] === value);
-      if (item) {
-        this[panel.sheetRange].selected = [item];
-        setTimeout(() => {
-          useSheetManager().setFocusedItem(item)
-        }, 250)
-        return item;
-      } else {
+      const item = this[panel.sheetRange].list.find(item => item[key] === value) as types.SheetItem | undefined
+      if (!item) {
         return null;
       }
+
+      this.setSelectedItems({
+        panel,
+        items: [item]
+      })
+
+      return item;
     },
-    setSelectedItemBySysId(sysId: string, panelObject?: Panel) {
+    setSelectedItemBySysId(sysId: string, panelName?: PanelName) {
       const { panel: activePanel } = useSheetManager();
-      const panel = panelObject ?? activePanel;
-      const item = this[panel.sheetRange].list.find(item => item.sysId === sysId);
-      if (item) {
-        this[panel.sheetRange].selected = [item];
-        return item;
-      } else {
-        return null;
-      }
+      const actualPanelName = panelName ?? activePanel.panelName;
+      const panel = panels[actualPanelName];
+      return this.setSelectedItemByKeyValue({
+        panel,
+        key: "sysId",
+        value: sysId
+      })
     },
-    deleteItemCache(sysId: string, panelObject?: Panel) {
-      const { panel: activePanel, pinnedSysIds, focusedItem } = useSheetManager();
-      const panel = panelObject ?? activePanel;
-      const index = this[panel.sheetRange].list.findIndex(item => item.sysId === sysId);
+    deleteItemCache(sysId: string, panelName?: PanelName) {
+      const {
+        panel: activePanel,
+        pinnedSysIds,
+        focusedItemSysId
+      } = useSheetManager();
 
-      const selectedItem = this[panel.sheetRange].selected.find(item => item.sysId === sysId) ?? focusedItem
+      const actualPanelName = panelName ?? activePanel.panelName;
+      const panel = panels[actualPanelName];
 
-      console.log(selectedItem)
+      const indexOfItemToDelete = this[panel.sheetRange].list.findIndex(item => item.sysId === sysId);
+      const itemToDeleteInSelected = this[panel.sheetRange].selected.find(item => item.sysId === sysId)
 
-      if (index !== -1) {
-        this[panel.sheetRange].list.splice(index, 1);
+      if (indexOfItemToDelete !== -1) {
+        this[panel.sheetRange].list.splice(indexOfItemToDelete, 1);
       }
 
-      const pinnedSysIdIndex = pinnedSysIds.indexOf(sysId)
-      if (pinnedSysIdIndex !== -1) {
-        pinnedSysIds.splice(pinnedSysIdIndex, 1)
+      // todo: test if this code is actually needed
+      // const pinnedSysIdIndex = pinnedSysIds.indexOf(sysId)
+      // if (pinnedSysIdIndex !== -1) {
+      //   pinnedSysIds.splice(pinnedSysIdIndex, 1)
+      // }
+
+      if (!itemToDeleteInSelected) {
+        return;
       }
 
-      if (selectedItem) {
-        this.removeSelectedItem({
-          item: selectedItem,
-          panel
-        });
-      }
+      this.removeSelectedItem({
+        item: itemToDeleteInSelected,
+        panel
+      });
     },
     async deleteItem(options: DeleteItem = {}) {
       const { panel: activePanel, focusedItem } = useSheetManager();

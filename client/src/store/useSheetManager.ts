@@ -31,8 +31,8 @@ export const useSheetManager = defineStore('sheetManager', {
       ascending: true
     } as SortOption,
     listItemBeingDragged: null as SheetItem | null,
-    focusedItem: null as SheetItem | null,
-    focusedEmbeddedItem: null as SheetItem | null,
+    focusedItemSysId: '',
+    focusedEmbeddedItemSysId: '',
     listTransitionActive: false
   }),
   getters: {
@@ -193,8 +193,8 @@ export const useSheetManager = defineStore('sheetManager', {
         itemsOnActivePanel.reverse();
       }
     },
-    setFocusedItem(item: SheetItem | null) {
-      this.focusedItem = item
+    setFocusedItem(sysId: string) {
+      this.focusedItemSysId = sysId
       const { socket, googleProfile } = useAuth()
 
       if (!socket || !googleProfile) {
@@ -203,13 +203,13 @@ export const useSheetManager = defineStore('sheetManager', {
 
       socket.emit('userFocus', {
         googleId: googleProfile.id,
-        sysId: item?.sysId,
-        embeddedSysId: this.focusedEmbeddedItem?.sysId,
+        sysId: sysId,
+        embeddedSysId: this.focusedEmbeddedItemSysId,
         panelName: this.panel.panelName
       })
     },
-    setFocusedEmbeddedItem(item: SheetItem | null) {
-      this.focusedEmbeddedItem = item
+    setFocusedEmbeddedItem(sysId: string) {
+      this.focusedEmbeddedItemSysId = sysId
       const { socket, googleProfile } = useAuth()
 
       if (!socket || !googleProfile) {
@@ -218,8 +218,8 @@ export const useSheetManager = defineStore('sheetManager', {
 
       socket.emit('userFocus', {
         googleId: googleProfile.id,
-        sysId: this.focusedItem?.sysId,
-        embeddedSysId: item?.sysId,
+        sysId: this.focusedItemSysId,
+        embeddedSysId: sysId,
         panelName: this.panel.panelName
       })
     }

@@ -70,15 +70,6 @@ export const sortOptions = {
       func: (a: Graduate, b: Graduate) => a.name.localeCompare(b.name)
     },
     {
-      label: 'Phone Number',
-      tooltip: 'Sort by phone number',
-      icon: {
-        asc: 'mdi-sort-numeric-ascending',
-        desc: 'mdi-sort-numeric-descending'
-      },
-      func: (a: Graduate, b: Graduate) => a.phone.localeCompare(b.phone)
-    },
-    {
       label: 'Grad Date',
       tooltip: 'Sort by graduation date',
       icon: {
