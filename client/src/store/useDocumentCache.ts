@@ -12,7 +12,7 @@ import { useAuth } from "./useAuth";
 type GetAllDocuments = {
   showLoading?: boolean;
   forceCacheRefresh?: boolean;
-  panel?: Panel;
+  panelName?: PanelName;
 }
 
 type GetItemByKeyValue = {
@@ -22,7 +22,7 @@ type GetItemByKeyValue = {
 }
 
 type RefreshCache = {
-  panel?: Panel;
+  panelName?: PanelName;
   data?: string[][];
 }
 
@@ -53,22 +53,21 @@ type SetSelectedItemByKeyValue = {
 }
 
 type DeleteItem = {
-  item?: types.SheetItem;
-  panel?: Panel;
+  item: types.SheetItem;
+  panelName?: PanelName;
   showWarning?: boolean;
   concurrent?: boolean;
 }
 
 type AddItem = {
-  panel?: Panel;
-  pin?: boolean;
+  panelName?: PanelName;
   postToSheet?: boolean;
   columns?: any[];
 }
 
 type UpdateItem = {
-  item?: types.SheetItem;
-  panel?: Panel;
+  item: types.SheetItem;
+  panelName?: PanelName;
 }
 
 type MoveItemBetweenLists = {
@@ -122,9 +121,13 @@ export const useDocumentCache = defineStore("documentCache", {
     Announcements: [[]] as string[][],
   }),
   getters: {
-    getPanelListData: (state) => (panelObject?: Panel) => {
+    itemPostedToSheet: (state) => (item: types.SheetItem) => {
+      return typeof item.row === "number";
+    },
+    getItems: (state) => (panelName?: PanelName) => {
       const { panel: activePanel } = useSheetManager();
-      const panel = panelObject ?? activePanel;
+      const actualPanelName = panelName ?? activePanel.panelName;
+      const panel = panels[actualPanelName];
       return state[panel.sheetRange].list;
     },
     getSelectedItems: (state) => (panelObject?: Panel) => {
@@ -195,8 +198,10 @@ export const useDocumentCache = defineStore("documentCache", {
       const {
         showLoading = true,
         forceCacheRefresh = false,
-        panel = getActivePanel,
+        panelName = getActivePanel.panelName,
       } = options;
+
+      const panel = panels[panelName];
 
       if (this.cacheRefreshInProgress) {
         return
@@ -213,6 +218,7 @@ export const useDocumentCache = defineStore("documentCache", {
         setSort();
         return;
       }
+
       this.cacheRefreshInProgress = this.refreshEntireCache();
       this.cacheRefreshInProgress.then(() => {
         this.cacheRefreshInProgress = null;
@@ -249,16 +255,23 @@ export const useDocumentCache = defineStore("documentCache", {
         }
 
         this.refreshCache({
-          panel: panels[panelKey],
+          panelName: panelKey,
           data: rangeDataObj[panels[panelKey].sheetRange]
         })
       }
     },
     async refreshCache(options: RefreshCache = {}) {
       const {
-        panel = useSheetManager().panel,
+        focusedItemSysId,
+        getActivePanel,
+        setFocusedItem
+      } = useSheetManager();
+
+      const {
+        panelName = getActivePanel.panelName,
       } = options;
 
+      const panel = panels[panelName];
       const range = panel.sheetRange;
 
       if (!options.data) {
@@ -274,39 +287,31 @@ export const useDocumentCache = defineStore("documentCache", {
       const documents = await panel.mappers.map(data);
       this[range].list = documents;
 
-      // clean up selected items
-      const oldSelectedItems = [...this[range].selected]
-      const oldFocusedItem = JSON.parse(JSON.stringify((useSheetManager().focusedItem)))
-      this[range].selected = []
-
-      for (const oldSelectedItem of oldSelectedItems) {
-        const itemInNewData = this[range].list.find((item) => {
-          return item.sysId === oldSelectedItem.sysId
+      // check if any of the selected items were removed from the list
+      const selectedItems = [...this[range].selected]
+      this[range].selected = this[range].list.filter((newItem) => {
+        return selectedItems.some((selectedItem) => {
+          return selectedItem.sysId === newItem.sysId
         })
-
-        if (itemInNewData) {
-          this.addSelectedItem({
-            item: itemInNewData
-          })
-        }
-      }
-
-      const focusedItemInNewData = this[range].list.find((item) => {
-        return item.sysId === oldFocusedItem?.sysId
       })
 
-      if (focusedItemInNewData) {
-        useSheetManager().setFocusedItem(focusedItemInNewData)
+      const focusedItemStillExists = this[range].selected.some((item) => {
+        return item.sysId === focusedItemSysId
+      })
+
+      if (!focusedItemStillExists && this[range].selected.length > 0) {
+        setFocusedItem(this[range].selected[0].sysId)
       }
 
+      // todo: see if code is necessary
       // clean up pinned items
-      if (panel.sheetRange === useSheetManager().getActivePanel.sheetRange) {
-        useSheetManager().pinnedSysIds = useSheetManager().pinnedSysIds.filter((sysId) => {
-          return this[range].list.some((item) => {
-            return item.sysId === sysId
-          })
-        })
-      }
+      // if (panel.sheetRange === getActivePanel.sheetRange) {
+      //   useSheetManager().pinnedSysIds = useSheetManager().pinnedSysIds.filter((sysId) => {
+      //     return this[range].list.some((item) => {
+      //       return item.sysId === sysId
+      //     })
+      //   })
+      // }
 
       this.refreshLog[range] = new Date();
       return documents;
@@ -436,15 +441,15 @@ export const useDocumentCache = defineStore("documentCache", {
         panel
       });
     },
-    async deleteItem(options: DeleteItem = {}) {
-      const { panel: activePanel, focusedItem } = useSheetManager();
+    async deleteItem(options: DeleteItem) {
       const syncState = useSyncState();
+      const { getActivePanel } = useSheetManager();
       const { setProcessing, waitUntilSynced } = syncState;
       const { processing } = storeToRefs(syncState);
 
       const {
-        item = focusedItem,
-        panel = activePanel,
+        item,
+        panelName = getActivePanel.panelName,
         showWarning = true,
         concurrent = false
       } = options;
@@ -457,9 +462,11 @@ export const useDocumentCache = defineStore("documentCache", {
       // no row means it's a new item that hasn't been saved to the sheet yet
       if (typeof item.row !== "number" && !processing.value) {
         console.log("useDocumentCache: No row to delete, not hitting API");
-        this.deleteItemCache(item.sysId, panel);
+        this.deleteItemCache(item.sysId, panelName);
         return;
       }
+
+      const panel = panels[panelName];
 
       if (showWarning) {
         try {
@@ -475,18 +482,20 @@ export const useDocumentCache = defineStore("documentCache", {
       }
 
       if (!concurrent && processing.value) {
-        await waitUntilSynced({ showDialog: true });
+        await waitUntilSynced({
+          showDialog: true
+        });
       }
 
       const { sysId, row } = item;
 
-      setProcessing(true);
-
       if (typeof row === "number") {
-        this.deleteItemCache(sysId, panel);
+        this.deleteItemCache(sysId, panelName);
+        setProcessing(true);
         await clearByRow(panel.sheetRange, row);
       } else {
         console.error("useDocumentCache: deleteItem started processing without an assigned row!");
+        return;
       }
 
       useSyncState().$reset();
@@ -496,7 +505,7 @@ export const useDocumentCache = defineStore("documentCache", {
         action: 'delete',
         payload: {
           sysId,
-          panelObject: panel
+          panelName
         }
       })
     },
@@ -511,44 +520,39 @@ export const useDocumentCache = defineStore("documentCache", {
     async addItem(options: AddItem = {}): Promise<types.SheetItem> {
       const {
         setSearchFilter,
-        panel: activePanel,
+        getActivePanel,
         newSysId,
-        addPinnedItem,
+        setFocusedItem,
+        setFocusedEmbeddedItem,
       } = useSheetManager();
 
       const {
-        panel = activePanel,
-        pin = false,
+        panelName = getActivePanel.panelName,
         postToSheet = false,
         columns = null,
       } = options;
 
-      if (panel === activePanel) {
-        setSearchFilter("");
-      }
+      const panel = panels[panelName];
 
       const [newItem] = await panel.mappers.map([
         columns ? [newSysId(), ...columns] : [newSysId()]
       ]);
       newItem.row = null;
 
-      if (activePanel === panel) {
+      const onActivePanel = panelName === getActivePanel.panelName;
+      if (onActivePanel) {
         setSelectedItem(newItem)
+        setSearchFilter("");
+        setFocusedItem(newItem.sysId)
       } else {
         this[panel.sheetRange].selected = [newItem]
       }
 
-      if (panel.panelName === activePanel.panelName) {
-        useSheetManager().setFocusedItem(newItem)
-      } else if (panel.panelName === activePanel?.embedded.panel) {
-        useSheetManager().setFocusedEmbeddedItem(newItem)
+      if (panelName === panel?.embedded.panel) {
+        setFocusedEmbeddedItem(newItem)
       }
 
-      this.addItemCache(newItem, panel.panelName);
-
-      if (pin) {
-        addPinnedItem(newItem);
-      }
+      this.addItemCache(newItem, panelName);
 
       if (postToSheet) {
         useSyncState().setProcessing(true);
@@ -582,19 +586,18 @@ export const useDocumentCache = defineStore("documentCache", {
 
       return itemInList;
     },
-    async updateItem(options: UpdateItem = {}) {
-      const { panel: activePanel, focusedItem } = useSheetManager();
+    async updateItem(options: UpdateItem) {
+      const { getActivePanel, focusedItemSysId } = useSheetManager();
       const { setProcessing } = useSyncState();
 
       const {
-        panel = activePanel,
-        item = focusedItem,
+        item,
+        panelName = getActivePanel.panelName,
       } = options;
 
-      if (!item) {
-        console.error("useDocumentCache: No item to update");
-        return;
-      } else if (typeof item.row !== "number") {
+      const panel = panels[panelName];
+
+      if (!this.itemPostedToSheet(item)) {
         setProcessing(true);
         const row = await postInRange(
           panel.sheetRange,
@@ -602,6 +605,7 @@ export const useDocumentCache = defineStore("documentCache", {
         )
         console.log("useDocumentCache: Posted to row", row)
         item.row = row
+
         useSyncState().$reset();
 
         const { socket } = useAuth()
@@ -616,9 +620,9 @@ export const useDocumentCache = defineStore("documentCache", {
         return;
       }
 
-      const itemInList = this.updateItemCache(item, panel.panelName);
+      const itemInList = this.updateItemCache(item, panelName);
 
-      if (!itemInList) {
+      if (!itemInList || !item.row) {
         return
       }
 
@@ -629,15 +633,6 @@ export const useDocumentCache = defineStore("documentCache", {
         item.row,
         await panel.mappers.unmap([item])
       )
-
-      const { socket } = useAuth()
-      socket.emit('userAction', {
-        action: 'update',
-        payload: {
-          item,
-          panelName: panel.panelName
-        }
-      })
 
       useSyncState().$reset();
     },

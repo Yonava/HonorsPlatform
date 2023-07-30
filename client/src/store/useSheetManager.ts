@@ -32,7 +32,7 @@ export const useSheetManager = defineStore('sheetManager', {
     } as SortOption,
     listItemBeingDragged: null as SheetItem | null,
     focusedItemSysId: '',
-    focusedEmbeddedItemSysId: '',
+    focusedEmbeddedItem: null as SheetItem | null,
     listTransitionActive: false
   }),
   getters: {
@@ -93,7 +93,11 @@ export const useSheetManager = defineStore('sheetManager', {
       this.canPanelSwitch = false;
 
       const { setSelectedItems, getAllDocuments } = useDocumentCache();
-      setSelectedItems();
+
+      setSelectedItems({
+        items: []
+      });
+
       this.panel = getPanel(panelName);
       this.pinnedSysIds = localStorage.getItem(local.pinned(this.panel.panelName))?.split(',') || []
       this.setSearchFilter('');
@@ -204,12 +208,12 @@ export const useSheetManager = defineStore('sheetManager', {
       socket.emit('userFocus', {
         googleId: googleProfile.id,
         sysId: sysId,
-        embeddedSysId: this.focusedEmbeddedItemSysId,
+        embeddedSysId: this.focusedEmbeddedItem?.sysId,
         panelName: this.panel.panelName
       })
     },
-    setFocusedEmbeddedItem(sysId: string) {
-      this.focusedEmbeddedItemSysId = sysId
+    setFocusedEmbeddedItem(item: SheetItem | null) {
+      this.focusedEmbeddedItem = item
       const { socket, googleProfile } = useAuth()
 
       if (!socket || !googleProfile) {
@@ -219,7 +223,7 @@ export const useSheetManager = defineStore('sheetManager', {
       socket.emit('userFocus', {
         googleId: googleProfile.id,
         sysId: this.focusedItemSysId,
-        embeddedSysId: sysId,
+        embeddedSysId: item?.sysId,
         panelName: this.panel.panelName
       })
     }
