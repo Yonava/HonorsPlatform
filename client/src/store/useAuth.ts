@@ -141,10 +141,9 @@ export const useAuth = defineStore('auth', {
 
             case 'move':
               moveItemBetweenListsCache({
-                oldSysId: data.payload.oldSysId,
                 oldPanelName: data.payload.oldPanelName,
-                newItem: data.payload.newItem,
-                newPanelName: data.payload.newPanelName
+                newPanelName: data.payload.newPanelName,
+                item: data.payload.item,
               })
               break
 

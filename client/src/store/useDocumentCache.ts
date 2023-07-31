@@ -71,16 +71,14 @@ type UpdateItem = {
 }
 
 type MoveItemBetweenLists = {
-  oldItem: types.SheetItem;
-  oldPanel: Panel;
-  newItem: types.SheetItem;
-  newPanel: Panel;
+  item: types.SheetItem;
+  oldPanelName: PanelName;
+  newPanelName: PanelName;
 }
 
 type MoveItemBetweenListsCache = {
-  oldSysId: string;
+  item: types.SheetItem;
   oldPanelName: PanelName;
-  newItem: types.SheetItem;
   newPanelName: PanelName;
 }
 
@@ -459,8 +457,7 @@ export const useDocumentCache = defineStore("documentCache", {
         return;
       }
 
-      // no row means it's a new item that hasn't been saved to the sheet yet
-      if (typeof item.row !== "number" && !processing.value) {
+      if (!this.itemPostedToSheet(item) && !processing.value) {
         console.log("useDocumentCache: No row to delete, not hitting API");
         this.deleteItemCache(item.sysId, panelName);
         return;
@@ -489,12 +486,12 @@ export const useDocumentCache = defineStore("documentCache", {
 
       const { sysId, row } = item;
 
-      if (typeof row === "number") {
+      if (this.itemPostedToSheet(item)) {
         this.deleteItemCache(sysId, panelName);
         setProcessing(true);
         await clearByRow(panel.sheetRange, row);
       } else {
-        console.error("useDocumentCache: deleteItem started processing without an assigned row!");
+        console.error("useDocumentCache: deleteItem started processing without item being saved to sheet!");
         return;
       }
 
@@ -636,43 +633,39 @@ export const useDocumentCache = defineStore("documentCache", {
 
       useSyncState().$reset();
     },
-    moveItemBetweenListsCache({ oldSysId, oldPanelName, newItem, newPanelName }: MoveItemBetweenListsCache) {
-      const oldPanel = panels[oldPanelName];
-      this.addItemCache(newItem, newPanelName);
-      this.deleteItemCache(oldSysId, oldPanel);
+    moveItemBetweenListsCache({ item, oldPanelName, newPanelName }: MoveItemBetweenListsCache) {
+      this.addItemCache(item, newPanelName);
+      this.deleteItemCache(item.sysId, oldPanelName);
     },
-    async moveItemBetweenLists({ oldItem, newItem, oldPanel, newPanel }: MoveItemBetweenLists) {
+    async moveItemBetweenLists({ item, oldPanelName, newPanelName }: MoveItemBetweenLists) {
       const { waitUntilSynced } = useSyncState();
 
-      if (typeof oldItem.row !== "number") {
+      if (!this.itemPostedToSheet(item)) {
         throw new Error("useDocumentCache: Cannot move item that hasn't been saved to the sheet yet");
       }
 
       await waitUntilSynced({ showDialog: true });
 
+      const oldPanel = panels[oldPanelName];
+      const newPanel = panels[newPanelName];
+
       const row = await postInRange(
         newPanel.sheetRange,
-        await newPanel.mappers.unmap([newItem])
+        await newPanel.mappers.unmap([item])
       )
+      item.row = row;
 
-      newItem.row = row;
-      this.addItemCache(newItem, newPanel.panelName);
+      await clearByRow(oldPanel.sheetRange, item.row);
 
-      await this.deleteItem({
-        item: oldItem,
-        panel: oldPanel,
-        showWarning: false,
-      })
+      this.moveItemBetweenListsCache({ item, oldPanelName, newPanelName });
 
       const { socket } = useAuth()
-
       socket.emit('userAction', {
         action: 'move',
         payload: {
-          oldSysId: oldItem.sysId,
-          oldPanelName: oldPanel.panelName,
-          newItem,
-          newPanelName: newPanel.panelName
+          oldPanelName,
+          newPanelName,
+          item,
         }
       })
     }
