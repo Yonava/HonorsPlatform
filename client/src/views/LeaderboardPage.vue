@@ -6,7 +6,9 @@
       class="mt-3 ml-3"
       style="position: absolute; left: 0; top: 0"
     >
-      <v-icon>mdi-arrow-left</v-icon>
+      <v-icon>
+        mdi-arrow-left
+      </v-icon>
       Admin Dashboard
     </v-btn>
     <v-sheet

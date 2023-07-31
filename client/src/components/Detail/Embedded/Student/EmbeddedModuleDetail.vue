@@ -44,7 +44,9 @@
         "
         :color="getActiveEmbeddedPanel.color + '-darken-2'"
         size="x-small"
-      >Created Now</v-btn>
+      >
+        Created Now
+      </v-btn>
       <v-spacer></v-spacer>
       <v-btn
         v-if="!selectedModule.docuSignCompleted"

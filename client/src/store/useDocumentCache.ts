@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { getRange, clearByRow, updateByRow, postInRange, getRanges } from '../SheetsAPI';
+import { getRange, clearByRow, updateByRow, postInRange, getRanges, replaceRange } from '../SheetsAPI';
 import { panels, Panel, PanelName } from "../Panels";
 import * as types from "../SheetTypes";
 import { useSheetManager } from "./useSheetManager";
@@ -667,6 +667,16 @@ export const useDocumentCache = defineStore("documentCache", {
           newPanelName,
           item,
         }
+      })
+    },
+    async forceConnectedClientsToRefresh() {
+      const { socket } = useAuth()
+      socket.emit('userAction', {
+        action: 'refresh',
+      })
+      await this.getAllDocuments({
+        showLoading: false,
+        forceCacheRefresh: true
       })
     }
   }

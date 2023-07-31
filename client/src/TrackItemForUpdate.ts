@@ -5,28 +5,29 @@ import { useSheetManager } from "./store/useSheetManager";
 import { useAuth } from "./store/useAuth";
 import { type Ref, watch, onUnmounted, computed } from "vue";
 import type { SheetItem } from "./SheetTypes";
-import type { Panel } from "./Panels";
+import { type PanelName, panels } from "./Panels";
 
 const updateDebounceMs = 2_000
 
-export function useUpdateItem<T extends SheetItem>(item: Ref<T | null>, panelObject?: Panel) {
-  const { updateItem, deleteItemCache } = useDocumentCache();
+export function useUpdateItem<T extends SheetItem>(item: Ref<T | null>, panelNameParam?: PanelName) {
+  const { updateItem, deleteItemCache, itemPostedToSheet } = useDocumentCache();
   const { setProcessing } = useSyncState();
   const { processing } = storeToRefs(useSyncState());
   const { getActivePanel } = storeToRefs(useSheetManager());
   const { connectedAccounts, focusData } = storeToRefs(useAuth())
 
-  const panel = panelObject ?? getActivePanel.value
+  const panelName = panelNameParam ?? getActivePanel.value.panelName
+  const panel = panels[panelName]
 
   let timeout = setTimeout(() => { }, 0)
   let currentItem = ''
-  let updateInProgress = false;
 
   const update = (newItem: T | null, oldItem: T | null | undefined) => {
-    if (updateInProgress) {
+    if (!newItem) {
       return
     }
 
+    // collab mode takes over
     if (numberOfUsersEditingItem.value > 1) {
       return
     }
@@ -44,12 +45,9 @@ export function useUpdateItem<T extends SheetItem>(item: Ref<T | null>, panelObj
       return
     }
 
-    if (newItem !== oldItem) {
-      // no row # means it's a new item that has never hit the server
-      if (oldItem && typeof oldItem?.row !== 'number' && !processing.value) {
-        const { sysId } = oldItem
-        deleteItemCache(sysId, panel)
-      }
+    if (newItem !== oldItem && !itemPostedToSheet(oldItem) && !processing.value) {
+      const { sysId } = oldItem
+      deleteItemCache(sysId, panelName)
       return
     }
 
@@ -57,13 +55,11 @@ export function useUpdateItem<T extends SheetItem>(item: Ref<T | null>, panelObj
     clearTimeout(timeout)
 
     timeout = setTimeout(async () => {
-      updateInProgress = true
       currentItem = JSON.stringify(newItem)
       await updateItem({
         item: newItem,
-        panel,
+        panelName,
       })
-      updateInProgress = false
     }, updateDebounceMs);
   }
 
@@ -97,13 +93,13 @@ export function useUpdateItem<T extends SheetItem>(item: Ref<T | null>, panelObj
   }, { deep: true, immediate: true })
 
   onUnmounted(() => {
-    if (!item) {
+    if (!item.value) {
       return
     }
-    // no row # means it's a new item that has never hit the server
-    if (item.value && typeof item.value?.row !== 'number' && !processing.value) {
+
+    if (!itemPostedToSheet(item.value) && !processing.value) {
       const { sysId } = item.value
-      deleteItemCache(sysId, panel)
+      deleteItemCache(sysId, panelName)
     }
   })
 
@@ -111,13 +107,12 @@ export function useUpdateItem<T extends SheetItem>(item: Ref<T | null>, panelObj
     if (!item.value) {
       return
     }
-    updateInProgress = true
+
     currentItem = JSON.stringify(item.value)
     await updateItem({
       item: item.value,
-      panel,
+      panelName,
     })
-    updateInProgress = false
   }
 
   type Primitive = string | number | boolean

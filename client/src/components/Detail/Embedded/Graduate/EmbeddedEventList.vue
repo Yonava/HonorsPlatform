@@ -2,7 +2,7 @@
   <div>
     <div
       v-for="event in items"
-      :key="event.id"
+      :key="event.sysId"
       @click="select(event)"
     >
       <v-sheet

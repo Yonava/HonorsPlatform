@@ -24,7 +24,9 @@
         variant="text"
         style="position: absolute; left: 0; top: 0"
       >
-        <v-icon class="mr-1">mdi-arrow-left</v-icon>
+        <v-icon class="mr-1">
+          mdi-arrow-left
+        </v-icon>
         Back to Dashboard
       </v-btn>
       <h1

@@ -2,7 +2,7 @@
   <div>
     <v-sheet
       v-for="mod in items"
-      :key="mod.courseCode"
+      :key="mod.sysId"
       @click="select(mod)"
       :color="getActiveEmbeddedPanel.color + '-darken-2'"
       class="module-card pa-2 mt-2 d-flex flex-row align-center"
@@ -21,7 +21,9 @@
           <span
             class="ml-2"
             style="color: white; line-height: 0.3; font-weight: 300;"
-          >{{ mod.instructor || '(No Instructor)' }}</span>
+          >
+            {{ mod.instructor || '(No Instructor)' }}
+          </span>
         </div>
       </div>
       <v-icon

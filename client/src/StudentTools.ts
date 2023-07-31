@@ -3,7 +3,6 @@ import { unmapGraduates } from './DataMappers'
 import { replaceRange, getHeaderRowCache, postInRange } from './SheetsAPI'
 import { panels } from './Panels'
 import { useDocumentCache } from './store/useDocumentCache'
-import { useAuth } from './store/useAuth'
 
 export const statusOptions = [
   {
@@ -101,10 +100,9 @@ export async function moveToGraduates(student: Student) {
   const { moveItemBetweenLists } = useDocumentCache()
   try {
     await moveItemBetweenLists({
-      oldItem: student,
-      oldPanel: panels['STUDENTS'],
-      newItem: studentToGraduate(student),
-      newPanel: panels['GRADUATES'],
+      item: studentToGraduate(student),
+      oldPanelName: 'STUDENTS',
+      newPanelName: 'GRADUATES',
     })
   } catch (e) {
     return Promise.reject(e)
@@ -115,10 +113,9 @@ export async function moveToStudents(graduate: Graduate) {
   const { moveItemBetweenLists } = useDocumentCache()
   try {
     await moveItemBetweenLists({
-      oldItem: graduate,
-      oldPanel: panels['GRADUATES'],
-      newItem: graduateToStudent(graduate),
-      newPanel: panels['STUDENTS'],
+      item: graduateToStudent(graduate),
+      oldPanelName: 'GRADUATES',
+      newPanelName: 'STUDENTS',
     })
   } catch (e) {
     return Promise.reject(e)
@@ -127,7 +124,7 @@ export async function moveToStudents(graduate: Graduate) {
 
 export async function incrementStudentYear(students: Student[] = useDocumentCache().Students.list) {
   const { unmap } = panels['STUDENTS'].mappers
-  const { getAllDocuments } = useDocumentCache()
+  const { forceConnectedClientsToRefresh } = useDocumentCache()
   const graduatingSeniors: Student[] = []
   const failedToIncrement: Student[] = []
 
@@ -183,15 +180,7 @@ export async function incrementStudentYear(students: Student[] = useDocumentCach
   const headerRow = await getHeaderRowCache('Students')
   await replaceRange('Students', [headerRow, ...data])
 
-  const { socket } = useAuth()
-  socket.emit('userAction', {
-    action: 'refresh'
-  })
-
-  await getAllDocuments({
-    forceCacheRefresh: true,
-    showLoading: false
-  })
+  await forceConnectedClientsToRefresh()
 
   return {
     graduatingSeniors,
