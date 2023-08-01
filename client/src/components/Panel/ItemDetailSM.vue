@@ -1,0 +1,48 @@
+<template>
+  <v-navigation-drawer
+    v-if="smAndDown"
+    v-model="showItem"
+    temporary
+    touchless
+    rounded
+    location="bottom"
+    style="width: 100%; height: calc(100vh - 175px);"
+  >
+    <component
+      v-if="item"
+      :is="getActivePanel.components.detail"
+      :item="item"
+    />
+  </v-navigation-drawer>
+</template>
+
+<script setup lang="ts">
+import { useDisplay } from 'vuetify';
+import { useSheetManager } from '../../store/useSheetManager';
+import { useDocumentCache } from '../../store/useDocumentCache';
+import { storeToRefs } from 'pinia';
+import { computed } from 'vue';
+
+const { getActivePanel, focusedItemSysId } = storeToRefs(useSheetManager())
+const { getSelectedItems, setSelectedItems } = useDocumentCache()
+
+const { smAndDown } = useDisplay()
+
+const showItem = computed({
+  get: () => {
+    return !!item.value
+  },
+  set: (value) => {
+    if (!value) {
+      setSelectedItems({
+        items: [],
+      })
+    }
+  }
+})
+
+const item = computed(() => {
+  const selectedItems = getSelectedItems()
+  return selectedItems.find((item) => item.sysId === focusedItemSysId.value)
+})
+</script>

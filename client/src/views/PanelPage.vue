@@ -144,22 +144,8 @@
         </span>
       </div>
     </v-main>
+    <ItemDetailSM />
     <ServeDialog />
-    <v-navigation-drawer
-      v-if="smAndDown"
-      v-model="showNavDrawer"
-      temporary
-      touchless
-      rounded
-      location="bottom"
-      style="width: 100%; height: calc(100vh - 175px);"
-    >
-      <component
-        v-if="focusedItem"
-        :is="getActivePanel.components.detail"
-        :item="focusedItem"
-      />
-    </v-navigation-drawer>
   </div>
 </template>
 
@@ -171,6 +157,7 @@ import {
   watch
 } from 'vue'
 import { useRoute } from 'vue-router'
+import ItemDetailSM from '../components/Panel/ItemDetailSM.vue'
 import PanelCoverAppBar from '../components/Panel/PanelCoverAppBar.vue'
 import PanelList from '../components/Panel/PanelList.vue'
 import SortPanel from '../components/Panel/SortPanel.vue'
@@ -192,10 +179,9 @@ import { useStalePageDetector } from '../StalePageDetector'
 useStalePageDetector()
 const { userLogoutFlow } = useAuth()
 const { googleProfile } = storeToRefs(useAuth())
-const { setPanel, setFocusedItem } = useSheetManager()
-const { getActivePanel, pinnedSysIds, focusedItemSysId } = storeToRefs(useSheetManager())
-const { getAllDocuments, setSelectedItems } = useDocumentCache()
-const { setPanelCover } = useDialog()
+const { setPanel } = useSheetManager()
+const { getActivePanel, pinnedSysIds, focusedItemSysId, listItemBeingDragged } = storeToRefs(useSheetManager())
+const { getAllDocuments } = useDocumentCache()
 const { getPanelCover } = storeToRefs(useDialog())
 
 const route = useRoute()
@@ -215,26 +201,8 @@ const {
   smAndDown
 } = useDisplay()
 
-const showNavDrawer = ref(false)
-watchEffect(() => {
-  if (focusedItem.value && smAndDown.value) {
-    setTimeout(() => {
-      showNavDrawer.value = true
-    }, 100)
-  } else if (!focusedItem.value) {
-    showNavDrawer.value = false
-  }
-})
-
-watch(showNavDrawer, (newVal) => {
-  if (!newVal) {
-    setFocusedItem(null)
-    setSelectedItems()
-  }
-})
-
 const showLogo = computed(() => {
-  return mdAndUp.value && !focusedItem.value
+  return mdAndUp.value && !focusedItemSysId.value && !listItemBeingDragged.value
 })
 
 const panelHopBindings = () => {
@@ -247,14 +215,7 @@ const panelHopBindings = () => {
 
 useKeyBindings({
   'r': () => getAllDocuments({ forceCacheRefresh: true }),
-  ...panelHopBindings(),
-  ' ': () => {
-    if (getPanelCover.value.show) {
-      setPanelCover('close')
-    } else {
-      setPanelCover('open')
-    }
-  },
+  ...panelHopBindings()
 })
 
 const getDefaultWidth = () => {
@@ -282,15 +243,22 @@ const resizeStart = (e: MouseEvent) => {
 
 const resizeMove = (e: MouseEvent) => {
   const [smallestAllowed, largestAllowed] = [400, 600]
-  if (!resizing.value) return
+  if (!resizing.value) {
+    return
+  }
   const newWidth = e.clientX - sortPanelWidth
-  if (newWidth < smallestAllowed || newWidth > largestAllowed) return
+  if (newWidth < smallestAllowed || newWidth > largestAllowed) {
+    return
+  }
   proposedWidth.value = newWidth
 }
 
 const resizeEnd = () => {
   resizing.value = false
   const panelParent = document.getElementById('panel-parent')
+  if (!panelParent) {
+    throw new Error('panel-parent not found')
+  }
   panelParent.style.userSelect = 'auto'
   panelListWidth.value = proposedWidth.value
   localStorage.setItem(local.panelListWidth, panelListWidth.value.toString())

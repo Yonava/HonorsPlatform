@@ -325,8 +325,15 @@ export const useDocumentCache = defineStore("documentCache", {
       this[panel.sheetRange].selected = items;
 
       const onActivePanel = panel.panelName === activePanel.panelName;
-      if (items.length > 1 && onActivePanel) {
+
+      if (!onActivePanel) {
+        return
+      }
+
+      if (items.length > 0) {
         setFocusedItem(items[0].sysId)
+      } else {
+        setFocusedItem('')
       }
     },
     addSelectedItem(options: AddSelectedItem) {

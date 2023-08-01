@@ -87,7 +87,7 @@ import { useDisplay } from 'vuetify'
 
 const { setPanelCover, open, close } = useDialog();
 const { getPanelCover, getListOfFlaggedItems } = storeToRefs(useDialog());
-const { getPanelListData, getAllDocuments } = useDocumentCache()
+const { getItems, forceConnectedClientsToRefresh } = useDocumentCache()
 const { getActivePanel } = storeToRefs(useSheetManager());
 
 const { mdAndDown } = useDisplay()
@@ -96,7 +96,7 @@ const selectedItems = computed(() => {
   const selected: SheetItem[] = []
   const selectedSysIds = getPanelCover.value.selectedForDelete
   selectedSysIds.forEach((sysId) => {
-    const itemCorrespondingToSysId = getPanelListData().find((itemInPanel) => {
+    const itemCorrespondingToSysId = getItems().find((itemInPanel) => {
       return itemInPanel.sysId === sysId
     })
 
@@ -165,15 +165,7 @@ const deleteItems = async (itemsToDelete: SheetItem[]) => {
     ...newSheetData
   ])
 
-  const { socket } = useAuth()
-  socket.emit('userAction', {
-    action: 'refresh'
-  })
-
-  await getAllDocuments({
-    showLoading: false,
-    forceCacheRefresh: true
-  })
+  await forceConnectedClientsToRefresh()
 
   close()
 }
