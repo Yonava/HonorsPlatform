@@ -120,7 +120,9 @@ export const useSheetManager = defineStore('sheetManager', {
       });
 
       if (jumpTo) {
-        this.jumpToItem(jumpTo);
+        // setTimeout(() => {
+          this.jumpToItem(jumpTo);
+        // }, 0);
       }
 
       const { socket, googleProfile } = useAuth()

@@ -303,7 +303,7 @@ const viewThesis = async () => {
   if (!thesis.value) {
     creatingThesis.value = true;
     await addItem({
-      panel: thesisPanel,
+      panelName: thesisPanel.panelName,
       postToSheet: true,
       columns: [
         student.value.sysId,

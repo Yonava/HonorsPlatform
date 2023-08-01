@@ -21,16 +21,25 @@ import { useDisplay } from 'vuetify';
 import { useSheetManager } from '../../store/useSheetManager';
 import { useDocumentCache } from '../../store/useDocumentCache';
 import { storeToRefs } from 'pinia';
-import { computed } from 'vue';
+import { computed, ref, watch } from 'vue';
 
 const { getActivePanel, focusedItemSysId } = storeToRefs(useSheetManager())
 const { getSelectedItems, setSelectedItems } = useDocumentCache()
 
 const { smAndDown } = useDisplay()
 
+watch(getActivePanel, () => {
+  canShowItem.value = false
+  setTimeout(() => {
+    canShowItem.value = true
+  }, 300)
+})
+
+const canShowItem = ref(true)
+
 const showItem = computed({
   get: () => {
-    return !!item.value
+    return !!item.value && canShowItem.value
   },
   set: (value) => {
     if (!value) {

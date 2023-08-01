@@ -330,11 +330,13 @@ export const useDocumentCache = defineStore("documentCache", {
         return
       }
 
-      if (items.length > 0) {
-        setFocusedItem(items[0].sysId)
-      } else {
-        setFocusedItem('')
-      }
+      setTimeout(() => {
+        if (items.length > 0) {
+          setFocusedItem(items[0].sysId)
+        } else {
+          setFocusedItem('')
+        }
+      }, 0)
     },
     addSelectedItem(options: AddSelectedItem) {
       const { panel: activePanel, setFocusedItem } = useSheetManager();
