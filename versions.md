@@ -1,4 +1,23 @@
-# Current Version: prerelease 0.87
+# Current Version: prerelease 0.88.1
+
+### prerelease 0.88 (Aug. 2)
+- Feature: The Honors Program platform is live. Edits are broadcasted between clients for a truely collaborative exprience
+- Feature: Added Google Profile Info API to always see which account you are editing on
+- Feature: Item can now be dragged to trigger moving it to a different panel
+- Improvement: The ability to logout has been added so users with mutliple accounts can switch which account they are using
+- Refresh Data has been removed and added to Additional Tools
+- Moved Selected Item navigation drawer for SM devices to ItemDetailSM.vue and improved gittery behavior
+- useDocumentCache code refactor for clarity, cleanliness, and consistency
+- Changed focusedItem to focusedItemSysId
+- Fixed bug causing application after google auth to unintentionally close if spawned from a third party link
+- Sync state now only indicated on the item that is focused
+- Enhanced type safety and code quality on TrackItemForUpdate
+- Removed all clearable attributes on vuetify input elements as they are not compatible with Vue deep watchers
+- Improvement: Added tooltips to all sort options
+- Removed phone number sort option on Graduates panel because who sorts by phone number 😂
+- Added Locals file for standardizing localStorage namespaces
+- Added useMoveItem composable for standardizing and streamlining the process of moving any item to any other compoatible panel
+- Expanded warn API to add "persistent" option
 
 ### prerelease 0.87 (Jul. 19)
 - Feature: Pinned items allow users to pin items in the sidebar list which persist between sessions
