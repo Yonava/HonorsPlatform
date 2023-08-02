@@ -81,11 +81,13 @@ const displayedItems = computed(() => {
 const addEmbeddedItem = async () => {
   // edge case for when parent panel is not yet saved to the sheet
   if (!props.item.row) {
-    updateItem()
+    updateItem({
+      item: props.item
+    })
   }
 
   await addItem({
-    panel: getActiveEmbeddedPanel,
+    panelName: getActiveEmbeddedPanel.panelName,
     columns: [
       props.item[filterBy.outer],
     ],

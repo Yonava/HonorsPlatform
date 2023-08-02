@@ -549,7 +549,6 @@ export const useDocumentCache = defineStore("documentCache", {
       if (onActivePanel) {
         setSelectedItem(newItem)
         setSearchFilter("");
-        setFocusedItem(newItem.sysId)
       } else {
         this[panel.sheetRange].selected = [newItem]
       }

@@ -121,6 +121,7 @@ export function useUpdateItem<T extends SheetItem>(item: Ref<T | null>, panelNam
     if (!item.value) {
       return
     }
+
     const { socket } = useAuth()
     socket.emit('userAction', {
       action: 'prop-update',

@@ -72,7 +72,8 @@ export async function getRanges(ranges: Range[] = [
     });
   } catch {
     await useAuth().authorize();
-    return getRanges();
+    await useAuth().pendingAuthorization
+    return await getRanges();
   }
 }
 

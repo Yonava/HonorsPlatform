@@ -232,7 +232,7 @@ export const useAuth = defineStore('auth', {
         this.setGoogleProfile(profile)
         this.setGoogleAccessToken(accessToken)
 
-        console.log('creating socket connection...')
+        this.destroySocketConnection()
         await this.createSocketConnection()
       } catch (error) {
         console.error('userLoginFlow error', error)
@@ -296,7 +296,6 @@ export const useAuth = defineStore('auth', {
           if (!this.pendingAuthorization) {
             return
           }
-          this.destroySocketConnection()
           console.error('Token not received. Request timed out. User redirected to auth page')
           router.push({
             name: 'auth'

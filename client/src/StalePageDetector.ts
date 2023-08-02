@@ -3,19 +3,22 @@ import { useAuth } from "./store/useAuth"
 import { onUnmounted } from "vue"
 
 export const useStalePageDetector = () => {
-  const { createSocketConnection, socket, destroySocketConnection } = useAuth()
+  const { createSocketConnection, socket } = useAuth()
   const { getAllDocuments } = useDocumentCache()
 
   const onVisibilityChange = async () => {
-    if (document.visibilityState === "visible") {
-      await getAllDocuments({
-        showLoading: false,
-      })
+    if (document.visibilityState === "hidden") {
+      return
+    }
 
-      if (!socket?.connected) {
-        console.log("Reconnecting socket")
-        await createSocketConnection()
-      }
+    await getAllDocuments({
+      showLoading: false,
+      forceCacheRefresh: !socket?.connected,
+    })
+
+    if (!socket?.connected) {
+      console.log("Reconnecting socket")
+      await createSocketConnection()
     }
   }
 
