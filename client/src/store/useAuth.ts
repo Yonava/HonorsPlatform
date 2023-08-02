@@ -8,7 +8,6 @@ import { getUserProfileData } from "../SheetsAPI";
 import { useDocumentCache } from "./useDocumentCache";
 import { PanelName } from "../Panels";
 import { useSheetManager } from "./useSheetManager";
-import { useSyncState } from "./useSyncState";
 
 export type GoogleProfile = {
   id: string,
@@ -99,7 +98,7 @@ export const useAuth = defineStore('auth', {
 
       await new Promise((resolve, reject) => {
         this.socket.on('connect', () => {
-          console.log('Socket connection established, looking for last')
+          console.log('Socket connection established, looking for latest action data...')
           resolve('socket connection established')
         })
 
@@ -185,12 +184,44 @@ export const useAuth = defineStore('auth', {
           }
         }, (lastActionData: LastActionData) => {
           const { time, serverIsUp } = lastActionData
-          if (!time) {
-            console.log('No server side actions found', lastActionData)
+          const { getAllDocuments } = useDocumentCache()
+
+          if (!this.timeOfSocketDisconnect) {
+            // If the socket has never disconnected, we are done here
+            console.log('Socket has never disconnected')
             return
           }
-          const timeOfLastAction = new Date(time)
-          console.log('Last action detected at', timeOfLastAction.toLocaleTimeString())
+
+          if (!serverIsUp) {
+            // If the server is not up and we have disconnected, we may have missed some actions, so we need to refresh
+            console.log('Server is stale, refreshing cache')
+            getAllDocuments({
+              showLoading: false,
+              forceCacheRefresh: true
+            })
+            return
+          }
+
+          if (!time) {
+            // If no time is returned, and the server is up, but no actions have been recorded, we are done here
+            console.log('No actions recorded on server, despite server being up')
+            return
+          }
+
+          const actionOccurredDuringDisconnect = this.timeOfSocketDisconnect < new Date(time)
+
+          if (!actionOccurredDuringDisconnect) {
+            // If the last action occurred before the socket disconnected, we are done here
+            console.log('No actions occurred during disconnect')
+            return
+          }
+
+          // We have missed some actions, so we need to refresh
+          console.log('Missed actions, refreshing cache')
+          getAllDocuments({
+            showLoading: false,
+            forceCacheRefresh: true
+          })
         })
       } catch {
         console.error('Unable to get user profile data')
