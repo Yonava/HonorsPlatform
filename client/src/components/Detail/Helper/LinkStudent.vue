@@ -70,7 +70,10 @@ const filteredItems = computed(() => {
 })
 
 const studentLinked = (sysId: string) => {
-  const itemToModify = useSheetManager().focusedItem
+  const { focusedItemSysId } = useSheetManager()
+  const itemToModify = Students.list.find(item => item.sysId === focusedItemSysId)
+
+
 
   // if itemToModify does not have a studentSysId return and log an error
   if (!itemToModify?.studentSysId === undefined) {

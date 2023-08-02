@@ -23,9 +23,6 @@ export function useUpdateItem<T extends SheetItem>(item: Ref<T | null>, panelNam
   let currentItem = ''
 
   const update = (newItem: T | null, oldItem: T | null | undefined) => {
-    if (!newItem) {
-      return
-    }
 
     // collab mode takes over
     if (numberOfUsersEditingItem.value > 1) {
@@ -48,6 +45,10 @@ export function useUpdateItem<T extends SheetItem>(item: Ref<T | null>, panelNam
     if (newItem !== oldItem && !itemPostedToSheet(oldItem) && !processing.value) {
       const { sysId } = oldItem
       deleteItemCache(sysId, panelName)
+      return
+    }
+
+    if (!newItem) {
       return
     }
 

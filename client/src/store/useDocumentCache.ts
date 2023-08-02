@@ -418,9 +418,7 @@ export const useDocumentCache = defineStore("documentCache", {
     },
     deleteItemCache(sysId: string, panelName?: PanelName) {
       const {
-        panel: activePanel,
-        pinnedSysIds,
-        focusedItemSysId
+        panel: activePanel
       } = useSheetManager();
 
       const actualPanelName = panelName ?? activePanel.panelName;
@@ -528,8 +526,6 @@ export const useDocumentCache = defineStore("documentCache", {
         setSearchFilter,
         getActivePanel,
         newSysId,
-        setFocusedItem,
-        setFocusedEmbeddedItem,
       } = useSheetManager();
 
       const {
@@ -551,10 +547,6 @@ export const useDocumentCache = defineStore("documentCache", {
         setSearchFilter("");
       } else {
         this[panel.sheetRange].selected = [newItem]
-      }
-
-      if (panelName === panel?.embedded.panel) {
-        setFocusedEmbeddedItem(newItem)
       }
 
       this.addItemCache(newItem, panelName);
@@ -592,7 +584,7 @@ export const useDocumentCache = defineStore("documentCache", {
       return itemInList;
     },
     async updateItem(options: UpdateItem) {
-      const { getActivePanel, focusedItemSysId } = useSheetManager();
+      const { getActivePanel } = useSheetManager();
       const { setProcessing } = useSyncState();
 
       const {

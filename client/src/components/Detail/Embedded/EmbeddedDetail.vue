@@ -71,7 +71,7 @@ const props = defineProps<{
 }>()
 
 const { list: items } = toRefs(documents[getActiveEmbeddedPanel.sheetRange])
-const { broadcastThroughSocket } = useUpdateItem(focusedEmbeddedItem, getActiveEmbeddedPanel)
+const { broadcastThroughSocket } = useUpdateItem(focusedEmbeddedItem, getActiveEmbeddedPanel.panelName)
 
 const displayedItems = computed(() => {
   if (!props.item[filterBy.outer]) return []
@@ -86,12 +86,14 @@ const addEmbeddedItem = async () => {
     })
   }
 
-  await addItem({
+  const createdItem = await addItem({
     panelName: getActiveEmbeddedPanel.panelName,
     columns: [
       props.item[filterBy.outer],
     ],
   })
+
+  setFocusedEmbeddedItem(createdItem)
 }
 
 const deleteEmbeddedItem = async (item: SheetItem) => {
