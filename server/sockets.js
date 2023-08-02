@@ -12,6 +12,11 @@ console.log('Sockets Live!')
 
 const connectedAccounts = []
 const focusData = {}
+const timeOfLastUserAction = {
+  time: null,
+  // this helps determine if time is null because the server is down or because no user has done anything yet
+  serverIsUp: false
+}
 
 io.on('connection', (socket) => {
   socket.on('disconnect', () => {
@@ -25,7 +30,7 @@ io.on('connection', (socket) => {
     io.emit('connectedAccounts', connectedAccounts)
   })
 
-  socket.on('connectAccount', (joinData) => {
+  socket.on('connectAccount', (joinData, callback) => {
     const { googleProfile, initialFocusState } = joinData
     connectedAccounts.push({
       socketId: socket.id,
@@ -36,9 +41,15 @@ io.on('connection', (socket) => {
     console.log('connectedAccounts', connectedAccounts)
     io.emit('connectedAccounts', connectedAccounts)
     io.emit('userFocus', focusData)
+    io.emit('latestUserAction', timeOfLastUserAction)
+
+    callback(timeOfLastUserAction)
+    timeOfLastUserAction.serverIsUp = true
   })
 
   socket.on('userAction', (data) => {
+    timeOfLastUserAction.time = new Date()
+    timeOfLastUserAction.serverIsUp = true
     socket.broadcast.emit('userAction', data)
   })
 
@@ -46,4 +57,6 @@ io.on('connection', (socket) => {
     focusData[socket.id] = data
     io.emit('userFocus', focusData)
   })
+
+  socket.emit('latestUserAction', timeOfLastUserAction)
 })

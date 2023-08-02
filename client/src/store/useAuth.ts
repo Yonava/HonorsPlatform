@@ -8,6 +8,7 @@ import { getUserProfileData } from "../SheetsAPI";
 import { useDocumentCache } from "./useDocumentCache";
 import { PanelName } from "../Panels";
 import { useSheetManager } from "./useSheetManager";
+import { useSyncState } from "./useSyncState";
 
 export type GoogleProfile = {
   id: string,
@@ -23,6 +24,11 @@ export type ConnectedAccount = GoogleProfile & { socketId: string }
 type ActionData = {
   action: string,
   payload: any
+}
+
+type LastActionData = {
+  time: Date,
+  serverIsUp: boolean,
 }
 
 type FocusData = {
@@ -41,7 +47,8 @@ export const useAuth = defineStore('auth', {
     socket: null as any,
     googleProfile: null as GoogleProfile | null,
     connectedAccounts: [] as ConnectedAccount[],
-    focusData: {} as FocusData
+    focusData: {} as FocusData,
+    timeOfSocketDisconnect: null as Date | null
   }),
   getters: {
     getConnectedAccounts(state) {
@@ -92,13 +99,18 @@ export const useAuth = defineStore('auth', {
 
       await new Promise((resolve, reject) => {
         this.socket.on('connect', () => {
-          console.log('Socket connection established')
+          console.log('Socket connection established, looking for last')
           resolve('socket connection established')
         })
 
         this.socket.on('connect_error', (error: any) => {
           console.error('Socket connection error', error)
           reject(error)
+        })
+
+        this.socket.on('disconnect', () => {
+          this.timeOfSocketDisconnect = new Date()
+          console.log('Socket connection disconnected', this.timeOfSocketDisconnect.toLocaleTimeString())
         })
 
         this.socket.on('connectedAccounts', (connectedAccounts: ConnectedAccount[]) => {
@@ -171,6 +183,14 @@ export const useAuth = defineStore('auth', {
             panelName: useSheetManager().panel.panelName,
             googleId: this.googleProfile?.id
           }
+        }, (lastActionData: LastActionData) => {
+          const { time, serverIsUp } = lastActionData
+          if (!time) {
+            console.log('No server side actions found', lastActionData)
+            return
+          }
+          const timeOfLastAction = new Date(time)
+          console.log('Last action detected at', timeOfLastAction.toLocaleTimeString())
         })
       } catch {
         console.error('Unable to get user profile data')
@@ -180,7 +200,6 @@ export const useAuth = defineStore('auth', {
       if (this.socket) {
         this.socket.disconnect()
       }
-      this.socket = null
     },
     setAuthTimeout(timeout: number) {
       this.authTimeoutInSeconds = timeout
