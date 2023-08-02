@@ -11,6 +11,8 @@ export const local = {
   googleOAuthAccessToken: (googleId: string) => 'ACCESS-TOKEN-' + googleId,
   // google oauth code
   googleOAuthCode: 'code',
+  // time since last auth
+  timeSinceLastAuth: 'lastAuth',
   // controls whether or not window.close() is called after google oauth
   closeAfterAuth: 'close-window',
   // width of the list item container on panel page

@@ -15,7 +15,6 @@ export const setSelectedItem = (item: SheetItem) => {
 
   // replace the focused item with the new item
   const indexOfFocusedItem = selectedItems.findIndex(i => i.sysId === focusedItemSysId)
-  console.log('indexOfFocusedItem', indexOfFocusedItem)
   if (indexOfFocusedItem !== -1) {
     selectedItems.splice(indexOfFocusedItem, 1, item)
     setFocusedItem(item.sysId)
