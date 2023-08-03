@@ -52,7 +52,7 @@ import { useSheetManager } from '../../../store/useSheetManager'
 import { filterItems } from '../../../FilterObjects'
 import { ref, computed } from 'vue'
 
-const { Students } = useDocumentCache()
+const { Students, getItemBySysId } = useDocumentCache()
 
 const filterQuery = ref('')
 
@@ -71,9 +71,7 @@ const filteredItems = computed(() => {
 
 const studentLinked = (sysId: string) => {
   const { focusedItemSysId } = useSheetManager()
-  const itemToModify = Students.list.find(item => item.sysId === focusedItemSysId)
-
-
+  const itemToModify = getItemBySysId(focusedItemSysId)
 
   // if itemToModify does not have a studentSysId return and log an error
   if (!itemToModify?.studentSysId === undefined) {

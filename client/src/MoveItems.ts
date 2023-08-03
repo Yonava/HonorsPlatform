@@ -1,6 +1,5 @@
 import {
   getPanel,
-  type PanelName,
   type Panel
 } from './Panels'
 import type { SheetItem, Student, Graduate, Module, CompletedModule } from './SheetTypes'
@@ -13,15 +12,6 @@ import { useSheetManager } from './store/useSheetManager'
 import { warn } from './Warn'
 import { moveToGraduates, moveToStudents } from './StudentTools'
 import { useDocumentCache } from './store/useDocumentCache'
-
-type MovementFn = (item: SheetItem) => Promise<void>
-
-type MoveItem = {
-  [key in PanelName]?: {
-    to: Panel,
-    handler: MovementFn
-  }
-}
 
 const savedToSheet = (item: SheetItem, panel?: Panel) => {
   const { open, close } = useDialog()
@@ -194,10 +184,9 @@ export const movementHandlers = {
     }
 
     await moveItemBetweenLists({
-      oldItem: completedModule,
-      newItem,
-      oldPanel: completedModulePanel,
-      newPanel: modulePanel,
+      item: newItem,
+      oldPanelName: completedModulePanel.panelName,
+      newPanelName: modulePanel.panelName,
     })
 
     open({
@@ -259,10 +248,11 @@ export const useMoveItem = () => {
   })
 
   const moveItem = async (item?: SheetItem) => {
-    const { focusedItem } = useSheetManager()
+    const { focusedItemSysId } = useSheetManager()
+    const { getItemBySysId } = useDocumentCache()
 
-    if (!item && focusedItem) {
-      item = focusedItem
+    if (!item && focusedItemSysId) {
+      item = getItemBySysId(focusedItemSysId)
     }
 
     if (!item) {

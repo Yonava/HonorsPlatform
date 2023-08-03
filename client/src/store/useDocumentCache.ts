@@ -425,10 +425,17 @@ export const useDocumentCache = defineStore("documentCache", {
       const panel = panels[actualPanelName];
 
       const indexOfItemToDelete = this[panel.sheetRange].list.findIndex(item => item.sysId === sysId);
-      const itemToDeleteInSelected = this[panel.sheetRange].selected.find(item => item.sysId === sysId)
 
-      if (indexOfItemToDelete !== -1) {
-        this[panel.sheetRange].list.splice(indexOfItemToDelete, 1);
+      if (indexOfItemToDelete === -1) {
+        return
+      }
+
+      this[panel.sheetRange].list.splice(indexOfItemToDelete, 1);
+
+      const itemToDeleteInSelected = this[panel.sheetRange].selected.find(item => item.sysId === sysId);
+
+      if (!itemToDeleteInSelected) {
+        return
       }
 
       // todo: test if this code is actually needed
@@ -436,10 +443,6 @@ export const useDocumentCache = defineStore("documentCache", {
       // if (pinnedSysIdIndex !== -1) {
       //   pinnedSysIds.splice(pinnedSysIdIndex, 1)
       // }
-
-      if (!itemToDeleteInSelected) {
-        return;
-      }
 
       this.removeSelectedItem({
         item: itemToDeleteInSelected,

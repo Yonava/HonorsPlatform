@@ -39,9 +39,15 @@ import { useDialog } from '../../../store/useDialog'
 import { useDocumentCache } from '../../../store/useDocumentCache'
 import { useSheetManager } from '../../../store/useSheetManager'
 
-const { Graduates } = useDocumentCache()
+const { Graduates, getItemBySysId } = useDocumentCache()
 
 const filterQuery = ref('')
+
+const props = defineProps<{
+  props: {
+    onUpdate: () => void
+  }
+}>()
 
 const filteredItems = computed(() => {
   return filterItems(
@@ -51,13 +57,17 @@ const filteredItems = computed(() => {
 })
 
 const graduateLinked = (sysId: string) => {
-  const itemToModify = useSheetManager().focusedItem
+  const { focusedItemSysId } = useSheetManager()
+  const itemToModify = getItemBySysId(focusedItemSysId)
+
   // if itemToModify does not have a studentSysId return and log an error
   if (!itemToModify?.studentSysId === undefined) {
-    console.error('Link Graduate: No studentSysId found on itemToModify')
+    console.error('Link Student: No studentSysId found on itemToModify')
     return
   }
+
   itemToModify.studentSysId = sysId
+  props.props.onUpdate()
   useDialog().close()
 }
 </script>

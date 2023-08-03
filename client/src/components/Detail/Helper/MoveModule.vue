@@ -125,10 +125,9 @@ async function moveModule() {
 
   try {
     await moveItemBetweenLists({
-      oldItem: module,
-      oldPanel: modulePanel,
-      newItem: newCompletedModule,
-      newPanel: completedModulePanel
+      oldPanelName: modulePanel.panelName,
+      newPanelName: completedModulePanel.panelName,
+      item: newCompletedModule,
     })
   } catch (e) {
     console.error(e)
