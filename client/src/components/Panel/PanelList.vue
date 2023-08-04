@@ -1,16 +1,17 @@
 <template>
   <div>
-    <div v-if="!loadingItems">
-      <div
-        style="position: relative; width: 100%;"
-        class="d-flex flex-column align-center"
-      >
-        <TransitionGroup :name="listTransitionActive ? 'list' : ''">
+    <div
+      v-if="!loadingItems"
+      v-bind="containerProps"
+      style="height: calc(100vh - 64px);"
+    >
+      <div v-bind="wrapperProps">
+        <!-- <TransitionGroup :name="listTransitionActive ? 'list' : ''"> -->
           <div
-            v-for="item in incrementallyRenderedItems"
-            :key="item"
+            v-for="{ data: item } in list"
+            :key="item.sysId"
             @click="setSelectedItem(item)"
-            style="width: 100%; height: 100%; position: relative;"
+            style="height: 105px; overflow: hidden;"
           >
             <component
               :is="panel.components.list"
@@ -18,7 +19,7 @@
               :styled="true"
             />
           </div>
-        </TransitionGroup>
+        <!-- </TransitionGroup> -->
       </div>
       <v-sheet
         v-if="filteredItems.length === 0"
@@ -58,17 +59,20 @@
 </template>
 
 <script setup lang="ts">
+import { useVirtualList } from '@vueuse/core'
 import { setSelectedItem } from './SetSelectedItem'
-import type { SheetItem } from '../../SheetTypes'
 import { useSheetManager } from '../../store/useSheetManager'
-import { useIncrementalRender } from '../../useIncrementalRender'
-import { useDisplay } from 'vuetify'
 import { storeToRefs } from 'pinia'
 
 const sheetManager = useSheetManager()
 const { filteredItems, loadingItems, panel, searchFilter, listTransitionActive } = storeToRefs(sheetManager)
 
-const { incrementallyRenderedItems } = useIncrementalRender(filteredItems)
+const { list, containerProps, wrapperProps } = useVirtualList(
+  filteredItems,
+  {
+    itemHeight: 105
+  }
+)
 </script>
 
 <style scoped>

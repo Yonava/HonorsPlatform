@@ -5,10 +5,8 @@ export const local = {
   initials: 'initials',
   // comma separated list of pinned item sysIds for each panel
   pinned: (panelName: PanelName) => `PINNED-${panelName}`,
-  // the prefix that comes before access token
-  accessTokenPrefix: 'ACCESS-TOKEN-',
   // temporary google token needed for all google api calls
-  googleOAuthAccessToken: (googleId: string) => 'ACCESS-TOKEN-' + googleId,
+  googleOAuthAccessToken: 'ACCESS-TOKEN',
   // google oauth code
   googleOAuthCode: 'code',
   // time since last auth

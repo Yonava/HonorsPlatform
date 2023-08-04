@@ -10,8 +10,8 @@
       @click="profileClicked(account)"
       :key="account.id"
       :style="{
-        width: '40px',
-        height: '40px',
+        width: xs ? '50px' : '40px',
+        height: xs ? '50px' : '40px',
         borderRadius: '50%',
         background: 'rgb(0, 0, 0)',
         transform: `translateX(${i * -25}px)`,
@@ -29,6 +29,7 @@
         }"
       />
       <v-tooltip
+        :disabled="smAndDown"
         activator="parent"
         location="bottom"
       >
@@ -44,7 +45,9 @@ import { storeToRefs } from 'pinia';
 import { panels } from '../../Panels';
 import { useSheetManager } from '../../store/useSheetManager';
 import { useDocumentCache } from '../../store/useDocumentCache';
+import { useDisplay } from 'vuetify';
 
+const { smAndDown, xs } = useDisplay()
 const { setPanel } = useSheetManager()
 const { getConnectedAccounts, focusData } = storeToRefs(useAuth())
 
@@ -81,12 +84,9 @@ const profileClicked = (account: ConnectedAccount) => {
     return
   }
 
-  const { focusedItem } = useSheetManager()
-  if (focusedItem) {
-    const { sysId: focusedSysId } = focusedItem
-    if (focusedSysId === sysId) {
-      return
-    }
+  const { focusedItemSysId } = useSheetManager()
+  if (focusedItemSysId === sysId) {
+    return
   }
 
   setPanel(panelName, {

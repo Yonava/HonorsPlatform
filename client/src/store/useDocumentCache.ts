@@ -262,7 +262,8 @@ export const useDocumentCache = defineStore("documentCache", {
       const {
         focusedItemSysId,
         getActivePanel,
-        setFocusedItem
+        setFocusedItem,
+        pinnedSysIds
       } = useSheetManager();
 
       const {
@@ -301,15 +302,14 @@ export const useDocumentCache = defineStore("documentCache", {
         setFocusedItem(this[range].selected[0].sysId)
       }
 
-      // todo: see if code is necessary
       // clean up pinned items
-      // if (panel.sheetRange === getActivePanel.sheetRange) {
-      //   useSheetManager().pinnedSysIds = useSheetManager().pinnedSysIds.filter((sysId) => {
-      //     return this[range].list.some((item) => {
-      //       return item.sysId === sysId
-      //     })
-      //   })
-      // }
+      if (panel.panelName === getActivePanel.panelName) {
+        useSheetManager().pinnedSysIds = pinnedSysIds.filter((sysId) => {
+          return this[range].list.some((item) => {
+            return item.sysId === sysId
+          })
+        })
+      }
 
       this.refreshLog[range] = new Date();
       return documents;
@@ -437,12 +437,6 @@ export const useDocumentCache = defineStore("documentCache", {
       if (!itemToDeleteInSelected) {
         return
       }
-
-      // todo: test if this code is actually needed
-      // const pinnedSysIdIndex = pinnedSysIds.indexOf(sysId)
-      // if (pinnedSysIdIndex !== -1) {
-      //   pinnedSysIds.splice(pinnedSysIdIndex, 1)
-      // }
 
       this.removeSelectedItem({
         item: itemToDeleteInSelected,

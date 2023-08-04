@@ -47,7 +47,8 @@ export const useAuth = defineStore('auth', {
     googleProfile: null as GoogleProfile | null,
     connectedAccounts: [] as ConnectedAccount[],
     focusData: {} as FocusData,
-    timeOfSocketDisconnect: null as Date | null
+    timeOfSocketDisconnect: null as Date | null,
+    accessTokenOnDisconnect: null as string | null,
   }),
   getters: {
     getConnectedAccounts(state) {
@@ -65,20 +66,6 @@ export const useAuth = defineStore('auth', {
           return true;
         }
       });
-    },
-    getGoogleAccessToken() {
-      const googleId = this.googleProfile?.id
-      if (!googleId) {
-        const { accessTokenPrefix } = local
-        const tokenKey = Object.keys(localStorage).find(key => key.startsWith(accessTokenPrefix))
-        if (!tokenKey) {
-          console.error('useAuth getGoogleAccessToken: No google access token found')
-          return
-        }
-        return localStorage.getItem(tokenKey)
-      }
-      const tokenKey = local.googleOAuthAccessToken(googleId)
-      return localStorage.getItem(tokenKey)
     }
   },
   actions: {
@@ -87,7 +74,8 @@ export const useAuth = defineStore('auth', {
         return
       }
 
-      if (!this.getGoogleAccessToken) {
+      const accessToken = localStorage.getItem(local.googleOAuthAccessToken)
+      if (!accessToken) {
         return
       }
 
@@ -99,6 +87,14 @@ export const useAuth = defineStore('auth', {
       await new Promise((resolve, reject) => {
         this.socket.on('connect', () => {
           console.log('Socket connection established, looking for latest action data...')
+          const accessToken = localStorage.getItem(local.googleOAuthAccessToken)
+          if (this.accessTokenOnDisconnect && this.accessTokenOnDisconnect !== accessToken) {
+            console.log('Access token has changed, logging out for security reasons...')
+            this.userLogoutFlow({
+              goToAuthPage: true
+            })
+            return
+          }
           resolve('socket connection established')
         })
 
@@ -109,11 +105,24 @@ export const useAuth = defineStore('auth', {
 
         this.socket.on('disconnect', () => {
           this.timeOfSocketDisconnect = new Date()
+          this.connectedAccounts = []
+          this.focusData = {}
+          this.accessTokenOnDisconnect = localStorage.getItem(local.googleOAuthAccessToken)
           console.log('Socket connection disconnected', this.timeOfSocketDisconnect.toLocaleTimeString())
         })
 
         this.socket.on('connectedAccounts', (connectedAccounts: ConnectedAccount[]) => {
           this.connectedAccounts = connectedAccounts
+        })
+
+        this.socket.on('userLogout', (googleId: string) => {
+          console.log('userLogout', googleId)
+          if (googleId === this.googleProfile?.id) {
+            this.userLogoutFlow({
+              goToAuthPage: true,
+              fromLogoutEvent: true
+            })
+          }
         })
 
         this.socket.on('userAction', (data: ActionData) => {
@@ -238,24 +247,6 @@ export const useAuth = defineStore('auth', {
     setGoogleProfile(profile: GoogleProfile | null) {
       this.googleProfile = profile
     },
-    setGoogleAccessToken(token: string) {
-      const googleId = this.googleProfile?.id
-      if (!googleId) {
-        console.error('Google ID not found')
-        return
-      }
-      const tokenKey = local.googleOAuthAccessToken(googleId)
-      localStorage.setItem(tokenKey, token)
-    },
-    removeGoogleAccessToken() {
-      const googleId = this.googleProfile?.id
-      if (!googleId) {
-        console.error('Google ID not found')
-        return
-      }
-      const tokenKey = local.googleOAuthAccessToken(googleId)
-      localStorage.removeItem(tokenKey)
-    },
     async getURL(): Promise<string> {
       const response = await axios.get('/api/auth/url')
       if (!response.data.url) {
@@ -281,7 +272,7 @@ export const useAuth = defineStore('auth', {
         }
 
         this.setGoogleProfile(profile)
-        this.setGoogleAccessToken(accessToken)
+        localStorage.setItem(local.googleOAuthAccessToken, accessToken)
 
         this.destroySocketConnection()
         await this.createSocketConnection()
@@ -290,8 +281,20 @@ export const useAuth = defineStore('auth', {
         throw error
       }
     },
-    userLogoutFlow() {
-      this.removeGoogleAccessToken()
+    userLogoutFlow({ goToAuthPage = false, fromLogoutEvent = false } = {}) {
+      localStorage.removeItem(local.googleOAuthAccessToken)
+
+      if (this.socket && !fromLogoutEvent) {
+        this.socket.emit('userLogout', this.googleProfile?.id)
+      }
+
+      if (goToAuthPage) {
+        router.push({
+          name: 'auth'
+        })
+        return
+      }
+
       this.forceAuthorize()
     },
     async forceAuthorize(url?: string) {
@@ -311,7 +314,7 @@ export const useAuth = defineStore('auth', {
         return
       }
 
-      this.removeGoogleAccessToken()
+      localStorage.removeItem(local.googleOAuthAccessToken)
       localStorage.removeItem(local.googleOAuthCode)
       localStorage.setItem(local.closeAfterAuth, 'true')
 

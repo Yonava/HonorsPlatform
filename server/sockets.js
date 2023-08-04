@@ -19,6 +19,7 @@ const timeOfLastUserAction = {
 }
 
 io.on('connection', (socket) => {
+
   socket.on('disconnect', () => {
     const index = connectedAccounts.findIndex(account => account.socketId === socket.id)
     if (index === -1) {
@@ -47,6 +48,10 @@ io.on('connection', (socket) => {
 
     callback(timeOfLastUserAction)
     timeOfLastUserAction.serverIsUp = true
+  })
+
+  socket.on('userLogout', (googleId) => {
+    io.emit('userLogout', googleId)
   })
 
   socket.on('userAction', (data) => {

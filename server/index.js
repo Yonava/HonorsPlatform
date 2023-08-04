@@ -92,6 +92,7 @@ app.get('/api/auth/:authCode', async (req, res) => {
     const { access_token: accessToken } = tokens;
     const profile = await getGoogleProfileData(accessToken);
 
+    console.log('done', accessToken, profile)
     console.assert(accessToken && profile, 'Auth entry point failed');
 
     res.json({
@@ -129,6 +130,12 @@ app.post("/api/ranges", async (req, res) => {
   const accessToken = authorization.split(' ')[1];
 
   console.log('hitting 2', accessToken)
+
+  if (!accessToken) {
+    console.log('no access token')
+    res.status(401).json({ error: 'Forbidden' });
+    return;
+  }
 
   try {
     const sheet = new GoogleSheet(accessToken);

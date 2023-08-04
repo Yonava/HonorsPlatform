@@ -95,6 +95,7 @@
     <v-sheet
       v-for="item in getSelectedItems()"
       :key="item.sysId"
+      @click="setFocusedItem(item.sysId)"
       :style="{
         width: '100%',
         height: '100%',
@@ -145,19 +146,20 @@ const dragState = ref(false)
 const dragStateMove = ref(false)
 
 const sheetManager = useSheetManager()
-const { getActivePanel } = storeToRefs(sheetManager)
+const { getActivePanel, listItemBeingDragged, focusedItemSysId } = storeToRefs(sheetManager)
+const { setFocusedItem } = sheetManager
 
 const { getSelectedItems, addSelectedItem } = useDocumentCache()
 
 const moveWidgetActive = computed(() => {
-  return useSheetManager().listItemBeingDragged || movingItem.value
+  return listItemBeingDragged.value || movingItem.value
 })
 
 const { moveItem, movingItem, movementObject } = useMoveItem()
 
 const drop = (e: DragEvent) => {
   dragState.value = false
-  const item = useSheetManager().listItemBeingDragged
+  const item = listItemBeingDragged.value
   if (item) {
     addSelectedItem({ item })
   }
@@ -165,7 +167,7 @@ const drop = (e: DragEvent) => {
 
 const dropMove = (e: DragEvent) => {
   dragStateMove.value = false
-  const item = useSheetManager().listItemBeingDragged
+  const item = listItemBeingDragged.value
   if (item) {
     moveItem(item)
   }
@@ -176,12 +178,11 @@ const dragOver = (e: DragEvent) => {
 }
 
 const isFocused = (item: SheetItem) => {
-  const { focusedItemSysId } = useSheetManager()
-  return focusedItemSysId === item.sysId
+  return focusedItemSysId.value === item.sysId
 }
 
 const allowPointerEvents = computed(() => {
-  return useSheetManager().listItemBeingDragged
+  return listItemBeingDragged.value
 })
 </script>
 

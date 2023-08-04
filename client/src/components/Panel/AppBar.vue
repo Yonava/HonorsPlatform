@@ -23,8 +23,9 @@
             icon="mdi-podium"
             size="large"
           ></v-icon>
-        </v-btn>
-        <v-spacer></v-spacer> -->
+        </v-btn> -->
+        <ActiveAccounts />
+        <v-spacer></v-spacer>
         <Announcements />
       </div>
       <v-btn
@@ -109,10 +110,11 @@
         type="text"
         id="input"
       />
+
       <v-spacer></v-spacer>
 
-      <ActiveAccounts />
-      
+      <ActiveAccounts v-if="smAndUp" />
+
       <v-btn
         v-if="smAndUp && getActivePanel.add"
         @click="add.fire"

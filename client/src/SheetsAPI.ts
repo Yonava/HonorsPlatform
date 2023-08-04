@@ -8,26 +8,9 @@ export type HeaderRows = { [key in Range]?: string[] }
 export const headerRowMemo: HeaderRows = {}
 
 function requestHeaders() {
-
-  const { googleProfile } = useAuth();
-
-  const googleAccessToken = () => {
-    const googleId = googleProfile?.id
-    if (!googleId) {
-      const { accessTokenPrefix } = local
-      const tokenKey = Object.keys(localStorage).find(key => key.startsWith(accessTokenPrefix))
-      if (!tokenKey) {
-        return
-      }
-      return localStorage.getItem(tokenKey)
-    }
-    const tokenKey = local.googleOAuthAccessToken(googleId)
-    return localStorage.getItem(tokenKey)
-  }
-
   return {
     headers: {
-      Authorization: `Bearer ${googleAccessToken()}`,
+      Authorization: `Bearer ${localStorage.getItem(local.googleOAuthAccessToken) }`,
     }
   }
 }
