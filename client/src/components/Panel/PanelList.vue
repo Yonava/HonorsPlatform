@@ -63,9 +63,18 @@ import { useVirtualList } from '@vueuse/core'
 import { setSelectedItem } from './SetSelectedItem'
 import { useSheetManager } from '../../store/useSheetManager'
 import { storeToRefs } from 'pinia'
+import { watch, ref } from 'vue'
 
 const sheetManager = useSheetManager()
 const { filteredItems, loadingItems, panel, searchFilter, listTransitionActive } = storeToRefs(sheetManager)
+
+// const panelListContainer = ref<HTMLElement | null>(null)
+
+// watch(searchFilter, () => {
+//   if (panelListContainer.value) {
+//     panelListContainer.value.scrollTop = 0
+//   }
+// })
 
 const { list, containerProps, wrapperProps } = useVirtualList(
   filteredItems,

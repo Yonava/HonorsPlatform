@@ -367,8 +367,9 @@ export const useDocumentCache = defineStore("documentCache", {
       } = options;
 
       const indexOfFocusedItemInSelected = this[panel.sheetRange].selected.findIndex((selectedItem) => selectedItem.sysId === focusedItemSysId);
-      const itemBeingRemovedIsFocused = indexOfFocusedItemInSelected !== -1;
+      const itemBeingRemovedIsFocused = item.sysId === focusedItemSysId;
       const thereIsAnotherItemSelected = this[panel.sheetRange].selected.length > 1;
+
 
       if (itemBeingRemovedIsFocused && thereIsAnotherItemSelected) {
         const itemToTheLeft = this[panel.sheetRange].selected[indexOfFocusedItemInSelected - 1];
