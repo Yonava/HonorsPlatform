@@ -366,20 +366,22 @@ export const useDocumentCache = defineStore("documentCache", {
         item,
       } = options;
 
-      const indexOfFocusedItemInSelected = this[panel.sheetRange].selected.findIndex((selectedItem) => selectedItem.sysId === focusedItemSysId);
+      const selectedItems = this[panel.sheetRange].selected;
+
+      const indexOfFocusedItemInSelected = selectedItems.findIndex((selectedItem) => selectedItem.sysId === focusedItemSysId);
       const itemBeingRemovedIsFocused = item.sysId === focusedItemSysId;
-      const thereIsAnotherItemSelected = this[panel.sheetRange].selected.length > 1;
+      const thereIsAnotherItemSelected = selectedItems.length > 1;
 
 
       if (itemBeingRemovedIsFocused && thereIsAnotherItemSelected) {
-        const itemToTheLeft = this[panel.sheetRange].selected[indexOfFocusedItemInSelected - 1];
-        const itemToTheRight = this[panel.sheetRange].selected[indexOfFocusedItemInSelected + 1];
+        const itemToTheLeft = selectedItems[indexOfFocusedItemInSelected - 1];
+        const itemToTheRight = selectedItems[indexOfFocusedItemInSelected + 1];
         const nextFocusedItem = itemToTheRight || itemToTheLeft;
         setFocusedItem(nextFocusedItem.sysId);
       }
 
-      const indexOfItemInSelected = this[panel.sheetRange].selected.findIndex((selectedItem) => selectedItem.sysId === item.sysId);
-      this[panel.sheetRange].selected.splice(indexOfItemInSelected, 1);
+      const indexOfItemInSelected = selectedItems.findIndex((selectedItem) => selectedItem.sysId === item.sysId);
+      selectedItems.splice(indexOfItemInSelected, 1);
     },
     setSelectedItemByKeyValue(options: SetSelectedItemByKeyValue = {}) {
       const { panel: activePanel } = useSheetManager();

@@ -198,7 +198,6 @@ export const useSheetManager = defineStore('sheetManager', {
       }
     },
     setFocusedItem(sysId: string) {
-      console.log('setFocusedItem', sysId)
       this.focusedItemSysId = sysId
       const { socket, googleProfile } = useAuth()
 
