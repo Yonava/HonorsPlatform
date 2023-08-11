@@ -36,8 +36,8 @@
     >
       <component
         :is="getActivePanel.embedded.list"
-        @selected="item => setFocusedEmbeddedItem(item)"
-        @delete="item => deleteEmbeddedItem(item)"
+        @selected="setFocusedEmbeddedItem($event)"
+        @delete="deleteEmbeddedItem($event)"
         :items="displayedItems"
       />
     </div>
@@ -74,7 +74,9 @@ const { list: items } = toRefs(documents[getActiveEmbeddedPanel.sheetRange])
 const { broadcastThroughSocket } = useUpdateItem(focusedEmbeddedItem, getActiveEmbeddedPanel.panelName)
 
 const displayedItems = computed(() => {
-  if (!props.item[filterBy.outer]) return []
+  if (!props.item[filterBy.outer]) {
+    return []
+  }
   return items.value.filter(e => e[filterBy.inner] === props.item[filterBy.outer])
 })
 

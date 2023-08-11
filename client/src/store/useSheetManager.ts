@@ -21,7 +21,7 @@ export type SortOption = {
 export const useSheetManager = defineStore('sheetManager', {
   state: () => ({
     panelSwitchDebounce: 250,
-    canPanelSwitch: true,
+    panelSwitchCooldown: true,
     panel: getPanel(Object.keys(panels)[0] as PanelName),
     searchFilter: '',
     pinnedSysIds: [] as string[],
@@ -86,11 +86,11 @@ export const useSheetManager = defineStore('sheetManager', {
       this.searchFilter = filter;
     },
     async setPanel(panelName: PanelName, jumpTo?: JumpObject) {
-      if (!this.canPanelSwitch) {
+      if (!this.panelSwitchCooldown) {
         return;
       }
 
-      this.canPanelSwitch = false;
+      this.panelSwitchCooldown = false;
 
       const { setSelectedItems, getAllDocuments } = useDocumentCache();
 
@@ -134,7 +134,7 @@ export const useSheetManager = defineStore('sheetManager', {
       }
 
       setTimeout(() => {
-        this.canPanelSwitch = true;
+        this.panelSwitchCooldown = true;
       }, this.panelSwitchDebounce);
     },
     async jumpToItem({ key = 'sysId', value, fallbackFn = () => null }: JumpObject) {
