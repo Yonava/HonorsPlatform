@@ -43,14 +43,18 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { storeToRefs } from 'pinia'
 import { useDisplay } from 'vuetify'
 import { useSheetManager } from '../../../store/useSheetManager'
 import ModalContent from '../../ModalContent.vue'
 
 const {
   getActiveEmbeddedPanel,
-  setFocusedEmbeddedItem,
   focusedEmbeddedItem
+} = storeToRefs(useSheetManager())
+
+const {
+  setFocusedEmbeddedItem
 } = useSheetManager()
 
 const props = defineProps<{
@@ -75,7 +79,9 @@ const { xs } = useDisplay()
 
 const dialogCanOpen = ref(true)
 const showDialog = computed({
-  get: () => !!focusedEmbeddedItem && dialogCanOpen.value,
+  get: () => {
+    return dialogCanOpen.value && !!focusedEmbeddedItem.value
+  },
   set: () => {
     dialogCanOpen.value = false
     setTimeout(() => {

@@ -84,7 +84,7 @@
     ></v-textarea>
     <template #right-button>
       <v-btn
-        @click="openMoveDialog"
+        @click="moveItem(selectedModule)"
         variant="outlined"
         :color="getActiveEmbeddedPanel.color + '-darken-2'"
       >
@@ -98,11 +98,10 @@
 import EmbeddedDetailFrame from '../EmbeddedDetailFrame.vue'
 import { useSheetManager } from '../../../../store/useSheetManager'
 import { computed } from 'vue'
-import { useDialog } from '../../../../store/useDialog'
 import { termValidator, getCurrentTerm } from '../../../../TermValidator'
-import MoveModule from '../../Helper/MoveModule.vue'
 import InstructorComplete from '../../Helper/InstructorComplete.vue'
 import type { Module } from '../../../../SheetTypes'
+import { useMoveItem } from '../../../../MoveItems'
 
 const { getActiveEmbeddedPanel, focusedEmbeddedItem } = useSheetManager()
 const selectedModule = computed(() => focusedEmbeddedItem as Module)
@@ -111,14 +110,5 @@ defineProps<{
   broadcastThroughSocket: (prop: keyof Module, value?: string | number | boolean) => void
 }>()
 
-const openMoveDialog = () => {
-  useDialog().open({
-    component: {
-      render: MoveModule,
-      props: {
-        module: selectedModule.value,
-      },
-    },
-  })
-}
+const { moveItem } = useMoveItem('MODULES');
 </script>

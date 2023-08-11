@@ -649,13 +649,20 @@ export const useDocumentCache = defineStore("documentCache", {
       const oldPanel = panels[oldPanelName];
       const newPanel = panels[newPanelName];
 
+      const { row: oldRow } = item;
+
+      if (!oldRow) {
+        throw new Error("useDocumentCache: Cannot move item that doesn't have a row");
+      }
+
       const row = await postInRange(
         newPanel.sheetRange,
         await newPanel.mappers.unmap([item])
       )
       item.row = row;
 
-      await clearByRow(oldPanel.sheetRange, item.row);
+      console.log(oldPanel.sheetRange, oldRow)
+      await clearByRow(oldPanel.sheetRange, oldRow);
 
       this.moveItemBetweenListsCache({ item, oldPanelName, newPanelName });
 

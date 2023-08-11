@@ -1,5 +1,7 @@
 import {
   getPanel,
+  PanelName,
+  panels,
   type Panel
 } from './Panels'
 import type { SheetItem, Student, Graduate, Module, CompletedModule } from './SheetTypes'
@@ -215,10 +217,12 @@ export const movementHandlers = {
   },
 }
 
-export const useMoveItem = () => {
+export const useMoveItem = (originatingPanelName?: PanelName) => {
 
   const sheetManager = useSheetManager()
+
   const { getActivePanel } = storeToRefs(sheetManager)
+  const panelName = computed(() => originatingPanelName ?? getActivePanel.value.panelName)
 
   const movingItem = ref(false)
 
@@ -244,11 +248,11 @@ export const useMoveItem = () => {
   }
 
   const movementObject = computed(() => {
-    return movements[getActivePanel.value.panelName]
+    return movements[panelName.value]
   })
 
   const moveItem = async (item?: SheetItem) => {
-    const { focusedItemSysId } = useSheetManager()
+    const { focusedItemSysId, setFocusedEmbeddedItem } = useSheetManager()
     const { getItemBySysId } = useDocumentCache()
 
     if (!item && focusedItemSysId) {
@@ -261,7 +265,8 @@ export const useMoveItem = () => {
 
     movingItem.value = true
     try {
-      await movementObject.value?.handler(item) ?? Promise.reject(new Error(`No movement handler for ${getActivePanel.value.panelName}`))
+      await movementObject.value?.handler(item) ?? Promise.reject(new Error(`No movement handler for ${panelName.value}`))
+      setFocusedEmbeddedItem(null)
     } catch (e) {
       console.error(e)
     } finally {
