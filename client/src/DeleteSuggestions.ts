@@ -1,4 +1,5 @@
 import { Panel, getPanel } from "./Panels";
+import { useStudentMatcher } from "./StudentMatcher";
 import { useSheetManager } from './store/useSheetManager'
 import { useDocumentCache } from "./store/useDocumentCache";
 import { useDialog } from "./store/useDialog";
@@ -108,22 +109,18 @@ const thesisDeletions = async () => {
 
     if (!thesis.title) {
       deletionData.status = "danger"
-      deletionData.flaggedBecause.push("it does not have a title")
+      deletionData.flaggedBecause.push("no title")
     }
 
     if (thesis.decision === "Rejected") {
       deletionData.status = "danger"
-      deletionData.flaggedBecause.push("it has been rejected by the honors committee")
+      deletionData.flaggedBecause.push("rejected by the honors committee")
     }
 
-    if (thesis.draftReceived) {
-      const draftReceived = new Date(thesis.draftReceived)
-      const now = new Date()
-      const aYearAgo = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate())
-      if (draftReceived < aYearAgo) {
-        deletionData.status = "danger"
-        deletionData.flaggedBecause.push("draft received over a year ago without a final draft")
-      }
+    const { studentMatch } = useStudentMatcher(thesis.studentSysId)
+    if (studentMatch.value?.error) {
+      deletionData.status = "danger"
+      deletionData.flaggedBecause.push(studentMatch.value.error)
     }
 
     return deletionData

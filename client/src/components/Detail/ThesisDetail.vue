@@ -86,12 +86,8 @@
       <v-select
         v-model="thesis.decision"
         @update:model-value="broadcastThroughSocket('decision')"
-        :items="[
-          'Approved',
-          'Rejected',
-          'Pending',
-        ]"
-        :prepend-icon="thesis.decision === 'Approved' ? 'mdi-check-circle' : thesis.decision === 'Rejected' ? 'mdi-close-circle' : 'mdi-alert-circle'"
+        :items="Object.keys(approvalStates)"
+        :prepend-icon="approvalStates[thesis.decision]"
         label="Decision"
       ></v-select>
 
@@ -173,6 +169,12 @@ const props = defineProps<{
   item: Thesis
 }>()
 
+const approvalStates = {
+  'Approved': 'mdi-check-circle',
+  'Rejected': 'mdi-close-circle',
+  'Pending': 'mdi-alert-circle',
+}
+
 const thesis = computed(() => props.item)
 
 const { broadcastThroughSocket } = useUpdateItem(thesis)
@@ -208,15 +210,22 @@ const viewProfileButton = computed(() => {
                 text: `Link ${studentPanel.title.singular}`,
                 color: studentPanel.color,
                 onClick: () => {
-                  open({ component: {
-                    render: LinkStudent
-                  } })
+                  open({
+                    component: {
+                      render: LinkStudent,
+                      props: {
+                        onUpdate: () => broadcastThroughSocket('studentSysId')
+                      }
+                    }
+                  })
                 },
               },
               {
                 text: 'Delete',
                 color: 'red-darken-2',
-                onClick: () => deleteItem()
+                onClick: () => deleteItem({
+                  item: thesis.value
+                })
               },
               {
                 text: 'Dismiss',
@@ -257,15 +266,22 @@ const viewProfileButton = computed(() => {
               {
                 text: 'Delete',
                 color: 'red-darken-2',
-                onClick: () => deleteItem()
+                onClick: () => deleteItem({
+                  item: thesis.value
+                })
               },
               {
                 text: 'Relink',
                 color: studentPanel.color,
                 onClick: () => {
-                  open({ component: {
-                    render: LinkStudent
-                  }})
+                  open({
+                    component: {
+                      render: LinkStudent,
+                      props: {
+                        onUpdate: () => broadcastThroughSocket('studentSysId')
+                      }
+                    }
+                  })
                 },
               },
               {

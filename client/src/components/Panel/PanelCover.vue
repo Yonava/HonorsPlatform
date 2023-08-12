@@ -47,10 +47,10 @@
           style="border-radius: 10px;"
         >
           <h3>
-            All Good!
+            High Five!
           </h3>
           <p>
-            Every aforementioned issue has been resolved. We would like to formally retract what we said before and a sincere apology to this {{ getActivePanel.title.singular.toLowerCase() }}.
+            No more issues found.
           </p>
         </v-sheet>
         <v-sheet
@@ -61,9 +61,11 @@
           style="border-radius: 10px;"
         >
           <h3 style="text-transform: capitalize">
-            We {{ status === 'danger' ? 'recommend' : 'would consider' }} deleting this {{ getActivePanel.title.singular }} because
+            {{ status === 'danger' ? 'recommend' : 'would consider' }} deleting
           </h3>
-          <p>{{ rationale }}</p>
+          <p>
+            {{ rationale }}
+          </p>
         </v-sheet>
       </v-sheet>
     </div>

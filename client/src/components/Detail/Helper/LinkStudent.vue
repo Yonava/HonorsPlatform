@@ -5,7 +5,7 @@
   >
     <div class="d-flex flex-row align-center">
       <h1 class="my-2">
-        Select Student:
+        Select {{ studentPanel.title.singular }}:
       </h1>
       <v-spacer></v-spacer>
       <input
@@ -38,7 +38,7 @@
         class="mt-1"
       >
         <h2 style="color: red">
-          No Students Found
+          No {{ studentPanel.title.plural }} Found
         </h2>
       </div>
     </div>
@@ -51,8 +51,11 @@ import { useDocumentCache } from '../../../store/useDocumentCache'
 import { useSheetManager } from '../../../store/useSheetManager'
 import { filterItems } from '../../../FilterObjects'
 import { ref, computed } from 'vue'
+import { getPanel } from '../../../Panels'
 
 const { Students, getItemBySysId } = useDocumentCache()
+
+const studentPanel = getPanel('STUDENTS')
 
 const filterQuery = ref('')
 
@@ -80,7 +83,8 @@ const studentLinked = (sysId: string) => {
   }
 
   itemToModify.studentSysId = sysId
-  props.props.onUpdate()
+  props.props?.onUpdate()
+  console.log('closing')
   useDialog().close()
 }
 </script>

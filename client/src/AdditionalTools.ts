@@ -1,23 +1,10 @@
 import { useDialog } from './store/useDialog'
 import { useDocumentCache } from './store/useDocumentCache'
-import { useAuth } from './store/useAuth'
 import IncrementStudentYearDialog from './components/IncrementStudentYear.vue'
 import CreateTempSheet from './components/CreateTempSheet.vue'
 
 export const tools = {
   STUDENTS: [
-    {
-      name: 'Connect Socket',
-      handler: () => {
-        useAuth().createSocketConnection();
-      }
-    },
-    {
-      name: 'Disconnect Socket',
-      handler: () => {
-        useAuth().destroySocketConnection();
-      }
-    },
     {
       name: 'Suggested Deletions',
       handler: () => { useDialog().setPanelCover('open') }
