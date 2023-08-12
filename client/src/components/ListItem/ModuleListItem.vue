@@ -169,7 +169,20 @@ const daysSinceDate = (date: string) => {
 }
 
 const docuSignStatus = computed(() => {
-  if (props.item.docuSignCompleted) {
+  const created = new Date(props.item.docuSignCreated)
+  const completed = new Date(props.item.docuSignCompleted)
+  const invalid =
+    (created.toString() === 'Invalid Date' && props.item.docuSignCreated) ||
+    (completed.toString() === 'Invalid Date' && props.item.docuSignCompleted)
+
+  if (invalid) {
+    return {
+      icon: 'mdi-file-document-alert-outline',
+      text: 'Invalid Date',
+      color: 'red',
+      tooltip: 'Either the created or completed date for the DocuSign is invalid.'
+    }
+  } else if (props.item.docuSignCompleted) {
     return {
       icon: 'mdi-file-document-check-outline',
       text: 'Completed',

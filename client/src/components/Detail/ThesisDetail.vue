@@ -187,8 +187,8 @@ const student = computed(() => {
 const studentPanel = getPanel('STUDENTS')
 const graduatePanel = getPanel('GRADUATES')
 
-const jumpTo = (panel: 'STUDENTS' | 'GRADUATES') => {
-  setPanel(panel, {
+const jumpTo = (panelName: 'STUDENTS' | 'GRADUATES') => {
+  setPanel(panelName, {
     value: thesis.value.studentSysId
   })
 }

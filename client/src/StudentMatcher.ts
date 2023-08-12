@@ -1,6 +1,20 @@
-import { computed } from 'vue'
+import { computed, type ComputedRef } from 'vue'
 import { useDocumentCache } from './store/useDocumentCache'
 import { Student, Graduate } from './SheetTypes'
+
+type StudentMatchError = 'NOT_FOUND' | 'NOT_LINKED' | 'STUDENT_SYSID_UNDEFINED'
+
+type StudentMatch = ComputedRef<{
+  // if there is an error, it will be the only property
+  error?: StudentMatchError,
+
+  // if there is no error, there will be these properties
+  sysId?: string,
+  id?: string,
+  name?: string,
+  fullData?: Student | Graduate,
+  foundIn?: 'STUDENTS' | 'GRADUATES'
+}>
 
 export function useStudentMatcher(studentSysId: string) {
   const { getItemBySysId } = useDocumentCache()
@@ -13,11 +27,11 @@ export function useStudentMatcher(studentSysId: string) {
     return getItemBySysId(studentSysId, 'GRADUATES') as Graduate
   })
 
-  const studentMatch = computed(() => {
+  const studentMatch: StudentMatch = computed(() => {
     if (studentSysId === undefined) {
       return {
         error: 'STUDENT_SYSID_UNDEFINED'
-      } as const
+      }
     }
 
     if (student.value) {
@@ -27,7 +41,7 @@ export function useStudentMatcher(studentSysId: string) {
         name: student.value.name,
         fullData: student.value,
         foundIn: 'STUDENTS',
-      } as const
+      }
     } else if (graduate.value) {
       return {
         sysId: graduate.value.sysId,
@@ -35,16 +49,16 @@ export function useStudentMatcher(studentSysId: string) {
         name: graduate.value.name,
         fullData: graduate.value,
         foundIn: 'GRADUATES',
-      } as const
+      }
     }
     else if (studentSysId) {
       return {
         error: 'NOT_FOUND'
-      } as const
+      }
     } else {
       return {
         error: 'NOT_LINKED'
-      } as const
+      }
     }
   })
 

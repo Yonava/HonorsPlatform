@@ -38,7 +38,12 @@ const deletionToDeletionOutput = <T extends SheetItem>(deletion: Deletion<T>) =>
 }
 
 const sortItems = (a: DeletionOutput<SheetItem>, b: DeletionOutput<SheetItem>) => {
-  const [tieBreakerA, tieBreakerB] = [Object.values(a.item)[3], Object.values(b.item)[3]]
+
+  const [tieBreakerA, tieBreakerB] = [
+    Object.values(a.item)[3],
+    Object.values(b.item)[3]
+  ]
+
   if (a.status === "danger" && b.status === "warn") {
     return -1
   } else if (a.status === "warn" && b.status === "danger") {
@@ -65,13 +70,12 @@ const rationaleToString = (rationale: string[]) => {
 }
 
 const gradEngagementDeletions = async () => {
-  const {
-    "Grad Engagements": GradEngagements,
-    Graduates,
-  } = useDocumentCache()
 
+  const { "Grad Engagements": GradEngagements } = useDocumentCache()
   const gradEngagements = GradEngagements.list
-  const graduates = Graduates.list
+
+  const graduatePanel = getPanel('GRADUATES')
+  const studentPanel = getPanel('STUDENTS')
 
   return gradEngagements.map(gradEngagement => {
     const deletionData: Deletion<GradEngagement> = {
@@ -82,7 +86,21 @@ const gradEngagementDeletions = async () => {
 
     if (!gradEngagement.event) {
       deletionData.status = "danger"
-      deletionData.flaggedBecause.push("the event does not have a name")
+      deletionData.flaggedBecause.push("no event name")
+    }
+
+    const { studentMatch } = useStudentMatcher(gradEngagement.studentSysId)
+    if (studentMatch.value?.error) {
+      deletionData.status = "danger"
+      const { error } = studentMatch.value
+      if (error === 'NOT_FOUND') {
+        deletionData.flaggedBecause.push(`no ${graduatePanel.title.singular} found`)
+      } else if (error === 'STUDENT_SYSID_UNDEFINED' || error === 'NOT_LINKED') {
+        deletionData.flaggedBecause.push(`no ${graduatePanel.title.singular} linked`)
+      }
+    } else if (studentMatch.value.foundIn === 'STUDENTS') {
+      deletionData.status = "danger"
+      deletionData.flaggedBecause.push(`is still a ${studentPanel.title.singular}`)
     }
 
     return deletionData
@@ -90,15 +108,11 @@ const gradEngagementDeletions = async () => {
 }
 
 const thesisDeletions = async () => {
-  const {
-    Theses,
-    Graduates,
-    Students,
-  } = useDocumentCache()
 
+  const { Theses } = useDocumentCache()
   const theses = Theses.list
-  const graduates = Graduates.list
-  const students = Students.list
+
+  const studentPanel = getPanel('STUDENTS')
 
   return theses.map(thesis => {
     const deletionData: Deletion<Thesis> = {
@@ -120,23 +134,32 @@ const thesisDeletions = async () => {
     const { studentMatch } = useStudentMatcher(thesis.studentSysId)
     if (studentMatch.value?.error) {
       deletionData.status = "danger"
-      deletionData.flaggedBecause.push(studentMatch.value.error)
+      const { error } = studentMatch.value
+      if (error === 'NOT_FOUND') {
+        deletionData.flaggedBecause.push(`no ${studentPanel.title.singular} found`)
+      } else if (error === 'STUDENT_SYSID_UNDEFINED' || error === 'NOT_LINKED') {
+        deletionData.flaggedBecause.push(`no ${studentPanel.title.singular} linked`)
+      } else {
+        deletionData.flaggedBecause.push("error with student link")
+      }
+    } else if (studentMatch.value.foundIn === 'GRADUATES') {
+      deletionData.status = "danger"
+      deletionData.flaggedBecause.push(`${studentPanel.title.singular} has graduated`)
+    }
+
+    if (!thesis.mentor) {
+      deletionData.status ??= 'warn'
+      deletionData.flaggedBecause.push("no mentor")
     }
 
     return deletionData
   })
 }
 
-
-
 const graduateDeletions = async () => {
-  const {
-    Graduates,
-    "Grad Engagements": GraduateEngagements,
-  } = useDocumentCache()
 
+  const { Graduates } = useDocumentCache()
   const graduates = Graduates.list
-  const graduateEngagements = GraduateEngagements.list
 
   return graduates.map(graduate => {
     const deletionData: Deletion<Graduate> = {
@@ -147,17 +170,12 @@ const graduateDeletions = async () => {
 
     if (!graduate.name) {
       deletionData.status = "danger"
-      deletionData.flaggedBecause.push("they do not have a name")
+      deletionData.flaggedBecause.push("no name")
     }
 
     if (!graduate.id) {
       deletionData.status ??= "warn"
-      deletionData.flaggedBecause.push("they do not have an ID")
-    }
-
-    if (graduate.email.toLowerCase().endsWith("@yahoo.com")) {
-      deletionData.status ??= "warn"
-      deletionData.flaggedBecause.push("they gave you a Yahoo email address (its probably not their primary email and some throwaway they made 10 years ago)")
+      deletionData.flaggedBecause.push("no ID")
     }
 
     return deletionData
@@ -165,15 +183,11 @@ const graduateDeletions = async () => {
 }
 
 const completedModuleDeletions = async () => {
-  const {
-    Students,
-    Graduates,
-    "Completed Modules": CompletedModules
-  } = useDocumentCache()
 
+  const { "Completed Modules": CompletedModules } = useDocumentCache()
   const completedModules = CompletedModules.list
-  const students = Students.list
-  const graduates = Graduates.list
+
+  const studentPanel = getPanel('STUDENTS')
 
   return completedModules.map(module => {
     const deletionData: Deletion<CompletedModule> = {
@@ -182,20 +196,32 @@ const completedModuleDeletions = async () => {
       flaggedBecause: []
     }
 
+    const { studentMatch } = useStudentMatcher(module.studentSysId)
+    if (studentMatch.value?.error) {
+      deletionData.status = "danger"
+      const { error } = studentMatch.value
+      if (error === 'NOT_FOUND') {
+        deletionData.flaggedBecause.push(`no ${studentPanel.title.singular} found`)
+      } else if (error === 'STUDENT_SYSID_UNDEFINED' || error === 'NOT_LINKED') {
+        deletionData.flaggedBecause.push(`no ${studentPanel.title.singular} linked`)
+      } else {
+        deletionData.flaggedBecause.push(`error with ${studentPanel.title.singular} link`)
+      }
+    } else if (studentMatch.value.foundIn === 'GRADUATES') {
+      deletionData.status = "danger"
+      deletionData.flaggedBecause.push(`${studentPanel.title.singular} has graduated`)
+    }
+
     return deletionData
   })
 }
 
 const moduleDeletions = async () => {
-  const {
-    Modules,
-    Students,
-    Graduates
-  } = useDocumentCache()
 
+  const { Modules } = useDocumentCache()
   const modules = Modules.list
-  const students = Students.list
-  const graduates = Graduates.list
+
+  const studentPanel = getPanel('STUDENTS')
 
   return modules.map(module => {
     const deletionData: Deletion<Module> = {
@@ -204,19 +230,47 @@ const moduleDeletions = async () => {
       flaggedBecause: []
     }
 
-    if (module.docuSignCreated && !module.docuSignCompleted) {
-      const docuSignCreated = new Date(module.docuSignCreated)
-      const now = new Date()
-      const threeMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 3, now.getDate())
-      if (docuSignCreated < threeMonthsAgo) {
-        deletionData.status = "danger"
-        deletionData.flaggedBecause.push("it has been in progress for over 3 months")
-      }
-    }
+    const docuSignCreated = new Date(module.docuSignCreated)
+    const docuSignCompleted = new Date(module.docuSignCompleted)
 
     if (!module.docuSignCreated && !module.docuSignCompleted) {
       deletionData.status ??= "warn"
-      deletionData.flaggedBecause.push("the docu sign is yet to be created")
+      deletionData.flaggedBecause.push("no DocuSign")
+    }
+
+    // docuSignCreated is filled in but with invalid dates
+    else if (docuSignCreated.toString() === 'Invalid Date' && module.docuSignCreated) {
+      deletionData.status = "danger"
+      deletionData.flaggedBecause.push("invalid creation date")
+
+    }
+
+    // over n months in progress
+    else if (module.docuSignCreated && !module.docuSignCompleted) {
+      const months = 3
+      const docuSignCreated = new Date(module.docuSignCreated)
+      const now = new Date()
+      const dateOfFlag = new Date(now.getFullYear(), now.getMonth() - months, now.getDate())
+      if (docuSignCreated < dateOfFlag) {
+        deletionData.status = "danger"
+        deletionData.flaggedBecause.push(`in progress for ${months}+ months`)
+      }
+    }
+
+    const { studentMatch } = useStudentMatcher(module.studentSysId)
+    if (studentMatch.value?.error) {
+      deletionData.status = "danger"
+      const { error } = studentMatch.value
+      if (error === 'NOT_FOUND') {
+        deletionData.flaggedBecause.push(`no ${studentPanel.title.singular} found`)
+      } else if (error === 'STUDENT_SYSID_UNDEFINED' || error === 'NOT_LINKED') {
+        deletionData.flaggedBecause.push(`no ${studentPanel.title.singular} linked`)
+      } else {
+        deletionData.flaggedBecause.push(`error with ${studentPanel.title.singular} link`)
+      }
+    } else if (studentMatch.value.foundIn === 'GRADUATES') {
+      deletionData.status = "danger"
+      deletionData.flaggedBecause.push(`${studentPanel.title.singular} has graduated`)
     }
 
     return deletionData
