@@ -53,6 +53,7 @@ import { postInRange } from '../../SheetsAPI';
 import { useAuth } from '../../store/useAuth';
 import { storeToRefs } from 'pinia';
 import { useDocumentCache } from '../../store/useDocumentCache';
+import { useSheetManager } from '../../store/useSheetManager';
 
 const auth = useAuth();
 const { googleProfile } = storeToRefs(auth);
@@ -73,13 +74,12 @@ const postNewAnnouncement = async () => {
   }
 
   await postInRange('Announcements', [[
+    useSheetManager().newSysId(),
     announcement.value,
     googleProfile.value.name,
     googleProfile.value.picture,
     new Date().toString()
   ]])
-
-  await useDocumentCache().forceConnectedClientsToRefresh()
 
   open({
     body: {

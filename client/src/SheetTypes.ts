@@ -69,3 +69,11 @@ export interface Thesis extends SheetEntry {
   draftReceived: string;
   note: string;
 }
+
+export interface Announcement {
+  sysId: string,
+  posterName: string,
+  posterPhoto: string,
+  content: string,
+  datePosted: string
+}

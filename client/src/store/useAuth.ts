@@ -129,7 +129,12 @@ export const useAuth = defineStore('auth', {
         })
 
         this.socket.on('userAction', (data: ActionData) => {
-          const { addItemCache, deleteItemCache, updateItemCache, moveItemBetweenListsCache } = useDocumentCache()
+          const {
+            addItemCache,
+            deleteItemCache,
+            updateItemCache,
+            moveItemBetweenListsCache
+          } = useDocumentCache()
           switch (data.action) {
             case 'add':
               addItemCache(data.payload.item, data.payload.panelName)
@@ -169,6 +174,8 @@ export const useAuth = defineStore('auth', {
                 item: data.payload.item,
               })
               break
+
+            case 'announce':
 
             default:
               console.error("userAction not recognized: " + data.action)

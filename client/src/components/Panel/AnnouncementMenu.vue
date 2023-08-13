@@ -69,7 +69,7 @@
         v-for="announcement in announcements"
         :key="announcement.content"
         :style="{
-          background: `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 0.2)`
+          background: `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 0.5)`
         }"
         class="announcement pa-3 mt-3"
       >
@@ -106,17 +106,13 @@
 
 <script setup lang="ts">
 import { ref, watch, computed, onMounted } from 'vue'
+import type { Announcement } from '../../SheetTypes';
 import { useDocumentCache } from '../../store/useDocumentCache'
 import { useDisplay } from 'vuetify'
 
 const { mdAndUp, smAndDown } = useDisplay()
 
-const announcements = ref<{
-  posterName: string,
-  posterPhoto: string,
-  content: string,
-  datePosted: string
-}[]>([])
+const announcements = ref<Announcement[]>([])
 const loading = ref(true)
 const active = ref(false)
 const read = ref(false)
@@ -136,10 +132,11 @@ onMounted(async () => {
   }
   announcements.value = useDocumentCache().Announcements.map(row => {
     return {
-      content: row[0],
-      posterName: row[1],
-      posterPhoto: row[2],
-      datePosted: row[3]
+      sysId: row[0],
+      content: row[1],
+      posterName: row[2],
+      posterPhoto: row[3],
+      datePosted: row[4]
     }
   })
     .filter(announcement => announcement.content)

@@ -122,6 +122,9 @@ export const useDocumentCache = defineStore("documentCache", {
     itemPostedToSheet: (state) => (item: types.SheetItem) => {
       return typeof item.row === "number";
     },
+    getAnnouncements: (state) => () => {
+      return state.Announcements;
+    },
     getItems: (state) => (panelName?: PanelName) => {
       const { panel: activePanel } = useSheetManager();
       const actualPanelName = panelName ?? activePanel.panelName;
@@ -191,6 +194,9 @@ export const useDocumentCache = defineStore("documentCache", {
     }
   },
   actions: {
+    async postAnnouncement(announcement: types.Announcement) {
+
+    },
     getAllDocuments(options: GetAllDocuments = {}) {
       const { setLoadingItems, setSort, getActivePanel } = useSheetManager();
       const {
