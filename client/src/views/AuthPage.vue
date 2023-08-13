@@ -19,9 +19,18 @@
       class="d-flex align-center justify-center flex-column"
     >
       <div class="mb-8 d-flex flex-row align-center">
-        <h1 style="font-size: 250%">
-          Authorize
-        </h1>
+        <div style="max-width: 450px; text-align: center;">
+          <h1 style="font-size: 250%;">
+            {{ title.large }}
+          </h1>
+          <p
+            v-if="title.small"
+            class="mt-2"
+            style="color: red; font-weight: bold;"
+          >
+            {{ title.small }}
+          </p>
+        </div>
       </div>
       <v-btn
         @click="forceAuthorize()"
@@ -33,54 +42,34 @@
         <v-icon class="mr-2">mdi-google</v-icon>
         Continue With Google
       </v-btn>
-      <div style="max-width: 450px; width: 80%" class="mb-10">
-        <v-expansion-panels variant="accordion">
-          <v-expansion-panel
-            elevation="0"
-            color="grey-lighten-3"
-          >
-            <template #title>
-              <v-icon class="mr-2">mdi-information-outline</v-icon>
-              <p>Why Am I Seeing This?</p>
-            </template>
-            <template #text>
-              <div>
-                <h3 style="font-weight: 900;">
-                  This could be due to one of the following reasons:
-                </h3>
-                <ol class="ml-4">
-                  <li>
-                    Your previous credentials have expired
-                  </li>
-                  <li>
-                    Your internet connection is unstable
-                  </li>
-                  <li>
-                    You attempted to perform an operation you are
-                    not authorized to perform (i.e. generating registrar reports)
-                  </li>
-                  <li>
-                    You are not whitelisted as a Honors Program staff member
-                  </li>
-                </ol>
-              </div>
-            </template>
-          </v-expansion-panel>
-        </v-expansion-panels>
-      </div>
     </v-sheet>
   </v-sheet>
 </template>
 
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router'
-import { useAuth } from '../store/useAuth'
-import { onMounted, ref } from 'vue'
+import { useAuth, type ServerErrors } from '../store/useAuth'
+import { onMounted, ref, computed } from 'vue'
 import { local } from '../Locals'
 
 const route = useRoute()
 const router = useRouter()
 const loading = ref(true)
+
+const error = route.query.error as ServerErrors | undefined
+const title = computed(() => {
+  switch (error) {
+    case 'NO_SHEET_ACCESS':
+      return {
+        large: 'Access Not Granted',
+        small: 'The Google Account You Have Attempted To Logged In With Has Not Been Granted Access To The Honors Program, Please Contact Dr. Matthews For Further Assistance'
+      }
+    default:
+      return {
+        large: 'Authorize'
+      }
+  }
+})
 
 const auth = useAuth()
 const { forceAuthorize, userLoginFlow } = auth

@@ -26,6 +26,12 @@ const scope = [
   'https://www.googleapis.com/auth/spreadsheets'
 ]
 
+const errors = {
+  NO_SHEET_ACCESS: 'NO_SHEET_ACCESS',
+  INVALID_ACCESS_TOKEN: 'INVALID_ACCESS_TOKEN',
+  INVALID_OAUTH_CODE: 'INVALID_OAUTH_CODE',
+}
+
 // app.use("/api/open", openAccessAPI);
 
 function getAuthUrl() {
@@ -92,17 +98,31 @@ app.get('/api/auth/:authCode', async (req, res) => {
     const { access_token: accessToken } = tokens;
     const profile = await getGoogleProfileData(accessToken);
 
-    console.log('done', accessToken, profile)
+    // check if user has access to sheet
+    const sheet = new GoogleSheet(accessToken);
+    const hasAccess = await sheet.checkAccess();
+    if (!hasAccess) {
+      res.json({
+        error: errors.NO_SHEET_ACCESS
+      })
+
+      return;
+    }
+
     console.assert(accessToken && profile, 'Auth entry point failed');
+
+    if (!accessToken || !profile) {
+      throw "Invalid: Improper Google Profile Data";
+    }
 
     res.json({
       accessToken,
       profile
     });
   } catch (e) {
-    // console.log(e)
+    console.log(e)
     res.json({
-      error: 'Invalid token',
+      error: errors.INVALID_OAUTH_CODE
     });
   }
 })

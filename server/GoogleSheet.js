@@ -39,6 +39,19 @@ module.exports = class GoogleSheet {
     this.spreadsheetId = spreadsheetIds[process.env.NODE_ENV ?? 'dev'];
   }
 
+  // ping to check if access token is valid
+  async checkAccess() {
+    try {
+      await this.sheets.spreadsheets.get({
+        spreadsheetId: this.spreadsheetId,
+        ranges: [],
+      });
+      return true;
+    } catch (err) {
+      return false;
+    }
+  }
+
   async getRange(range) {
     const response = await this.sheets.spreadsheets.values.get({
       spreadsheetId: this.spreadsheetId,

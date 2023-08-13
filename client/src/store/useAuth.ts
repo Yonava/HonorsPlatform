@@ -20,6 +20,8 @@ export type GoogleProfile = {
 
 export type ConnectedAccount = GoogleProfile & { socketId: string }
 
+export type ServerErrors = 'NO_SHEET_ACCESS' | 'INVALID_ACCESS_TOKEN' | 'INVALID_OAUTH_CODE'
+
 type ActionData = {
   action: string,
   payload: any
@@ -38,6 +40,7 @@ type FocusData = {
     googleId: string
   }
 }
+
 
 export const useAuth = defineStore('auth', {
   state: () => ({
@@ -261,25 +264,21 @@ export const useAuth = defineStore('auth', {
       localStorage.removeItem(local.closeAfterAuth)
       localStorage.removeItem(local.googleOAuthCode)
 
-      try {
-        let authUrl = `/api/auth/${encodeURIComponent(googleOAuthCode)}`
-        // todo: add try catch here
-        const { data } = await axios.get(authUrl)
-        const { accessToken, profile } = data
+      let authUrl = `/api/auth/${encodeURIComponent(googleOAuthCode)}`
 
-        if (!accessToken) {
-          throw new Error('No access token received')
-        }
+      const { data } = await axios.get(authUrl)
+      const { error } = data as { error?: ServerErrors }
 
-        this.setGoogleProfile(profile)
-        localStorage.setItem(local.googleOAuthAccessToken, accessToken)
-
-        this.destroySocketConnection()
-        await this.createSocketConnection()
-      } catch (error) {
-        console.error('userLoginFlow error', error)
-        throw error
+      if (error) {
+        location.replace(`/auth?error=${error}`)
+        return
       }
+
+      this.setGoogleProfile(data.profile)
+      localStorage.setItem(local.googleOAuthAccessToken, data.accessToken)
+
+      this.destroySocketConnection()
+      await this.createSocketConnection()
     },
     userLogoutFlow({ goToAuthPage = false, fromLogoutEvent = false } = {}) {
       localStorage.removeItem(local.googleOAuthAccessToken)
