@@ -2,25 +2,46 @@
   <v-sheet>
     <v-card>
       <v-card-title>
-        <h2>Post Announcement</h2>
+        <h2 class="my-3">
+          Post An Announcement
+        </h2>
       </v-card-title>
       <v-card-text>
         <v-textarea
-          v-model="announcement"
-          label="Announcement"
-          outlined
-          rows="5"
-          placeholder="Enter your announcement here..."
+        v-model="announcement"
+        :disabled="posting"
+        label="Content"
+        variant="outlined"
         ></v-textarea>
       </v-card-text>
-      <v-card-actions>
+      <div
+        class="ml-4 mb-4"
+      >
         <v-btn
-          color="primary"
+          v-if="!posting"
           @click="postNewAnnouncement"
+          color="primary"
+          size="large"
         >
+          <v-icon class="mr-2">
+            mdi-message-arrow-right
+          </v-icon>
           Post
         </v-btn>
-      </v-card-actions>
+        <v-btn
+          v-else
+          disabled
+          color="primary"
+          size="large"
+        >
+          Posting...
+          <v-progress-circular
+            indeterminate
+            size="24"
+            color="white"
+          ></v-progress-circular>
+        </v-btn>
+      </div>
     </v-card>
   </v-sheet>
 </template>
@@ -28,14 +49,52 @@
 <script setup lang="ts">
 import { useDialog } from '../../store/useDialog';
 import { ref } from 'vue';
+import { postInRange } from '../../SheetsAPI';
+import { useAuth } from '../../store/useAuth';
+import { storeToRefs } from 'pinia';
+import { useDocumentCache } from '../../store/useDocumentCache';
+
+const auth = useAuth();
+const { googleProfile } = storeToRefs(auth);
 
 const dialog = useDialog();
-const { close } = dialog;
+const { open, close } = dialog;
 
 const announcement = ref('');
+const posting = ref(false);
 
-const postNewAnnouncement = () => {
-  console.log('posting announcement', announcement.value)
-  close()
+const postNewAnnouncement = async () => {
+  posting.value = true
+
+  if (!googleProfile.value) {
+    console.error('No google profile found')
+    close()
+    return
+  }
+
+  await postInRange('Announcements', [[
+    announcement.value,
+    googleProfile.value.name,
+    googleProfile.value.picture,
+    new Date().toString()
+  ]])
+
+  await useDocumentCache().forceConnectedClientsToRefresh()
+
+  open({
+    body: {
+      title: 'Announcement Posted',
+      description: 'Your announcement has been posted successfully.',
+      buttons: [
+        {
+          text: 'OK',
+          color: 'green',
+          onClick: () => {
+            close()
+          }
+        }
+      ]
+    }
+  })
 }
 </script>

@@ -67,13 +67,38 @@
       </div>
       <v-list-item
         v-for="announcement in announcements"
-        :key="announcement"
+        :key="announcement.content"
         :style="{
           background: `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 0.2)`
         }"
         class="announcement pa-3 mt-3"
       >
-        {{ announcement }}
+        <div
+          class="d-flex flex-row"
+          style="gap: 12px;"
+        >
+          <img
+            style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%"
+            :src="announcement.posterPhoto"
+            alt="Poster Photo"
+          >
+
+          <div>
+            <h4>
+              {{ announcement.posterName }}
+            </h4>
+            <p>
+              {{ announcement.content }}
+            </p>
+          </div>
+          <v-spacer></v-spacer>
+          <p
+            style="font-size: 0.8rem; position: absolute; top: 5px; right: 10px;"
+            class="ma-3"
+          >
+            {{ daysAgo(announcement.datePosted) }}
+          </p>
+        </div>
       </v-list-item>
     </v-list>
   </v-menu>
@@ -86,7 +111,12 @@ import { useDisplay } from 'vuetify'
 
 const { mdAndUp, smAndDown } = useDisplay()
 
-const announcements = ref<string[]>([])
+const announcements = ref<{
+  posterName: string,
+  posterPhoto: string,
+  content: string,
+  datePosted: string
+}[]>([])
 const loading = ref(true)
 const active = ref(false)
 const read = ref(false)
@@ -104,8 +134,15 @@ onMounted(async () => {
   } else {
     read.value = true
   }
-  announcements.value = useDocumentCache().Announcements.map(row => row[0])
-    .filter(announcement => announcement)
+  announcements.value = useDocumentCache().Announcements.map(row => {
+    return {
+      content: row[0],
+      posterName: row[1],
+      posterPhoto: row[2],
+      datePosted: row[3]
+    }
+  })
+    .filter(announcement => announcement.content)
   loading.value = false
 })
 
@@ -116,6 +153,21 @@ const tooltipText = computed(() => {
     return 'No New Announcements'
   }
 })
+
+const daysAgo = (date: string) => {
+  const today = new Date()
+  const datePosted = new Date(date)
+  const diff = today.getTime() - datePosted.getTime()
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24))
+
+  if (days === 0) {
+    return 'Today'
+  } else if (days === 1) {
+    return 'Yesterday'
+  } else {
+    return `${days} days ago`
+  }
+}
 </script>
 
 <style scoped>
