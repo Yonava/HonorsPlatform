@@ -116,7 +116,7 @@ export const useDocumentCache = defineStore("documentCache", {
       list: [],
       selected: [],
     } as PanelState<types.Thesis>,
-    Announcements: [[]] as string[][],
+    Announcements: [] as types.Announcement[],
   }),
   getters: {
     itemPostedToSheet: (state) => (item: types.SheetItem) => {
@@ -194,8 +194,27 @@ export const useDocumentCache = defineStore("documentCache", {
     }
   },
   actions: {
+    addAnnouncementCache(announcement: types.Announcement) {
+      const { Announcements } = this;
+      Announcements.push(announcement);
+    },
     async postAnnouncement(announcement: types.Announcement) {
 
+      await postInRange('Announcements', [[
+        announcement.sysId,
+        announcement.content,
+        announcement.posterName,
+        announcement.posterPhoto,
+        announcement.datePosted
+      ]])
+
+      this.addAnnouncementCache(announcement)
+
+      const { socket } = useAuth()
+      socket.emit('userAction', {
+        action: 'announce',
+        payload: announcement
+      })
     },
     getAllDocuments(options: GetAllDocuments = {}) {
       const { setLoadingItems, setSort, getActivePanel } = useSheetManager();
@@ -242,7 +261,15 @@ export const useDocumentCache = defineStore("documentCache", {
         return range === "Announcements"
       })
 
-      this.Announcements = announcementsData?.Announcements ?? [[]];
+      this.Announcements = announcementsData?.Announcements.map((announcementRow) => {
+        return {
+          sysId: announcementRow[0],
+          content: announcementRow[1],
+          posterName: announcementRow[2],
+          posterPhoto: announcementRow[3],
+          datePosted: announcementRow[4],
+        }
+      }) ?? [];
 
       const panelKeys = Object.keys(panels) as (keyof typeof panels)[];
       for (const panelKey of panelKeys) {

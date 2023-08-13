@@ -133,7 +133,8 @@ export const useAuth = defineStore('auth', {
             addItemCache,
             deleteItemCache,
             updateItemCache,
-            moveItemBetweenListsCache
+            moveItemBetweenListsCache,
+            addAnnouncementCache,
           } = useDocumentCache()
           switch (data.action) {
             case 'add':
@@ -176,6 +177,9 @@ export const useAuth = defineStore('auth', {
               break
 
             case 'announce':
+              console.log('useAuth: announce', data.payload)
+              addAnnouncementCache(data.payload)
+              break
 
             default:
               console.error("userAction not recognized: " + data.action)

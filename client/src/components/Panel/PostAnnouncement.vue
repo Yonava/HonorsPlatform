@@ -58,6 +58,9 @@ import { useSheetManager } from '../../store/useSheetManager';
 const auth = useAuth();
 const { googleProfile } = storeToRefs(auth);
 
+const documentCache = useDocumentCache();
+const { postAnnouncement } = documentCache;
+
 const dialog = useDialog();
 const { open, close } = dialog;
 
@@ -69,17 +72,31 @@ const postNewAnnouncement = async () => {
 
   if (!googleProfile.value) {
     console.error('No google profile found')
-    close()
+    open({
+    body: {
+      title: 'Announcement Failed To Post',
+      description: 'You must be signed in to post an announcement.',
+      buttons: [
+        {
+          text: 'OK',
+          color: 'green',
+          onClick: () => {
+            close()
+          }
+        }
+      ]
+    }
+  })
     return
   }
 
-  await postInRange('Announcements', [[
-    useSheetManager().newSysId(),
-    announcement.value,
-    googleProfile.value.name,
-    googleProfile.value.picture,
-    new Date().toString()
-  ]])
+  await postAnnouncement({
+    sysId: useSheetManager().newSysId(),
+    content: announcement.value,
+    posterName: googleProfile.value.name,
+    posterPhoto: googleProfile.value.picture,
+    datePosted: new Date().toString()
+  })
 
   open({
     body: {

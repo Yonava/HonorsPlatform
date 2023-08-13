@@ -3,26 +3,29 @@
     <template v-slot:activator="{ props }">
       <v-btn
         v-bind="props"
+        @click="badgeNumber = 0"
         icon
       >
         <v-badge
-          v-if="!read && announcements.length > 0"
+          v-if="badgeNumber > 0 && !cacheRefreshInProgress"
+          :content="badgeNumber"
           size="small"
           color="red"
-          :content="announcements.length"
         >
           <v-icon>
-            mdi-message-alert{{ active ? '' : '-outline' }}
+            {{ icon }}
           </v-icon>
         </v-badge>
         <v-icon v-else>
-          mdi-message-alert{{ active ? '' : '-outline' }}
+          {{ icon }}
         </v-icon>
         <v-tooltip
           :disabled="smAndDown || active"
           activator="parent"
           location="bottom"
-        >{{ tooltipText }}</v-tooltip>
+        >
+          {{ tooltipText }}
+        </v-tooltip>
       </v-btn>
     </template>
 
@@ -30,19 +33,23 @@
       style="max-width: 80vw; width: 500px"
       class="pa-5"
     >
-      <div class="d-flex align-center">
+      <div
+        class="d-flex align-center mb-4"
+      >
         <v-icon
           size="x-large"
           class="mr-3"
         >
           mdi-bullhorn-variant
         </v-icon>
-        <h1 style="line-height: 1">
-          Message Board
+        <h1
+          style="line-height: 1"
+        >
+          Bulletin Board
         </h1>
       </div>
       <div
-        v-if="loading"
+        v-if="cacheRefreshInProgress"
         class="d-flex justify-center"
       >
         <v-progress-circular
@@ -62,93 +69,99 @@
           <v-icon class="mr-1 mb-1">
             mdi-check
           </v-icon>
-          No New Messages!
+          No Active Announcements!
         </h2>
       </div>
-      <v-list-item
-        v-for="announcement in announcements"
-        :key="announcement.content"
-        :style="{
-          background: `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 0.5)`
-        }"
-        class="announcement pa-3 mt-3"
-      >
-        <div
-          class="d-flex flex-row"
-          style="gap: 12px;"
+      <div style="max-height: 400px; overflow: auto">
+        <v-list-item
+          v-for="announcement in announcements"
+          :key="announcement.content"
+          :style="{
+            background: `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 0.5)`
+          }"
+          class="announcement pa-3 mt-3"
         >
-          <img
-            style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%"
-            :src="announcement.posterPhoto"
-            alt="Poster Photo"
+          <div
+            class="d-flex flex-row"
+            style="gap: 12px;"
           >
+            <img
+              style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%"
+              :src="announcement.posterPhoto"
+              alt="Poster Photo"
+            >
 
-          <div>
-            <h4>
-              {{ announcement.posterName }}
-            </h4>
-            <p>
-              {{ announcement.content }}
+            <div>
+              <h4>
+                {{ announcement.posterName }}
+              </h4>
+              <p>
+                {{ announcement.content }}
+              </p>
+            </div>
+            <v-spacer></v-spacer>
+            <p
+              style="font-size: 0.8rem; position: absolute; top: 5px; right: 10px;"
+              class="ma-3"
+            >
+              {{ daysAgo(announcement.datePosted) }}
             </p>
           </div>
-          <v-spacer></v-spacer>
-          <p
-            style="font-size: 0.8rem; position: absolute; top: 5px; right: 10px;"
-            class="ma-3"
-          >
-            {{ daysAgo(announcement.datePosted) }}
-          </p>
-        </div>
-      </v-list-item>
+        </v-list-item>
+      </div>
     </v-list>
   </v-menu>
 </template>
 
 <script setup lang="ts">
-import { ref, watch, computed, onMounted } from 'vue'
-import type { Announcement } from '../../SheetTypes';
+import { ref, computed, watch } from 'vue'
+import { storeToRefs } from 'pinia';
 import { useDocumentCache } from '../../store/useDocumentCache'
 import { useDisplay } from 'vuetify'
 
 const { mdAndUp, smAndDown } = useDisplay()
 
-const announcements = ref<Announcement[]>([])
-const loading = ref(true)
-const active = ref(false)
-const read = ref(false)
+const { Announcements, cacheRefreshInProgress } = storeToRefs(useDocumentCache())
 
-watch(active, async (val) => {
-  if (val) {
-    read.value = true
-  }
-})
+const announcements = computed(() => {
+  return Announcements.value.sort((a, b) => {
+    const dateA = new Date(a.datePosted)
+    const dateB = new Date(b.datePosted)
 
-onMounted(async () => {
-  loading.value = true
-  if (useDocumentCache().cacheRefreshInProgress) {
-    await useDocumentCache().cacheRefreshInProgress
-  } else {
-    read.value = true
-  }
-  announcements.value = useDocumentCache().Announcements.map(row => {
-    return {
-      sysId: row[0],
-      content: row[1],
-      posterName: row[2],
-      posterPhoto: row[3],
-      datePosted: row[4]
-    }
+    return dateB.getTime() - dateA.getTime()
   })
-    .filter(announcement => announcement.content)
-  loading.value = false
 })
+
+const badgeNumber = ref(0)
+const previousListLength = ref(0)
+const active = ref(false)
 
 const tooltipText = computed(() => {
-  if (announcements.value.length && !read.value) {
-    return `Unread Announcements (${announcements.value.length})`
+  if (announcements.value.length === 0) {
+    return 'No active announcements'
+  } else if (announcements.value.length === 1) {
+    return '1 active announcement'
   } else {
-    return 'No New Announcements'
+    return `${announcements.value.length} active announcements`
   }
+})
+
+watch(announcements, (newList) => {
+  if (newList.length > previousListLength.value) {
+    badgeNumber.value += newList.length - previousListLength.value
+    console.log(badgeNumber.value)
+  }
+
+  previousListLength.value = newList.length
+}, { deep: true })
+
+const icon = computed(() => {
+  const announcementsUnViewed = badgeNumber.value > 0
+
+  const innerIcon = cacheRefreshInProgress.value ? 'processing' : announcementsUnViewed ? 'alert' : 'check'
+  const outlined = active.value ? '' : '-outline'
+
+  return `mdi-message-${innerIcon}${outlined}`
 })
 
 const daysAgo = (date: string) => {
