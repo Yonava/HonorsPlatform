@@ -234,7 +234,7 @@ export const useMoveItem = (originatingPanelName?: PanelName) => {
     'GRADUATES': {
       to: getPanel('STUDENTS'),
       handler: movementHandlers.GRADUATES
-    } as const,
+    },
     'MODULES': {
       to: getPanel('COMPLETED_MODULES'),
       handler: movementHandlers.MODULES
