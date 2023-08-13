@@ -34,9 +34,11 @@
         <v-icon
           size="x-large"
           class="mr-3"
-        >mdi-bullhorn-variant</v-icon>
+        >
+          mdi-bullhorn-variant
+        </v-icon>
         <h1 style="line-height: 1">
-          Dr. Matthews Says...
+          Message Board
         </h1>
       </div>
       <div
@@ -57,8 +59,10 @@
           class="ma-10"
           style="color: green"
         >
-          <v-icon class="mr-1 mb-1">mdi-check</v-icon>
-          Nothing at the moment!
+          <v-icon class="mr-1 mb-1">
+            mdi-check
+          </v-icon>
+          No New Messages!
         </h2>
       </div>
       <v-list-item

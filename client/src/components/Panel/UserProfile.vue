@@ -1,6 +1,7 @@
 <template>
   <v-sheet
     v-if="googleProfile"
+    @click.stop
     class="d-flex flex-column align-center"
     style="border-radius: 20px; min-width: 350px; max-width: 450px;"
   >
@@ -8,17 +9,38 @@
       class="pa-4 d-flex flex-column align-center"
       style="width: 100%;"
     >
-      <img
-        :src="googleProfile.picture"
-        :alt="`Profile picture for ${googleProfile.name}`"
-        :style="{
-          borderRadius: '50%',
-          width: '100px',
-          height: '100px',
-          objectFit: 'cover',
-          boxShadow: '0 0 5px rgba(0, 0, 0, 0.3)',
-        }"
-      >
+      <div style="width: 100px; height: 100px; position: relative;">
+        <img
+          :src="googleProfile.picture"
+          :alt="`Profile picture for ${googleProfile.name}`"
+          :style="{
+            borderRadius: '50%',
+            width: '100%',
+            aspectRatio: '1 / 1',
+            objectFit: 'cover',
+            boxShadow: '0 0 5px rgba(0, 0, 0, 0.3)',
+          }"
+        >
+
+        <v-btn
+          @click="makeAnnouncement"
+          class="my-3"
+          style="position: absolute; bottom: -17%; right: -7%;"
+          :color="getActivePanel.color + '-darken-1'"
+          icon
+          size="small"
+        >
+          <v-icon>
+            mdi-bullhorn-outline
+          </v-icon>
+          <v-tooltip
+            activator="parent"
+          >
+            Make Announcement as {{ googleProfile.given_name }}
+          </v-tooltip>
+        </v-btn>
+      </div>
+
       <v-sheet
         color="white"
         style="width: 100%;"
@@ -115,9 +137,11 @@
 import { useAuth } from '../../store/useAuth';
 import { useSheetManager } from '../../store/useSheetManager';
 import { useDocumentCache } from '../../store/useDocumentCache';
+import { useDialog } from '../../store/useDialog';
 import { storeToRefs } from 'pinia';
 import { computed } from 'vue';
 import { local } from '../../Locals';
+import PostAnnouncement from './PostAnnouncement.vue';
 
 const auth = useAuth();
 const { userLogoutFlow } = auth;
@@ -156,4 +180,13 @@ const itemFocused = computed(() => {
   }
   return false;
 });
+
+const makeAnnouncement = () => {
+  const { open } = useDialog();
+  open({
+    component: {
+      render: PostAnnouncement
+    }
+  })
+}
 </script>
