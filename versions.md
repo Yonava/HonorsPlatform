@@ -1,4 +1,14 @@
-# Current Version: prerelease 0.88.1
+# Current Version: prerelease 0.89
+
+### prerelease 0.89 (Aug. 13)
+- Feature: Profile menu added to BottomLeftActions on panel displaying time of last login and ability to logout + more
+- Improvement: Announcements now can be posted by any honors staff through their profile menu. Announcements display more information including profile information of poster, and post date
+- Huge preformance improvements introduced using virtualScrollList on PanelList with the tradeoffs of TransitionList animations
+- Socket userAction "announce" added for live announcement posting
+- Improved delete suggestions that have migrated to the StudentSysId and StudentMatcher APIs
+- New ServerErrors introduced and parsed on AuthPage to provide more transparency into server errors for end users
+- If a DocuSign date is unable to be parsed on ModuleListItem, a new "Invalid Date" state is shown to users
+- Various bug fixes to improve system stability and reliability
 
 ### prerelease 0.88 (Aug. 2)
 - Feature: The Honors Program platform is live. Edits are broadcasted between clients for a truely collaborative exprience
