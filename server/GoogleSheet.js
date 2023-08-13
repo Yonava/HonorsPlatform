@@ -1,7 +1,7 @@
 const { google } = require("googleapis")
 
 module.exports = class GoogleSheet {
-  spreadsheetId = '1bW-aQRn-GAbTsNkV2VB9xtBFT3n-LPrSJXua_NA2G6Y';
+  spreadsheetId = '18f6XbXlClfLdX3X17MMOy4- sQ8aLiMAk3jkmS3g4ubc';
   sheets;
 
   writable(range, data) {
