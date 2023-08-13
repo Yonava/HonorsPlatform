@@ -6,7 +6,7 @@ const { OAuth2 } = google.auth;
 
 const clientId = '190006346508-fsioaathe0vo6ou4c46dssgq3vnr0kk9.apps.googleusercontent.com';
 const clientSecret = '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';
-const redirectUri = 'http://localhost:5177/auth';
+const redirectUri = 'http://localhost:5179/auth';
 const scope = 'https://www.googleapis.com/auth/spreadsheets';
 
 const app = express();
@@ -32,7 +32,7 @@ app.get('/auth/:oauthtoken', async (req, res) => {
   try {
     sheetInstance = await GoogleSheet.getInstance(auth, oauthtoken);
   } catch (e) {
-    res.json({ 
+    res.json({
       error: 'Invalid token',
       url: getAuthUrl()
     });
@@ -159,7 +159,7 @@ if (process.env.NODE_ENV === 'production') {
   app.get(/.*/, (req, res) => res.sendFile(__dirname + '/public/index.html'));
 }
 
-const port = process.env.PORT || 1010;
+const port = process.env.PORT || 1030;
 
 app.listen(port, () => {
   console.log("listening on port " + port);

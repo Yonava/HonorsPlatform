@@ -1,7 +1,7 @@
 import { google } from 'googleapis';
 
 export default class GoogleSheet {
-  spreadsheetId = '1bW-aQRn-GAbTsNkV2VB9xtBFT3n-LPrSJXua_NA2G6Y';
+  spreadsheetId = '1j14nkncHzlj_LPMvKzboKqAcViHjB6RuezbNZ8n8scI';
   sheets;
   static instance;
 
@@ -25,8 +25,8 @@ export default class GoogleSheet {
       throw e
     }
 
-    this.sheets = google.sheets({ 
-      version: 'v4', 
+    this.sheets = google.sheets({
+      version: 'v4',
       auth
     });
 
