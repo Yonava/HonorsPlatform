@@ -175,7 +175,7 @@ const graduateDeletions = async () => {
 
     if (!graduate.id) {
       deletionData.status ??= "warn"
-      deletionData.flaggedBecause.push("no ID")
+      deletionData.flaggedBecause.push("no student ID")
     }
 
     return deletionData
@@ -194,6 +194,17 @@ const completedModuleDeletions = async () => {
       item: module,
       status: null,
       flaggedBecause: []
+    }
+
+    if (!module.courseCode) {
+      deletionData.status = "danger"
+      deletionData.flaggedBecause.push("no course code")
+    }
+
+    // course codes must start with 2 letters
+    else if (!module.courseCode.match(/^[A-Za-z]{2}/)) {
+      deletionData.status = "danger"
+      deletionData.flaggedBecause.push("invalid course code")
     }
 
     const { studentMatch } = useStudentMatcher(module.studentSysId)
@@ -230,12 +241,23 @@ const moduleDeletions = async () => {
       flaggedBecause: []
     }
 
+    if (!module.courseCode) {
+      deletionData.status = "danger"
+      deletionData.flaggedBecause.push("no course code")
+    }
+
+    // course codes must start with 2 letters
+    else if (!module.courseCode.match(/^[A-Za-z]{2}/)) {
+      deletionData.status = "danger"
+      deletionData.flaggedBecause.push("invalid course code")
+    }
+
     const docuSignCreated = new Date(module.docuSignCreated)
     const docuSignCompleted = new Date(module.docuSignCompleted)
 
     if (!module.docuSignCreated && !module.docuSignCompleted) {
       deletionData.status ??= "warn"
-      deletionData.flaggedBecause.push("no DocuSign")
+      deletionData.flaggedBecause.push("DocuSign not started")
     }
 
     // docuSignCreated is filled in but with invalid dates
@@ -255,6 +277,12 @@ const moduleDeletions = async () => {
         deletionData.status = "danger"
         deletionData.flaggedBecause.push(`in progress for ${months}+ months`)
       }
+    }
+
+    // docuSignCompleted is filled in but with invalid dates
+    else if (docuSignCompleted.toString() === 'Invalid Date' && module.docuSignCompleted) {
+      deletionData.status = "danger"
+      deletionData.flaggedBecause.push("invalid completion date")
     }
 
     const { studentMatch } = useStudentMatcher(module.studentSysId)
@@ -279,17 +307,13 @@ const moduleDeletions = async () => {
 
 
 const studentDeletions = async () => {
-  const {
-    Students,
-    Modules,
-    Graduates,
-    "Completed Modules": CompletedModules
-  } = useDocumentCache()
 
+  const { Students, Graduates } = useDocumentCache()
   const students = Students.list
-  const modules = Modules.list
   const graduates = Graduates.list
-  const completedModules = CompletedModules.list
+
+  const studentPanel = getPanel('STUDENTS')
+  const graduatePanel = getPanel('GRADUATES')
 
   return students.map(student => {
     const deletionData: Deletion<Student> = {
@@ -300,39 +324,39 @@ const studentDeletions = async () => {
 
     if (student.activeStatus === "Request Delete") {
       deletionData.status = "danger"
-      deletionData.flaggedBecause.push("active status is currently marked as 'Request Delete'")
+      deletionData.flaggedBecause.push("marked as 'Request Delete'")
     }
 
     if (!student.name) {
       deletionData.status = "danger"
-      deletionData.flaggedBecause.push("they do not have a name")
+      deletionData.flaggedBecause.push("no name")
     }
 
     if (student.activeStatus === "Inactive") {
       deletionData.status ??= "warn"
-      deletionData.flaggedBecause.push("active status is currently marked as 'Inactive'")
+      deletionData.flaggedBecause.push("inactive")
     }
 
     if (!student.id) {
       deletionData.status ??= "warn"
-      deletionData.flaggedBecause.push("they do not have an id")
+      deletionData.flaggedBecause.push("no student id")
     } else {
-      const otherStudentsWithSameId = students.filter(otherStudent => otherStudent.id === student.id)
-      if (otherStudentsWithSameId.length > 1) {
-        deletionData.status ??= "warn"
-        deletionData.flaggedBecause.push("there is another student with the same id")
+      const studentsWithId = students.filter(otherStudent => otherStudent.id === student.id)
+      if (studentsWithId.length > 1) {
+        deletionData.status = "danger"
+        deletionData.flaggedBecause.push(`there are other ${studentPanel.title.plural} in the system using this student id (${student.id})`)
       }
 
-      const otherGraduatesWithSameId = graduates.filter(graduate => graduate.id === student.id)
-      if (otherGraduatesWithSameId.length > 0) {
-        deletionData.status ??= "warn"
-        deletionData.flaggedBecause.push("there is a graduate with the same id")
+      const gradsWithId = graduates.filter(graduate => graduate.id === student.id)
+      if (gradsWithId.length > 0) {
+        deletionData.status = "danger"
+        deletionData.flaggedBecause.push(`there are ${graduatePanel.title.plural} in the system using this student id (${student.id})`)
       }
     }
 
     if (!student.year) {
       deletionData.status ??= "warn"
-      deletionData.flaggedBecause.push("this student has not been assigned a class year")
+      deletionData.flaggedBecause.push("no class year")
     }
 
     return deletionData

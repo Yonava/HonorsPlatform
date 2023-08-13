@@ -50,7 +50,7 @@
             High Five!
           </h3>
           <p>
-            No more issues found.
+            All issues resolved 🤙
           </p>
         </v-sheet>
         <v-sheet
