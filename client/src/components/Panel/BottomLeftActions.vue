@@ -16,25 +16,21 @@
             v-bind="props"
             :src="googleProfile.picture"
             alt="Profile"
-            style="border-radius: 50%; width: 100%; height: 100%; object-fit: cover; box-shadow: 0 0 5px rgba(0, 0, 0, 0.3); border: 3px solid white; cursor: pointer;"
+            :style="{
+              borderRadius: '50%',
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              boxShadow: '0 0 5px rgba(0, 0, 0, 0.3)',
+              border: '3px solid white',
+              cursor: 'pointer'
+            }"
           />
         </template>
-        <v-sheet class="px-4 py-6">
-          <v-btn
-            @click="userLogoutFlow"
-            block
-            color="red"
-          >
-            Logout
-          </v-btn>
-        </v-sheet>
+
+        <UserProfile />
+
       </v-menu>
-      <v-tooltip
-        activator="parent"
-        location="end"
-      >
-        {{ googleProfile.name }}
-      </v-tooltip>
     </div>
     <v-btn
       @click="$router.push({ name: 'registrar' })"
@@ -61,7 +57,9 @@
         :disabled="smAndDown"
         activator="parent"
         location="end"
-      >Compose Mass Email</v-tooltip>
+      >
+        Compose Mass Email
+      </v-tooltip>
     </v-btn>
   </div>
 </template>
@@ -70,10 +68,10 @@
 import { useDisplay } from 'vuetify';
 import { useAuth } from '../../store/useAuth';
 import { storeToRefs } from 'pinia';
+import UserProfile from './UserProfile.vue';
 
 const auth = useAuth();
 const { googleProfile } = storeToRefs(auth);
-const { userLogoutFlow } = auth;
 
 const { smAndDown } = useDisplay();
 </script>

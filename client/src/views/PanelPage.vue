@@ -82,8 +82,8 @@
         </span>
       </div>
     </v-main>
-    <ItemDetailSM />
     <ServeDialog />
+    <ItemDetailSM />
   </div>
 </template>
 

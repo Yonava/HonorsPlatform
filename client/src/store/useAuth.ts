@@ -260,7 +260,7 @@ export const useAuth = defineStore('auth', {
     },
     async userLoginFlow(googleOAuthCode: string) {
 
-      localStorage.setItem(local.timeSinceLastAuth, Date.now().toString())
+      localStorage.setItem(local.timeOfLastAuth, Date.now().toString())
       localStorage.removeItem(local.closeAfterAuth)
       localStorage.removeItem(local.googleOAuthCode)
 
