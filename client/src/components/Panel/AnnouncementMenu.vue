@@ -45,7 +45,7 @@
         <h1
           style="line-height: 1"
         >
-          Bulletin Board
+          Announcements
         </h1>
       </div>
       <div
@@ -105,6 +105,11 @@
               class="ma-3"
             >
               {{ daysAgo(announcement.datePosted) }}
+              <v-tooltip
+                activator="parent"
+              >
+                {{ fullDateTime(announcement.datePosted) }}
+              </v-tooltip>
             </p>
           </div>
         </v-list-item>
@@ -177,6 +182,21 @@ const daysAgo = (date: string) => {
   } else {
     return `${days} days ago`
   }
+}
+
+const fullDateTime = (date: string) => {
+  const datePosted = new Date(date)
+  const dateString = datePosted.toLocaleDateString([], {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  })
+  const timeString = datePosted.toLocaleTimeString([], {
+    hour: '2-digit',
+    minute: '2-digit'
+  })
+  return `${dateString} at ${timeString}`
 }
 </script>
 
