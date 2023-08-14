@@ -1,11 +1,13 @@
 import express from "express";
+import dotenv from "dotenv";
+dotenv.config();
 import GoogleSheet from "./GoogleSheet.js";
 import { google } from 'googleapis';
 
 const { OAuth2 } = google.auth;
 
-const clientId = '190006346508-fsioaathe0vo6ou4c46dssgq3vnr0kk9.apps.googleusercontent.com';
-const clientSecret = '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';
+const clientId = process.env.GOOGLE_OAUTH_CLIENT_ID;
+const clientSecret = process.env.GOOGLE_OAUTH_CLIENT_SECRET;
 const redirectUri = 'http://localhost:5179/auth';
 const scope = 'https://www.googleapis.com/auth/spreadsheets';
 
