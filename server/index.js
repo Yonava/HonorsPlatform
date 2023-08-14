@@ -9,7 +9,7 @@ require('dotenv').config();
 const { OAuth2 } = google.auth;
 
 const { GOOGLE_OAUTH_CLIENT_ID, GOOGLE_OAUTH_CLIENT_SECRET } = process.env;
-const redirectUri =  process.env.NODE_ENV ? 'https://www.snhuhonors.com/auth' : 'http://localhost:5178/auth';
+const redirectUri = process.env.NODE_ENV ? 'https://honorsplatform-production.up.railway.app/auth' : 'http://localhost:5178/auth';
 const scope = 'https://www.googleapis.com/auth/spreadsheets';
 
 const app = express();
