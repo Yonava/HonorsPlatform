@@ -32,7 +32,9 @@
                 @click="tempStudentId = student.id;"
                 class="d-flex align-center px-2 py-1 edit-student-id"
               >
-                <div>{{ student.id }}</div>
+                <div>
+                  {{ student.id }}
+                </div>
                 <v-icon
                   size="small"
                   style="opacity: 0.5;"
@@ -87,13 +89,18 @@
         </v-btn>
         <div class="d-flex align-center">
           <DetailTextField
-            v-model="student.email"
-            prop-name="email"
+            prop="email"
             :rules="[(v) => emailValidator(v) || 'Invalid email']"
             label="Email"
             icon="email"
           />
         </div>
+        <DetailTextField
+          prop="points"
+          label="Points"
+          icon="ticket"
+          :input="{ type: 'text', variant: 'number' }"
+        />
         <v-text-field
           v-model.number="student.points"
           @input="broadcastThroughSocket('points')"
