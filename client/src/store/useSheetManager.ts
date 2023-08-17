@@ -75,7 +75,6 @@ export const useSheetManager = defineStore('sheetManager', {
       return state.pinnedSysIds.find((sysId) => item.sysId === sysId)
     },
     getFocusedItem: (state): SheetItem | null => {
-      console.log('computing focused item')
       const documents = useDocumentCache();
       const { selected: selectedItems } = documents[state.panel.sheetRange];
       return selectedItems.find((item) => item.sysId === state.focusedItemSysId)

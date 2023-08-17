@@ -9,7 +9,12 @@ import {
   Thesis,
   ThesisDecision,
 } from "./SheetTypes";
-import { YearOption, StatusOption } from "./StudentTools";
+
+import {
+  type YearOption,
+  type StatusOption,
+  athleticOptions,
+} from "./StudentTools";
 
 function removeEmptyObjects(item: Object) {
   return Object
@@ -30,7 +35,7 @@ export async function mapStudents(sheetData: string[][]): Promise<Student[]> {
       points: parseInt(student[4]) || 0,
       activeStatus: (student[5] ?? '') as StatusOption,
       year: (student[6] ?? '') as YearOption,
-      athletics: student[7] ?? '',
+      athletics: (student[7] ?? '') as keyof typeof athleticOptions,
       note: student[8] ?? '',
       misc: categories.reduce((acc: { [key in string]: string }, category: string, index: number) => {
         if (category === '') {
@@ -71,7 +76,7 @@ export function mapModules(sheetData: string[][]): Module[] {
         sysId: module[0] ?? '',
         studentSysId: module[1] ?? '',
         courseCode: module[2] ?? '',
-        description: module[3] ?? '',
+        note: module[3] ?? '',
         term: module[4] ?? '',
         instructor: module[5] ?? '',
         docuSignCreated: module[6] ?? '',
@@ -98,7 +103,7 @@ export function mapCompletedModules(sheetData: string[][]): CompletedModule[] {
         sysId: module[0] ?? '',
         studentSysId: module[1] ?? '',
         courseCode: module[2] ?? '',
-        description: module[3] ?? '',
+        note: module[3] ?? '',
         term: module[4] ?? '',
         instructor: module[5] ?? '',
         docuSignCreated: module[6] ?? '',

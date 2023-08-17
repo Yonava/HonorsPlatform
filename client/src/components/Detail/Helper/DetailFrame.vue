@@ -30,13 +30,11 @@
       >
         <div style="width: 100%;">
           <slot name="notes-button"></slot>
-          <v-textarea
-            v-model="notepad"
-            @input="$emit('user-input')"
-            auto-grow
-            variant="outlined"
+          <DetailInput
+            :input="{ type: 'textarea' }"
+            prop="note"
             label="Notes"
-          ></v-textarea>
+          />
         </div>
         <div
           :class="[
@@ -55,7 +53,9 @@
             <v-icon
               class="mr-4"
               size="x-large"
-            >mdi-delete</v-icon>
+            >
+              mdi-delete
+            </v-icon>
             remove
           </v-btn>
         </div>
@@ -66,6 +66,7 @@
 
 <script setup lang="ts">
 import EmbeddedDetail from '../Embedded/EmbeddedDetail.vue'
+import DetailInput from './DetailInput.vue'
 import { computed, ref, watch } from 'vue'
 import { useElementSize } from '@vueuse/core'
 import { useSheetManager } from '../../../store/useSheetManager'
@@ -93,19 +94,10 @@ const props = defineProps<{
   disableReason?: string,
 }>()
 
-// @ts-ignore
 const emits = defineEmits<{
-  'update:modelValue': (value: string) => void,
-  'user-input': () => void,
+  (e: 'update:modelValue', v: string): void,
+  (e: 'user-input'): void,
 }>()
-
-const notepad = computed({
-  get: () => props.modelValue,
-  set: (value) => {
-    // @ts-ignore
-    emits('update:modelValue', value)
-  }
-})
 
 const attemptDelete = () => {
   if (props.disableDelete) {

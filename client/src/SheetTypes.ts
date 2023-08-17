@@ -12,12 +12,12 @@ export type Grade = typeof grades[number];
 export interface SheetEntry {
   row: number | null | undefined;
   sysId: string;
+  note: string;
 }
 
 export interface Module extends SheetEntry {
   studentSysId: string;
   courseCode: string;
-  description: string;
   term: string;
   instructor: string;
   docuSignCreated: string;
@@ -35,7 +35,6 @@ export interface Graduate extends SheetEntry {
   email: string;
   phone: string;
   graduationDate: string;
-  note: string;
 }
 
 export interface Student extends SheetEntry {
@@ -46,7 +45,6 @@ export interface Student extends SheetEntry {
   activeStatus: StatusOption;
   year: YearOption;
   athletics: keyof typeof athleticOptions;
-  note: string;
   misc: {
     [key: string]: string
   };
@@ -56,7 +54,6 @@ export interface GradEngagement extends SheetEntry {
   studentSysId: string;
   event: string;
   dateTime: string;
-  note: string;
 }
 
 export type ThesisDecision = "Approved" | "Rejected" | "Pending";
@@ -71,7 +68,6 @@ export interface Thesis extends SheetEntry {
   mentor: string;
   mentorEmail: string;
   draftReceived: string;
-  note: string;
 }
 
 export interface Announcement {

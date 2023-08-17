@@ -46,6 +46,16 @@
       :readonly="false"
     ></v-select>
 
+    <v-textarea
+      v-else-if="activeInput.type === 'textarea'"
+      v-model="content"
+      v-bind="$attrs"
+      @input="broadcast(prop)"
+      :readonly="false"
+      auto-grow
+      variant="outlined"
+    ></v-textarea>
+
   </div>
 </template>
 
@@ -77,6 +87,9 @@ const props = defineProps<{
     {
       type: 'select',
       items: string[] | readonly string[],
+    } |
+    {
+      type: 'textarea',
     }
 }>()
 
