@@ -1,10 +1,17 @@
 import { useDialog } from './store/useDialog'
 import { useDocumentCache } from './store/useDocumentCache'
+import { useSheetManager } from './store/useSheetManager'
 import IncrementStudentYearDialog from './components/IncrementStudentYear.vue'
 import CreateTempSheet from './components/CreateTempSheet.vue'
 
 export const tools = {
   STUDENTS: [
+    {
+      name: 'Toggle Read-Only Mode',
+      handler: () => {
+        useSheetManager().readOnlyMode = !useSheetManager().readOnlyMode
+      }
+    },
     {
       name: 'Suggested Deletions',
       handler: () => { useDialog().setPanelCover('open') }

@@ -5,7 +5,6 @@ import router from '../router';
 import { filterItems } from '../FilterObjects';
 import { useDocumentCache } from './useDocumentCache';
 import { local } from '../Locals';
-import { useAuth } from './useAuth';
 import { useSocket } from './useSocket';
 
 export type JumpObject = {
@@ -34,7 +33,8 @@ export const useSheetManager = defineStore('sheetManager', {
     listItemBeingDragged: null as SheetItem | null,
     focusedItemSysId: '',
     focusedEmbeddedItem: null as SheetItem | null,
-    listTransitionActive: false
+    listTransitionActive: false,
+    readOnlyMode: false
   }),
   getters: {
     filteredItems(state) {

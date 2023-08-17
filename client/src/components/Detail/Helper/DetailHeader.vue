@@ -35,6 +35,7 @@
       <input
         v-model="title"
         :placeholder="placeholder"
+        :readonly="readOnlyMode"
         type="text"
         class="header-input"
       >
@@ -53,7 +54,7 @@ import { SheetItem } from '../../../SheetTypes';
 import SyncStatus from "./SyncStatus.vue";
 
 const { getPanelCover } = storeToRefs(useDialog());
-const { focusedItemSysId } = storeToRefs(useSheetManager());
+const { focusedItemSysId, readOnlyMode } = storeToRefs(useSheetManager());
 const { getSelectedItems, removeSelectedItem } = useDocumentCache();
 
 const props = defineProps<{

@@ -1,9 +1,6 @@
 <template>
   <div>
-    <DetailFrame
-      v-model="student.note"
-      :item="student"
-    >
+    <DetailFrame :item="item">
       <template #main>
         <DetailHeader
           v-model="student.name"

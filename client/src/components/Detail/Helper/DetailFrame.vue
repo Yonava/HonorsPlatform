@@ -67,13 +67,13 @@
 <script setup lang="ts">
 import EmbeddedDetail from '../Embedded/EmbeddedDetail.vue'
 import DetailInput from './DetailInput.vue'
-import { computed, ref, watch } from 'vue'
+import { ref, watch } from 'vue'
 import { useElementSize } from '@vueuse/core'
 import { useSheetManager } from '../../../store/useSheetManager'
 import { useDialog } from '../../../store/useDialog'
 import { useDocumentCache } from '../../../store/useDocumentCache'
 import { storeToRefs } from 'pinia'
-import { SheetItem } from '../../../SheetTypes'
+import type { SheetItem } from '../../../SheetTypes'
 
 const { open, close } = useDialog()
 const { deleteItem } = useDocumentCache()
@@ -88,15 +88,9 @@ watch(width, (newWidth) => {
 }, { immediate: true })
 
 const props = defineProps<{
-  modelValue: string,
   item: SheetItem,
   disableDelete?: boolean,
   disableReason?: string,
-}>()
-
-const emits = defineEmits<{
-  (e: 'update:modelValue', v: string): void,
-  (e: 'user-input'): void,
 }>()
 
 const attemptDelete = () => {
@@ -116,6 +110,7 @@ const attemptDelete = () => {
     })
     return
   }
+
   deleteItem({
     item: props.item,
   })

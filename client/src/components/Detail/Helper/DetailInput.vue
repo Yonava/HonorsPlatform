@@ -9,7 +9,7 @@
         v-bind="$attrs"
         @input="broadcast(prop)"
         :prepend-icon="activeIcon"
-        :readonly="false"
+        :readonly="readOnlyMode"
         type="text"
       ></v-text-field>
 
@@ -20,7 +20,7 @@
         v-bind="$attrs"
         @input="broadcast(prop)"
         :prepend-icon="activeIcon"
-        :readonly="false"
+        :readonly="readOnlyMode"
         type="number"
       ></v-text-field>
 
@@ -33,7 +33,7 @@
       @input="broadcast(prop)"
       :items="activeInput.items"
       :prepend-icon="activeIcon"
-      :readonly="false"
+      :readonly="readOnlyMode"
     ></v-autocomplete>
 
     <v-select
@@ -43,7 +43,7 @@
       @input="broadcast(prop)"
       :items="activeInput.items"
       :prepend-icon="activeIcon"
-      :readonly="false"
+      :readonly="readOnlyMode"
     ></v-select>
 
     <v-textarea
@@ -51,7 +51,7 @@
       v-model="content"
       v-bind="$attrs"
       @input="broadcast(prop)"
-      :readonly="false"
+      :readonly="readOnlyMode"
       auto-grow
       variant="outlined"
     ></v-textarea>
@@ -67,7 +67,7 @@ import { storeToRefs } from 'pinia';
 import type { SheetItem } from '../../../SheetTypes'
 
 const { broadcast } = useBroadcastThroughSocket('DETAIL')
-const { getFocusedItem } = storeToRefs(useSheetManager())
+const { getFocusedItem, readOnlyMode } = storeToRefs(useSheetManager())
 
 const item = ref<SheetItem | null>(null)
 item.value = getFocusedItem.value
