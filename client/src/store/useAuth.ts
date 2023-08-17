@@ -18,7 +18,7 @@ export type GoogleProfile = {
   locale: string
 }
 
-export type ConnectedAccount = GoogleProfile & { socketId: string }
+export type ConnectedSocket = GoogleProfile & { socketId: string }
 
 export type ServerErrors = 'NO_SHEET_ACCESS' | 'INVALID_ACCESS_TOKEN' | 'INVALID_OAUTH_CODE'
 
@@ -40,7 +40,6 @@ type FocusData = {
     googleId: string
   }
 }
-
 
 export const useAuth = defineStore('auth', {
   state: () => ({

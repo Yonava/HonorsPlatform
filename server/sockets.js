@@ -10,7 +10,7 @@ const io = socketIO(SOCKET_SERVER, {
 
 console.log('Sockets Live!')
 
-const connectedAccounts = []
+const connectedSockets = []
 const focusData = {}
 const timeOfLastUserAction = {
   time: null,
@@ -21,28 +21,28 @@ const timeOfLastUserAction = {
 io.on('connection', (socket) => {
 
   socket.on('disconnect', () => {
-    const index = connectedAccounts.findIndex(account => account.socketId === socket.id)
+    const index = connectedSockets.findIndex(account => account.socketId === socket.id)
     if (index === -1) {
       return
     }
-    console.log(`${connectedAccounts[index].name} (${connectedAccounts[index].socketId}) disconnected`)
-    connectedAccounts.splice(index, 1)
+    console.log(`${connectedSockets[index].name} (${connectedSockets[index].socketId}) disconnected`)
+    connectedSockets.splice(index, 1)
     delete focusData[socket.id]
-    io.emit('connectedAccounts', connectedAccounts)
+    io.emit('connectedSockets', connectedSockets)
   })
 
   socket.on('connectAccount', (joinData, callback) => {
     const { googleProfile, initialFocusState } = joinData
-    connectedAccounts.push({
+    connectedSockets.push({
       socketId: socket.id,
       ...googleProfile,
     })
     focusData[socket.id] = initialFocusState
 
     console.log(`${googleProfile.name} (${socket.id}) connected`)
-    console.log('connectedAccounts', connectedAccounts)
+    console.log('connectedSockets', connectedSockets)
 
-    io.emit('connectedAccounts', connectedAccounts)
+    io.emit('connectedSockets', connectedSockets)
     io.emit('userFocus', focusData)
     io.emit('latestUserAction', timeOfLastUserAction)
 

@@ -19,7 +19,7 @@
             :style="{
               borderRadius: '50%',
               width: '100%',
-              height: '100%',
+              aspectRatio: '1 / 1',
               objectFit: 'cover',
               boxShadow: '0 0 5px rgba(0, 0, 0, 0.3)',
               border: '3px solid white',
