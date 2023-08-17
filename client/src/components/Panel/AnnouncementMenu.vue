@@ -154,7 +154,6 @@ const tooltipText = computed(() => {
 watch(announcements, (newList) => {
   if (newList.length > previousListLength.value) {
     badgeNumber.value += newList.length - previousListLength.value
-    console.log(badgeNumber.value)
   }
 
   previousListLength.value = newList.length

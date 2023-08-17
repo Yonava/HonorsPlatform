@@ -22,7 +22,10 @@ export type ServerErrors =
   'INVALID_ACCESS_TOKEN' |
   'INVALID_OAUTH_CODE' |
   'SESSION_EXPIRED' |
-  'NO_ACCESS_TOKEN'
+  'NO_ACCESS_TOKEN' |
+  'REMOTE_LOGOUT' |
+  'LOGOUT' |
+  'SOCKET_EXCEPTION'
 
 export const useAuth = defineStore('auth', {
   state: () => ({
@@ -87,22 +90,27 @@ export const useAuth = defineStore('auth', {
       disconnect()
       await connect()
     },
-    userLogoutFlow({ goToAuthPage = false, fromLogoutEvent = false } = {}) {
+    userLogoutFlow({ goToAuthPage, broadcastLogoutEvent, error }: {
+      goToAuthPage: boolean,
+      error: ServerErrors,
+      broadcastLogoutEvent: boolean,
+    }) {
       localStorage.removeItem(local.googleOAuthAccessToken)
 
-      if (!fromLogoutEvent) {
+      if (broadcastLogoutEvent) {
         const { emitUserLogout } = useSocket()
         emitUserLogout()
       }
 
       if (goToAuthPage) {
         router.push({
-          name: 'auth'
+          name: 'auth',
+          query: {
+            error
+          }
         })
         return
       }
-
-      this.forceAuthorize()
     },
     async forceAuthorize(url?: string) {
       const redirectUrl = url ?? await this.getURL();

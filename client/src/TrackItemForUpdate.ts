@@ -129,7 +129,7 @@ export function useUpdateItem<T extends SheetItem>(item: Ref<T | null>, panelNam
       payload: {
         sysId: item.value.sysId,
         prop: property,
-        value,
+        value: value ?? item.value[property],
         panelName,
       }
     })

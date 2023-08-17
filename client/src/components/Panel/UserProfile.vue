@@ -113,7 +113,7 @@
     </v-sheet>
     <div class="mb-8"></div>
     <v-sheet
-      @click="userLogoutFlow"
+      @click="logout"
       color="red"
       :style="{
         position: 'absolute',
@@ -188,5 +188,13 @@ const makeAnnouncement = () => {
       render: PostAnnouncement
     }
   })
+}
+
+const logout = () => {
+  userLogoutFlow({
+    goToAuthPage: true,
+    error: 'LOGOUT',
+    broadcastLogoutEvent: true,
+  });
 }
 </script>

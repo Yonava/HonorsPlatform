@@ -3,7 +3,7 @@
     <div
       v-if="syncing"
       class="d-flex flex-row align-center"
-      style="height: 25px"
+      style="height: 25px; white-space: nowrap;"
     >
       <v-progress-circular
         indeterminate
@@ -16,7 +16,7 @@
     </div>
     <p
       v-else
-      style="height: 25px"
+      style="height: 25px; white-space: nowrap;"
     >
       <v-icon>
         mdi-cloud-check-variant-outline

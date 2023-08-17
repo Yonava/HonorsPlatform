@@ -111,12 +111,9 @@ import { useDocumentCache } from '../store/useDocumentCache'
 import { useDialog } from '../store/useDialog'
 import { storeToRefs } from 'pinia'
 import { panels, version } from '../Panels'
-import { useAuth } from '../store/useAuth'
 import { useStalePageDetector } from '../StalePageDetector'
 
 useStalePageDetector()
-const { userLogoutFlow } = useAuth()
-const { googleProfile } = storeToRefs(useAuth())
 const { setPanel } = useSheetManager()
 const { getActivePanel, pinnedSysIds, focusedItemSysId, listItemBeingDragged } = storeToRefs(useSheetManager())
 const { getAllDocuments } = useDocumentCache()
@@ -135,8 +132,7 @@ if (route.query.type) {
 
 const {
   smAndUp,
-  mdAndUp,
-  smAndDown
+  mdAndUp
 } = useDisplay()
 
 const showLogo = computed(() => {

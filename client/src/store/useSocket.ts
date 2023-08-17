@@ -121,7 +121,9 @@ export const useSocket = defineStore("socket", {
           if (this.accessTokenOnSocketDisconnect && this.accessTokenOnSocketDisconnect !== accessToken) {
 
             userLogoutFlow({
-              goToAuthPage: true
+              goToAuthPage: true,
+              error: 'INVALID_ACCESS_TOKEN',
+              broadcastLogoutEvent: false,
             })
             return
           }
@@ -131,7 +133,9 @@ export const useSocket = defineStore("socket", {
         this.socket.on('connect_error', (error: any) => {
           console.error('Socket connection error', error)
           userLogoutFlow({
-            goToAuthPage: true
+            goToAuthPage: true,
+            error: 'SOCKET_EXCEPTION',
+            broadcastLogoutEvent: false,
           })
           reject(error)
         })
@@ -147,6 +151,8 @@ export const useSocket = defineStore("socket", {
           googleId: googleProfile?.id
         }
       }, this.checkForActionsDuringDisconnect)
+
+      this.initiateSocketListeners()
     },
     disconnect() {
       if (this.socket) {
@@ -236,6 +242,7 @@ export const useSocket = defineStore("socket", {
         {
           name: 'connectedSockets',
           action: (connectedSockets: ConnectedSocket[]) => {
+            console.log('Connected sockets', connectedSockets)
             this.connectedSockets = connectedSockets
           }
         },
@@ -246,7 +253,8 @@ export const useSocket = defineStore("socket", {
             if (googleId === googleProfile?.id) {
               userLogoutFlow({
                 goToAuthPage: true,
-                fromLogoutEvent: true
+                error: 'REMOTE_LOGOUT',
+                broadcastLogoutEvent: false,
               })
             }
           },
@@ -254,6 +262,7 @@ export const useSocket = defineStore("socket", {
         {
           name: 'userAction',
           action: (userAction: ActionPayload) => {
+            console.log('userAction', userAction)
             const { action } = userAction
             switch (action) {
               case 'add':
@@ -278,7 +287,7 @@ export const useSocket = defineStore("socket", {
                   console.error('useAuth: (prop-update) item not found')
                   return
                 }
-                item[userAction.payload.sysId] = userAction.payload.value
+                item[userAction.payload.prop] = userAction.payload.value
                 break
 
               case 'refresh':
@@ -310,8 +319,9 @@ export const useSocket = defineStore("socket", {
           }
         },
         {
-          name: 'focusData',
+          name: 'userFocus',
           action: (focusData: FocusData) => {
+            console.log('focusData', focusData)
             this.focusData = focusData
           }
         }

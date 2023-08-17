@@ -69,6 +69,15 @@ const title = computed(() => {
         large: 'Session Expired',
         small: 'Your Session Has Expired, Please Login Again'
       }
+    case 'REMOTE_LOGOUT':
+      return {
+        large: 'Logged Out',
+        small: 'You Have Been Logged Out Of Your Account From Another Device or Browser, Please Login Again'
+      }
+    case 'LOGOUT':
+      return {
+        large: 'Logged Out',
+      }
     default:
       return {
         large: 'Authorize'

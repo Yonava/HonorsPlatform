@@ -84,7 +84,6 @@ const studentLinked = (sysId: string) => {
 
   itemToModify.studentSysId = sysId
   props.props?.onUpdate()
-  console.log('closing')
   useDialog().close()
 }
 </script>
