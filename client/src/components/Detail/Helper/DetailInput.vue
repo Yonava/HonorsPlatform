@@ -36,6 +36,16 @@
       :readonly="false"
     ></v-autocomplete>
 
+    <v-select
+      v-else-if="activeInput.type === 'select'"
+      v-model="content"
+      v-bind="$attrs"
+      @input="broadcast(prop)"
+      :items="activeInput.items"
+      :prepend-icon="activeIcon"
+      :readonly="false"
+    ></v-select>
+
   </div>
 </template>
 
@@ -59,6 +69,10 @@ const props = defineProps<{
     {
       type: 'autocomplete',
       items: string[],
+    } |
+    {
+      type: 'select',
+      items: string[] | readonly string[],
     }
 }>()
 

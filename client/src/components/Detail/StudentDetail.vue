@@ -88,54 +88,64 @@
           new {{ getActivePanel.title.singular }} email
         </v-btn>
         <div class="d-flex align-center">
-          <DetailTextField
+          <DetailInput
             prop="email"
             :rules="[(v) => emailValidator(v) || 'Invalid email']"
             label="Email"
             icon="email"
           />
         </div>
-        <DetailTextField
+        <DetailInput
           prop="points"
+          :input="{
+            type: 'text',
+            variant: 'number'
+          }"
           label="Points"
           icon="ticket"
-          :input="{ type: 'text', variant: 'number' }"
         />
-        <v-text-field
-          v-model.number="student.points"
-          @input="broadcastThroughSocket('points')"
-          label="Points"
-          type="number"
-          prepend-icon="mdi-ticket"
-        ></v-text-field>
         <div class="d-flex flex-row">
-          <v-select
-            v-model="student.activeStatus"
-            @update:model-value="broadcastThroughSocket('activeStatus')"
-            :items="statusOptionLabels"
-            :prepend-icon="statusOptionIcon"
+          <DetailInput
+            prop="activeStatus"
+            :input="{
+              type: 'select',
+              items: statusOptionLabels,
+            }"
+            :icon="statusOptionIcon"
             label="Active Status"
-            style="width: 15%"
-            class="mr-4"
-          ></v-select>
-          <v-select
-            v-model="student.year"
-            @update:model-value="broadcastThroughSocket('year')"
-            :items="yearOptions"
+          />
+          <DetailInput
+            prop="year"
+            :input="{
+              type: 'select',
+              items: yearOptions,
+            }"
+            icon="briefcase"
             label="Year"
-            style="width: 15%"
-            prepend-icon="mdi-briefcase"
-          >
-          </v-select>
+            class="ml-4"
+          />
         </div>
-        <v-autocomplete
+
+        <!-- <v-autocomplete
           v-model="student.athletics"
           @update:model-value="broadcastThroughSocket('athletics')"
           :items="Object.keys(athleticOptions)"
           :prepend-icon="`mdi-${athleticOptions[student.athletics]}`"
           label="Athletics"
           class="mt-2"
-        ></v-autocomplete>
+        ></v-autocomplete> -->
+
+        <DetailInput
+          prop="athletics"
+          :input="{
+            type: 'select',
+            items: Object.keys(athleticOptions),
+          }"
+          :icon="athleticOptions[student.athletics]"
+          label="Athletics"
+          class="mt-2"
+        />
+
 
         <div class="d-flex flex-wrap">
           <div
@@ -210,7 +220,7 @@
 <script setup lang="ts">
 import DetailFrame from "./Helper/DetailFrame.vue";
 import DetailHeader from "./Helper/DetailHeader.vue";
-import DetailTextField from "./Helper/DetailTextField.vue";
+import DetailInput from "./Helper/DetailInput.vue";
 import AddStudentNote from "./Helper/AddStudentNote.vue";
 import {
   emailValidator,
@@ -247,8 +257,7 @@ const { moveItem, movingItem, panelOnceMoved } = useMoveItem();
 const statusOptionIcon = computed(() => {
   const optionIcon = statusOptions.find((option) => option.status === student.value.activeStatus)?.icon
   const fallbackIcon = 'help'
-  const icon = optionIcon ?? fallbackIcon
-  return `mdi-${icon}`
+  return optionIcon ?? fallbackIcon
 });
 
 const statusOptionLabels = computed(() => statusOptions.map((option) => option.status));

@@ -1,4 +1,8 @@
-import { StatusOption, YearOption } from "./StudentTools";
+import {
+  type StatusOption,
+  type YearOption,
+  athleticOptions
+} from "./StudentTools";
 
 export type SheetItem = Module | Graduate | Student | CompletedModule | Thesis | GradEngagement;
 
@@ -41,7 +45,7 @@ export interface Student extends SheetEntry {
   points: number;
   activeStatus: StatusOption;
   year: YearOption;
-  athletics: string;
+  athletics: keyof typeof athleticOptions;
   note: string;
   misc: {
     [key: string]: string
