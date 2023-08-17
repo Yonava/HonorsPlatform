@@ -126,19 +126,10 @@
           />
         </div>
 
-        <!-- <v-autocomplete
-          v-model="student.athletics"
-          @update:model-value="broadcastThroughSocket('athletics')"
-          :items="Object.keys(athleticOptions)"
-          :prepend-icon="`mdi-${athleticOptions[student.athletics]}`"
-          label="Athletics"
-          class="mt-2"
-        ></v-autocomplete> -->
-
         <DetailInput
           prop="athletics"
           :input="{
-            type: 'select',
+            type: 'autocomplete',
             items: Object.keys(athleticOptions),
           }"
           :icon="athleticOptions[student.athletics]"
@@ -146,8 +137,8 @@
           class="mt-2"
         />
 
-
-        <div class="d-flex flex-wrap">
+        <!-- TODO integrate full first class support for added categories (v0.90 hopefully) -->
+        <!-- <div class="d-flex flex-wrap">
           <div
             v-for="(value, key) in student.misc"
             :key="key"
@@ -158,7 +149,7 @@
               :label="key"
             ></v-text-field>
           </div>
-        </div>
+        </div> -->
       </template>
       <template #notes-button>
         <v-btn

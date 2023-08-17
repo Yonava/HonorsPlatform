@@ -32,7 +32,7 @@
       v-bind="$attrs"
       @input="broadcast(prop)"
       :items="activeInput.items"
-      :prepend-icon="icon"
+      :prepend-icon="activeIcon"
       :readonly="false"
     ></v-autocomplete>
 
@@ -50,13 +50,17 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useBroadcastThroughSocket } from '../../../TrackItemForUpdate'
 import { useSheetManager } from '../../../store/useSheetManager';
 import { storeToRefs } from 'pinia';
+import type { SheetItem } from '../../../SheetTypes'
 
 const { broadcast } = useBroadcastThroughSocket('DETAIL')
 const { getFocusedItem } = storeToRefs(useSheetManager())
+
+const item = ref<SheetItem | null>(null)
+item.value = getFocusedItem.value
 
 const props = defineProps<{
   prop: string,
@@ -88,14 +92,14 @@ const activeIcon = computed(() => {
 
 const content = computed({
   get: () => {
-    const item = getFocusedItem.value
+    if (!item.value) return ''
     // @ts-ignore
-    return item[props.prop]
+    return item.value[props.prop]
   },
   set: (v: string) => {
-    const item = getFocusedItem.value
+    if (!item.value) return
     // @ts-ignore
-    item[props.prop] = v
+    item.value[props.prop] = v
   }
 })
 </script>
