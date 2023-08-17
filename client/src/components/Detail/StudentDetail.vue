@@ -3,9 +3,6 @@
     <DetailFrame :item="item">
       <template #main>
         <DetailHeader
-          v-model="student.name"
-          @input="broadcastThroughSocket('name')"
-          :item="student"
           :placeholder="`${getActivePanel.title.singular} Name`"
         >
           <v-dialog

@@ -56,6 +56,16 @@
       variant="outlined"
     ></v-textarea>
 
+    <input
+      v-else-if="activeInput.type === 'title'"
+      v-model="content"
+      v-bind="$attrs"
+      @input="broadcast(prop)"
+      :readonly="readOnlyMode"
+      type="text"
+      class="header-input"
+    >
+
   </div>
 </template>
 
@@ -65,12 +75,14 @@ import { useBroadcastThroughSocket } from '../../../TrackItemForUpdate'
 import { useSheetManager } from '../../../store/useSheetManager';
 import { storeToRefs } from 'pinia';
 import type { SheetItem } from '../../../SheetTypes'
+import { useDocumentCache } from '../../../store/useDocumentCache';
 
 const { broadcast } = useBroadcastThroughSocket('DETAIL')
 const { getFocusedItem, readOnlyMode } = storeToRefs(useSheetManager())
+const { getSelectedItems } = useDocumentCache()
 
 const item = ref<SheetItem | null>(null)
-item.value = getFocusedItem.value
+item.value = getFocusedItem.value ?? getSelectedItems()[0]
 
 const props = defineProps<{
   prop: string,
@@ -90,7 +102,10 @@ const props = defineProps<{
     } |
     {
       type: 'textarea',
-    }
+    } |
+    {
+      type: 'title',
+    },
 }>()
 
 const activeInput = computed(() => {
@@ -116,3 +131,15 @@ const content = computed({
   }
 })
 </script>
+
+<style scoped>
+input.header-input {
+  font-weight: 900;
+  font-size: 3em;
+  line-height: 0.9;
+  width: 100%;
+}
+
+input.header-input:focus {
+  outline: none;
+}</style>

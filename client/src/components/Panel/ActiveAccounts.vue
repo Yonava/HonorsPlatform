@@ -89,6 +89,8 @@ const profileClicked = (account: ConnectedSocket) => {
     return
   }
 
+  console.log('profileClicked', panelName, sysId)
+
   setPanel(panelName, {
     value: sysId
   })

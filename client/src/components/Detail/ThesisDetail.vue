@@ -1,14 +1,9 @@
 <template>
   <DetailFrame
-    v-model="thesis.note"
-    @user-input="broadcastThroughSocket('note')"
     :item="thesis"
   >
     <template #main>
       <DetailHeader
-        v-model="thesis.title"
-        @input="broadcastThroughSocket('title')"
-        :item="thesis"
         :placeholder="`${getActivePanel.title.singular} Title`"
       >
         <LinkStudentButton

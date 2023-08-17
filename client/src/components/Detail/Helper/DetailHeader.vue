@@ -24,90 +24,62 @@
       >
         mdi-close
       </v-icon>
-      <p style="font-weight: 200">
-        {{ id }}
-      </p>
       <slot></slot>
       <v-spacer></v-spacer>
       <SyncStatus v-if="item.sysId === focusedItemSysId" />
     </div>
-    <div class="d-flex flex-row align-center">
-      <input
-        v-model="title"
+    <div
+      v-if="getActivePanel.properties.title"
+      class="d-flex flex-row align-center"
+    >
+      <DetailInput
+        :input="{ type: 'title' }"
+        :prop="getActivePanel.properties.title"
         :placeholder="placeholder"
-        :readonly="readOnlyMode"
-        type="text"
-        class="header-input"
-      >
+      />
     </div>
     <v-divider class="my-2"></v-divider>
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import SyncStatus from "./SyncStatus.vue";
+import DetailInput from "./DetailInput.vue";
+import { computed, ref, type Ref } from "vue";
 import { useDialog } from '../../../store/useDialog';
 import { useDocumentCache } from '../../../store/useDocumentCache';
 import { useSheetManager } from "../../../store/useSheetManager";
 import { storeToRefs } from "pinia";
 import { SheetItem } from '../../../SheetTypes';
-import SyncStatus from "./SyncStatus.vue";
 
 const { getPanelCover } = storeToRefs(useDialog());
-const { focusedItemSysId, readOnlyMode } = storeToRefs(useSheetManager());
+const { focusedItemSysId, getFocusedItem, getActivePanel } = storeToRefs(useSheetManager());
 const { getSelectedItems, removeSelectedItem } = useDocumentCache();
 
+const item = ref(getFocusedItem.value ?? getSelectedItems()[0]) as Ref<SheetItem>;
+
 const props = defineProps<{
-  modelValue: string;
-  item: SheetItem;
   placeholder?: string;
-  id?: string;
 }>();
 
 const includedInDelete = computed(() => {
   return getPanelCover.value.selectedForDelete.some((sysId: string) => {
-    return props.item.sysId === sysId
+    return item.value.sysId === sysId
   });
-});
-
-const emits = defineEmits([
-  "update:modelValue",
-]);
-
-const title = computed({
-  get: () => props.modelValue,
-  set: (value: string) => {
-    emits("update:modelValue", value);
-  },
 });
 
 const placeholder = computed(() => {
   return props.placeholder ?? "";
 });
 
-const id = computed(() => {
-  return props.id ?? "";
-});
-
 const removeFromSelected = () => {
   removeSelectedItem({
-    item: props.item,
+    item: item.value,
   })
 }
 </script>
 
 <style scoped>
-input.header-input {
-  font-weight: 900;
-  font-size: 3em;
-  line-height: 0.9;
-  width: 100%;
-}
-
-input.header-input:focus {
-  outline: none;
-}
-
 .close:hover {
   color: red;
 }

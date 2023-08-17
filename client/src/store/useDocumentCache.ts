@@ -436,6 +436,8 @@ export const useDocumentCache = defineStore("documentCache", {
         return null;
       }
 
+      console.log(item)
+
       this.setSelectedItems({
         panel,
         items: [item]
