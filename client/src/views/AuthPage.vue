@@ -64,6 +64,11 @@ const title = computed(() => {
         large: 'Access Not Granted',
         small: 'The Google Account You Have Attempted To Logged In With Has Not Been Granted Access To The Honors Program, Please Contact Dr. Matthews For Further Assistance'
       }
+    case 'SESSION_EXPIRED':
+      return {
+        large: 'Session Expired',
+        small: 'Your Session Has Expired, Please Login Again'
+      }
     default:
       return {
         large: 'Authorize'

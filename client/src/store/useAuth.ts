@@ -3,11 +3,7 @@ import axios from "axios";
 import router from "../router";
 import { useDialog } from "./useDialog";
 import { local } from "../Locals";
-import io from 'socket.io-client'
 import { getUserProfileData } from "../SheetsAPI";
-import { useDocumentCache } from "./useDocumentCache";
-import { PanelName } from "../Panels";
-import { useSheetManager } from "./useSheetManager";
 import { useSocket } from "./useSocket";
 
 export type GoogleProfile = {
@@ -21,7 +17,12 @@ export type GoogleProfile = {
 
 export type ConnectedSocket = GoogleProfile & { socketId: string }
 
-export type ServerErrors = 'NO_SHEET_ACCESS' | 'INVALID_ACCESS_TOKEN' | 'INVALID_OAUTH_CODE'
+export type ServerErrors =
+  'NO_SHEET_ACCESS' |
+  'INVALID_ACCESS_TOKEN' |
+  'INVALID_OAUTH_CODE' |
+  'SESSION_EXPIRED' |
+  'NO_ACCESS_TOKEN'
 
 export const useAuth = defineStore('auth', {
   state: () => ({
@@ -44,6 +45,23 @@ export const useAuth = defineStore('auth', {
       const { url } = response.data
       return url
     },
+    async authorizeSession() {
+      const accessToken = localStorage.getItem(local.googleOAuthAccessToken)
+
+      if (!accessToken) {
+        location.replace('/auth?error=NO_ACCESS_TOKEN')
+        throw new Error('No access token found')
+      }
+
+      if (!this.googleProfile) {
+        try {
+          this.googleProfile = await getUserProfileData()
+        } catch (e) {
+          location.replace('/auth?error=SESSION_EXPIRED')
+          throw new Error('Session expired')
+        }
+      }
+    },
     async userLoginFlow(googleOAuthCode: string) {
 
       localStorage.setItem(local.timeOfLastAuth, Date.now().toString())
@@ -57,7 +75,7 @@ export const useAuth = defineStore('auth', {
 
       if (error) {
         location.replace(`/auth?error=${error}`)
-        return
+        throw new Error(error)
       }
 
       this.setGoogleProfile(data.profile)

@@ -7,6 +7,7 @@ import Email from '../views/ComposeMassEmail.vue'
 
 import { useDocumentCache } from '../store/useDocumentCache'
 import { useSocket } from '../store/useSocket'
+import { useAuth } from '../store/useAuth'
 
 const routes = [
   {
@@ -56,6 +57,8 @@ router.beforeEach(async (to, from) => {
   if (routesWithData.includes(goingTo)) {
     const { getAllDocuments } = useDocumentCache()
     const { connect } = useSocket()
+    const { authorizeSession } = useAuth()
+    await authorizeSession()
     await getAllDocuments()
     await connect()
   }

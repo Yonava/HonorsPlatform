@@ -94,12 +94,14 @@ export const useSocket = defineStore("socket", {
   actions: {
     async connect() {
       if (this.socket?.connected) {
-        throw new Error('Socket already connected')
+        console.log('Socket already connected')
+        return
       }
 
       const accessToken = localStorage.getItem(local.googleOAuthAccessToken);
       if (!accessToken) {
-        throw new Error('No access token found')
+        console.log('No access token found')
+        return
       }
 
       this.disconnect();

@@ -212,14 +212,12 @@ import { ref, computed, watchEffect } from "vue";
 import { useDisplay } from "vuetify";
 import { useKeyBindings } from "../../KeyBindings";
 import { useDialog } from '../../store/useDialog'
-import { useAuth } from "../../store/useAuth";
 
 import { version } from "../../Panels";
 import { useSheetManager } from "../../store/useSheetManager";
 import { useDocumentCache } from "../../store/useDocumentCache";
 import { storeToRefs } from "pinia";
 
-const { connectedAccounts } = storeToRefs(useAuth());
 const { show: dialogOpen } = storeToRefs(useDialog())
 const { getSelectedItems } = useDocumentCache();
 const { searchFilter, getActivePanel } = storeToRefs(useSheetManager());
