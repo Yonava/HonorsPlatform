@@ -2,11 +2,11 @@
   <div
     class="d-flex align-center mr-2"
     :style="{
-      transform: `translateX(${(getConnectedAccounts.length - 1) * 25}px)`,
+      transform: `translateX(${(getUniqueConnectedSockets.length - 1) * 25}px)`,
     }"
   >
     <div
-      v-for="(account, i) in getConnectedAccounts"
+      v-for="(account, i) in getUniqueConnectedSockets"
       @click="profileClicked(account)"
       :key="account.id"
       :style="{
@@ -40,18 +40,18 @@
 </template>
 
 <script setup lang="ts">
-import { useAuth, type ConnectedAccount } from '../../store/useAuth';
 import { storeToRefs } from 'pinia';
 import { panels } from '../../Panels';
 import { useSheetManager } from '../../store/useSheetManager';
 import { useDocumentCache } from '../../store/useDocumentCache';
 import { useDisplay } from 'vuetify';
+import { useSocket, type ConnectedSocket } from '../../store/useSocket';
 
 const { smAndDown, xs } = useDisplay()
 const { setPanel } = useSheetManager()
-const { getConnectedAccounts, focusData } = storeToRefs(useAuth())
+const { getUniqueConnectedSockets, focusData } = storeToRefs(useSocket())
 
-const accountTooltip = (account: ConnectedAccount) => {
+const accountTooltip = (account: ConnectedSocket) => {
   const { getItemBySysId } = useDocumentCache()
   const userFocusData = focusData.value[account.socketId]
   const defaultMessage = `${account.given_name} is online`
@@ -71,7 +71,7 @@ const accountTooltip = (account: ConnectedAccount) => {
   }
 }
 
-const profileClicked = (account: ConnectedAccount) => {
+const profileClicked = (account: ConnectedSocket) => {
   const userFocusData = focusData.value[account.socketId]
   if (!userFocusData) {
     return

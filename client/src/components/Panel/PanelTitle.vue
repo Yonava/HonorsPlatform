@@ -105,15 +105,16 @@ import { storeToRefs } from "pinia";
 import { useSheetManager } from "../../store/useSheetManager";
 import { useDisplay } from "vuetify";
 import { panels, Panel } from "../../Panels";
-import { useAuth } from "../../store/useAuth";
+import { useSocket } from "../../store/useSocket";
 
-const { getConnectedAccounts, focusData } = storeToRefs(useAuth());
+const { getUniqueConnectedSockets, focusData } = storeToRefs(useSocket());
 const { lgAndUp } = useDisplay();
+
 const { getActivePanel, loadingItems, filteredItems } = storeToRefs(useSheetManager());
 const { setPanel } = useSheetManager();
 
 const displayAccounts = (panel: Panel) => {
-  return getConnectedAccounts.value.filter(({ socketId }) => {
+  return getUniqueConnectedSockets.value.filter(({ socketId }) => {
     const accountPanelName = focusData.value[socketId]?.panelName;
     return panel.panelName === accountPanelName;
   });
