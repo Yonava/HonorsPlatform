@@ -141,3 +141,42 @@ export function useUpdateItem<T extends SheetItem>(item: Ref<T | null>, panelNam
     broadcastThroughSocket
   }
 }
+
+export function useBroadcastThroughSocket(itemType: 'DETAIL' | 'EMBEDDED') {
+  const { emitUserAction } = useSocket()
+  const {
+    getActivePanel,
+    getActiveEmbeddedPanel,
+    focusedEmbeddedItem,
+    getFocusedItem,
+  } = storeToRefs(useSheetManager());
+
+  const detailMode = itemType === 'DETAIL'
+  const panelName = detailMode ? getActivePanel.value.panelName : getActiveEmbeddedPanel.value.panelName
+
+  const broadcast = (prop: string) => {
+    const sysId = detailMode ? getFocusedItem.value?.sysId : focusedEmbeddedItem.value?.sysId
+
+    // @ts-ignore
+    const value = detailMode ? getFocusedItem.value?.[prop] : focusedEmbeddedItem.value?.[prop]
+
+    if (!sysId) {
+      console.error('no sysId')
+      return
+    }
+
+    emitUserAction({
+      action: 'prop-update',
+      payload: {
+        sysId,
+        prop,
+        value,
+        panelName,
+      }
+    })
+  }
+
+  return {
+    broadcast
+  }
+}

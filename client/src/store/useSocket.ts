@@ -242,7 +242,6 @@ export const useSocket = defineStore("socket", {
         {
           name: 'connectedSockets',
           action: (connectedSockets: ConnectedSocket[]) => {
-            console.log('Connected sockets', connectedSockets)
             this.connectedSockets = connectedSockets
           }
         },
@@ -262,7 +261,6 @@ export const useSocket = defineStore("socket", {
         {
           name: 'userAction',
           action: (userAction: ActionPayload) => {
-            console.log('userAction', userAction)
             const { action } = userAction
             switch (action) {
               case 'add':
@@ -321,7 +319,6 @@ export const useSocket = defineStore("socket", {
         {
           name: 'userFocus',
           action: (focusData: FocusData) => {
-            console.log('focusData', focusData)
             this.focusData = focusData
           }
         }

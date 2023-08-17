@@ -86,13 +86,13 @@
           new {{ getActivePanel.title.singular }} email
         </v-btn>
         <div class="d-flex align-center">
-          <v-text-field
+          <DetailTextField
             v-model="student.email"
-            @input="broadcastThroughSocket('email')"
+            prop-name="email"
             :rules="[(v) => emailValidator(v) || 'Invalid email']"
             label="Email"
-            prepend-icon="mdi-email"
-          ></v-text-field>
+            icon="email"
+          />
         </div>
         <v-text-field
           v-model.number="student.points"
@@ -203,6 +203,7 @@
 <script setup lang="ts">
 import DetailFrame from "./Helper/DetailFrame.vue";
 import DetailHeader from "./Helper/DetailHeader.vue";
+import DetailTextField from "./Helper/DetailTextField.vue";
 import AddStudentNote from "./Helper/AddStudentNote.vue";
 import {
   emailValidator,
