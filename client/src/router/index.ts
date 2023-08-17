@@ -6,7 +6,7 @@ import Registrar from '../views/BuildRegistrarList.vue'
 import Email from '../views/ComposeMassEmail.vue'
 
 import { useDocumentCache } from '../store/useDocumentCache'
-import { useAuth } from '../store/useAuth'
+import { useSocket } from '../store/useSocket'
 
 const routes = [
   {
@@ -54,8 +54,10 @@ router.beforeEach(async (to, from) => {
   const routesWithData: typeof routes[number]['name'][] = ['panel', 'registrar', 'email']
 
   if (routesWithData.includes(goingTo)) {
-    await useDocumentCache().getAllDocuments()
-    await useAuth().createSocketConnection()
+    const { getAllDocuments } = useDocumentCache()
+    const { connect } = useSocket()
+    await getAllDocuments()
+    await connect()
   }
 
   if (name === defaultTitle || to.name === 'panel') {

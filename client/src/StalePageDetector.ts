@@ -1,20 +1,16 @@
-import { useAuth } from "./store/useAuth"
 import { onUnmounted, ref, watch } from "vue"
-import { local } from "./Locals"
+import { useSocket } from "./store/useSocket"
 
 export const useStalePageDetector = () => {
   const pageVisible = ref(true)
-  const { createSocketConnection, destroySocketConnection } = useAuth()
+  const { connect, disconnect } = useSocket()
 
   const pageVisibleAction = async () => {
-    const { socket } = useAuth()
-    if (!socket?.connected) {
-      await createSocketConnection()
-    }
+    await connect()
   }
 
   const pageHiddenAction = () => {
-    destroySocketConnection()
+    disconnect()
   }
 
   watch(pageVisible, (visible) => {

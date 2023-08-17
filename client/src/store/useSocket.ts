@@ -30,7 +30,7 @@ type ActionPayload =
   action: 'prop-update',
   payload: {
     sysId: string,
-    prop: string,
+    prop: string | number | symbol,
     value: any,
     panelName: PanelName,
   }
@@ -74,6 +74,22 @@ export const useSocket = defineStore("socket", {
   }),
   getters: {
     getConnectedSockets: (state) => state.connectedSockets,
+    getUniqueConnectedSockets: (state) => {
+      const excludedIds: string[] = []
+      if (state.socket) {
+        excludedIds.push(state.socket.id)
+      }
+      const seenIds = new Set(excludedIds);
+
+      return state.connectedSockets.filter(({ socketId }) => {
+        if (seenIds.has(socketId)) {
+          return false;
+        } else {
+          seenIds.add(socketId);
+          return true;
+        }
+      });
+    },
   },
   actions: {
     async connect() {

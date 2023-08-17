@@ -125,17 +125,17 @@ import { useDisplay } from 'vuetify'
 import { ref, computed } from 'vue'
 import { useStudentMatcher } from '../../StudentMatcher'
 import { getPanel, PanelName } from '../../Panels'
-import { useAuth } from '../../store/useAuth'
 import { storeToRefs } from 'pinia'
+import { useSocket } from '../../store/useSocket'
 
 const { mdAndUp } = useDisplay()
 
 const { getActivePanel, activateListTransition, setPanel } = useSheetManager()
 const { getSelectedItems, deleteItem } = useDocumentCache()
-const { focusData, getConnectedAccounts } = storeToRefs(useAuth())
+const { focusData, getUniqueConnectedSockets } = storeToRefs(useSocket())
 
 const accounts = computed(() => {
-  return getConnectedAccounts.value.filter(({ socketId }) => {
+  return getUniqueConnectedSockets.value.filter(({ socketId }) => {
     const sysIdAccountIsFocusedOn = focusData.value[socketId]?.sysId;
     return sysIdAccountIsFocusedOn === props.item.sysId
   });
@@ -161,12 +161,13 @@ const isPinned = computed(() => {
 })
 
 const togglePin = () => {
+  const { removePinnedItem, addPinnedItem } = useSheetManager()
   if (isPinned.value) {
     activateListTransition()
-    useSheetManager().removePinnedItem(props.item)
+    removePinnedItem(props.item)
   } else {
     activateListTransition()
-    useSheetManager().addPinnedItem(props.item)
+    addPinnedItem(props.item)
   }
 }
 
@@ -175,6 +176,9 @@ const dragStart = () => {
 }
 
 const canEmail = computed(() => {
+  if (!('email' in props.item)) {
+    return false
+  }
   const email = props.item?.email
   return email && emailValidator(email)
 })
@@ -197,7 +201,7 @@ type SidebarActionButton = {
 
 const panelSpecificActions: { [key in PanelName]: SidebarActionButton } = {
   'STUDENTS': {
-    condition: () => canEmail.value,
+    condition: () => !!canEmail.value,
     icon: 'mdi-email-fast',
     tooltip: 'Email',
     onClick: () => {
@@ -205,7 +209,7 @@ const panelSpecificActions: { [key in PanelName]: SidebarActionButton } = {
     }
   },
   'GRADUATES': {
-    condition: () => canEmail.value,
+    condition: () => !!canEmail.value,
     icon: 'mdi-email-fast',
     tooltip: 'Email',
     onClick: () => {
@@ -217,9 +221,12 @@ const panelSpecificActions: { [key in PanelName]: SidebarActionButton } = {
     icon: getPanel(studentMatch.value.foundIn || 'STUDENTS').icon,
     tooltip: `View ${studentMatch.value.name || getPanel(studentMatch.value.foundIn || 'STUDENTS').title.singular}`,
     onClick: () => {
-      if (!studentMatch.value.sysId) return
-      setPanel(studentMatch.value.foundIn, {
-        value: studentMatch.value.sysId,
+      const { sysId, foundIn } = studentMatch.value
+      if (!sysId || !foundIn) {
+        return
+      }
+      setPanel(foundIn, {
+        value: sysId,
       })
     }
   },
@@ -228,9 +235,12 @@ const panelSpecificActions: { [key in PanelName]: SidebarActionButton } = {
     icon: getPanel(studentMatch.value.foundIn || 'STUDENTS').icon,
     tooltip: `View ${studentMatch.value.name || getPanel(studentMatch.value.foundIn || 'STUDENTS').title.singular}`,
     onClick: () => {
-      if (!studentMatch.value.sysId) return
-      setPanel(studentMatch.value.foundIn, {
-        value: studentMatch.value.sysId,
+      const { sysId, foundIn } = studentMatch.value
+      if (!sysId || !foundIn) {
+        return
+      }
+      setPanel(foundIn, {
+        value: sysId,
       })
     }
   },
@@ -239,9 +249,12 @@ const panelSpecificActions: { [key in PanelName]: SidebarActionButton } = {
     icon: getPanel(studentMatch.value.foundIn || 'STUDENTS').icon,
     tooltip: `View ${studentMatch.value.name || getPanel(studentMatch.value.foundIn || 'STUDENTS').title.singular}`,
     onClick: () => {
-      if (!studentMatch.value.sysId) return
-      setPanel(studentMatch.value.foundIn, {
-        value: studentMatch.value.sysId,
+      const { sysId, foundIn } = studentMatch.value
+      if (!sysId || !foundIn) {
+        return
+      }
+      setPanel(foundIn, {
+        value: sysId,
       })
     }
   },
@@ -250,9 +263,12 @@ const panelSpecificActions: { [key in PanelName]: SidebarActionButton } = {
     icon: getPanel(studentMatch.value.foundIn || 'STUDENTS').icon,
     tooltip: `View ${studentMatch.value.name || getPanel(studentMatch.value.foundIn || 'STUDENTS').title.singular}`,
     onClick: () => {
-      if (!studentMatch.value.sysId) return
-      setPanel(studentMatch.value.foundIn, {
-        value: studentMatch.value.sysId,
+      const { sysId, foundIn } = studentMatch.value
+      if (!sysId || !foundIn) {
+        return
+      }
+      setPanel(foundIn, {
+        value: sysId,
       })
     }
   }

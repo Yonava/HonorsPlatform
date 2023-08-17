@@ -2,10 +2,10 @@ import { useSyncState } from "./store/useSyncState";
 import { storeToRefs } from "pinia";
 import { useDocumentCache } from "./store/useDocumentCache";
 import { useSheetManager } from "./store/useSheetManager";
-import { useAuth } from "./store/useAuth";
 import { type Ref, watch, onUnmounted, computed } from "vue";
 import type { SheetItem } from "./SheetTypes";
 import { type PanelName, panels } from "./Panels";
+import { useSocket } from "./store/useSocket";
 
 const updateDebounceMs = 2_000
 
@@ -14,7 +14,7 @@ export function useUpdateItem<T extends SheetItem>(item: Ref<T | null>, panelNam
   const { setProcessing } = useSyncState();
   const { processing } = storeToRefs(useSyncState());
   const { getActivePanel } = storeToRefs(useSheetManager());
-  const { connectedAccounts, focusData } = storeToRefs(useAuth())
+  const { connectedSockets, focusData } = storeToRefs(useSocket())
 
   const panelName = panelNameParam ?? getActivePanel.value.panelName
   const panel = panels[panelName]
@@ -70,7 +70,7 @@ export function useUpdateItem<T extends SheetItem>(item: Ref<T | null>, panelNam
     }
     const { sysId } = item.value
     let accountsEditingItem = 0
-    for (const account of connectedAccounts.value) {
+    for (const account of connectedSockets.value) {
       const dataForAccount = focusData.value[account.socketId]
       if (!dataForAccount) {
         continue
@@ -123,14 +123,14 @@ export function useUpdateItem<T extends SheetItem>(item: Ref<T | null>, panelNam
       return
     }
 
-    const { socket } = useAuth()
-    socket.emit('userAction', {
+    const { emitUserAction } = useSocket()
+    emitUserAction({
       action: 'prop-update',
       payload: {
-        panelName: panel.panelName,
         sysId: item.value.sysId,
-        value: value ?? item.value[property],
         prop: property,
+        value,
+        panelName,
       }
     })
   }
