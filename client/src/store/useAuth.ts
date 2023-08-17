@@ -8,6 +8,7 @@ import { getUserProfileData } from "../SheetsAPI";
 import { useDocumentCache } from "./useDocumentCache";
 import { PanelName } from "../Panels";
 import { useSheetManager } from "./useSheetManager";
+import { useSocket } from "./useSocket";
 
 export type GoogleProfile = {
   id: string,
@@ -293,8 +294,9 @@ export const useAuth = defineStore('auth', {
     userLogoutFlow({ goToAuthPage = false, fromLogoutEvent = false } = {}) {
       localStorage.removeItem(local.googleOAuthAccessToken)
 
-      if (this.socket && !fromLogoutEvent) {
-        this.socket.emit('userLogout', this.googleProfile?.id)
+      if (!fromLogoutEvent) {
+        const { emitUserLogout } = useSocket()
+        emitUserLogout()
       }
 
       if (goToAuthPage) {

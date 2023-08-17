@@ -8,6 +8,7 @@ import { useSyncState } from "./useSyncState";
 import { storeToRefs } from "pinia";
 import { setSelectedItem } from '../components/Panel/SetSelectedItem'
 import { useAuth } from "./useAuth";
+import { useSocket } from "./useSocket";
 
 type GetAllDocuments = {
   showLoading?: boolean;
@@ -210,8 +211,8 @@ export const useDocumentCache = defineStore("documentCache", {
 
       this.addAnnouncementCache(announcement)
 
-      const { socket } = useAuth()
-      socket.emit('userAction', {
+      const { emitUserAction } = useSocket()
+      emitUserAction({
         action: 'announce',
         payload: announcement
       })
@@ -537,8 +538,8 @@ export const useDocumentCache = defineStore("documentCache", {
 
       useSyncState().$reset();
 
-      const { socket } = useAuth()
-      socket.emit('userAction', {
+      const { emitUserAction } = useSocket()
+      emitUserAction({
         action: 'delete',
         payload: {
           sysId,
@@ -593,12 +594,12 @@ export const useDocumentCache = defineStore("documentCache", {
         newItem.row = row
         useSyncState().$reset();
 
-        const { socket } = useAuth()
-        socket.emit('userAction', {
+        const { emitUserAction } = useSocket()
+        emitUserAction({
           action: 'add',
           payload: {
             item: newItem,
-            panelName: panel.panelName
+            panelName
           }
         })
       }
@@ -638,12 +639,12 @@ export const useDocumentCache = defineStore("documentCache", {
 
         useSyncState().$reset();
 
-        const { socket } = useAuth()
-        socket.emit('userAction', {
+        const { emitUserAction } = useSocket()
+        emitUserAction({
           action: 'add',
           payload: {
             item,
-            panelName: panel.panelName
+            panelName
           }
         })
 
@@ -699,21 +700,22 @@ export const useDocumentCache = defineStore("documentCache", {
 
       this.moveItemBetweenListsCache({ item, oldPanelName, newPanelName });
 
-      const { socket } = useAuth()
-      socket.emit('userAction', {
+      const { emitUserAction } = useSocket()
+      emitUserAction({
         action: 'move',
         payload: {
-          oldPanelName,
-          newPanelName,
           item,
+          oldPanelName,
+          newPanelName
         }
       })
     },
     async forceConnectedClientsToRefresh() {
-      const { socket } = useAuth()
-      socket.emit('userAction', {
-        action: 'refresh',
+      const { emitUserAction } = useSocket()
+      emitUserAction({
+        action: 'refresh'
       })
+
       await this.getAllDocuments({
         showLoading: false,
         forceCacheRefresh: true

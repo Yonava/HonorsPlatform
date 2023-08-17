@@ -48,9 +48,6 @@ type ActionPayload =
   payload: Announcement
 }
 
-
-
-
 type LastActionData = {
   time: Date,
   serverIsUp: boolean,
@@ -67,7 +64,7 @@ type FocusData = {
 
 export type ConnectedSocket = GoogleProfile & { socketId: string }
 
-export const useDialog = defineStore("socket", {
+export const useSocket = defineStore("socket", {
   state: () => ({
     socket: null as any,
     connectedSockets: [] as ConnectedSocket[],
@@ -138,6 +135,34 @@ export const useDialog = defineStore("socket", {
         this.socket.disconnect();
       }
     },
+    emitUserAction(action: ActionPayload) {
+      this.socket.emit('userAction', action)
+    },
+    emitUserFocus() {
+      const { googleProfile } = useAuth()
+      const { focusedItemSysId, focusedEmbeddedItem, getActivePanel } = useSheetManager()
+
+      if (!googleProfile) {
+        console.error('emitUserFocus: no google profile found')
+        return
+      }
+
+      this.socket.emit('userFocus', {
+        googleId: googleProfile.id,
+        sysId: focusedItemSysId,
+        embeddedSysId: focusedEmbeddedItem?.sysId,
+        panelName: getActivePanel.panelName
+      })
+    },
+    emitUserLogout() {
+      const { googleProfile } = useAuth()
+      if (!googleProfile) {
+        console.error('emitUserLogout: no google profile found')
+        return
+      }
+
+      this.socket.emit('userLogout', googleProfile.id)
+    },
     checkForActionsDuringDisconnect(lastAction: LastActionData) {
       const { time, serverIsUp } = lastAction
       const { getAllDocuments } = useDocumentCache()
@@ -194,9 +219,6 @@ export const useDialog = defineStore("socket", {
           name: 'connectedSockets',
           action: (connectedSockets: ConnectedSocket[]) => {
             this.connectedSockets = connectedSockets
-          },
-          callback: () => {
-            console.log('Connected sockets updated')
           }
         },
         {
@@ -213,21 +235,72 @@ export const useDialog = defineStore("socket", {
         },
         {
           name: 'userAction',
-          action: ({ action, payload }: ActionPayload) => {
-            if (action === 'remove') {
-              console.log('Announcement received', payload.message)
-              return
+          action: (userAction: ActionPayload) => {
+            const { action } = userAction
+            switch (action) {
+              case 'add':
+                const { addItemCache } = useDocumentCache()
+                addItemCache(userAction.payload.item, userAction.payload.panelName)
+                break
+
+              case 'delete':
+                const { deleteItemCache } = useDocumentCache()
+                deleteItemCache(userAction.payload.sysId, userAction.payload.panelName)
+                break
+
+              case 'update':
+                const { updateItemCache } = useDocumentCache()
+                updateItemCache(userAction.payload.item, userAction.payload.panelName)
+                break
+
+              case 'prop-update':
+                const { getItemBySysId } = useDocumentCache()
+                const item = getItemBySysId(userAction.payload.sysId, userAction.payload.panelName)
+                if (!item) {
+                  console.error('useAuth: (prop-update) item not found')
+                  return
+                }
+                item[userAction.payload.sysId] = userAction.payload.value
+                break
+
+              case 'refresh':
+                const { getAllDocuments } = useDocumentCache()
+                getAllDocuments({
+                  showLoading: false,
+                  forceCacheRefresh: true
+                })
+                break
+
+              case 'move':
+                const { moveItemBetweenListsCache } = useDocumentCache()
+                moveItemBetweenListsCache({
+                  item: userAction.payload.item,
+                  oldPanelName: userAction.payload.oldPanelName,
+                  newPanelName: userAction.payload.newPanelName,
+                })
+                break
+
+              case 'announce':
+                const { addAnnouncementCache } = useDocumentCache()
+                addAnnouncementCache(userAction.payload)
+                break
+
+              default:
+                console.error('(userAction) action not found', action)
+                break
             }
-          },
+          }
+        },
+        {
+          name: 'focusData',
+          action: (focusData: FocusData) => {
+            this.focusData = focusData
+          }
         }
       ]
 
-      const defaultCallback = () => {
-        console.log('Socket event received')
-      }
-
       listeners.forEach(listener => {
-        this.socket.on(listener.name, listener.action, listener?.callback ?? defaultCallback)
+        this.socket.on(listener.name, listener.action)
       })
     },
   }

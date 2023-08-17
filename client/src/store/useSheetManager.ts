@@ -6,6 +6,7 @@ import { filterItems } from '../FilterObjects';
 import { useDocumentCache } from './useDocumentCache';
 import { local } from '../Locals';
 import { useAuth } from './useAuth';
+import { useSocket } from './useSocket';
 
 export type JumpObject = {
   value: string,
@@ -123,15 +124,8 @@ export const useSheetManager = defineStore('sheetManager', {
         this.jumpToItem(jumpTo);
       }
 
-      const { socket, googleProfile } = useAuth()
-      if (socket) {
-        socket.emit('userFocus', {
-          googleId: googleProfile?.id,
-          panelName: this.panel.panelName,
-          sysId: undefined,
-          embeddedSysId: undefined
-        })
-      }
+      const { emitUserFocus } = useSocket()
+      emitUserFocus()
 
       setTimeout(() => {
         this.panelSwitchCooldown = true;
@@ -199,33 +193,13 @@ export const useSheetManager = defineStore('sheetManager', {
     },
     setFocusedItem(sysId: string) {
       this.focusedItemSysId = sysId
-      const { socket, googleProfile } = useAuth()
-
-      if (!socket || !googleProfile) {
-        return
-      }
-
-      socket.emit('userFocus', {
-        googleId: googleProfile.id,
-        sysId: sysId,
-        embeddedSysId: this.focusedEmbeddedItem?.sysId,
-        panelName: this.panel.panelName
-      })
+      const { emitUserFocus } = useSocket()
+      emitUserFocus()
     },
     setFocusedEmbeddedItem(item: SheetItem | null) {
       this.focusedEmbeddedItem = item
-      const { socket, googleProfile } = useAuth()
-
-      if (!socket || !googleProfile) {
-        return
-      }
-
-      socket.emit('userFocus', {
-        googleId: googleProfile.id,
-        sysId: this.focusedItemSysId,
-        embeddedSysId: item?.sysId,
-        panelName: this.panel.panelName
-      })
+      const { emitUserFocus } = useSocket()
+      emitUserFocus()
     }
   }
 })
