@@ -31,7 +31,7 @@ export const statusOptions = [
   }
 ] as const
 
-export type StatusOption = typeof statusOptions[number]['label'] | ''
+export type StatusOption = typeof statusOptions[number]['status'] | ''
 
 export const yearOptions = [
   'Freshman',
@@ -66,6 +66,32 @@ export const athleticOptions = {
   'Track & Field (F)': 'shoe-sneaker',
   'Volleyball (F)': 'volleyball'
 } as const
+
+export const studentIdRule = (studentId: string, studentSysId: string) => {
+  if (!studentId) {
+    return true;
+  }
+
+  // make sure the student id is 7 digits
+  if (!/^\d{7}$/.test(studentId)) {
+    return 'Invalid Student ID';
+  }
+
+  const { Students, Graduates } = useDocumentCache()
+  const allStudents = [...Students.list, ...Graduates.list]
+
+  const duplicateIdInStudents = allStudents.find(
+    (item) => item.id === studentId
+  );
+
+  const notThisStudent = duplicateIdInStudents && duplicateIdInStudents.sysId !== studentSysId
+
+  if (duplicateIdInStudents && notThisStudent) {
+    return 'ID already in use' + (duplicateIdInStudents.name ? ` by ${duplicateIdInStudents.name}` : '');
+  }
+
+  return true;
+}
 
 export function studentToGraduate(student: Student): Graduate {
   return {

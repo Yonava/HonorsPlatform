@@ -12,18 +12,10 @@
         :item="grad"
         placeholder="Name"
       >
-        <template
-          v-if="!grad.id"
-          #id
-        >
-          <v-btn
-            @click="generateGradId"
-            :color="getActivePanel.color"
-            size="x-small"
-          >
-            Generate Grad ID
-          </v-btn>
-        </template>
+        <IDInput
+          :item="grad"
+          :rules="[(v) => studentIdRule(v, grad.sysId) || 'Invalid ID']"
+        />
       </DetailHeader>
 
       <v-text-field
@@ -83,6 +75,7 @@
 </template>
 
 <script setup lang="ts">
+import IDInput from "./Helper/IDInput.vue";
 import DetailFrame from "./Helper/DetailFrame.vue";
 import DetailHeader from "./Helper/DetailHeader.vue";
 
@@ -91,6 +84,7 @@ import {
   emailValidator,
   phoneValidator,
 } from "../../EmailUtilities";
+import { studentIdRule } from "../../StudentTools";
 import { useUpdateItem } from "../../TrackItemForUpdate";
 import type { Graduate } from "../../SheetTypes";
 import { useSheetManager } from "../../store/useSheetManager";
@@ -105,11 +99,5 @@ const props = defineProps<{
 const grad = computed(() => props.item);
 
 const { broadcastThroughSocket } = useUpdateItem(grad);
-
-async function generateGradId() {
-  const newId = "G" + Math.random().toString().substring(2, 9);
-  grad.value.id = newId;
-}
-
 const { moveItem, movingItem, panelOnceMoved } = useMoveItem()
 </script>

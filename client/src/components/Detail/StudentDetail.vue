@@ -8,7 +8,7 @@
         >
           <IDInput
             :item="student"
-            :rules="[(v) => studentIdRule(v) || 'Invalid ID']"
+            :rules="[(v) => studentIdRule(v, student.sysId) || 'Invalid ID']"
           />
         </DetailHeader>
 
@@ -160,19 +160,19 @@ import {
   yearOptions,
   statusOptions,
   athleticOptions,
+  studentIdRule,
 } from "../../StudentTools";
 import { useSheetManager } from "../../store/useSheetManager";
 import { useDocumentCache } from "../../store/useDocumentCache";
 import { useUpdateItem } from "../../TrackItemForUpdate";
 import { ref, computed } from 'vue'
-import { Student } from '../../SheetTypes'
-import { useDisplay } from 'vuetify'
+import type { Student } from '../../SheetTypes'
 import { useMoveItem } from '../../MoveItems'
 import { storeToRefs } from "pinia";
 
 const { setPanel, getActivePanel } = useSheetManager();
 const { readOnlyMode } = storeToRefs(useSheetManager());
-const { Students, Theses, addItem } = useDocumentCache();
+const { Theses, addItem } = useDocumentCache();
 
 const props = defineProps<{
   item: Student;
@@ -181,7 +181,6 @@ const props = defineProps<{
 const student = computed(() => props.item);
 
 const { broadcastThroughSocket } = useUpdateItem(student);
-const { xs } = useDisplay();
 const { moveItem, movingItem, panelOnceMoved } = useMoveItem();
 
 const statusOptionIcon = computed(() => {
@@ -192,38 +191,7 @@ const statusOptionIcon = computed(() => {
 
 const statusOptionLabels = computed(() => statusOptions.map((option) => option.status));
 
-const idDialog = ref(false);
 const showAddNote = ref(false);
-
-function studentIdRule(studentId: string) {
-  if (!studentId) {
-    return true;
-  }
-  const existingStudent = Students.list.find(
-    (item) => item.id === studentId
-  );
-  if (existingStudent) {
-    if (existingStudent.sysId === student.value.sysId) {
-      return true;
-    }
-    else if (existingStudent.name) {
-      return `${getActivePanel.title.singular} ID already in use by ${existingStudent.name}`;
-    } else {
-      return `${getActivePanel.title.singular} ID already in use`;
-    }
-  };
-  if (/^\d{7}$/.test(studentId)) {
-    return true;
-  }
-  return `Invalid ${getActivePanel.title.singular} ID`;
-}
-
-const tempStudentId = ref("");
-const saveId = () => {
-  student.value.id = tempStudentId.value
-  broadcastThroughSocket('id')
-  idDialog.value = false
-}
 
 const thesisPanel = getPanel("THESES");
 const creatingThesis = ref(false);

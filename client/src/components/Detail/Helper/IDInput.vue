@@ -11,7 +11,7 @@
         v-bind="props"
         @click="tempId = ''"
       >
-        Add {{ getActivePanel.title.singular }} ID
+        Add Student ID
       </DetailButton>
 
       <!-- edit id input -->
@@ -34,7 +34,7 @@
           :disable="xs"
           activator="parent"
         >
-          Edit {{ getActivePanel.title.singular }} ID
+          Edit Student ID
         </v-tooltip>
       </div>
 
@@ -90,13 +90,16 @@ import { useSheetManager } from '../../../store/useSheetManager'
 import type { Student, Graduate } from '../../../SheetTypes'
 import { useDisplay } from 'vuetify/lib/framework.mjs';
 import { storeToRefs } from 'pinia';
+import { useBroadcastThroughSocket } from '../../../TrackItemForUpdate';
+
+const { broadcast } = useBroadcastThroughSocket('DETAIL')
 
 const idDialog = ref(false)
 const tempId = ref('')
 
 const { xs } = useDisplay()
 const sheetManager = useSheetManager()
-const { getActivePanel, readOnlyMode } = storeToRefs(sheetManager)
+const { readOnlyMode } = storeToRefs(sheetManager)
 
 const props = defineProps<{
   item: Student | Graduate,
@@ -106,6 +109,7 @@ const props = defineProps<{
 const saveId = () => {
   idDialog.value = false
   props.item.id = tempId.value
+  broadcast('id')
 }
 
 const idChangeCancelled = () => {
