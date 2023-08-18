@@ -7,7 +7,7 @@ import { warn } from "../Warn";
 import { useSyncState } from "./useSyncState";
 import { storeToRefs } from "pinia";
 import { setSelectedItem } from '../components/Panel/SetSelectedItem'
-import { useSocket } from "./useSocket";
+  import { useSocket } from "./useSocket";
 
 type GetAllDocuments = {
   showLoading?: boolean;
@@ -429,8 +429,6 @@ export const useDocumentCache = defineStore("documentCache", {
       if (!item) {
         return null;
       }
-
-      console.log(item)
 
       this.setSelectedItems({
         panel,

@@ -47,6 +47,7 @@
           <slot name="buttons"></slot>
           <v-btn
             @click="attemptDelete"
+            :disabled="readOnlyMode"
             size="large"
             color="red"
             class="mt-3"
@@ -78,7 +79,7 @@ import type { SheetItem } from '../../../SheetTypes'
 
 const { open, close } = useDialog()
 const { deleteItem } = useDocumentCache()
-const { getActivePanel } = storeToRefs(useSheetManager())
+const { getActivePanel, readOnlyMode } = storeToRefs(useSheetManager())
 
 const sm = ref(false)
 const el = ref(null)

@@ -7,10 +7,13 @@
       <v-spacer></v-spacer>
       <v-btn
         @click="addEmbeddedItem"
+        :disabled="readOnlyMode"
         size="small"
         color="green"
       >
-        <v-icon class="mr-1">mdi-plus</v-icon>
+        <v-icon class="mr-1">
+          mdi-plus
+        </v-icon>
         {{ text.add }}
       </v-btn>
     </div>
@@ -59,7 +62,7 @@ import { storeToRefs } from 'pinia'
 
 const sheetManager = useSheetManager()
 const { getActivePanel, getActiveEmbeddedPanel, setFocusedEmbeddedItem } = sheetManager
-const { loadingItems, focusedEmbeddedItem } = storeToRefs(sheetManager)
+const { loadingItems, focusedEmbeddedItem, readOnlyMode } = storeToRefs(sheetManager)
 
 const documents = useDocumentCache()
 const { deleteItem, addItem, updateItem } = documents

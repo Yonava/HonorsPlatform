@@ -1,9 +1,8 @@
 <template>
-  <DetailFrame
-    :item="thesis"
-  >
+  <DetailFrame :item="thesis">
     <template #main>
       <DetailHeader
+        :item="thesis"
         :placeholder="`${getActivePanel.title.singular} Title`"
       >
         <LinkStudentButton

@@ -6,68 +6,10 @@
           :item="student"
           :placeholder="`${getActivePanel.title.singular} Name`"
         >
-          <v-dialog
-            v-model="idDialog"
-            width="300"
-          >
-            <template #activator="{ props }">
-              <v-btn
-                v-if="!student.id"
-                v-bind="props"
-                @click="tempStudentId = ''"
-                :color="getActivePanel.color"
-                size="x-small"
-              >
-                Add {{ getActivePanel.title.singular }} ID
-              </v-btn>
-              <div
-                v-else
-                v-bind="props"
-                @click="tempStudentId = student.id;"
-                class="d-flex align-center px-2 py-1 edit-student-id"
-              >
-                <div>
-                  {{ student.id }}
-                </div>
-                <v-icon
-                  size="small"
-                  style="opacity: 0.5;"
-                >
-                  mdi-pencil
-                </v-icon>
-                <v-tooltip
-                  :disable="xs"
-                  activator="parent"
-                >
-                  Edit Student ID
-                </v-tooltip>
-              </div>
-            </template>
-            <v-sheet class="student-id-dialog pa-4">
-              <v-text-field
-                v-model="tempStudentId"
-                :rules="[studentIdRule]"
-                :label="`${getActivePanel.title.singular} ID`"
-                class="mb-2"
-              ></v-text-field>
-              <div class="d-flex">
-                <v-btn
-                  @click="saveId"
-                  :disabled="typeof studentIdRule(tempStudentId) === 'string'"
-                  color="green"
-                >
-                  Save
-                </v-btn>
-                <v-spacer></v-spacer>
-                <v-btn
-                  @click="idDialog = false; tempStudentId = student.id;"
-                  color="red"
-                >
-                  Cancel
-                </v-btn>
-              </div>
-            </v-sheet>
-          </v-dialog>
+          <IDInput
+            :item="student"
+            :rules="[(v) => studentIdRule(v) || 'Invalid ID']"
+          />
         </DetailHeader>
 
         <div class="d-flex align-center">
@@ -161,6 +103,7 @@
             @click="viewThesis"
             :color="thesisButton.color"
             :loading="creatingThesis"
+            :disabled="readOnlyMode && !thesis"
             size="large"
             style="width: 49%"
           >
@@ -175,6 +118,7 @@
           <v-btn
             @click="moveItem(student)"
             :loading="movingItem"
+            :disabled="readOnlyMode"
             :color="panelOnceMoved?.color"
             size="large"
             style="width: 49%"
@@ -200,6 +144,7 @@
 
 
 <script setup lang="ts">
+import IDInput from "./Helper/IDInput.vue";
 import DetailButton from "./Helper/DetailButton.vue";
 import DetailFrame from "./Helper/DetailFrame.vue";
 import DetailHeader from "./Helper/DetailHeader.vue";
@@ -223,8 +168,10 @@ import { ref, computed } from 'vue'
 import { Student } from '../../SheetTypes'
 import { useDisplay } from 'vuetify'
 import { useMoveItem } from '../../MoveItems'
+import { storeToRefs } from "pinia";
 
 const { setPanel, getActivePanel } = useSheetManager();
+const { readOnlyMode } = storeToRefs(useSheetManager());
 const { Students, Theses, addItem } = useDocumentCache();
 
 const props = defineProps<{
@@ -289,14 +236,14 @@ const thesisButton = computed(() => {
       text: `Create ${thesisPanel.title.singular}`,
       icon: "mdi-plus",
       color: thesisPanel.color,
-    };
+    } as const;
   }
 
   return {
     text: `View ${thesisPanel.title.singular}`,
     icon: thesisPanel.icon,
     color: thesisPanel.color,
-  };
+  } as const;
 });
 
 const viewThesis = async () => {
@@ -323,22 +270,3 @@ const addStudentNote = (event: { initials: string; note: string, date: string })
   broadcastThroughSocket('note')
 }
 </script>
-
-<style scoped>
-.student-id-dialog {
-  border-radius: 5px;
-  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
-}
-
-.edit-student-id:hover {
-  background: rgba(0, 0, 0, 0.1);
-}
-
-.edit-student-id {
-  transition: 0.3s;
-  cursor: pointer;
-  gap: 5px;
-  border-radius: 5px;
-  transform: translateX(-6px)
-}
-</style>
