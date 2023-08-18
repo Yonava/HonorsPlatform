@@ -1,24 +1,47 @@
 <template>
-  <div
-    @click="linkStudent"
-    :style="linkFrom === 'graduates' ? '' : student.style"
-    class="d-flex flew-row align-center clickable"
-  >
-    <v-icon
-      class="mr-1"
-      style="opacity: 0.75"
+  <div>
+
+    <!-- edit linked student -->
+    <div
+      v-if="!readOnlyMode"
+      @click="linkStudent"
+      :style="linkFrom === 'graduates' ? '' : student.style"
+      class="d-flex flew-row align-center clickable"
     >
-      {{ student.icon }}
-    </v-icon>
-    <p>
-      {{ student.text }}
-    </p>
-    <v-tooltip
-      :disabled="xs"
-      activator="parent"
+      <v-icon
+        class="mr-1"
+        style="opacity: 0.75"
+      >
+        {{ student.icon }}
+      </v-icon>
+      <p>
+        {{ student.text }}
+      </p>
+      <v-tooltip
+        :disabled="xs"
+        activator="parent"
+      >
+        Link Student
+      </v-tooltip>
+    </div>
+
+    <!-- view linked student -->
+    <div
+      v-else
+      :style="linkFrom === 'graduates' ? '' : student.style"
+      class="d-flex flew-row align-center read-only"
     >
-      Link Student
-    </v-tooltip>
+      <v-icon
+        class="mr-1"
+        style="opacity: 0.75"
+      >
+        {{ student.icon }}
+      </v-icon>
+      <p>
+        {{ student.text }}
+      </p>
+    </div>
+
   </div>
 </template>
 
@@ -26,11 +49,16 @@
 import LinkStudent from './LinkStudent.vue'
 import LinkGraduate from './LinkGraduate.vue'
 import { useStudentInfo } from '../../ListItem/useStudentInfo'
+import { useSheetManager } from '../../../store/useSheetManager'
 import { useDialog } from '../../../store/useDialog'
 import { computed } from 'vue'
 import { useDisplay } from 'vuetify'
+import { storeToRefs } from 'pinia'
 
 const { xs } = useDisplay()
+
+const sheetManager = useSheetManager()
+const { readOnlyMode } = storeToRefs(sheetManager)
 
 const props = defineProps<{
   item: Object & { studentSysId: string },
@@ -65,6 +93,13 @@ const linkStudent = () => {
   transform: translateX(-8px);
   padding: 4px 8px 4px 8px;
   border-radius: 5px;
+}
+
+.read-only {
+  transform: translateX(-8px);
+  padding: 4px 8px 4px 8px;
+  border-radius: 5px;
+  cursor: default;
 }
 
 .clickable:hover {

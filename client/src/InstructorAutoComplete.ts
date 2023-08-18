@@ -75,6 +75,7 @@ export function useInstructorAutoComplete(instructor: Ref<string>) {
   const suggestionSelected = ref(!!instructor.value)
   const selectSuggestion = () => {
     suggestionSelected.value = true
+    return suggestedInstructor.value
   }
 
   watch(instructor, (newInput, oldInput) => {
@@ -87,12 +88,21 @@ export function useInstructorAutoComplete(instructor: Ref<string>) {
     }
   })
 
+  const suggestionToString = computed(() => {
+    if (!suggestedInstructor.value) {
+      return 'No Suggestions'
+    }
+
+    return suggestedInstructor.value
+  })
+
   return {
     sameInstructor,
     selectSuggestion,
     suggestionSelected,
     suggestedInstructor,
     instructorList,
-    computeInstructors
+    computeInstructors,
+    suggestionToString
   }
 }

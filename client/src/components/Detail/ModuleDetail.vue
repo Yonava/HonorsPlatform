@@ -24,27 +24,23 @@
         icon="calendar"
       />
 
-      <InstructorComplete
-        @update="
-          module.instructor = $event;
-          broadcastThroughSocket('instructor');
-        "
-        :instructor="module.instructor"
-        :color="color"
-      />
-
-      <v-text-field
-        v-model="module.instructor"
-        @input="broadcastThroughSocket('instructor')"
+      <DetailInput
+        :item="module"
+        prop="instructor"
+        :button="{
+          condition: !sameInstructor && !suggestionSelected,
+          text: suggestionToString,
+          newPropValue: () => selectSuggestion(),
+        }"
+        icon="human-male-board"
         label="Instructor"
-        prepend-icon="mdi-human-male-board"
-      ></v-text-field>
+      />
 
       <h1 class="mb-2">
         Documentation
       </h1>
 
-      <div class="d-flex flex-row mb-2">
+      <!-- <div class="d-flex flex-row mb-2">
 
         <v-btn
           v-if="!module.docuSignCreated"
@@ -72,28 +68,33 @@
           Now
         </v-btn>
 
-      </div>
+      </div> -->
 
-      <div class="d-flex flex-row">
 
-        <v-text-field
-          v-model="module.docuSignCreated"
-          @input="broadcastThroughSocket('docuSignCreated')"
-          prepend-icon="mdi-calendar-alert"
-          style="width: 45%"
-          class="mr-6"
+        <DetailInput
+          :item="module"
+          prop="docuSignCreated"
+          icon="calendar-alert"
           label="DocuSign Created"
-        ></v-text-field>
+          :button="{
+            condition: !module.docuSignCreated,
+            text: 'Created Today',
+            newPropValue: () => new Date().toLocaleDateString('en-US'),
+          }"
+        />
 
-        <v-text-field
-          v-model="module.docuSignCompleted"
-          @input="broadcastThroughSocket('docuSignCompleted')"
-          style="width: 45%"
-          prepend-icon="mdi-calendar-check"
+        <DetailInput
+          :item="module"
+          prop="docuSignCompleted"
+          icon="calendar-check"
           label="DocuSign Completed"
-        ></v-text-field>
+          :button="{
+            condition: !module.docuSignCompleted,
+            text: 'Completed Today',
+            newPropValue: () => new Date().toLocaleDateString('en-US'),
+          }"
+        />
 
-      </div>
     </template>
 
     <template #buttons>
@@ -119,16 +120,17 @@
 <script setup lang="ts">
 import DetailInput from './Helper/DetailInput.vue'
 import DetailHeader from './Helper/DetailHeader.vue'
-import InstructorComplete from './Helper/InstructorComplete.vue'
 import DetailFrame from './Helper/DetailFrame.vue'
 import LinkStudentButton from './Helper/LinkStudentButton.vue'
 
 import { computed } from 'vue'
 import type { Module } from '../../SheetTypes'
 import { termValidator, getCurrentTerm } from '../../TermValidator'
+import { useInstructorAutoComplete } from '../../InstructorAutoComplete'
 import { getPanel } from '../../Panels'
 import { useMoveItem } from '../../MoveItems'
 import { useUpdateItem } from '../../TrackItemForUpdate'
+
 
 const modulesPanel = getPanel('MODULES')
 
@@ -139,6 +141,15 @@ const props = defineProps<{
 }>()
 
 const module = computed(() => props.item)
+const instructor = computed(() => module.value.instructor)
+
+const {
+  suggestedInstructor,
+  sameInstructor,
+  selectSuggestion,
+  suggestionSelected,
+  suggestionToString
+} = useInstructorAutoComplete(instructor)
 
 const { broadcastThroughSocket } = useUpdateItem(module)
 

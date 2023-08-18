@@ -80,7 +80,7 @@
 
 <script setup lang="ts">
 import DetailButton from './DetailButton.vue';
-import { computed } from 'vue'
+import { computed, type Ref } from 'vue'
 import { useBroadcastThroughSocket } from '../../../TrackItemForUpdate'
 import { useSheetManager } from '../../../store/useSheetManager';
 import { storeToRefs } from 'pinia';
