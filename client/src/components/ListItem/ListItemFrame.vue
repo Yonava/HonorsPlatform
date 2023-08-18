@@ -131,6 +131,7 @@ import { useSocket } from '../../store/useSocket'
 const { mdAndUp } = useDisplay()
 
 const { getActivePanel, activateListTransition, setPanel } = useSheetManager()
+const { readOnlyMode } = storeToRefs(useSheetManager())
 const { getSelectedItems, deleteItem } = useDocumentCache()
 const { focusData, getUniqueConnectedSockets } = storeToRefs(useSocket())
 
@@ -285,6 +286,10 @@ const sidebarActionButtons = computed(() => {
         item: props.item
       })
     }
+  }
+
+  if (readOnlyMode.value) {
+    return panelSpecificAction ? [panelSpecificAction] : []
   }
 
   return panelSpecificAction ? [panelSpecificAction, deleteAction] : [deleteAction]
