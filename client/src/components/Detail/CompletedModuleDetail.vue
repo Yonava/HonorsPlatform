@@ -145,16 +145,3 @@ const { moveItem, movingItem, panelOnceMoved } = useMoveItem()
 
 const { broadcastThroughSocket } = useUpdateItem(completedModule)
 </script>
-
-<style scoped>
-input.grade-input {
-  font-weight: 900;
-  font-size: 3em;
-  line-height: 0.9;
-  width: 100%;
-}
-
-input.grade-input:focus {
-  outline: none;
-}
-</style>

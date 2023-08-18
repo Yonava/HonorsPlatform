@@ -11,115 +11,90 @@
         />
       </DetailHeader>
 
-      <v-btn
-        v-if="!thesis.term"
-        @click="
-          thesis.term = getCurrentTerm();
-          broadcastThroughSocket('term');
-        "
-        :color="getActivePanel.color"
-        class="mb-2"
-        size="x-small"
-      >
-        Current Term
-      </v-btn>
-
-      <v-text-field
-        v-model="thesis.term"
-        @input="broadcastThroughSocket('term')"
+      <DetailInput
+        :item="thesis"
+        prop="term"
+        :button="{
+          condition: !thesis.term,
+          text: 'Current Term',
+          newPropValue: () => getCurrentTerm(),
+        }"
         :rules="[(v) => termValidator(v) || 'Potentially invalid term']"
         label="Term"
-        prepend-icon="mdi-calendar"
-      ></v-text-field>
+        icon="calendar"
+      />
 
-      <div class="mb-2 d-flex flex-row ">
-        <v-btn
-          v-if="!thesis.draftReceived"
-          @click="
-            thesis.draftReceived = new Date().toLocaleString('en-US').split(',')[0];
-            broadcastThroughSocket('draftReceived');
-          "
-          :color="getActivePanel.color"
-          size="x-small"
-        >
-          Today
-        </v-btn>
-        <v-spacer></v-spacer>
-        <v-btn
-          v-if="!thesis.proposalReceived"
-          @click="
-            thesis.proposalReceived = new Date().toLocaleString('en-US').split(',')[0];
-            broadcastThroughSocket('proposalReceived');
-          "
-          :color="getActivePanel.color"
-          size="x-small"
-        >
-          Today
-        </v-btn>
-      </div>
 
-      <div class="d-flex flex-row">
+      <DetailInput
+        :item="thesis"
+        prop="draftReceived"
+        icon="calendar-check"
+        label="Draft Received"
+        :button="{
+          condition: !thesis.draftReceived,
+          text: 'Received Today',
+          newPropValue: () => new Date().toLocaleDateString('en-US'),
+        }"
+      />
 
-        <v-text-field
-          v-model="thesis.draftReceived"
-          @input="broadcastThroughSocket('draftReceived')"
-          label="Draft Received"
-          prepend-icon="mdi-calendar-check"
-          class="mr-6"
-        ></v-text-field>
+      <DetailInput
+        :item="thesis"
+        prop="proposalReceived"
+        icon="calendar-check"
+        label="Proposal Received"
+        :button="{
+          condition: !thesis.proposalReceived,
+          text: 'Received Today',
+          newPropValue: () => new Date().toLocaleDateString('en-US'),
+        }"
+      />
 
-        <v-text-field
-          v-model="thesis.proposalReceived"
-          @input="broadcastThroughSocket('proposalReceived')"
-          label="Proposal Received"
-          prepend-icon="mdi-calendar-check"
-        ></v-text-field>
-
-      </div>
-
-      <v-select
-        v-model="thesis.decision"
-        @update:model-value="broadcastThroughSocket('decision')"
-        :items="Object.keys(approvalStates)"
-        :prepend-icon="approvalStates[thesis.decision]"
+      <DetailInput
+        :item="thesis"
+        prop="decision"
+        :icon="approvalStates[thesis.decision] ?? 'alert-circle'"
         label="Decision"
-      ></v-select>
+        :button="{
+          condition: !thesis.decision,
+          text: 'Mark as Pending',
+          newPropValue: () => 'Pending',
+        }"
+        :input="{
+          type: 'select',
+          items: Object.keys(approvalStates),
+        }"
+      />
 
-      <div class="d-flex flex-row">
-        <InstructorComplete
-          @update="thesis.mentor = $event; thesis.mentorEmail = getFacultyEmail($event)"
-          :instructor="thesis.mentor"
-          :color="getActivePanel.color"
-        />
-        <v-spacer></v-spacer>
-        <v-btn
-          v-if="thesis.mentor && !thesis.mentorEmail"
-          @click="thesis.mentorEmail = getFacultyEmail(thesis.mentor)"
-          :color="getActivePanel.color"
-          size="x-small"
-          class="mb-2"
-        >New Faculty Email</v-btn>
-      </div>
-      <div class="d-flex flex-row align-center justify-center">
-        <v-text-field
-          v-model="thesis.mentor"
-          prepend-icon="mdi-human-male-board"
-          label="Faculty Mentor"
-          class="mr-6"
-          style="width: 45%"
-        ></v-text-field>
-        <v-text-field
-          v-model="thesis.mentorEmail"
-          :rules="[(v) => emailValidator(v) || 'Invalid email address']"
-          prepend-icon="mdi-email"
-          label="Faculty Mentor Email"
-          style="width: 45%"
-        ></v-text-field>
-      </div>
+      <DetailInput
+        :item="thesis"
+        prop="mentor"
+        :button="{
+          condition: !sameInstructor && !suggestionSelected,
+          text: suggestionToString,
+          newPropValue: () => selectSuggestion(),
+        }"
+        icon="human-male-board"
+        label="Faculty Mentor"
+      />
+
+      <DetailInput
+        :item="thesis"
+        prop="mentorEmail"
+        :rules="[(v) => emailValidator(v) || 'Invalid email address']"
+        icon="email"
+        label="Faculty Mentor Email"
+        :button="{
+          condition: !thesis.mentorEmail && !!thesis.mentor,
+          text: 'New Faculty Email',
+          newPropValue: () => getFacultyEmail(thesis.mentor),
+        }"
+      />
+
     </template>
     <template #buttons>
       <v-btn
         @click="viewProfileButton.onClick()"
+        :disabled="readOnlyMode && !viewProfileButton.keepEnabledInReadOnly"
         :color="viewProfileButton.color"
         size="large"
       >
@@ -136,14 +111,15 @@
 </template>
 
 <script setup lang="ts">
+import DetailInput from './Helper/DetailInput.vue'
 import DetailHeader from './Helper/DetailHeader.vue'
-import InstructorComplete from './Helper/InstructorComplete.vue'
 import DetailFrame from './Helper/DetailFrame.vue'
 import LinkStudentButton from './Helper/LinkStudentButton.vue'
 import LinkStudent from './Helper/LinkStudent.vue'
 
 import { computed } from 'vue'
 import { useStudentMatcher } from '../../StudentMatcher'
+import { useInstructorAutoComplete } from '../../InstructorAutoComplete'
 import type { Thesis } from '../../SheetTypes'
 import { getPanel } from '../../Panels'
 import { getCurrentTerm, termValidator } from '../../TermValidator'
@@ -151,11 +127,13 @@ import {
   emailValidator,
   getFacultyEmail,
 } from '../../EmailUtilities'
-
 import { useSheetManager } from '../../store/useSheetManager'
 import { useDocumentCache } from '../../store/useDocumentCache'
 import { useDialog } from '../../store/useDialog'
 import { useUpdateItem } from '../../TrackItemForUpdate'
+import { storeToRefs } from 'pinia'
+
+const { readOnlyMode } = storeToRefs(useSheetManager())
 const { setPanel, getActivePanel } = useSheetManager()
 const { deleteItem } = useDocumentCache()
 
@@ -164,12 +142,21 @@ const props = defineProps<{
 }>()
 
 const approvalStates = {
-  'Approved': 'mdi-check-circle',
-  'Rejected': 'mdi-close-circle',
-  'Pending': 'mdi-alert-circle',
+  'Approved': 'check-circle',
+  'Rejected': 'close-circle',
+  'Pending': 'alert-circle'
 }
 
 const thesis = computed(() => props.item)
+const instructor = computed(() => thesis.value.mentor)
+
+const {
+  suggestedInstructor,
+  sameInstructor,
+  selectSuggestion,
+  suggestionSelected,
+  suggestionToString
+} = useInstructorAutoComplete(instructor)
 
 const { broadcastThroughSocket } = useUpdateItem(thesis)
 
@@ -190,6 +177,7 @@ const jumpTo = (panelName: 'STUDENTS' | 'GRADUATES') => {
 const viewProfileButton = computed(() => {
   if (student.value.error === 'NOT_LINKED') {
     return {
+      keepEnabledInReadOnly: false,
       text: `No ${studentPanel.title.singular} Linked`,
       color: 'red-darken-4',
       icon: 'mdi-account-off',
@@ -233,6 +221,7 @@ const viewProfileButton = computed(() => {
     }
   } else if (student.value.foundIn === studentPanel.panelName) {
     return {
+      keepEnabledInReadOnly: true,
       text: `${studentPanel.title.singular} Profile`,
       color: studentPanel.color,
       icon: studentPanel.icon,
@@ -240,6 +229,7 @@ const viewProfileButton = computed(() => {
     }
   } else if (student.value.foundIn === graduatePanel.panelName) {
     return {
+      keepEnabledInReadOnly: true,
       text: `${graduatePanel.title.singular} Profile`,
       color: graduatePanel.color,
       icon: graduatePanel.icon,
@@ -247,6 +237,7 @@ const viewProfileButton = computed(() => {
     }
   } else {
     return {
+      keepEnabledInReadOnly: false,
       text: `Problem Linking ${studentPanel.title.singular}`,
       color: 'red-darken-4',
       icon: 'mdi-alert-circle',
