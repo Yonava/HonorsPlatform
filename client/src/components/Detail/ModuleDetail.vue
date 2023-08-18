@@ -40,66 +40,36 @@
         Documentation
       </h1>
 
-      <!-- <div class="d-flex flex-row mb-2">
+      <DetailInput
+        :item="module"
+        prop="docuSignCreated"
+        icon="calendar-alert"
+        label="DocuSign Created"
+        :button="{
+          condition: !module.docuSignCreated,
+          text: 'Created Today',
+          newPropValue: () => new Date().toLocaleDateString('en-US'),
+        }"
+      />
 
-        <v-btn
-          v-if="!module.docuSignCreated"
-          @click="
-            module.docuSignCreated = new Date().toLocaleDateString('en-US');
-            broadcastThroughSocket('docuSignCreated');
-          "
-          :color="color"
-          size="x-small"
-        >
-          Now
-        </v-btn>
-
-        <v-spacer></v-spacer>
-
-        <v-btn
-          v-if="!module.docuSignCompleted"
-          @click="
-            module.docuSignCompleted = new Date().toLocaleDateString('en-US');
-            broadcastThroughSocket('docuSignCompleted');
-          "
-          :color="color"
-          size="x-small"
-        >
-          Now
-        </v-btn>
-
-      </div> -->
-
-
-        <DetailInput
-          :item="module"
-          prop="docuSignCreated"
-          icon="calendar-alert"
-          label="DocuSign Created"
-          :button="{
-            condition: !module.docuSignCreated,
-            text: 'Created Today',
-            newPropValue: () => new Date().toLocaleDateString('en-US'),
-          }"
-        />
-
-        <DetailInput
-          :item="module"
-          prop="docuSignCompleted"
-          icon="calendar-check"
-          label="DocuSign Completed"
-          :button="{
-            condition: !module.docuSignCompleted,
-            text: 'Completed Today',
-            newPropValue: () => new Date().toLocaleDateString('en-US'),
-          }"
-        />
+      <DetailInput
+        :item="module"
+        prop="docuSignCompleted"
+        icon="calendar-check"
+        label="DocuSign Completed"
+        :button="{
+          condition: !module.docuSignCompleted,
+          text: 'Completed Today',
+          newPropValue: () => new Date().toLocaleDateString('en-US'),
+        }"
+      />
 
     </template>
 
     <template #buttons>
       <v-btn
         @click="moveItem(module)"
+        :disabled="readOnlyMode"
         :loading="movingItem"
         :color="color"
         size="large"
@@ -130,7 +100,11 @@ import { useInstructorAutoComplete } from '../../InstructorAutoComplete'
 import { getPanel } from '../../Panels'
 import { useMoveItem } from '../../MoveItems'
 import { useUpdateItem } from '../../TrackItemForUpdate'
+import { useSheetManager } from '../../store/useSheetManager'
+import { storeToRefs } from 'pinia'
 
+const sheetManager = useSheetManager()
+const { readOnlyMode } = storeToRefs(sheetManager)
 
 const modulesPanel = getPanel('MODULES')
 

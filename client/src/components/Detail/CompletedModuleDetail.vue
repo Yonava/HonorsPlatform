@@ -1,13 +1,7 @@
 <template>
-  <DetailFrame
-    v-model="completedModule.description"
-    @user-input="broadcastThroughSocket('description')"
-    :item="completedModule"
-  >
+  <DetailFrame :item="completedModule">
     <template #main>
       <DetailHeader
-        v-model="completedModule.courseCode"
-        @input="broadcastThroughSocket('courseCode')"
         :item="completedModule"
         placeholder="Course Code"
       >
@@ -17,81 +11,92 @@
         />
       </DetailHeader>
 
-      <v-text-field
-        v-model="completedModule.completedDate"
-        @input="broadcastThroughSocket('completedDate')"
-        label="Completed Date"
-        prepend-icon="mdi-check"
-      ></v-text-field>
-
-      <v-text-field
-        v-model="completedModule.term"
-        @input="broadcastThroughSocket('term')"
-        label="Term"
-        prepend-icon="mdi-calendar"
-      ></v-text-field>
-
-      <InstructorComplete
-        @update="
-          completedModule.instructor = $event;
-          broadcastThroughSocket('instructor');
-        "
-        :instructor="completedModule.instructor"
-        :color="getActivePanel.color"
+      <DetailInput
+        :item="completedModule"
+        prop="completedDate"
+        label="Date of Completion"
+        icon="check"
+        :button="{
+          condition: !completedModule.completedDate,
+          text: 'Completed Today',
+          newPropValue: () => new Date().toLocaleDateString('en-US'),
+        }"
       />
 
-      <v-text-field
-        v-model="completedModule.instructor"
-        @input="broadcastThroughSocket('instructor')"
+      <DetailInput
+        :item="completedModule"
+        prop="term"
+        :rules="[(v) => termValidator(v) || 'Potentially invalid term']"
+        :button="{
+          condition: !completedModule.term,
+          text: 'Current Term',
+          newPropValue: () => getCurrentTerm(),
+        }"
+        label="Term"
+        icon="calendar"
+      />
+
+      <DetailInput
+        :item="completedModule"
+        prop="instructor"
+        :button="{
+          condition: !sameInstructor && !suggestionSelected,
+          text: suggestionToString,
+          newPropValue: () => selectSuggestion(),
+        }"
+        icon="human-male-board"
         label="Instructor"
-        prepend-icon="mdi-human-male-board"
-      ></v-text-field>
+      />
 
-      <div class="d-flex flex-row">
+      <DetailInput
+        :item="completedModule"
+        prop="grade"
+        :input="{
+          type: 'select',
+          items: grades.map(grade => !grade ? 'Ungraded' : grade),
+        }"
+        label="Grade"
+        icon="star"
+      />
 
-        <v-text-field
-          v-model="completedModule.docuSignCreated"
-          @input="broadcastThroughSocket('docuSignCreated')"
-          class="mr-6"
-          label="DocuSign Created"
-          prepend-icon="mdi-calendar-alert"
-        ></v-text-field>
+      <h1 class="mb-2">
+        Documentation
+      </h1>
 
-        <v-text-field
-          v-model="completedModule.docuSignCompleted"
-          @input="broadcastThroughSocket('docuSignCompleted')"
-          label="DocuSign Completed"
-          prepend-icon="mdi-calendar-check"
-        ></v-text-field>
+      <DetailInput
+        :item="completedModule"
+        prop="docuSignCreated"
+        icon="calendar-alert"
+        label="DocuSign Created"
+        :button="{
+          condition: !completedModule.docuSignCreated,
+          text: 'Created Today',
+          newPropValue: () => new Date().toLocaleDateString('en-US'),
+        }"
+      />
 
-      </div>
+      <DetailInput
+        :item="completedModule"
+        prop="docuSignCompleted"
+        icon="calendar-check"
+        label="DocuSign Completed"
+        :button="{
+          condition: !completedModule.docuSignCompleted,
+          text: 'Completed Today',
+          newPropValue: () => new Date().toLocaleDateString('en-US'),
+        }"
+      />
 
-      <div class="d-flex flex-column align-center">
-
-        <h2>
-          Final Grade
-        </h2>
-
-        <input
-          v-model="completedModule.grade"
-          @input="broadcastThroughSocket('grade')"
-          type="text"
-          class="grade-input"
-          placeholder="Grade"
-          style="font-size: 5em; text-align: center;"
-        />
-
-      </div>
     </template>
 
     <template #buttons>
       <v-btn
         @click="moveItem(completedModule)"
+        :disabled="readOnlyMode"
         :color="panelOnceMoved?.color + '-darken-2'"
         :loading="movingItem"
         size="large"
       >
-
         <v-icon
           class="mr-2"
           size="x-large"
@@ -105,23 +110,36 @@
 </template>
 
 <script setup lang="ts">
+import DetailInput from './Helper/DetailInput.vue'
 import DetailHeader from './Helper/DetailHeader.vue'
-import InstructorComplete from './Helper/InstructorComplete.vue'
 import DetailFrame from './Helper/DetailFrame.vue'
 import LinkStudentButton from './Helper/LinkStudentButton.vue'
-import type { CompletedModule } from '../../SheetTypes'
+import { type CompletedModule, grades } from '../../SheetTypes'
 import { useSheetManager } from '../../store/useSheetManager'
 import { useMoveItem } from '../../MoveItems'
 import { computed } from 'vue'
 import { useUpdateItem } from '../../TrackItemForUpdate'
+import { useInstructorAutoComplete } from '../../InstructorAutoComplete'
+import { getCurrentTerm, termValidator } from '../../TermValidator'
+import { storeToRefs } from 'pinia'
 
-const { getActivePanel } = useSheetManager()
+const sheetManager = useSheetManager()
+const { getActivePanel, readOnlyMode } = storeToRefs(sheetManager)
 
 const props = defineProps<{
   item: CompletedModule
 }>()
 
 const completedModule = computed(() => props.item)
+const instructor = computed(() => completedModule.value.instructor)
+
+const {
+  suggestedInstructor,
+  sameInstructor,
+  selectSuggestion,
+  suggestionSelected,
+  suggestionToString,
+} = useInstructorAutoComplete(instructor)
 
 const { moveItem, movingItem, panelOnceMoved } = useMoveItem()
 
