@@ -1,13 +1,7 @@
 <template>
-  <DetailFrame
-    v-model="module.description"
-    @user-input="broadcastThroughSocket('description')"
-    :item="module"
-  >
+  <DetailFrame :item="module">
     <template #main>
       <DetailHeader
-        v-model="module.courseCode"
-        @input="broadcastThroughSocket('courseCode')"
         :item="module"
         placeholder="Course Code"
       >
@@ -17,26 +11,18 @@
         />
       </DetailHeader>
 
-      <v-btn
-        v-if="!module.term"
-        @click="
-          module.term = getCurrentTerm();
-          broadcastThroughSocket('term');
-        "
-        :color="color"
-        size="x-small"
-        class="mb-3"
-      >
-        Current Term
-      </v-btn>
-
-      <v-text-field
-        v-model="module.term"
-        @input="broadcastThroughSocket('term')"
+      <DetailInput
+        :item="module"
+        prop="term"
+        :button="{
+          condition: !module.term,
+          text: 'Current Term',
+          newPropValue: () => getCurrentTerm(),
+        }"
         :rules="[(v) => termValidator(v) || 'Potentially invalid term']"
-        prepend-icon="mdi-calendar"
         label="Term"
-      ></v-text-field>
+        icon="calendar"
+      />
 
       <InstructorComplete
         @update="
@@ -131,6 +117,7 @@
 </template>
 
 <script setup lang="ts">
+import DetailInput from './Helper/DetailInput.vue'
 import DetailHeader from './Helper/DetailHeader.vue'
 import InstructorComplete from './Helper/InstructorComplete.vue'
 import DetailFrame from './Helper/DetailFrame.vue'

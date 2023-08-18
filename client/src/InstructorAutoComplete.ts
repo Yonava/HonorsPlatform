@@ -1,10 +1,11 @@
 import { useDocumentCache } from "./store/useDocumentCache"
+import { type Ref, watch, computed } from "vue"
 
-export function useInstructorAutoComplete() {
+export function useInstructorAutoComplete(instructor: Ref<string | null>) {
 
   const instructorList: string[] = [];
 
-  const init = () => {
+  const computeInstructors = () => {
     const {
       Modules,
       "Completed Modules": CompletedModules,
@@ -30,21 +31,46 @@ export function useInstructorAutoComplete() {
     }
   }
 
-  const getSuggestedInstructor = (input: string) => {
-    for (const instructor of instructorList) {
-      if (instructor.toLowerCase().startsWith(input.toLowerCase())) {
-        return instructor
-      } else if (instructor.toLowerCase().includes(input.toLowerCase())) {
-        return instructor
+  // false if no suggestion, else the suggested instructor
+  const suggestedInstructor = computed(() => {
+
+    if (!instructor.value) {
+      return false
+    }
+
+    for (const suggestedInstructor of instructorList) {
+
+      // prioritize startsWith
+      if (suggestedInstructor.toLowerCase().startsWith(instructor.value.toLowerCase())) {
+        return suggestedInstructor
       }
     }
-    return false
-  }
 
-  init()
+    for (const suggestedInstructor of instructorList) {
+
+      // fallback to includes
+      if (suggestedInstructor.toLowerCase().includes(instructor.value.toLowerCase())) {
+        return suggestedInstructor
+      }
+    }
+
+    return false
+  })
+
+  watch(instructor, (newInput, oldInput) => {
+    console.log('newInput', newInput)
+    const newLength = newInput?.length || 0
+    const oldLength = oldInput?.length || 0
+    const distance = Math.abs(newLength - oldLength)
+    if (distance > 1) {
+      computeInstructors()
+    }
+  })
+
+  computeInstructors()
 
   return {
-    getSuggestedInstructor,
-    init
+    suggestedInstructor,
+    computeInstructors
   }
 }

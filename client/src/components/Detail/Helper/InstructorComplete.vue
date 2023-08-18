@@ -1,8 +1,8 @@
 <template>
   <v-btn
-    v-if="instructor !== instructorSuggestion"
-    @click="emits('update', instructorSuggestion)"
-    :disabled="!instructorSuggestion"
+    v-if="instructor !== suggestedInstructor"
+    @click="emits('update', suggestedInstructor)"
+    :disabled="!suggestedInstructor"
     :color="color"
     size="x-small"
     class="mb-2"
@@ -13,38 +13,24 @@
 
 <script setup lang="ts">
 import { useInstructorAutoComplete } from '../../../InstructorAutoComplete'
-import { computed, watch } from 'vue'
+import { computed, toRefs } from 'vue'
 
 const props = defineProps<{
   color?: string,
   instructor: string | null,
 }>()
 
+const { instructor } = toRefs(props)
+
 const emits = defineEmits<{
-  update: () => string
+  (e: 'update', v: string | false): () => string
 }>()
 
 const buttonText = computed(() => {
-  return instructorSuggestion.value || 'No Suggestions'
+  return suggestedInstructor.value || 'No Suggestions'
 })
 
-const {
-  getSuggestedInstructor,
-  init: reComputeInstructors
-} = useInstructorAutoComplete()
-
-const instructorSuggestion = computed(() => {
-  return getSuggestedInstructor(props.instructor || '')
-})
-
-watch(() => props.instructor, (newInput, oldInput) => {
-  const newLength = newInput?.length || 0
-  const oldLength = oldInput?.length || 0
-  const distance = Math.abs(newLength - oldLength)
-  if (distance > 1) {
-    reComputeInstructors()
-  }
-})
+const { suggestedInstructor } = useInstructorAutoComplete(instructor)
 
 const color = computed(() => {
   return props.color || 'blue-darken-2'
