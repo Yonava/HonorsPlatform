@@ -54,7 +54,9 @@ router.beforeEach(async (to, from) => {
   const goingTo = to.name as typeof routes[number]['name']
   const routesWithData: typeof routes[number]['name'][] = ['panel', 'registrar', 'email']
 
-  if (routesWithData.includes(goingTo)) {
+  const sameRoute = to.name === from.name
+
+  if (routesWithData.includes(goingTo) && !sameRoute) {
     const { getAllDocuments } = useDocumentCache()
     const { connect } = useSocket()
     const { authorizeSession } = useAuth()

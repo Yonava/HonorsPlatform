@@ -1,13 +1,7 @@
 <template>
-  <DetailFrame
-    v-model="event.note"
-    @user-input="broadcastThroughSocket('note')"
-    :item="event"
-  >
+  <DetailFrame :item="event">
     <template #main>
       <DetailHeader
-        v-model="event.event"
-        @input="broadcastThroughSocket('event')"
         :item="event"
         placeholder="Event Name"
       >
@@ -18,12 +12,18 @@
         />
       </DetailHeader>
 
-      <v-text-field
-        v-model="event.dateTime"
-        @input="broadcastThroughSocket('dateTime')"
+      <DetailInput
+        :item="event"
+        prop="dateTime"
+        icon="clock-outline"
         label="Time"
-        prepend-icon="mdi-clock-outline"
-      ></v-text-field>
+        :button="{
+          condition: !event.dateTime,
+          text: 'Current Time',
+          newPropValue: getNewDate,
+        }"
+      />
+
     </template>
 
     <template #buttons></template>
@@ -31,6 +31,7 @@
 </template>
 
 <script setup lang="ts">
+import DetailInput from './Helper/DetailInput.vue'
 import DetailHeader from './Helper/DetailHeader.vue'
 import DetailFrame from './Helper/DetailFrame.vue'
 import LinkStudentButton from './Helper/LinkStudentButton.vue'
@@ -46,4 +47,17 @@ const props = defineProps<{
 const event = computed(() => props.item)
 
 const { broadcastThroughSocket } = useUpdateItem(event)
+
+const getNewDate = () => {
+  const date = new Date()
+  const time = date.toLocaleTimeString('en-US', {
+    hour: 'numeric'
+  })
+  const day = date.toLocaleDateString('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric'
+  })
+  return `${day} at ${time}`
+}
 </script>

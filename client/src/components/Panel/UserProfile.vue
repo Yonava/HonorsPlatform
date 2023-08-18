@@ -23,6 +23,7 @@
         >
 
         <v-btn
+          v-if="!readOnlyMode"
           @click="makeAnnouncement"
           class="my-3"
           style="position: absolute; bottom: -17%; right: -7%;"
@@ -148,7 +149,7 @@ const { userLogoutFlow } = auth;
 const { googleProfile } = storeToRefs(auth);
 
 const sheetManager = useSheetManager();
-const { getActivePanel, focusedItemSysId } = storeToRefs(sheetManager);
+const { getActivePanel, focusedItemSysId, readOnlyMode } = storeToRefs(sheetManager);
 
 const { getItemBySysId } = useDocumentCache();
 
