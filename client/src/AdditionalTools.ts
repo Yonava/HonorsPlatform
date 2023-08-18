@@ -47,6 +47,12 @@ export const tools = {
   ],
   GRADUATES: [
     {
+      name: 'Toggle Read-Only Mode',
+      handler: () => {
+        useSheetManager().readOnlyMode = !useSheetManager().readOnlyMode
+      }
+    },
+    {
       name: 'Suggested Deletions',
       handler: () => { useDialog().setPanelCover('open') }
     },
@@ -70,6 +76,12 @@ export const tools = {
     }
   ],
   MODULES: [
+    {
+      name: 'Toggle Read-Only Mode',
+      handler: () => {
+        useSheetManager().readOnlyMode = !useSheetManager().readOnlyMode
+      }
+    },
     {
       name: 'Suggested Deletions',
       handler: () => { useDialog().setPanelCover('open') }
@@ -95,6 +107,12 @@ export const tools = {
   ],
   COMPLETED_MODULES: [
     {
+      name: 'Toggle Read-Only Mode',
+      handler: () => {
+        useSheetManager().readOnlyMode = !useSheetManager().readOnlyMode
+      }
+    },
+    {
       name: 'Suggested Deletions',
       handler: () => { useDialog().setPanelCover('open') }
     },
@@ -119,6 +137,12 @@ export const tools = {
   ],
   THESES: [
     {
+      name: 'Toggle Read-Only Mode',
+      handler: () => {
+        useSheetManager().readOnlyMode = !useSheetManager().readOnlyMode
+      }
+    },
+    {
       name: 'Suggested Deletions',
       handler: () => { useDialog().setPanelCover('open') }
     },
@@ -142,6 +166,12 @@ export const tools = {
     }
   ],
   GRADUATE_ENGAGEMENTS: [
+    {
+      name: 'Toggle Read-Only Mode',
+      handler: () => {
+        useSheetManager().readOnlyMode = !useSheetManager().readOnlyMode
+      }
+    },
     {
       name: 'Suggested Deletions',
       handler: () => { useDialog().setPanelCover('open') }

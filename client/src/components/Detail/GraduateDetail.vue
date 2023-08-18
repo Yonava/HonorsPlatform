@@ -1,14 +1,7 @@
 <template>
-  <DetailFrame
-    v-model="grad.note"
-    @user-input="broadcastThroughSocket('note')"
-    :item="grad"
-  >
+  <DetailFrame :item="grad">
     <template #main>
       <DetailHeader
-        v-model="grad.name"
-        @input="broadcastThroughSocket('name')"
-        :id="grad.id"
         :item="grad"
         placeholder="Name"
       >
@@ -18,46 +11,39 @@
         />
       </DetailHeader>
 
-      <v-text-field
-        v-model="grad.email"
-        @input="broadcastThroughSocket('email')"
+      <DetailInput
+        :item="grad"
+        prop="email"
         :rules="[(v) => emailValidator(v) || 'Invalid email']"
         label="Email"
-        prepend-icon="mdi-email"
-      ></v-text-field>
+        icon="email"
+      />
 
-      <v-text-field
-        v-model="grad.phone"
-        @input="broadcastThroughSocket('phone')"
+      <DetailInput
+        :item="grad"
+        prop="phone"
         :rules="[(v) => phoneValidator(v) || 'Invalid phone number']"
         label="Phone"
-        prepend-icon="mdi-phone"
-      ></v-text-field>
+        icon="phone"
+      />
 
-      <v-btn
-        v-if="!grad.graduationDate"
-        @click="
-          grad.graduationDate = new Date().toLocaleString('en-US').split(',')[0];
-          broadcastThroughSocket('graduationDate');
-        "
-        :color="getActivePanel.color"
-        size="x-small"
-        class="mb-2"
-      >
-        Today
-      </v-btn>
-
-      <v-text-field
-        v-model="grad.graduationDate"
-        @input="broadcastThroughSocket('graduationDate')"
+      <DetailInput
+        :item="grad"
+        prop="graduationDate"
         label="Graduation Date"
-        prepend-icon="mdi-calendar"
-      ></v-text-field>
+        icon="calendar"
+        :button="{
+          condition: !grad.graduationDate,
+          text: 'Graduated Today',
+          newPropValue: () => new Date().toLocaleString('en-US').split(',')[0],
+        }"
+      />
 
     </template>
     <template #buttons>
       <v-btn
         @click="moveItem(grad)"
+        :disabled="readOnlyMode"
         :loading="movingItem"
         :color="panelOnceMoved?.color"
         size="large"
@@ -78,6 +64,7 @@
 import IDInput from "./Helper/IDInput.vue";
 import DetailFrame from "./Helper/DetailFrame.vue";
 import DetailHeader from "./Helper/DetailHeader.vue";
+import DetailInput from "./Helper/DetailInput.vue";
 
 import { computed } from "vue";
 import {
@@ -89,8 +76,10 @@ import { useUpdateItem } from "../../TrackItemForUpdate";
 import type { Graduate } from "../../SheetTypes";
 import { useSheetManager } from "../../store/useSheetManager";
 import { useMoveItem } from "../../MoveItems";
+import { storeToRefs } from "pinia";
 
-const { getActivePanel } = useSheetManager();
+const sheetManager = useSheetManager();
+const { getActivePanel, readOnlyMode } = storeToRefs(sheetManager);
 
 const props = defineProps<{
   item: Graduate;
@@ -98,6 +87,6 @@ const props = defineProps<{
 
 const grad = computed(() => props.item);
 
-const { broadcastThroughSocket } = useUpdateItem(grad);
+useUpdateItem(grad);
 const { moveItem, movingItem, panelOnceMoved } = useMoveItem()
 </script>
