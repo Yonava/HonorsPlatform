@@ -33,6 +33,7 @@
       class="d-flex flex-row align-center"
     >
       <DetailInput
+        :item="item"
         :input="{ type: 'title' }"
         :prop="getActivePanel.properties.title"
         :placeholder="placeholder"
@@ -45,7 +46,7 @@
 <script setup lang="ts">
 import SyncStatus from "./SyncStatus.vue";
 import DetailInput from "./DetailInput.vue";
-import { computed, ref, type Ref } from "vue";
+import { computed } from "vue";
 import { useDialog } from '../../../store/useDialog';
 import { useDocumentCache } from '../../../store/useDocumentCache';
 import { useSheetManager } from "../../../store/useSheetManager";
@@ -53,18 +54,17 @@ import { storeToRefs } from "pinia";
 import { SheetItem } from '../../../SheetTypes';
 
 const { getPanelCover } = storeToRefs(useDialog());
-const { focusedItemSysId, getFocusedItem, getActivePanel } = storeToRefs(useSheetManager());
+const { focusedItemSysId, getActivePanel } = storeToRefs(useSheetManager());
 const { getSelectedItems, removeSelectedItem } = useDocumentCache();
 
-const item = ref(getFocusedItem.value ?? getSelectedItems()[0]) as Ref<SheetItem>;
-
 const props = defineProps<{
+  item: SheetItem;
   placeholder?: string;
 }>();
 
 const includedInDelete = computed(() => {
   return getPanelCover.value.selectedForDelete.some((sysId: string) => {
-    return item.value.sysId === sysId
+    return props.item.sysId === sysId
   });
 });
 
@@ -74,7 +74,7 @@ const placeholder = computed(() => {
 
 const removeFromSelected = () => {
   removeSelectedItem({
-    item: item.value,
+    item: props.item,
   })
 }
 </script>

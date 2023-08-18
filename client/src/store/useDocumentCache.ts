@@ -7,7 +7,6 @@ import { warn } from "../Warn";
 import { useSyncState } from "./useSyncState";
 import { storeToRefs } from "pinia";
 import { setSelectedItem } from '../components/Panel/SetSelectedItem'
-import { useAuth } from "./useAuth";
 import { useSocket } from "./useSocket";
 
 type GetAllDocuments = {
@@ -320,17 +319,12 @@ export const useDocumentCache = defineStore("documentCache", {
       const documents = await panel.mappers.map(data);
       this[range].list = documents;
 
-      // check if any of the selected items were removed from the list
-      const selectedItems = [...this[range].selected]
-      this[range].selected = this[range].list.filter((newItem) => {
-        return selectedItems.some((selectedItem) => {
-          return selectedItem.sysId === newItem.sysId
-        })
-      })
+      const selectedSysIds = [...this[range].selected].map((item) => item.sysId);
+      this[range].selected = selectedSysIds.map((sysId) => {
+        return this.getItemBySysId(sysId, panelName) as types.SheetItem
+      }).filter((item) => item);
 
-      const focusedItemStillExists = this[range].selected.some((item) => {
-        return item.sysId === focusedItemSysId
-      })
+      const focusedItemStillExists = !!this[range].selected.find((item) => item.sysId === focusedItemSysId);
 
       if (!focusedItemStillExists && this[range].selected.length > 0) {
         setFocusedItem(this[range].selected[0].sysId)

@@ -1,8 +1,9 @@
 <template>
   <div>
-    <DetailFrame :item="item">
+    <DetailFrame :item="student">
       <template #main>
         <DetailHeader
+          :item="student"
           :placeholder="`${getActivePanel.title.singular} Name`"
         >
           <v-dialog
@@ -82,6 +83,7 @@
         </v-btn>
         <div class="d-flex align-center">
           <DetailInput
+            :item="student"
             prop="email"
             :rules="[(v) => emailValidator(v) || 'Invalid email']"
             label="Email"
@@ -89,6 +91,7 @@
           />
         </div>
         <DetailInput
+          :item="student"
           prop="points"
           :input="{
             type: 'text',
@@ -99,6 +102,7 @@
         />
         <div class="d-flex flex-row">
           <DetailInput
+            :item="student"
             prop="activeStatus"
             :input="{
               type: 'select',
@@ -108,6 +112,7 @@
             label="Active Status"
           />
           <DetailInput
+            :item="student"
             prop="year"
             :input="{
               type: 'select',
@@ -120,6 +125,7 @@
         </div>
 
         <DetailInput
+          :item="student"
           prop="athletics"
           :input="{
             type: 'autocomplete',

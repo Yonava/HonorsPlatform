@@ -31,6 +31,7 @@
         <div style="width: 100%;">
           <slot name="notes-button"></slot>
           <DetailInput
+            :item="item"
             :input="{ type: 'textarea' }"
             prop="note"
             label="Notes"

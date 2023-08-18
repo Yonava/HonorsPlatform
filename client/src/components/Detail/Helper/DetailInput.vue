@@ -70,22 +70,18 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 import { useBroadcastThroughSocket } from '../../../TrackItemForUpdate'
 import { useSheetManager } from '../../../store/useSheetManager';
 import { storeToRefs } from 'pinia';
 import type { SheetItem } from '../../../SheetTypes'
-import { useDocumentCache } from '../../../store/useDocumentCache';
 
 const { broadcast } = useBroadcastThroughSocket('DETAIL')
-const { getFocusedItem, readOnlyMode } = storeToRefs(useSheetManager())
-const { getSelectedItems } = useDocumentCache()
-
-const item = ref<SheetItem | null>(null)
-item.value = getFocusedItem.value ?? getSelectedItems()[0]
+const { readOnlyMode } = storeToRefs(useSheetManager())
 
 const props = defineProps<{
   prop: string,
+  item: SheetItem
   icon?: string,
   input?:
     {
@@ -120,14 +116,18 @@ const activeIcon = computed(() => {
 
 const content = computed({
   get: () => {
-    if (!item.value) return ''
+    if (!props.item) {
+      return ""
+    }
     // @ts-ignore
-    return item.value[props.prop]
+    return props.item[props.prop]
   },
   set: (v: string) => {
-    if (!item.value) return
+    if (!props.item) {
+      return
+    }
     // @ts-ignore
-    item.value[props.prop] = v
+    props.item[props.prop] = v
   }
 })
 </script>

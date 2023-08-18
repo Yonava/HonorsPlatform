@@ -93,7 +93,7 @@
       }"
     ></div>
     <v-sheet
-      v-for="item in getSelectedItems()"
+      v-for="item in useDocumentCache()[getActivePanel.sheetRange].selected"
       :key="item.sysId"
       @click="setFocusedItem(item.sysId)"
       :style="{
@@ -107,6 +107,7 @@
         :is="getActivePanel.components.detail"
         :item="item"
       />
+      {{ item }}
     </v-sheet>
     <v-sheet
       v-if="dragState"
@@ -123,7 +124,7 @@
       </v-icon>
     </v-sheet>
     <div
-      v-if="!getSelectedItems().length && !dragState"
+      v-if="!useDocumentCache()[getActivePanel.sheetRange].selected.length && !dragState"
       class="justify-center d-flex"
       style="width: 100%; height: 100%;"
     >
@@ -149,7 +150,7 @@ const sheetManager = useSheetManager()
 const { getActivePanel, listItemBeingDragged, focusedItemSysId } = storeToRefs(sheetManager)
 const { setFocusedItem } = sheetManager
 
-const { getSelectedItems, addSelectedItem } = useDocumentCache()
+const { addSelectedItem } = useDocumentCache()
 
 const moveWidgetActive = computed(() => {
   return listItemBeingDragged.value || movingItem.value
