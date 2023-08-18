@@ -1,5 +1,14 @@
 <template>
   <div style="width: 100%">
+
+    <!-- optional button -->
+    <DetailButton
+      v-if="button && button.condition"
+      @click="buttonClicked"
+    >
+      {{ button.text }}
+    </DetailButton>
+
     <div v-if="activeInput.type === 'text'">
 
       <!-- text input -->
@@ -70,6 +79,7 @@
 </template>
 
 <script setup lang="ts">
+import DetailButton from './DetailButton.vue';
 import { computed } from 'vue'
 import { useBroadcastThroughSocket } from '../../../TrackItemForUpdate'
 import { useSheetManager } from '../../../store/useSheetManager';
@@ -102,7 +112,21 @@ const props = defineProps<{
     {
       type: 'title',
     },
+  button?: {
+    condition: boolean,
+    newPropValue: () => string | number | boolean,
+    text: string,
+  }
 }>()
+
+const buttonClicked = () => {
+  if (!props.item) {
+    return
+  }
+  // @ts-ignore
+  props.item[props.prop] = props.button?.newPropValue()
+  broadcast(props.prop)
+}
 
 const activeInput = computed(() => {
   const type = props.input ?? { type: 'text', variant: 'string' }

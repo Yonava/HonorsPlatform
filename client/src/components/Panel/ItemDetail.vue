@@ -107,7 +107,6 @@
         :is="getActivePanel.components.detail"
         :item="item"
       />
-      {{ item }}
     </v-sheet>
     <v-sheet
       v-if="dragState"

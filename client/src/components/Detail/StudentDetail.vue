@@ -69,27 +69,24 @@
             </v-sheet>
           </v-dialog>
         </DetailHeader>
-        <v-btn
-          v-if="!student.email"
-          @click="
-            student.email = getStudentEmail(student.name);
-            broadcastThroughSocket('email');
-          "
-          :color="getActivePanel.color"
-          size="x-small"
-          class="mb-3"
-        >
-          new {{ getActivePanel.title.singular }} email
-        </v-btn>
+
         <div class="d-flex align-center">
+
           <DetailInput
             :item="student"
             prop="email"
             :rules="[(v) => emailValidator(v) || 'Invalid email']"
             label="Email"
             icon="email"
+            :button="{
+              condition: !student.email,
+              text: `New ${getActivePanel.title.singular} Email`,
+              newPropValue: () => getStudentEmail(student.name),
+            }"
           />
+
         </div>
+
         <DetailInput
           :item="student"
           prop="points"
@@ -151,14 +148,9 @@
         </div> -->
       </template>
       <template #notes-button>
-        <v-btn
-          @click="showAddNote = true"
-          :color="getActivePanel.color"
-          size="x-small"
-          class="mb-3"
-          >
-            Add Meeting Note
-          </v-btn>
+        <DetailButton @click="showAddNote = true">
+          Add Meeting Note
+        </DetailButton>
       </template>
       <template #buttons>
         <div
@@ -208,6 +200,7 @@
 
 
 <script setup lang="ts">
+import DetailButton from "./Helper/DetailButton.vue";
 import DetailFrame from "./Helper/DetailFrame.vue";
 import DetailHeader from "./Helper/DetailHeader.vue";
 import DetailInput from "./Helper/DetailInput.vue";
