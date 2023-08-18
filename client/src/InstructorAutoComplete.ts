@@ -1,9 +1,15 @@
 import { useDocumentCache } from "./store/useDocumentCache"
-import { type Ref, watch, computed } from "vue"
+import {
+  type Ref,
+  ref,
+  watch,
+  computed
+} from "vue"
 
-export function useInstructorAutoComplete(instructor: Ref<string | null>) {
+export function useInstructorAutoComplete(instructor: Ref<string>) {
 
-  const instructorList: string[] = [];
+  const instructorList = ref<string[]>([])
+  const searchableInstructorList = ref<string[]>([])
 
   const computeInstructors = () => {
     const {
@@ -14,51 +20,65 @@ export function useInstructorAutoComplete(instructor: Ref<string | null>) {
 
     for (const module of Modules.list) {
       if (module.instructor) {
-        instructorList.push(module.instructor)
+        instructorList.value.push(module.instructor)
       }
     }
 
     for (const module of CompletedModules.list) {
       if (module.instructor) {
-        instructorList.push(module.instructor)
+        instructorList.value.push(module.instructor)
       }
     }
 
     for (const thesis of Theses.list) {
       if (thesis.mentor) {
-        instructorList.push(thesis.mentor)
+        instructorList.value.push(thesis.mentor)
       }
     }
+
+    searchableInstructorList.value = [...instructorList.value].map(instructor => instructor.trim().toLowerCase())
   }
 
   // false if no suggestion, else the suggested instructor
   const suggestedInstructor = computed(() => {
 
-    if (!instructor.value) {
-      return false
-    }
+    const passedInstructor = instructor.value.trim().toLowerCase()
 
-    for (const suggestedInstructor of instructorList) {
+    for (const i in searchableInstructorList.value) {
 
       // prioritize startsWith
-      if (suggestedInstructor.toLowerCase().startsWith(instructor.value.toLowerCase())) {
-        return suggestedInstructor
+      if (searchableInstructorList.value[i].startsWith(passedInstructor)) {
+        return instructorList.value[i]
       }
     }
 
-    for (const suggestedInstructor of instructorList) {
+    for (const i in searchableInstructorList.value) {
 
       // fallback to includes
-      if (suggestedInstructor.toLowerCase().includes(instructor.value.toLowerCase())) {
-        return suggestedInstructor
+      if (searchableInstructorList.value[i].includes(passedInstructor)) {
+        return instructorList.value[i]
       }
     }
 
     return false
   })
 
+  const sameInstructor = computed(() => {
+    if (!suggestedInstructor.value) {
+      return false
+    }
+    return suggestedInstructor.value?.trim().toLowerCase() === instructor.value.trim().toLowerCase()
+  })
+
+  computeInstructors()
+
+  const suggestionSelected = ref(!!instructor.value)
+  const selectSuggestion = () => {
+    suggestionSelected.value = true
+  }
+
   watch(instructor, (newInput, oldInput) => {
-    console.log('newInput', newInput)
+    suggestionSelected.value = false
     const newLength = newInput?.length || 0
     const oldLength = oldInput?.length || 0
     const distance = Math.abs(newLength - oldLength)
@@ -67,10 +87,12 @@ export function useInstructorAutoComplete(instructor: Ref<string | null>) {
     }
   })
 
-  computeInstructors()
-
   return {
+    sameInstructor,
+    selectSuggestion,
+    suggestionSelected,
     suggestedInstructor,
+    instructorList,
     computeInstructors
   }
 }

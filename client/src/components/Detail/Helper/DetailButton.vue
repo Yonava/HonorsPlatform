@@ -1,6 +1,6 @@
 <template>
   <v-btn
-    :color="getActivePanel.color"
+    :color="getActivePanel.color + '-darken-2'"
     :disabled="readOnlyMode"
     size="x-small"
     class="mb-3"
