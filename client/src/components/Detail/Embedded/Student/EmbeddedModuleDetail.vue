@@ -84,7 +84,7 @@ import { storeToRefs } from 'pinia'
 
 const { readOnlyMode, getActiveEmbeddedPanel, focusedEmbeddedItem } = storeToRefs(useSheetManager())
 const module = computed(() => focusedEmbeddedItem.value as Module)
-const instructor = computed(() => module.value.instructor)
+const instructor = computed(() => module.value.instructor || '')
 
 const {
   sameInstructor,

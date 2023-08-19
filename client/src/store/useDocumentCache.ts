@@ -449,8 +449,14 @@ export const useDocumentCache = defineStore("documentCache", {
     },
     deleteItemCache(sysId: string, panelName?: PanelName) {
       const {
-        panel: activePanel
+        panel: activePanel,
+        focusedEmbeddedItem,
+        setFocusedEmbeddedItem
       } = useSheetManager();
+
+      if (focusedEmbeddedItem?.sysId === sysId) {
+        setFocusedEmbeddedItem(null);
+      }
 
       const actualPanelName = panelName ?? activePanel.panelName;
       const panel = panels[actualPanelName];
@@ -570,11 +576,10 @@ export const useDocumentCache = defineStore("documentCache", {
       newItem.row = null;
 
       const onActivePanel = panelName === getActivePanel.panelName;
+      console.log("useDocumentCache: activePanel", onActivePanel)
       if (onActivePanel) {
         setSelectedItem(newItem)
         setSearchFilter("");
-      } else {
-        this[panel.sheetRange].selected = [newItem]
       }
 
       this.addItemCache(newItem, panelName);

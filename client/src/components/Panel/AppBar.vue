@@ -17,6 +17,8 @@
       class="pa-4"
     >
       <div class="d-flex flex-row" style="width: 100%">
+
+        <!-- TODO enable when leaderboard is back online -->
         <!-- <v-btn icon>
           <v-icon
             @click="$router.push({ name: 'leaderboard' })"
@@ -24,23 +26,33 @@
             size="large"
           ></v-icon>
         </v-btn> -->
+
         <ActiveAccounts />
         <v-spacer></v-spacer>
         <Announcements />
       </div>
+
       <v-btn
         v-if="getActivePanel.add"
         @click="add.fire"
         :loading="add.loading"
+        :disabled="readOnlyMode"
         style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240)"
         class="mt-5"
         block
       >
-        <v-icon :icon="add.success ? 'mdi-check' : 'mdi-plus'" size="large" class="mr-2"></v-icon>
+        <v-icon
+          size="large"
+          class="mr-2"
+        >
+          {{ add.success ? 'mdi-check' : 'mdi-plus' }}
+        </v-icon>
         Add {{ getActivePanel.title.singular }}
       </v-btn>
+
       <v-btn
         @click="$router.push({ name: 'registrar' })"
+        :disabled="readOnlyMode"
         style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240)"
         class="mt-3"
         block
@@ -52,8 +64,10 @@
         ></v-icon>
         Registrar List
       </v-btn>
+
       <v-btn
         @click="$router.push({ name: 'email' })"
+        :disabled="readOnlyMode"
         style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240)"
         class="mt-3"
         block
@@ -65,6 +79,7 @@
         ></v-icon>
         Mass Email
       </v-btn>
+
       <AdditionalTools>
         <template #showing="{ toolsAvailable }">
           <v-btn
@@ -78,17 +93,22 @@
           </v-btn>
         </template>
       </AdditionalTools>
+
       <div style="overflow: auto; max-height: 50vh">
         <SortPanel class="mt-5" />
       </div>
+
       <span style="font-size: 10px; position: absolute; bottom: 10px;">
         {{ version }}
       </span>
+
     </v-navigation-drawer>
+
     <v-app-bar
       :color="appBarColor"
       class="app-bar px-5"
     >
+
       <div
         v-if="searchMode"
         style="width: 100%;"
@@ -101,7 +121,9 @@
           id="input"
         />
       </div>
+
       <PanelTitle v-else />
+
       <input
         v-if="mdAndUp"
         v-model="searchText"
@@ -118,6 +140,7 @@
       <v-btn
         v-if="smAndUp && getActivePanel.add"
         @click="add.fire"
+        :disabled="readOnlyMode"
         :loading="add.loading"
         :style="{
           background: add.success ? 'rgb(34, 159, 34)' : 'rgba(0, 0, 0, 0.4)',
@@ -125,10 +148,9 @@
         }"
         class="ml-3"
       >
-        <v-icon
-          :icon="add.success ? 'mdi-check' : 'mdi-plus'"
-          size="large"
-        ></v-icon>
+        <v-icon size="large">
+          {{ add.success ? 'mdi-check' : 'mdi-plus' }}
+        </v-icon>
         <span
           v-if="mdAndUp"
           class="ml-2"
@@ -136,6 +158,7 @@
           Add {{ getActivePanel.title.singular }}
         </span>
       </v-btn>
+
       <v-btn
         v-if="!mdAndUp"
         class="ml-3"
@@ -147,6 +170,7 @@
           icon="mdi-magnify"
           size="large"
         ></v-icon>
+
         <v-icon
           v-else
           @click="searchMode = false"
@@ -154,29 +178,46 @@
           size="large"
         ></v-icon>
       </v-btn>
+
       <div
         v-if="smAndUp"
-        :class="[mdAndUp ? 'ml-3' : '', 'd-flex', 'flex-row', 'align-center']"
+        :class="[
+          mdAndUp ? 'ml-3' : '',
+          'd-flex',
+          'flex-row',
+          'align-center'
+        ]"
       >
+
         <Announcements />
+
         <AdditionalTools>
           <template #showing="{ showing, toolsAvailable }">
+
             <v-btn
               v-if="toolsAvailable"
               icon
             >
+
               <v-icon
                 icon="mdi-hammer"
                 size="large"
               ></v-icon>
+
               <v-tooltip
                 :disabled="smAndDown || showing"
                 activator="parent"
                 location="bottom"
-              >Additional Tools</v-tooltip>
+              >
+                Additional Tools
+              </v-tooltip>
+
             </v-btn>
+
           </template>
         </AdditionalTools>
+
+        <!-- TODO enable when leaderboard is back online -->
         <!-- <v-btn icon>
           <v-icon
             @click="$router.push({ name: 'leaderboard' })"
@@ -187,8 +228,11 @@
             >View Points Leaderboard</v-tooltip
           >
         </v-btn> -->
+
       </div>
+
       <div v-else-if="!searchMode">
+
         <v-btn icon>
           <v-icon
             @click="navDrawer = true"
@@ -196,6 +240,7 @@
             size="large"
           ></v-icon>
         </v-btn>
+
       </div>
     </v-app-bar>
   </div>
@@ -220,7 +265,7 @@ import { storeToRefs } from "pinia";
 
 const { show: dialogOpen } = storeToRefs(useDialog())
 const { getSelectedItems } = useDocumentCache();
-const { searchFilter, getActivePanel } = storeToRefs(useSheetManager());
+const { searchFilter, getActivePanel, readOnlyMode } = storeToRefs(useSheetManager());
 const { setSearchFilter } = useSheetManager();
 
 const searchText = computed({

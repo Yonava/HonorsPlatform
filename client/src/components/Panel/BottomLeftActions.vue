@@ -34,6 +34,7 @@
     </div>
     <v-btn
       @click="$router.push({ name: 'registrar' })"
+      :disabled="readOnlyMode"
       icon
     >
       <v-icon>
@@ -48,6 +49,7 @@
     </v-btn>
     <v-btn
       @click="$router.push({ name: 'email' })"
+      :disabled="readOnlyMode"
       icon
     >
       <v-icon>
@@ -67,11 +69,15 @@
 <script setup lang="ts">
 import { useDisplay } from 'vuetify';
 import { useAuth } from '../../store/useAuth';
+import { useSheetManager } from '../../store/useSheetManager';
 import { storeToRefs } from 'pinia';
 import UserProfile from './UserProfile.vue';
 
 const auth = useAuth();
 const { googleProfile } = storeToRefs(auth);
+
+const sheetManager = useSheetManager();
+const { readOnlyMode } = storeToRefs(sheetManager);
 
 const { smAndDown } = useDisplay();
 </script>
