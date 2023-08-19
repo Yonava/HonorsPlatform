@@ -2,12 +2,13 @@
   <div style="width: 100%">
 
     <!-- optional button -->
-    <DetailButton
+    <ButtonInput
       v-if="button && button.condition"
       @click="buttonClicked"
+      :inputMedium="inputMedium"
     >
       {{ button.text }}
-    </DetailButton>
+    </ButtonInput>
 
     <div v-if="activeInput.type === 'text'">
 
@@ -83,7 +84,7 @@
 </template>
 
 <script setup lang="ts">
-import DetailButton from './DetailButton.vue';
+import ButtonInput from './ButtonInput.vue'
 import { computed } from 'vue'
 import { useBroadcastThroughSocket } from '../../../TrackItemForUpdate'
 import { useSheetManager } from '../../../store/useSheetManager';

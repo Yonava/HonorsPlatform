@@ -3,26 +3,18 @@
     v-model="selectedEvent.event"
     titlePlaceholder="Event Name"
   >
-    <v-btn
-      v-if="!selectedEvent.dateTime"
-      @click="
-        selectedEvent.dateTime = getNewDate();
-        broadcastThroughSocket('dateTime');
-      "
-      :color="getActiveEmbeddedPanel.color + '-darken-2'"
-      size="x-small"
-      class="mb-3"
-    >
-      Now
-    </v-btn>
 
-    <v-text-field
-      v-model="selectedEvent.dateTime"
-      @input="broadcastThroughSocket('dateTime')"
-      prepend-inner-icon="mdi-clock-outline"
+    <EmbeddedInput
+      :item="selectedEvent"
+      prop="dateTime"
+      icon="clock-outline"
       label="Date/Time"
-      variant="outlined"
-    ></v-text-field>
+      :button="{
+        condition: !selectedEvent.dateTime,
+        newPropValue: () => getNewDate(),
+        text: 'Current Time'
+      }"
+    />
 
     <v-textarea
       v-model="selectedEvent.note"
@@ -35,6 +27,7 @@
 </template>
 
 <script setup lang="ts">
+import EmbeddedInput from '../EmbeddedInput.vue';
 import EmbeddedDetailFrame from '../EmbeddedDetailFrame.vue'
 import { useSheetManager } from '../../../../store/useSheetManager'
 import { computed } from 'vue'

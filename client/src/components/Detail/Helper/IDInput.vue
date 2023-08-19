@@ -6,13 +6,13 @@
     <template #activator="{ props }">
 
       <!-- new id input -->
-      <DetailButton
+      <ButtonInput
         v-if="!item.id"
         v-bind="props"
         @click="tempId = ''"
       >
         Add Student ID
-      </DetailButton>
+      </ButtonInput>
 
       <!-- edit id input -->
       <div
@@ -84,7 +84,7 @@
 </template>
 
 <script setup lang="ts">
-import DetailButton from './DetailButton.vue';
+import ButtonInput from './ButtonInput.vue';
 import { computed, ref } from 'vue'
 import { useSheetManager } from '../../../store/useSheetManager'
 import type { Student, Graduate } from '../../../SheetTypes'

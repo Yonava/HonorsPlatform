@@ -12,7 +12,7 @@
 </template>
 
 <script setup lang="ts">
-import InputField from './InputField.vue'
+import InputField from '../Helper/InputField.vue'
 import type { SheetItem } from '../../../SheetTypes';
 
 const config = {

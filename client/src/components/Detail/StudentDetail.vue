@@ -40,6 +40,7 @@
           icon="ticket"
         />
         <div class="d-flex flex-row">
+
           <DetailInput
             :item="student"
             prop="activeStatus"
@@ -50,6 +51,7 @@
             :icon="statusOptionIcon"
             label="Active Status"
           />
+
           <DetailInput
             :item="student"
             prop="year"
@@ -90,9 +92,9 @@
         </div> -->
       </template>
       <template #notes-button>
-        <DetailButton @click="showAddNote = true">
+        <ButtonInput @click="showAddNote = true">
           Add Meeting Note
-        </DetailButton>
+        </ButtonInput>
       </template>
       <template #buttons>
         <div
@@ -145,7 +147,7 @@
 
 <script setup lang="ts">
 import IDInput from "./Helper/IDInput.vue";
-import DetailButton from "./Helper/DetailButton.vue";
+import ButtonInput from "./Helper/ButtonInput.vue";
 import DetailFrame from "./Helper/DetailFrame.vue";
 import DetailHeader from "./Helper/DetailHeader.vue";
 import DetailInput from "./Helper/DetailInput.vue";
