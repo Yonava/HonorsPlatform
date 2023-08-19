@@ -17,7 +17,7 @@ import type { SheetItem } from '../../../SheetTypes';
 
 const config = {
   inputVariant: 'outlined',
-  inputMedium: 'DETAIL'
+  inputMedium: 'EMBEDDED'
 } as const
 
 const props = defineProps<{

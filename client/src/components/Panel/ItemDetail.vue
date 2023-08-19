@@ -21,7 +21,7 @@
       }"
     ></div>
     <v-sheet
-      v-if="movementObject"
+      v-if="movementObject && !readOnlyMode"
       :color="movementObject.to.color"
       :style="{
         transition: 'all 0.3s ease',
@@ -146,7 +146,12 @@ const dragState = ref(false)
 const dragStateMove = ref(false)
 
 const sheetManager = useSheetManager()
-const { getActivePanel, listItemBeingDragged, focusedItemSysId } = storeToRefs(sheetManager)
+const {
+  getActivePanel,
+  listItemBeingDragged,
+  focusedItemSysId,
+  readOnlyMode
+} = storeToRefs(sheetManager)
 const { setFocusedItem } = sheetManager
 
 const { addSelectedItem } = useDocumentCache()
