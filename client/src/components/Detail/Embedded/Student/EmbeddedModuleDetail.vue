@@ -1,90 +1,67 @@
 <template>
   <EmbeddedDetailFrame
-    v-model="selectedModule.courseCode"
+    v-model="module.courseCode"
     @input="broadcastThroughSocket('courseCode')"
     titlePlaceholder="Course Code"
   >
-    <v-btn
-      v-if="!selectedModule.term"
-      @click="
-        selectedModule.term = getCurrentTerm();
-        broadcastThroughSocket('term');
-      "
-      :color="getActiveEmbeddedPanel.color + '-darken-2'"
-      size="x-small"
-      class="mb-3"
-    >Current Term</v-btn>
-    <v-text-field
-      v-model="selectedModule.term"
-      @input="broadcastThroughSocket('term')"
+
+    <EmbeddedInput
+      :item="module"
+      prop="term"
+      :button="{
+        condition: !module.term,
+        text: 'Current Term',
+        newPropValue: () => getCurrentTerm(),
+      }"
       :rules="[(v) => termValidator(v) || 'Potentially invalid term']"
       label="Term"
-      variant="outlined"
-    ></v-text-field>
-    <InstructorComplete
-      @update="
-        selectedModule.instructor = $event;
-        broadcastThroughSocket('instructor')
-      "
-      :instructor="selectedModule.instructor"
-      :color="getActiveEmbeddedPanel.color + '-darken-2'"
+      icon="calendar"
     />
-    <v-text-field
-      v-model="selectedModule.instructor"
-      @input="broadcastThroughSocket('instructor')"
+
+    <EmbeddedInput
+      :item="module"
+      prop="instructor"
+      :button="{
+        condition: !sameInstructor && !suggestionSelected,
+        text: suggestionToString,
+        newPropValue: () => selectSuggestion(),
+      }"
+      icon="human-male-board"
       label="Instructor"
-      variant="outlined"
-    ></v-text-field>
-    <div class="d-flex flex-row mb-3">
-      <v-btn
-        v-if="!selectedModule.docuSignCreated"
-        @click="
-          selectedModule.docuSignCreated = new Date().toLocaleDateString('en-US');
-          broadcastThroughSocket('docuSignCreated');
-        "
-        :color="getActiveEmbeddedPanel.color + '-darken-2'"
-        size="x-small"
-      >
-        Created Now
-      </v-btn>
-      <v-spacer></v-spacer>
-      <v-btn
-        v-if="!selectedModule.docuSignCompleted"
-        @click="
-          selectedModule.docuSignCompleted = new Date().toLocaleDateString('en-US');
-          broadcastThroughSocket('docuSignCompleted');
-        "
-        :color="getActiveEmbeddedPanel.color + '-darken-2'"
-        size="x-small"
-      >
-        Completed Now
-      </v-btn>
-    </div>
+    />
+
     <div class="d-flex flex-row">
-      <v-text-field
-        v-model="selectedModule.docuSignCreated"
-        @input="broadcastThroughSocket('docuSignCreated')"
+      <EmbeddedInput
+        :item="module"
+        prop="docuSignCreated"
+        icon="calendar-alert"
         label="DocuSign Created"
-        variant="outlined"
-        class="mr-5"
-      ></v-text-field>
-      <v-text-field
-        v-model="selectedModule.docuSignCompleted"
-        @input="broadcastThroughSocket('docuSignCompleted')"
+        :button="{
+          condition: !module.docuSignCreated,
+          text: 'Created Today',
+          newPropValue: () => new Date().toLocaleDateString('en-US'),
+        }"
+      />
+
+      <EmbeddedInput
+        :item="module"
+        prop="docuSignCompleted"
+        icon="calendar-check"
         label="DocuSign Completed"
-        variant="outlined"
-      ></v-text-field>
+        :button="{
+          condition: !module.docuSignCompleted,
+          text: 'Completed Today',
+          newPropValue: () => new Date().toLocaleDateString('en-US'),
+        }"
+        class="ml-4"
+      />
     </div>
-    <v-textarea
-      v-model="selectedModule.description"
-      @input="broadcastThroughSocket('description')"
-      no-resize
-      label="Description"
-      variant="outlined"
-    ></v-textarea>
+
     <template #right-button>
       <v-btn
-        @click="moveItem(selectedModule)"
+        @click="moveItem(module)"
+        :loading="movingItem"
+        :disabled="readOnlyMode"
         variant="outlined"
         :color="getActiveEmbeddedPanel.color + '-darken-2'"
       >
@@ -95,20 +72,26 @@
 </template>
 
 <script setup lang="ts">
+import EmbeddedInput from '../EmbeddedInput.vue'
 import EmbeddedDetailFrame from '../EmbeddedDetailFrame.vue'
 import { useSheetManager } from '../../../../store/useSheetManager'
 import { computed } from 'vue'
 import { termValidator, getCurrentTerm } from '../../../../TermValidator'
-import InstructorComplete from '../../Helper/InstructorComplete.vue'
+import { useInstructorAutoComplete } from '../../../../InstructorAutoComplete'
 import type { Module } from '../../../../SheetTypes'
 import { useMoveItem } from '../../../../MoveItems'
+import { storeToRefs } from 'pinia'
 
-const { getActiveEmbeddedPanel, focusedEmbeddedItem } = useSheetManager()
-const selectedModule = computed(() => focusedEmbeddedItem as Module)
+const { readOnlyMode, getActiveEmbeddedPanel, focusedEmbeddedItem } = storeToRefs(useSheetManager())
+const module = computed(() => focusedEmbeddedItem.value as Module)
+const instructor = computed(() => module.value.instructor)
 
-defineProps<{
-  broadcastThroughSocket: (prop: keyof Module, value?: string | number | boolean) => void
-}>()
+const {
+  sameInstructor,
+  selectSuggestion,
+  suggestionSelected,
+  suggestionToString
+} = useInstructorAutoComplete(instructor)
 
-const { moveItem } = useMoveItem('MODULES');
+const { moveItem, movingItem } = useMoveItem('MODULES');
 </script>

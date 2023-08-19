@@ -118,7 +118,6 @@ const module = computed(() => props.item)
 const instructor = computed(() => module.value.instructor)
 
 const {
-  suggestedInstructor,
   sameInstructor,
   selectSuggestion,
   suggestionSelected,

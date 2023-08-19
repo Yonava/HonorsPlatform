@@ -27,6 +27,7 @@
         </div>
       </div>
       <v-icon
+        v-if="!readOnlyMode"
         @click.stop="remove(mod)"
         color="white"
         style="cursor: pointer; margin-left: auto;"
@@ -41,8 +42,10 @@
 <script setup lang="ts">
 import { Module } from "../../../../SheetTypes"
 import { useSheetManager } from '../../../../store/useSheetManager'
+import { storeToRefs } from "pinia";
 
-const { getActiveEmbeddedPanel } = useSheetManager()
+const sheetManager = useSheetManager()
+const { getActiveEmbeddedPanel, readOnlyMode } = storeToRefs(sheetManager)
 
 const props = defineProps<{
   items: Module[];

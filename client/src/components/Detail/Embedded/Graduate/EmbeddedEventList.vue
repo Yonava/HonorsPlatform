@@ -13,19 +13,32 @@
       >
         <div class="d-flex flex-column">
           <div>
-            <strong v-if="event.event">Event: </strong>
-            {{ event.event }}
+
+            <strong>
+              Event:
+            </strong>
+            {{ event.event || '(No Event Name)' }}
+
           </div>
           <div>
-            <strong v-if="event.dateTime">Date/Time: </strong>
-            {{ event.dateTime }}
+
+            <strong>
+              Date/Time:
+            </strong>
+            {{ event.dateTime || '(No Date/Time)' }}
           </div>
+
         </div>
+
         <v-icon
+          v-if="!readOnlyMode"
           @click.stop="remove(event)"
           size="large"
           class="delete-icon"
-        >mdi-close</v-icon>
+        >
+          mdi-close
+        </v-icon>
+
       </v-sheet>
     </div>
   </div>
@@ -34,8 +47,10 @@
 <script setup lang="ts">
 import { GradEngagement } from "../../../../SheetTypes"
 import { useSheetManager } from '../../../../store/useSheetManager'
+import { storeToRefs } from "pinia";
 
-const { getActiveEmbeddedPanel } = useSheetManager()
+const sheetManager = useSheetManager()
+const { getActiveEmbeddedPanel, readOnlyMode } = storeToRefs(sheetManager)
 
 const props = defineProps<{
   items: GradEngagement[];

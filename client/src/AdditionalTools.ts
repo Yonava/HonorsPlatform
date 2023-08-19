@@ -14,10 +14,12 @@ export const tools = {
     },
     {
       name: 'Suggested Deletions',
+      disableInReadOnly: true,
       handler: () => { useDialog().setPanelCover('open') }
     },
     {
       name: 'Increment Student Year',
+      disableInReadOnly: true,
       handler: async () => {
         useDialog().open({
           component: {
@@ -28,6 +30,7 @@ export const tools = {
     },
     {
       name: 'Create Temporary Sheet',
+      disableInReadOnly: true,
       handler: async () => {
         useDialog().open({
           component: {
@@ -54,10 +57,12 @@ export const tools = {
     },
     {
       name: 'Suggested Deletions',
+      disableInReadOnly: true,
       handler: () => { useDialog().setPanelCover('open') }
     },
     {
       name: 'Create Temporary Sheet',
+      disableInReadOnly: true,
       handler: async () => {
         useDialog().open({
           component: {
@@ -84,10 +89,12 @@ export const tools = {
     },
     {
       name: 'Suggested Deletions',
+      disableInReadOnly: true,
       handler: () => { useDialog().setPanelCover('open') }
     },
     {
       name: 'Create Temporary Sheet',
+      disableInReadOnly: true,
       handler: async () => {
         useDialog().open({
           component: {
@@ -114,10 +121,12 @@ export const tools = {
     },
     {
       name: 'Suggested Deletions',
+      disableInReadOnly: true,
       handler: () => { useDialog().setPanelCover('open') }
     },
     {
       name: 'Create Temporary Sheet',
+      disableInReadOnly: true,
       handler: async () => {
         useDialog().open({
           component: {
@@ -144,10 +153,12 @@ export const tools = {
     },
     {
       name: 'Suggested Deletions',
+      disableInReadOnly: true,
       handler: () => { useDialog().setPanelCover('open') }
     },
     {
       name: 'Create Temporary Sheet',
+      disableInReadOnly: true,
       handler: async () => {
         useDialog().open({
           component: {
@@ -174,10 +185,12 @@ export const tools = {
     },
     {
       name: 'Suggested Deletions',
+      disableInReadOnly: true,
       handler: () => { useDialog().setPanelCover('open') }
     },
     {
       name: 'Create Temporary Sheet',
+      disableInReadOnly: true,
       handler: async () => {
         useDialog().open({
           component: {

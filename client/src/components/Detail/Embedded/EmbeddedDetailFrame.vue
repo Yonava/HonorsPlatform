@@ -25,6 +25,17 @@
           class="title mt-2"
         >
         <slot></slot>
+
+        <EmbeddedInput
+          v-if="focusedEmbeddedItem"
+          :item="focusedEmbeddedItem"
+          prop="note"
+          :input="{
+            type: 'textarea',
+          }"
+          label="Note"
+        />
+
         <v-card-actions class="pa-0">
           <v-btn
             @click="showDialog = false"
@@ -42,6 +53,7 @@
 </template>
 
 <script setup lang="ts">
+import EmbeddedInput from './EmbeddedInput.vue'
 import { ref, computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useDisplay } from 'vuetify'

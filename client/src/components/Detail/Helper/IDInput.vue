@@ -21,21 +21,25 @@
         @click="openIdDialog"
         class="d-flex align-center px-2 py-1 edit-id"
       >
+
         <div>
           {{ item.id }}
         </div>
+
         <v-icon
           size="small"
           style="opacity: 0.5;"
         >
           mdi-pencil
         </v-icon>
+
         <v-tooltip
           :disable="xs"
           activator="parent"
         >
           Edit Student ID
         </v-tooltip>
+
       </div>
 
       <!-- view id -->
@@ -44,19 +48,23 @@
         class="d-flex align-center px-2 py-1 edit-id"
         style="cursor: default;"
       >
+
         <div>
           {{ item.id }}
         </div>
+
         <v-tooltip
           :disable="xs"
           activator="parent"
         >
           Student ID
         </v-tooltip>
+
       </div>
 
     </template>
     <v-sheet class="id-dialog pa-4">
+
       <v-text-field
         v-model="tempId"
         :rules="props.rules"
@@ -64,6 +72,7 @@
         class="mb-2"
       ></v-text-field>
       <div class="d-flex">
+
         <v-btn
           @click="saveId"
           :disabled="invalidId"
@@ -71,13 +80,16 @@
         >
           Save
         </v-btn>
+
         <v-spacer></v-spacer>
+
         <v-btn
           @click="idChangeCancelled"
           color="red"
         >
           Cancel
         </v-btn>
+
       </div>
     </v-sheet>
   </v-dialog>

@@ -14,6 +14,7 @@
         v-for="tool in activeTools"
         :key="tool.name"
         @click="tool.handler"
+        :disabled="readOnlyMode && tool.disableInReadOnly"
         class="type-list-item"
       >
         {{ tool.name }}
@@ -32,7 +33,7 @@ import { tools } from '../../AdditionalTools'
 const showing = ref(false)
 
 const sheetManager = useSheetManager()
-const { getActivePanel } = storeToRefs(sheetManager)
+const { getActivePanel, readOnlyMode } = storeToRefs(sheetManager)
 
 const activeTools = computed(() => {
   return tools[getActivePanel.value.panelName] ?? []
