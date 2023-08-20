@@ -47,6 +47,7 @@ const props = defineProps<{
     condition: boolean,
     newPropValue: () => string | number | boolean,
     text: string,
+    disableCondition?: boolean,
   }
 }>()
 </script>

@@ -1,7 +1,7 @@
 <template>
   <v-btn
     :color="panel.color + '-darken-2'"
-    :disabled="readOnlyMode"
+    :disabled="disabled"
     size="x-small"
     class="mb-3"
   >
@@ -15,11 +15,20 @@ import { storeToRefs } from 'pinia';
 import { computed } from 'vue';
 
 const sheetManager = useSheetManager();
-const { getActivePanel, getActiveEmbeddedPanel, readOnlyMode } = storeToRefs(sheetManager);
+const {
+  getActivePanel,
+  getActiveEmbeddedPanel,
+  readOnlyMode
+} = storeToRefs(sheetManager);
 
 const props = defineProps<{
   inputMedium?: 'DETAIL' | 'EMBEDDED',
+  disableCondition?: boolean,
 }>()
+
+const disabled = computed(() => {
+  return readOnlyMode.value || props.disableCondition
+})
 
 const panel = computed(() => {
   if (props.inputMedium === 'EMBEDDED') {

@@ -2,7 +2,7 @@
   <div>
     <div class="d-flex flex-row align-center mb-2">
       <h2>
-        {{ text.title }} {{ focusedEmbeddedItem && item.sysId === focusedEmbeddedItem.studentSysId }}
+        {{ text.title }}
       </h2>
       <v-spacer></v-spacer>
       <v-btn

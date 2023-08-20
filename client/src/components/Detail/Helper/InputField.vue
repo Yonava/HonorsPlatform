@@ -6,6 +6,7 @@
       v-if="button && button.condition"
       @click="buttonClicked"
       :inputMedium="inputMedium"
+      :disableCondition="button.disableCondition"
     >
       {{ button.text }}
     </ButtonInput>
@@ -18,7 +19,7 @@
         v-model="content"
         v-bind="$attrs"
         @input="broadcast(prop)"
-        :prepend-icon="activeIcon"
+        :prepend-inner-icon="activeIcon"
         :readonly="readOnlyMode"
         :variant="inputVariant"
         type="text"
@@ -30,7 +31,7 @@
         v-model.number="content"
         v-bind="$attrs"
         @input="broadcast(prop)"
-        :prepend-icon="activeIcon"
+        :prepend-inner-icon="activeIcon"
         :readonly="readOnlyMode"
         :variant="inputVariant"
         type="number"
@@ -44,7 +45,7 @@
       v-bind="$attrs"
       @update:model-value="broadcast(prop)"
       :items="activeInput.items"
-      :prepend-icon="activeIcon"
+      :prepend-inner-icon="activeIcon"
       :readonly="readOnlyMode"
       :variant="inputVariant"
     ></v-autocomplete>
@@ -55,7 +56,7 @@
       v-bind="$attrs"
       @update:model-value="broadcast(prop)"
       :items="activeInput.items"
-      :prepend-icon="activeIcon"
+      :prepend-inner-icon="activeIcon"
       :readonly="readOnlyMode"
       :variant="inputVariant"
     ></v-select>
@@ -65,6 +66,7 @@
       v-model="content"
       v-bind="$attrs"
       @input="broadcast(prop)"
+      prepend-inner-icon="mdi-note"
       :readonly="readOnlyMode"
       auto-grow
       :variant="inputVariant"
@@ -130,6 +132,7 @@ const props = defineProps<{
     condition: boolean,
     newPropValue: () => string | number | boolean,
     text: string,
+    disableCondition?: boolean,
   },
 }>()
 

@@ -31,6 +31,7 @@
           condition: !sameInstructor && !suggestionSelected,
           text: suggestionToString,
           newPropValue: () => selectSuggestion(),
+          disableCondition: !suggestedInstructor
         }"
         icon="human-male-board"
         label="Instructor"
@@ -115,13 +116,14 @@ const props = defineProps<{
 }>()
 
 const module = computed(() => props.item)
-const instructor = computed(() => module.value.instructor)
+const instructor = computed(() => module.value?.instructor)
 
 const {
   sameInstructor,
   selectSuggestion,
   suggestionSelected,
-  suggestionToString
+  suggestionToString,
+  suggestedInstructor
 } = useInstructorAutoComplete(instructor)
 
 const { broadcastThroughSocket } = useUpdateItem(module)

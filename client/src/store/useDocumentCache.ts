@@ -576,7 +576,6 @@ export const useDocumentCache = defineStore("documentCache", {
       newItem.row = null;
 
       const onActivePanel = panelName === getActivePanel.panelName;
-      console.log("useDocumentCache: activePanel", onActivePanel)
       if (onActivePanel) {
         setSelectedItem(newItem)
         setSearchFilter("");

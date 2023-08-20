@@ -16,7 +16,7 @@ import InputField from './InputField.vue'
 import type { SheetItem } from '../../../SheetTypes';
 
 const config = {
-  inputVariant: 'outlined',
+  inputVariant: 'filled',
   inputMedium: 'DETAIL'
 } as const
 
@@ -47,6 +47,7 @@ const props = defineProps<{
     condition: boolean,
     newPropValue: () => string | number | boolean,
     text: string,
+    disableCondition?: boolean,
   }
 }>()
 </script>

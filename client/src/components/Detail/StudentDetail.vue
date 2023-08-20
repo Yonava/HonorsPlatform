@@ -1,7 +1,9 @@
 <template>
   <div>
     <DetailFrame :item="student">
+
       <template #main>
+
         <DetailHeader
           :item="student"
           :placeholder="`${getActivePanel.title.singular} Name`"
@@ -12,22 +14,18 @@
           />
         </DetailHeader>
 
-        <div class="d-flex align-center">
-
-          <DetailInput
-            :item="student"
-            prop="email"
-            :rules="[(v) => emailValidator(v) || 'Invalid email']"
-            label="Email"
-            icon="email"
-            :button="{
-              condition: !student.email,
-              text: `New ${getActivePanel.title.singular} Email`,
-              newPropValue: () => getStudentEmail(student.name),
-            }"
-          />
-
-        </div>
+        <DetailInput
+          :item="student"
+          prop="email"
+          :rules="[(v) => emailValidator(v) || 'Invalid email']"
+          label="Email"
+          icon="email"
+          :button="{
+            condition: !student.email,
+            text: `New ${getActivePanel.title.singular} Email`,
+            newPropValue: () => getStudentEmail(student.name),
+          }"
+        />
 
         <DetailInput
           :item="student"
@@ -39,7 +37,8 @@
           label="Points"
           icon="ticket"
         />
-        <div class="d-flex flex-row">
+
+        <InputCoupler>
 
           <DetailInput
             :item="student"
@@ -61,9 +60,9 @@
             }"
             icon="briefcase"
             label="Year"
-            class="ml-4"
           />
-        </div>
+
+        </InputCoupler>
 
         <DetailInput
           :item="student"
@@ -77,26 +76,18 @@
           class="mt-2"
         />
 
-        <!-- TODO integrate full first class support for added categories (v0.90 hopefully) -->
-        <!-- <div class="d-flex flex-wrap">
-          <div
-            v-for="(value, key) in student.misc"
-            :key="key"
-            style="width: calc(50% - 15px); margin-right: 15px;"
-          >
-            <v-text-field
-              v-model="student.misc[key]"
-              :label="key"
-            ></v-text-field>
-          </div>
-        </div> -->
       </template>
+
       <template #notes-button>
+
         <ButtonInput @click="showAddNote = true">
           Add Meeting Note
         </ButtonInput>
+
       </template>
+
       <template #buttons>
+
         <div
           class="d-flex flex-row justify-space-between"
           style="width: 100%"
@@ -135,17 +126,21 @@
           </v-btn>
         </div>
       </template>
+
     </DetailFrame>
+
     <AddStudentNote
       @success="addStudentNote($event)"
       @close="showAddNote = false"
       :show="showAddNote"
     />
+
   </div>
 </template>
 
 
 <script setup lang="ts">
+import InputCoupler from "./Helper/InputCoupler.vue";
 import IDInput from "./Helper/IDInput.vue";
 import ButtonInput from "./Helper/ButtonInput.vue";
 import DetailFrame from "./Helper/DetailFrame.vue";

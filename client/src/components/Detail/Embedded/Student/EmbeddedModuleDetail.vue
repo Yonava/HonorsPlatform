@@ -25,6 +25,7 @@
         condition: !sameInstructor && !suggestionSelected,
         text: suggestionToString,
         newPropValue: () => selectSuggestion(),
+        disableCondition: !suggestedInstructor
       }"
       icon="human-male-board"
       label="Instructor"
@@ -51,7 +52,7 @@
         :button="{
           condition: !module.docuSignCompleted,
           text: 'Completed Today',
-          newPropValue: () => new Date().toLocaleDateString('en-US'),
+          newPropValue: () => new Date().toLocaleDateString('en-US')
         }"
         class="ml-4"
       />
@@ -84,13 +85,14 @@ import { storeToRefs } from 'pinia'
 
 const { readOnlyMode, getActiveEmbeddedPanel, focusedEmbeddedItem } = storeToRefs(useSheetManager())
 const module = computed(() => focusedEmbeddedItem.value as Module)
-const instructor = computed(() => module.value.instructor || '')
+const instructor = computed(() => module.value?.instructor || '')
 
 const {
   sameInstructor,
   selectSuggestion,
   suggestionSelected,
-  suggestionToString
+  suggestionToString,
+  suggestedInstructor
 } = useInstructorAutoComplete(instructor)
 
 const { moveItem, movingItem } = useMoveItem('MODULES');
