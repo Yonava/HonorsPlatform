@@ -2,12 +2,13 @@
   <div
     ref="parentDiv"
     :class="[
-      breakup ? '' : 'd-flex',
-      'flex-row'
+      'd-flex',
+      breakup ? 'flex-column' : 'flex-row',
     ]"
     :style="{
-      gap: '20px',
+      gap: breakup ? '' : gap,
       width: '100%',
+      justifyContent: 'space-between',
     }"
   >
     <slot
@@ -27,12 +28,20 @@ const { width } = useElementSize(parentDiv)
 
 const props = defineProps<{
   minWidth?: number,
+  gap?: string,
 }>()
 
-const defaultMinWidth = 500
+const DEFAULTS = {
+  minWidth: 400,
+  gap: '20px',
+}
 
 const minWidth = computed(() => {
-  return props.minWidth ?? defaultMinWidth
+  return props.minWidth ?? DEFAULTS.minWidth
+})
+
+const gap = computed(() => {
+  return props.gap ?? DEFAULTS.gap
 })
 
 const breakup = computed(() => {

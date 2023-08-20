@@ -95,17 +95,22 @@
 
       <template #buttons>
 
-        <div
-          class="d-flex flex-row justify-space-between"
-          style="width: 100%"
+        <InputCoupler
+          :minWidth="400"
+          #default="{ brokenUp }"
+          gap="12px"
         >
+
           <v-btn
             @click="viewThesis"
             :color="thesisButton.color"
             :loading="creatingThesis"
             :disabled="readOnlyMode && !thesis"
+            :style="{
+              width: brokenUp ? '' : 'calc(50% - 6px)',
+              marginBottom: brokenUp ? '12px' : '',
+            }"
             size="large"
-            style="width: 49%"
           >
             <v-icon
               class="mr-2"
@@ -115,13 +120,17 @@
             </v-icon>
             {{ thesisButton.text }}
           </v-btn>
+
           <v-btn
             @click="moveItem(student)"
             :loading="movingItem"
             :disabled="readOnlyMode"
             :color="panelOnceMoved?.color"
+            :style="{
+              width: brokenUp ? '' : 'calc(50% - 6px)',
+              marginBottom: brokenUp ? '' : '',
+            }"
             size="large"
-            style="width: 49%"
           >
             <v-icon
               class="mr-2"
@@ -131,7 +140,10 @@
             </v-icon>
             Graduate
           </v-btn>
-        </div>
+
+        </InputCoupler>
+
+
       </template>
 
     </DetailFrame>

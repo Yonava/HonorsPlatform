@@ -103,14 +103,3 @@ const showDialog = computed({
   }
 })
 </script>
-
-<style scoped>
-input.title {
-  font-weight: 900;
-  border: none;
-  outline: none;
-  width: 100%;
-  margin-bottom: 1rem;
-  font-size: 3rem;
-}
-</style>

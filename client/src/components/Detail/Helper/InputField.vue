@@ -83,7 +83,17 @@
       @input="broadcast(prop)"
       :readonly="readOnlyMode"
       type="text"
-      class="header-input"
+      class="title"
+    >
+
+    <input
+      v-else-if="activeInput.type === 'title-variant'"
+      v-model="content"
+      v-bind="$attrs"
+      @input="broadcast(prop)"
+      :readonly="readOnlyMode"
+      type="text"
+      class="title-variant mt-2"
     >
 
   </div>
@@ -132,7 +142,10 @@ const props = defineProps<{
     } |
     {
       type: 'title',
-    },
+    } |
+    {
+      type: 'title-variant'
+    }
   button?: {
     condition: boolean,
     newPropValue: () => string | number | boolean,
@@ -181,13 +194,23 @@ const content = computed({
 </script>
 
 <style scoped>
-input.header-input {
+input.title {
   font-weight: 900;
   font-size: 3em;
   line-height: 0.9;
   width: 100%;
 }
 
-input.header-input:focus {
+input.title:focus {
   outline: none;
-}</style>
+}
+
+input.title-variant {
+  font-weight: 900;
+  border: none;
+  outline: none;
+  width: 100%;
+  margin-bottom: 1rem;
+  font-size: 3rem;
+}
+</style>
