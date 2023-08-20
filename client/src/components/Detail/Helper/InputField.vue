@@ -1,5 +1,9 @@
 <template>
-  <div style="width: 100%">
+  <div
+    :style="{
+      width: width ?? '100%',
+    }"
+  >
 
     <!-- optional button -->
     <ButtonInput
@@ -108,6 +112,7 @@ const props = defineProps<{
   item: SheetItem
   inputMedium: 'DETAIL' | 'EMBEDDED',
   inputVariant?: VuetifyInputVariant,
+  width?: string,
   icon?: string,
   input?:
     {

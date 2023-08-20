@@ -41,6 +41,7 @@
         <InputCoupler>
 
           <DetailInput
+            width="10%"
             :item="student"
             prop="activeStatus"
             :input="{
@@ -52,6 +53,7 @@
           />
 
           <DetailInput
+            width="90%"
             :item="student"
             prop="year"
             :input="{

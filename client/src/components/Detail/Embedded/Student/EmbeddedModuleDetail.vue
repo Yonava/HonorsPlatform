@@ -31,7 +31,8 @@
       label="Instructor"
     />
 
-    <div class="d-flex flex-row">
+    <InputCoupler>
+
       <EmbeddedInput
         :item="module"
         prop="docuSignCreated"
@@ -54,9 +55,9 @@
           text: 'Completed Today',
           newPropValue: () => new Date().toLocaleDateString('en-US')
         }"
-        class="ml-4"
       />
-    </div>
+
+    </InputCoupler>
 
     <template #right-button>
       <v-btn
@@ -73,6 +74,7 @@
 </template>
 
 <script setup lang="ts">
+import InputCoupler from '../../Helper/InputCoupler.vue'
 import EmbeddedInput from '../EmbeddedInput.vue'
 import EmbeddedDetailFrame from '../EmbeddedDetailFrame.vue'
 import { useSheetManager } from '../../../../store/useSheetManager'

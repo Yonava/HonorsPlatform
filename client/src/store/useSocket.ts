@@ -2,6 +2,7 @@ import { defineStore } from "pinia";
 import { local } from "../Locals";
 import { io } from "socket.io-client";
 import { useAuth, type GoogleProfile } from "./useAuth";
+import { useSyncState } from "./useSyncState";
 import { useSheetManager } from "./useSheetManager";
 import { useDocumentCache } from "./useDocumentCache";
 import { PanelName } from "../Panels";
@@ -187,9 +188,13 @@ export const useSocket = defineStore("socket", {
 
       this.socket.emit('userLogout', googleProfile.id)
     },
-    checkForActionsDuringDisconnect(lastAction: LastActionData) {
+    async checkForActionsDuringDisconnect(lastAction: LastActionData) {
       const { time, serverIsUp } = lastAction
       const { getAllDocuments } = useDocumentCache()
+      const { waitUntilSynced } = useSyncState()
+
+      // wait for all pending writes to resolve prior to checking for missed actions
+      await waitUntilSynced()
 
       if (!this.timeOfSocketDisconnect) {
         // If the socket has never disconnected, we are done here
