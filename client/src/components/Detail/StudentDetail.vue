@@ -27,21 +27,10 @@
           }"
         />
 
-        <DetailInput
-          :item="student"
-          prop="points"
-          :input="{
-            type: 'text',
-            variant: 'number'
-          }"
-          label="Points"
-          icon="ticket"
-        />
-
-        <InputCoupler>
+        <InputCoupler #default="{ brokenUp }">
 
           <DetailInput
-            width="10%"
+            :width="brokenUp ? '' : '40%'"
             :item="student"
             prop="activeStatus"
             :input="{
@@ -53,7 +42,7 @@
           />
 
           <DetailInput
-            width="90%"
+            :width="brokenUp ? '' : '60%'"
             :item="student"
             prop="year"
             :input="{
@@ -66,17 +55,33 @@
 
         </InputCoupler>
 
-        <DetailInput
-          :item="student"
-          prop="athletics"
-          :input="{
-            type: 'autocomplete',
-            items: Object.keys(athleticOptions),
-          }"
-          :icon="athleticOptions[student.athletics]"
-          label="Athletics"
-          class="mt-2"
-        />
+        <InputCoupler #default="{ brokenUp }">
+
+          <DetailInput
+            :width="brokenUp ? '' : '60%'"
+            :item="student"
+            prop="athletics"
+            :input="{
+              type: 'autocomplete',
+              items: Object.keys(athleticOptions),
+            }"
+            :icon="athleticOptions[student.athletics]"
+            label="Athletics"
+          />
+
+          <DetailInput
+            :width="brokenUp ? '' : '40%'"
+            :item="student"
+            prop="points"
+            :input="{
+              type: 'text',
+              variant: 'number'
+            }"
+            label="Points"
+            icon="ticket"
+          />
+
+        </InputCoupler>
 
       </template>
 

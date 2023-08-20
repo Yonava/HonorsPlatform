@@ -10,7 +10,11 @@
       width: '100%',
     }"
   >
-    <slot><!-- optional fallback --></slot>
+    <slot
+      v-bind="{
+        brokenUp: breakup
+      }"
+    ></slot>
   </div>
 </template>
 

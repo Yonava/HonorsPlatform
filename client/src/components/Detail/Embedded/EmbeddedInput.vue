@@ -1,11 +1,12 @@
 <template>
   <InputField
     v-bind="$attrs"
-    :prop="props.prop"
-    :item="props.item"
-    :icon="props.icon"
-    :input="props.input"
-    :button="props.button"
+    :prop="prop"
+    :item="item"
+    :icon="icon"
+    :width="width"
+    :input="input"
+    :button="button"
     :inputVariant="config.inputVariant"
     :inputMedium="config.inputMedium"
   />
@@ -23,6 +24,7 @@ const config = {
 const props = defineProps<{
   prop: string,
   item: SheetItem
+  width?: string,
   icon?: string,
   input?:
     {
