@@ -8,6 +8,7 @@ import {
   Grade,
   Thesis,
   ThesisDecision,
+  SheetEntry,
 } from "./SheetTypes";
 
 import {
@@ -22,56 +23,83 @@ function removeEmptyObjects(item: Object) {
     .some(value => typeof value === 'string' && value.length > 0);
 }
 
-const obj = {
-  a: 'a',
-}
+// the index where all SheetItems stored on Google Sheets must have their unique sysId
+const SYS_ID_INDEX = 0;
+
+const sheetItemHeaders: (keyof SheetEntry)[] = [
+  'sysId',
+  'note',
+];
 
 const studentHeaders: (keyof Student)[] = [
-  'sysId',
   'id',
   'name',
   'email',
   'points',
   'activeStatus',
   'year',
-  'athletics',
-  'note',
-]
+  'athletics'
+];
 
-export async function mapStudents(sheetData: string[][]): Promise<Student[]> {
-  const headerRow = await getHeaderRowCache('Students');
-  const categories = headerRow.slice(9);
-  return sheetData.map((student, index) => ({
-    row: index + 2, // + 1 for header row, + 1 for 0-indexing
-    sysId: student[0] ?? '',
-    id: student[1] ?? '',
-    name: student[2] ?? '',
-    email: student[3] ?? '',
-    points: parseInt(student[4]) || 0,
-    activeStatus: (student[5] ?? '') as StatusOption,
-    year: (student[6] ?? '') as YearOption,
-    athletics: (student[7] ?? '') as keyof typeof athleticOptions,
-    note: student[8] ?? '',
-    custom1: 30,
-  }))
+export const getNonCustomHeaderCount = () => {
+  return sheetItemHeaders.length + studentHeaders.length;
 }
 
-export async function unmapStudents(students: Student[]): Promise<string[][]> {
-  const headerRow = await getHeaderRowCache('Students');
-  const categories = headerRow.slice(9);
-  return students.map((student: Student) => {
-    return [
+export function mapStudents(matrix: string[][]): Student[] {
+  return matrix
+    .filter((row) => !!row[SYS_ID_INDEX])
+    .map((row, index) => ({
+
+      // the row number on the spreadsheet: + 1 for header row, + 1 for 0-indexing
+      row: index + 2,
+
+      // sysId is the first column of all SheetItems
+      sysId: row[SYS_ID_INDEX],
+
+      // student fields
+      ...studentHeaders.reduce((acc, curr, index) => {
+        return {
+          ...acc,
+          [curr]: row[index + 1] ?? '',
+        };
+      }, {} as Record<keyof Omit<Student, keyof SheetEntry>, any>),
+
+      // note is the last column of all SheetItems
+      note: row[studentHeaders.length + 1],
+
+      // custom fields
+      ...row.reduce((acc, curr, index) => {
+        const numberOfFields = studentHeaders.length + sheetItemHeaders.length;
+        if (index < numberOfFields) {
+          return acc;
+        }
+        return {
+          ...acc,
+          [index]: row[index] ?? '',
+        };
+      }, {}),
+
+    }))
+}
+
+export function unmapStudents(students: Student[]): string[][] {
+  const matrix: string[][] = []
+  for (const student of students) {
+    console.log(student);
+    const row = [
       student.sysId,
-      student.id,
-      student.name,
-      student.email,
-      student.points ? student.points.toString() : '0',
-      student.activeStatus,
-      student.year,
-      student.athletics,
+      ...studentHeaders.map((key) => {
+        const res = student[key]?.toString() ?? ''
+        console.log(res, key);
+        return res;
+      }),
       student.note,
-    ]
-  });
+    ];
+    matrix.push(row);
+  }
+
+  console.log(matrix);
+  return matrix;
 }
 
 export function mapModules(sheetData: string[][]): Module[] {

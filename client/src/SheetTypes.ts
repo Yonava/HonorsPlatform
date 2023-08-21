@@ -9,15 +9,14 @@ export type SheetItem = Module | Graduate | Student | CompletedModule | Thesis |
 export const grades = [null, "High Pass", "Pass", "Low Pass", "Fail"] as const;
 export type Grade = typeof grades[number];
 
-type CustomProp = `custom${number}`;
 
 type Primitive = string | number | boolean | null | undefined;
 
 type CustomField = {
-  [Property in CustomProp]: Primitive;
+  [Property in number]: Primitive;
 };
 
-type SheetEntry = {
+export type SheetEntry = {
   row: number | null | undefined;
   sysId: string;
   note: string;

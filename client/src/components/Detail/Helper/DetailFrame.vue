@@ -9,11 +9,19 @@
       ]"
     >
       <div>
+
         <slot name="main"></slot>
+
+        <CustomFields
+          input-medium="DETAIL"
+          :item="item"
+        />
+
         <EmbeddedDetail
           v-if="getActivePanel.embedded"
           :item="item"
         />
+
       </div>
       <v-divider
         v-if="sm"
@@ -69,6 +77,7 @@
 <script setup lang="ts">
 import EmbeddedDetail from '../Embedded/EmbeddedDetail.vue'
 import DetailInput from './DetailInput.vue'
+import CustomFields from './CustomFields.vue'
 import { ref, watch } from 'vue'
 import { useElementSize } from '@vueuse/core'
 import { useSheetManager } from '../../../store/useSheetManager'

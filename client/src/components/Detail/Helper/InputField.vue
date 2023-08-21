@@ -174,8 +174,8 @@ const activeInput = computed(() => {
 })
 
 const activeIcon = computed(() => {
-  const icon = `mdi-${props.icon}` ?? ""
-  return icon
+  const iconProp = props.icon ?? null
+  return iconProp ? `mdi-${iconProp}` : null
 })
 
 const content = computed({
