@@ -4,6 +4,8 @@ import {
   athleticOptions
 } from "./StudentTools";
 
+import { sheetProps } from "./DataMappers";
+
 export type SheetItem = Module | Graduate | Student | CompletedModule | Thesis | GradEngagement;
 
 export const grades = [null, "High Pass", "Pass", "Low Pass", "Fail"] as const;

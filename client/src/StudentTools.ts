@@ -118,7 +118,6 @@ export function graduateToStudent(graduate: Graduate): Student {
     year: "Senior",
     athletics: "",
     note: graduate.note,
-    misc: {},
   }
 }
 

@@ -29,6 +29,12 @@
         />
         <slot></slot>
 
+        <CustomFields
+          v-if="focusedEmbeddedItem"
+          :item="focusedEmbeddedItem"
+          input-medium="EMBEDDED"
+        />
+
         <EmbeddedInput
           v-if="focusedEmbeddedItem"
           :item="focusedEmbeddedItem"
@@ -56,6 +62,7 @@
 </template>
 
 <script setup lang="ts">
+import CustomFields from '../Helper/CustomFields.vue'
 import EmbeddedInput from './EmbeddedInput.vue'
 import { ref, computed } from 'vue'
 import { storeToRefs } from 'pinia'

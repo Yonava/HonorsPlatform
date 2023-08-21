@@ -5,7 +5,7 @@
       :key="index"
     >
 
-      <div v-if="headerField">
+      <div v-if="headerField && index > nonCustomPropLength - 1">
 
         <DetailInput
           v-if="inputMedium === 'DETAIL'"
@@ -35,15 +35,35 @@ import { headerRowMemo } from '../../../SheetsAPI';
 import { useSheetManager } from '../../../store/useSheetManager';
 import { storeToRefs } from 'pinia';
 import type { SheetItem } from '../../../SheetTypes';
-import { getNonCustomHeaderCount } from '../../../DataMappers';
+import { getNonCustomProps } from '../../../DataMappers';
 
 const sheetManager = useSheetManager()
-const { getActivePanel } = storeToRefs(sheetManager)
+const { getActivePanel, getActiveEmbeddedPanel } = storeToRefs(sheetManager)
 
 const headerRow = computed(() => {
-  const { sheetRange } = getActivePanel.value
-  const nonCustomHeaderCount = getNonCustomHeaderCount()
-  return headerRowMemo[sheetRange]?.slice(nonCustomHeaderCount) ?? []
+  if (props.inputMedium === 'DETAIL') {
+    const { sheetRange } = getActivePanel.value
+    return headerRowMemo[sheetRange] ?? []
+  } else if (props.inputMedium === 'EMBEDDED') {
+    const { sheetRange } = getActiveEmbeddedPanel.value
+    return headerRowMemo[sheetRange] ?? []
+  } else {
+    return []
+  }
+})
+
+const nonCustomPropLength = computed(() => {
+  if (props.inputMedium === 'DETAIL') {
+    const { panelName } = getActivePanel.value
+    const nonCustomProps = getNonCustomProps(panelName)
+    return nonCustomProps.length
+  } else if (props.inputMedium === 'EMBEDDED') {
+    const { panelName } = getActiveEmbeddedPanel.value
+    const nonCustomProps = getNonCustomProps(panelName)
+    return nonCustomProps.length
+  } else {
+    return 0
+  }
 })
 
 const props = defineProps<{
