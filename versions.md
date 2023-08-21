@@ -1,7 +1,15 @@
-# Current Version: prerelease 0.89
+# Current Version: prerelease 0.90
+
+### prerelease 0.90 (Aug. 21)
+- Feature / Read-Only Mode: Users are now able to place themselves in and be placed in read-only mode through the additional tools menu. Read-only mode toggles off the ability to make any changes to data on the platform including the ability to make announcements. In addition, access to features such as "Create Registrar List" as well as "Generate Mass Email" are disabled
+- Feature / Custom Fields: Custom fields can now be added to every panel with first class support for sockets, read-only mode, and embedded panel views.
+- Improvement: Previously cramped input fields (especially at smaller device sizes and on side by side editing) have been modified to take up more space and scale to adjust automatically as width changes using the new InputCoupler API
+- Graduate panel and Student panel ID inputs have been merged and improved with the new IDInput API
+- New Pinia store "useSocket" added to accommodate more robust and better seperation of concern for socket IO functionality
+- Added timestamps to posted announcements
 
 ### prerelease 0.89 (Aug. 13)
-- Feature: Profile menu added to BottomLeftActions on panel displaying time of last login and ability to logout + more
+- Feature / Profile Menu: Profile menu added to BottomLeftActions on panel displaying time of last login and ability to logout + more
 - Improvement: Announcements now can be posted by any honors staff through their profile menu. Announcements display more information including profile information of poster, and post date
 - Huge preformance improvements introduced using virtualScrollList on PanelList with the tradeoffs of TransitionList animations
 - Socket userAction "announce" added for live announcement posting
@@ -11,9 +19,9 @@
 - Various bug fixes to improve system stability and reliability
 
 ### prerelease 0.88 (Aug. 2)
-- Feature: The Honors Program platform is live. Edits are broadcasted between clients for a truely collaborative exprience
-- Feature: Added Google Profile Info API to always see which account you are editing on
-- Feature: Item can now be dragged to trigger moving it to a different panel
+- Feature / Live Collaboration: The Honors Program platform is live. Edits are broadcasted between clients for a truely collaborative exprience
+- Feature / Google Profiles: Added Google Profile Info API to always see which account you are editing on
+- Feature / Drag to Move: Item can now be dragged to trigger moving it to a different panel
 - Improvement: The ability to logout has been added so users with mutliple accounts can switch which account they are using
 - Refresh Data has been removed and added to Additional Tools
 - Moved Selected Item navigation drawer for SM devices to ItemDetailSM.vue and improved gittery behavior
@@ -30,8 +38,8 @@
 - Expanded warn API to add "persistent" option
 
 ### prerelease 0.87 (Jul. 19)
-- Feature: Pinned items allow users to pin items in the sidebar list which persist between sessions
-- Feature: List Item Actions let users access frequently used actions just one click away
+- Feature / Pinned Items: Pinned items allow users to pin items in the sidebar list which persist between sessions
+- Feature / Quick Actions: List Item Actions/Quick Actions let users access frequently used actions just one click away
 - Improvement: Completed Modules can now be moved back to the Modules panel
 - Sidebar list now animates when user pins items or an item is added to the list
 - Expanded the useDialog API to include options for props and persistence
@@ -48,13 +56,13 @@
 - Fixed bug that caused selected panels to not propogate updates properly
 
 ### prerelease 0.86 (Jul. 15)
-- Feature: Multi-panel mode — Drag and drop items from the item list to create a custom workspace
+- Feature / Multi-Profile Editing: Drag & drop items from the item list to create a custom side-by-side workspace
 - Improvement: added search to student and graduate link dialogs
 - Minor UI improvements to AuthPage
 - Added "getItemByKeyValue" method to useDocumentCache
 
 ### prerelease 0.85 (Jul. 9)
-- Improved Data Modelling: Added Student Sys ID to data layer across all panels dependent on students or graduates.
+- Improved Data Modeling: Added Student Sys ID to data layer across all panels dependent on students or graduates.
 - Fixed bug that caused items to duplicate when moved between ranges without document refresh
 - Student Match darastically improved and moved into its own composable
 - StudentLink and StudentLinkButton added to all panels dependent on students or graduates to relink on the fly
