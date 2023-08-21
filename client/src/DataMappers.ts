@@ -22,37 +22,44 @@ function removeEmptyObjects(item: Object) {
     .some(value => typeof value === 'string' && value.length > 0);
 }
 
+const obj = {
+  a: 'a',
+}
+
+const studentHeaders: (keyof Student)[] = [
+  'sysId',
+  'id',
+  'name',
+  'email',
+  'points',
+  'activeStatus',
+  'year',
+  'athletics',
+  'note',
+]
+
 export async function mapStudents(sheetData: string[][]): Promise<Student[]> {
   const headerRow = await getHeaderRowCache('Students');
   const categories = headerRow.slice(9);
-  return sheetData
-    .map((student, index) => ({
-      row: index + 2, // + 1 for header row, + 1 for 0-indexing
-      sysId: student[0] ?? '',
-      id: student[1] ?? '',
-      name: student[2] ?? '',
-      email: student[3] ?? '',
-      points: parseInt(student[4]) || 0,
-      activeStatus: (student[5] ?? '') as StatusOption,
-      year: (student[6] ?? '') as YearOption,
-      athletics: (student[7] ?? '') as keyof typeof athleticOptions,
-      note: student[8] ?? '',
-      misc: categories.reduce((acc: { [key in string]: string }, category: string, index: number) => {
-        if (category === '') {
-          return acc;
-        }
-        acc[category] = student[index + 9] ?? ''
-        return acc;
-      }, {})
-    }))
-    .filter(removeEmptyObjects);
+  return sheetData.map((student, index) => ({
+    row: index + 2, // + 1 for header row, + 1 for 0-indexing
+    sysId: student[0] ?? '',
+    id: student[1] ?? '',
+    name: student[2] ?? '',
+    email: student[3] ?? '',
+    points: parseInt(student[4]) || 0,
+    activeStatus: (student[5] ?? '') as StatusOption,
+    year: (student[6] ?? '') as YearOption,
+    athletics: (student[7] ?? '') as keyof typeof athleticOptions,
+    note: student[8] ?? '',
+    custom1: 30,
+  }))
 }
 
 export async function unmapStudents(students: Student[]): Promise<string[][]> {
   const headerRow = await getHeaderRowCache('Students');
   const categories = headerRow.slice(9);
   return students.map((student: Student) => {
-    const misc = categories.map((category: string) => student.misc[category] ?? '');
     return [
       student.sysId,
       student.id,
@@ -63,7 +70,6 @@ export async function unmapStudents(students: Student[]): Promise<string[][]> {
       student.year,
       student.athletics,
       student.note,
-      ...misc,
     ]
   });
 }

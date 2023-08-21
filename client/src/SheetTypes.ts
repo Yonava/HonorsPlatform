@@ -9,10 +9,28 @@ export type SheetItem = Module | Graduate | Student | CompletedModule | Thesis |
 export const grades = [null, "High Pass", "Pass", "Low Pass", "Fail"] as const;
 export type Grade = typeof grades[number];
 
-export interface SheetEntry {
+type CustomProp = `custom${number}`;
+
+type Primitive = string | number | boolean | null | undefined;
+
+type CustomField = {
+  [Property in CustomProp]: Primitive;
+};
+
+type SheetEntry = {
   row: number | null | undefined;
   sysId: string;
   note: string;
+} & CustomField;
+
+export interface Student extends SheetEntry {
+  id: string;
+  name: string;
+  email: string;
+  points: number;
+  activeStatus: StatusOption;
+  year: YearOption;
+  athletics: keyof typeof athleticOptions;
 }
 
 export interface Module extends SheetEntry {
@@ -35,19 +53,6 @@ export interface Graduate extends SheetEntry {
   email: string;
   phone: string;
   graduationDate: string;
-}
-
-export interface Student extends SheetEntry {
-  id: string;
-  name: string;
-  email: string;
-  points: number;
-  activeStatus: StatusOption;
-  year: YearOption;
-  athletics: keyof typeof athleticOptions;
-  misc: {
-    [key: string]: string
-  };
 }
 
 export interface GradEngagement extends SheetEntry {
