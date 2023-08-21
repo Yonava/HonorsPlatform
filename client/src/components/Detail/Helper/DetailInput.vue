@@ -44,7 +44,9 @@ const props = defineProps<{
     } |
     {
       type: 'title',
-    },
+    } | {
+      type: 'title-variant'
+    }
   button?: {
     condition: boolean,
     newPropValue: () => string | number | boolean,

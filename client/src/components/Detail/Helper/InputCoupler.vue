@@ -9,6 +9,7 @@
       gap: breakup ? '' : gap,
       width: '100%',
       justifyContent: 'space-between',
+      alignItems: breakup ? '' : 'end'
     }"
   >
     <slot

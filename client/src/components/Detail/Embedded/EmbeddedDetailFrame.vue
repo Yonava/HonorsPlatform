@@ -18,12 +18,15 @@
             {{ getActiveEmbeddedPanel.title.singular }}
           </span>
         </v-sheet>
-        <input
-          v-model="title"
+        <EmbeddedInput
+          v-if="focusedEmbeddedItem"
+          :item="focusedEmbeddedItem"
           :placeholder="titlePlaceholder"
-          type="text"
-          class="title mt-2"
-        >
+          :prop="getActiveEmbeddedPanel.properties.title"
+          :input="{
+            type: 'title-variant'
+          }"
+        />
         <slot></slot>
 
         <EmbeddedInput
@@ -70,7 +73,6 @@ const {
 } = useSheetManager()
 
 const props = defineProps<{
-  modelValue: string,
   titlePlaceholder: string
 }>()
 
@@ -78,14 +80,6 @@ const props = defineProps<{
 const emits = defineEmits<{
   'update:modelValue': (value: string) => void,
 }>()
-
-const title = computed({
-  get: () => props.modelValue,
-  set: (value) => {
-    // @ts-ignore
-    emits('update:modelValue', value)
-  }
-})
 
 const { xs } = useDisplay()
 

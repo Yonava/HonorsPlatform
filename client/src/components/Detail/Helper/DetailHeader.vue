@@ -39,7 +39,7 @@
         :placeholder="placeholder"
       />
     </div>
-    <v-divider class="my-2"></v-divider>
+    <v-divider class="mt-2 mb-4"></v-divider>
   </div>
 </template>
 

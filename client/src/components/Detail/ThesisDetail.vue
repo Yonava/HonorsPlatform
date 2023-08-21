@@ -11,59 +11,66 @@
         />
       </DetailHeader>
 
-      <DetailInput
-        :item="thesis"
-        prop="term"
-        :button="{
-          condition: !thesis.term,
-          text: 'Current Term',
-          newPropValue: () => getCurrentTerm(),
-        }"
-        :rules="[(v) => termValidator(v) || 'Potentially invalid term']"
-        label="Term"
-        icon="calendar"
-      />
+      <InputCoupler>
 
+        <DetailInput
+          :item="thesis"
+          prop="term"
+          :button="{
+            condition: !thesis.term,
+            text: 'Current Term',
+            newPropValue: () => getCurrentTerm(),
+          }"
+          :rules="[(v) => termValidator(v) || 'Potentially invalid term']"
+          label="Term"
+          icon="calendar"
+        />
 
-      <DetailInput
-        :item="thesis"
-        prop="draftReceived"
-        icon="calendar-check"
-        label="Draft Received"
-        :button="{
-          condition: !thesis.draftReceived,
-          text: 'Received Today',
-          newPropValue: () => new Date().toLocaleDateString('en-US'),
-        }"
-      />
+        <DetailInput
+          :item="thesis"
+          prop="decision"
+          :icon="approvalStates[thesis.decision] ?? 'alert-circle'"
+          label="Decision"
+          :button="{
+            condition: !thesis.decision,
+            text: 'Mark as Pending',
+            newPropValue: () => 'Pending',
+          }"
+          :input="{
+            type: 'select',
+            items: Object.keys(approvalStates),
+          }"
+        />
 
-      <DetailInput
-        :item="thesis"
-        prop="proposalReceived"
-        icon="calendar-check"
-        label="Proposal Received"
-        :button="{
-          condition: !thesis.proposalReceived,
-          text: 'Received Today',
-          newPropValue: () => new Date().toLocaleDateString('en-US'),
-        }"
-      />
+      </InputCoupler>
 
-      <DetailInput
-        :item="thesis"
-        prop="decision"
-        :icon="approvalStates[thesis.decision] ?? 'alert-circle'"
-        label="Decision"
-        :button="{
-          condition: !thesis.decision,
-          text: 'Mark as Pending',
-          newPropValue: () => 'Pending',
-        }"
-        :input="{
-          type: 'select',
-          items: Object.keys(approvalStates),
-        }"
-      />
+      <InputCoupler>
+
+        <DetailInput
+          :item="thesis"
+          prop="draftReceived"
+          icon="calendar-check"
+          label="Draft Received"
+          :button="{
+            condition: !thesis.draftReceived,
+            text: 'Received Today',
+            newPropValue: () => new Date().toLocaleDateString('en-US'),
+          }"
+        />
+
+        <DetailInput
+          :item="thesis"
+          prop="proposalReceived"
+          icon="calendar-check"
+          label="Proposal Received"
+          :button="{
+            condition: !thesis.proposalReceived,
+            text: 'Received Today',
+            newPropValue: () => new Date().toLocaleDateString('en-US'),
+          }"
+        />
+
+      </InputCoupler>
 
       <DetailInput
         :item="thesis"
@@ -111,6 +118,7 @@
 </template>
 
 <script setup lang="ts">
+import InputCoupler from './Helper/InputCoupler.vue'
 import DetailInput from './Helper/DetailInput.vue'
 import DetailHeader from './Helper/DetailHeader.vue'
 import DetailFrame from './Helper/DetailFrame.vue'

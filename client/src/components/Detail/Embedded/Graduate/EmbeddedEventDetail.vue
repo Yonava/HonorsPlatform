@@ -1,8 +1,5 @@
 <template>
-  <EmbeddedDetailFrame
-    v-model="event.event"
-    titlePlaceholder="Event Name"
-  >
+  <EmbeddedDetailFrame titlePlaceholder="Event Name">
 
     <EmbeddedInput
       :item="event"

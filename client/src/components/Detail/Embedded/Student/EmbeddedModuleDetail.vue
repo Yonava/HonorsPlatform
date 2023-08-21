@@ -1,9 +1,5 @@
 <template>
-  <EmbeddedDetailFrame
-    v-model="module.courseCode"
-    @input="broadcastThroughSocket('courseCode')"
-    titlePlaceholder="Course Code"
-  >
+  <EmbeddedDetailFrame titlePlaceholder="Course Code">
 
     <EmbeddedInput
       :item="module"

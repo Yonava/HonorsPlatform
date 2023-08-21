@@ -41,29 +41,34 @@
         Documentation
       </h1>
 
-      <DetailInput
-        :item="module"
-        prop="docuSignCreated"
-        icon="calendar-alert"
-        label="DocuSign Created"
-        :button="{
-          condition: !module.docuSignCreated,
-          text: 'Created Today',
-          newPropValue: () => new Date().toLocaleDateString('en-US'),
-        }"
-      />
 
-      <DetailInput
-        :item="module"
-        prop="docuSignCompleted"
-        icon="calendar-check"
-        label="DocuSign Completed"
-        :button="{
-          condition: !module.docuSignCompleted,
-          text: 'Completed Today',
-          newPropValue: () => new Date().toLocaleDateString('en-US'),
-        }"
-      />
+      <InputCoupler>
+
+        <DetailInput
+          :item="module"
+          prop="docuSignCreated"
+          icon="calendar-alert"
+          label="DocuSign Created"
+          :button="{
+            condition: !module.docuSignCreated,
+            text: 'Created Today',
+            newPropValue: () => new Date().toLocaleDateString('en-US'),
+          }"
+        />
+
+        <DetailInput
+          :item="module"
+          prop="docuSignCompleted"
+          icon="calendar-check"
+          label="DocuSign Completed"
+          :button="{
+            condition: !module.docuSignCompleted,
+            text: 'Completed Today',
+            newPropValue: () => new Date().toLocaleDateString('en-US'),
+          }"
+        />
+
+      </InputCoupler>
 
     </template>
 
@@ -89,6 +94,7 @@
 </template>
 
 <script setup lang="ts">
+import InputCoupler from './Helper/InputCoupler.vue'
 import DetailInput from './Helper/DetailInput.vue'
 import DetailHeader from './Helper/DetailHeader.vue'
 import DetailFrame from './Helper/DetailFrame.vue'

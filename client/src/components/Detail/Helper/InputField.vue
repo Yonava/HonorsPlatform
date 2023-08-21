@@ -84,7 +84,7 @@
       :readonly="readOnlyMode"
       type="text"
       class="title"
-    >
+    />
 
     <input
       v-else-if="activeInput.type === 'title-variant'"
@@ -94,7 +94,7 @@
       :readonly="readOnlyMode"
       type="text"
       class="title-variant mt-2"
-    >
+    />
 
   </div>
 </template>
@@ -166,7 +166,10 @@ const buttonClicked = () => {
 }
 
 const activeInput = computed(() => {
-  const type = props.input ?? { type: 'text', variant: 'string' }
+  const type = props.input ?? {
+    type: 'text',
+    variant: 'string'
+  }
   return type
 })
 

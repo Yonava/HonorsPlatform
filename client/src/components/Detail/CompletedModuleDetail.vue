@@ -11,17 +11,33 @@
         />
       </DetailHeader>
 
-      <DetailInput
-        :item="completedModule"
-        prop="completedDate"
-        label="Date of Completion"
-        icon="check"
-        :button="{
-          condition: !completedModule.completedDate,
-          text: 'Completed Today',
-          newPropValue: () => new Date().toLocaleDateString('en-US'),
-        }"
-      />
+
+      <InputCoupler>
+
+        <DetailInput
+          :item="completedModule"
+          prop="completedDate"
+          label="Date of Completion"
+          icon="check"
+          :button="{
+            condition: !completedModule.completedDate,
+            text: 'Completed Today',
+            newPropValue: () => new Date().toLocaleDateString('en-US'),
+          }"
+        />
+
+        <DetailInput
+          :item="completedModule"
+          prop="grade"
+          :input="{
+            type: 'select',
+            items: grades.map(grade => !grade ? 'Ungraded' : grade),
+          }"
+          label="Grade"
+          icon="star"
+        />
+
+      </InputCoupler>
 
       <DetailInput
         :item="completedModule"
@@ -48,44 +64,37 @@
         label="Instructor"
       />
 
-      <DetailInput
-        :item="completedModule"
-        prop="grade"
-        :input="{
-          type: 'select',
-          items: grades.map(grade => !grade ? 'Ungraded' : grade),
-        }"
-        label="Grade"
-        icon="star"
-      />
-
       <h1 class="mb-2">
         Documentation
       </h1>
 
-      <DetailInput
-        :item="completedModule"
-        prop="docuSignCreated"
-        icon="calendar-alert"
-        label="DocuSign Created"
-        :button="{
-          condition: !completedModule.docuSignCreated,
-          text: 'Created Today',
-          newPropValue: () => new Date().toLocaleDateString('en-US'),
-        }"
-      />
+      <InputCoupler>
 
-      <DetailInput
-        :item="completedModule"
-        prop="docuSignCompleted"
-        icon="calendar-check"
-        label="DocuSign Completed"
-        :button="{
-          condition: !completedModule.docuSignCompleted,
-          text: 'Completed Today',
-          newPropValue: () => new Date().toLocaleDateString('en-US'),
-        }"
-      />
+        <DetailInput
+          :item="completedModule"
+          prop="docuSignCreated"
+          icon="calendar-alert"
+          label="DocuSign Created"
+          :button="{
+            condition: !completedModule.docuSignCreated,
+            text: 'Created Today',
+            newPropValue: () => new Date().toLocaleDateString('en-US'),
+          }"
+        />
+
+        <DetailInput
+          :item="completedModule"
+          prop="docuSignCompleted"
+          icon="calendar-check"
+          label="DocuSign Completed"
+          :button="{
+            condition: !completedModule.docuSignCompleted,
+            text: 'Completed Today',
+            newPropValue: () => new Date().toLocaleDateString('en-US'),
+          }"
+        />
+
+      </InputCoupler>
 
     </template>
 
@@ -110,6 +119,7 @@
 </template>
 
 <script setup lang="ts">
+import InputCoupler from './Helper/InputCoupler.vue'
 import DetailInput from './Helper/DetailInput.vue'
 import DetailHeader from './Helper/DetailHeader.vue'
 import DetailFrame from './Helper/DetailFrame.vue'

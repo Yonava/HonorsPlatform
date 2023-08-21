@@ -47,7 +47,6 @@
     <component
       v-if="focusedEmbeddedItem && item.sysId === focusedEmbeddedItem.studentSysId"
       :is="getActivePanel.embedded.detail"
-      :broadcastThroughSocket="broadcastThroughSocket"
     />
   </div>
 </template>
@@ -74,7 +73,7 @@ const props = defineProps<{
 }>()
 
 const { list: items } = toRefs(documents[getActiveEmbeddedPanel.sheetRange])
-const { broadcastThroughSocket } = useUpdateItem(focusedEmbeddedItem, getActiveEmbeddedPanel.panelName)
+useUpdateItem(focusedEmbeddedItem, getActiveEmbeddedPanel.panelName)
 
 const displayedItems = computed(() => {
   if (!props.item[filterBy.outer]) {
