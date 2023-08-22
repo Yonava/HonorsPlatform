@@ -205,7 +205,9 @@ export const useDocumentCache = defineStore("documentCache", {
         announcement.content,
         announcement.posterName,
         announcement.posterPhoto,
-        announcement.datePosted
+        announcement.datePosted,
+        announcement.expiryDate,
+        announcement.panelType
       ]])
 
       this.addAnnouncementCache(announcement)
@@ -268,6 +270,8 @@ export const useDocumentCache = defineStore("documentCache", {
           posterName: announcementRow[2],
           posterPhoto: announcementRow[3],
           datePosted: announcementRow[4],
+          expiryDate: announcementRow[5],
+          panelType: announcementRow[6]
         }
       }) ?? [];
 

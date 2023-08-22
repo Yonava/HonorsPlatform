@@ -81,5 +81,7 @@ export interface Announcement {
   posterName: string,
   posterPhoto: string,
   content: string,
-  datePosted: string
+  datePosted: string,
+  expiryDate: string,
+  panelType: string,
 }

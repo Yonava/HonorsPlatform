@@ -9,6 +9,9 @@ import {
   SheetItem,
 } from "./SheetTypes";
 
+import { useDialog } from "./store/useDialog";
+import DuplicateSysIdRemediation from "./components/DuplicateSysIdRemediation.vue";
+
 import { type PanelName } from "./Panels";
 
 // the index where all SheetItems stored on Google Sheets must have their unique sysId
@@ -80,7 +83,56 @@ export const getNonCustomProps = (panelName: PanelName) => {
   ]
 }
 
-const map = <T extends SheetItem>(spreadsheetMatrix: string[][], headerRow: readonly (keyof T)[]) => {
+export const map = <T extends SheetItem>(spreadsheetMatrix: string[][], headerRow: readonly (keyof T)[]) => {
+  const spreadsheetMatrixCopy = [...spreadsheetMatrix];
+
+  // duplicate sysId detection
+  const seenSysIds = new Set<string>();
+  const duplicateSysIds = new Set<string>();
+
+  spreadsheetMatrixCopy
+    .filter(([sysId]) => !!sysId)
+    .map(([sysId, ...rest]) => {
+      if (seenSysIds.has(sysId)) {
+        console.error(`Duplicate sysId: ${sysId}. ${String(headerRow[1])}: ${rest[1]}`);
+        duplicateSysIds.add(sysId);
+      }
+      seenSysIds.add(sysId);
+      return sysId;
+    });
+
+  if (duplicateSysIds.size > 0) {
+    useDialog().open({
+      body: {
+        title: 'Important!',
+        description: `This program uses a unique identifier for every item in the system called a sysId. This sysId is used for essential tasks including managing the addition and deletion of data associated with the item. This error means that there are two or more items with the same sysId which can lead to serious consequences such as data loss for the items using duplicate identifiers. We strongly encourage remediating this issue before continuing.`,
+        buttons: [
+          {
+            text: 'Ignore & Continue',
+            onClick: () => {
+              useDialog().close();
+            },
+            color: 'red'
+          },
+          {
+            text: 'Remediate',
+            onClick: () => {
+              useDialog().open({
+                component: {
+                  render: DuplicateSysIdRemediation,
+                  props: {
+                    duplicateSysIds: Array.from(duplicateSysIds),
+                  }
+                }
+              });
+            },
+            color: 'green'
+          }
+        ]
+      }
+    })
+  }
+
   return spreadsheetMatrix
     .filter((row) => {
       if (row.length === 0) {
@@ -88,10 +140,12 @@ const map = <T extends SheetItem>(spreadsheetMatrix: string[][], headerRow: read
       }
       return !!row[SYS_ID_INDEX];
     })
-    .map((row, index) => ({
+    .map((row) => ({
 
       // the row number on the spreadsheet: + 1 for header row, + 1 for 0-indexing
-      row: index + 2,
+      row: spreadsheetMatrixCopy.findIndex(([sysId]) => {
+        return sysId === row[SYS_ID_INDEX];
+      }) + 2,
 
       // sysId is the first column of all SheetItems
       sysId: row[SYS_ID_INDEX],
@@ -122,7 +176,7 @@ const map = <T extends SheetItem>(spreadsheetMatrix: string[][], headerRow: read
     }))
 }
 
-const unmap = <T extends SheetItem>(sheetItems: T[], headerRow: readonly (keyof T)[]) => {
+export const unmap = <T extends SheetItem>(sheetItems: T[], headerRow: readonly (keyof T)[]) => {
   const matrix: string[][] = []
 
   for (const item of sheetItems) {
@@ -204,3 +258,30 @@ export const mapTheses = (matrix: string[][]): Thesis[] => {
 export const unmapTheses = (theses: Thesis[]) => {
   return unmap(theses, sheetProps.THESES);
 }
+
+export const mappers = {
+  STUDENTS: {
+    map: mapStudents,
+    unmap: unmapStudents,
+  },
+  MODULES: {
+    map: mapModules,
+    unmap: unmapModules,
+  },
+  COMPLETED_MODULES: {
+    map: mapCompletedModules,
+    unmap: unmapCompletedModules,
+  },
+  GRADUATES: {
+    map: mapGraduates,
+    unmap: unmapGraduates,
+  },
+  GRADUATE_ENGAGEMENTS: {
+    map: mapGradEngagements,
+    unmap: unmapGradEngagements,
+  },
+  THESES: {
+    map: mapTheses,
+    unmap: unmapTheses,
+  },
+} as const;

@@ -1,59 +1,86 @@
 <template>
   <v-sheet>
-    <v-card>
-      <v-card-title>
-        <h2 class="my-3">
-          Post An Announcement
-        </h2>
-      </v-card-title>
-      <v-card-text>
-        <v-textarea
+    <v-card class="px-5 py-4">
+
+      <h1 class="mb-2">
+        Post An Announcement
+      </h1>
+
+      <v-textarea
         v-model="announcement"
         :disabled="posting"
-        label="Content"
+        label="Announcement"
         variant="outlined"
-        ></v-textarea>
-      </v-card-text>
-      <div
-        class="ml-4 mb-4"
+        prepend-inner-icon="mdi-message-text"
+      ></v-textarea>
+
+      <v-select
+        v-model="expiryDate"
+        :disabled="posting"
+        :items="expiryDateOptions"
+        variant="outlined"
+        item-title="text"
+        item-value="dateOfExpiry"
+        label="Remove After"
+        hint="How long do you want the announcement to stay up for?"
+        persistent-hint
+        style="width: 100%"
+        class="mb-4"
+      ></v-select>
+
+      <v-select
+        v-model="panelType"
+        variant="outlined"
+        :items="Object.values(panels).map(panel => panel.sheetRange)"
+        chips
+        label="Post To"
+        multiple
+        hint="Select the panels you intend to post to, or leave blank to post to all panels."
+        persistent-hint
+        style="width: 100%"
+      ></v-select>
+
+      <v-btn
+        v-if="!posting"
+        @click="postNewAnnouncement"
+        :disabled="!announcement"
+        :color="getActivePanel.color + '-darken-2'"
+        size="large"
+        class="mt-4"
       >
-        <v-btn
-          v-if="!posting"
-          @click="postNewAnnouncement"
-          color="primary"
-          size="large"
-        >
-          <v-icon class="mr-2">
-            mdi-message-arrow-right
-          </v-icon>
-          Post
-        </v-btn>
-        <v-btn
-          v-else
-          disabled
-          color="primary"
-          size="large"
-        >
-          Posting...
-          <v-progress-circular
-            indeterminate
-            size="24"
-            color="white"
-          ></v-progress-circular>
-        </v-btn>
-      </div>
+        <v-icon class="mr-2">
+          mdi-message-arrow-right
+        </v-icon>
+        Post
+      </v-btn>
+
+      <v-btn
+        v-else
+        disabled
+        color="primary"
+        size="large"
+      >
+        Posting...
+        <v-progress-circular
+          indeterminate
+          size="24"
+          color="white"
+        ></v-progress-circular>
+      </v-btn>
+
     </v-card>
   </v-sheet>
 </template>
 
 <script setup lang="ts">
+import InputCoupler from '../Detail/Helper/InputCoupler.vue';
 import { useDialog } from '../../store/useDialog';
 import { ref } from 'vue';
-import { postInRange } from '../../SheetsAPI';
 import { useAuth } from '../../store/useAuth';
 import { storeToRefs } from 'pinia';
 import { useDocumentCache } from '../../store/useDocumentCache';
 import { useSheetManager } from '../../store/useSheetManager';
+import { panels } from '../../Panels';
 
 const auth = useAuth();
 const { googleProfile } = storeToRefs(auth);
@@ -61,11 +88,71 @@ const { googleProfile } = storeToRefs(auth);
 const documentCache = useDocumentCache();
 const { postAnnouncement } = documentCache;
 
+const sheetManager = useSheetManager();
+const { getActivePanel } = storeToRefs(sheetManager);
+
 const dialog = useDialog();
 const { open, close } = dialog;
 
 const announcement = ref('');
 const posting = ref(false);
+
+type ExpiryDateOption = {
+  text: string
+  dateOfExpiry: Date | ''
+}[]
+
+const thingsThatWillNeverHappen = [
+  'When Pigs Fly 🐷🛩️',
+  'MySNHU Becomes User Friendly',
+  'Dine SNHU Wins A Michelin Star',
+  'The Penmen Press Goes Mainstream',
+  'Frogs Start Reciting Shakespeare',
+  'Doing Taxes Becomes Fun',
+  'SNHU Wins A Football Game',
+  'The Heat Death Of The Universe',
+  'SNHU Ranks #1 Nationwide On US News & World Report',
+  'A Third Party Candidate Wins The Presidency',
+  'Mark Zuckerberg Becomes A Human',
+  'Jeff Bezos Runs Out Of Money',
+  'Nancy Pelosis Stock Portfolio Tanks',
+  'Big Banks Discover Morality',
+  'The US Government Stops Printing Money',
+  'The NSA Stops Spying On You',
+  'Unicorns Are Discovered 🦄✨',
+]
+
+
+const expiryDateOptions: ExpiryDateOption = [
+  {
+    text: thingsThatWillNeverHappen[Math.floor(Math.random() * thingsThatWillNeverHappen.length)],
+    dateOfExpiry: '',
+  },
+  {
+    text: 'A Day',
+    dateOfExpiry: new Date(Date.now() + 1000 * 60 * 60 * 24),
+  },
+  {
+    text: 'A Week',
+    dateOfExpiry: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
+  },
+  {
+    text: 'A Month',
+    dateOfExpiry: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30),
+  },
+  {
+    text: 'A Year',
+    dateOfExpiry: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365),
+  },
+  {
+    text: 'Custom',
+    dateOfExpiry: '',
+  }
+]
+
+const expiryDate = ref(expiryDateOptions[0])
+
+const panelType = ref<string[]>([])
 
 const postNewAnnouncement = async () => {
   posting.value = true
@@ -95,23 +182,10 @@ const postNewAnnouncement = async () => {
     content: announcement.value,
     posterName: googleProfile.value.name,
     posterPhoto: googleProfile.value.picture,
-    datePosted: new Date().toString()
+    datePosted: new Date().toString(),
+    expiryDate: expiryDate.value.dateOfExpiry.toString(),
+    panelType: panelType.value.join(', '),
   })
 
-  open({
-    body: {
-      title: 'Announcement Posted',
-      description: 'Your announcement has been posted successfully.',
-      buttons: [
-        {
-          text: 'OK',
-          color: 'green',
-          onClick: () => {
-            close()
-          }
-        }
-      ]
-    }
-  })
 }
 </script>
