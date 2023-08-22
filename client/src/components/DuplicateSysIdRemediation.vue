@@ -1,10 +1,12 @@
 <template>
   <v-sheet class="px-5 py-3">
+
     <h1>
       Duplicate SysId Remediation
     </h1>
+
     <p>
-      Below are all the {{ duplicateSysIds.length }} duplicate sysId{{ duplicateSysIds.length === 1 ? '' : 's' }} found along with their corresponding items. By clicking, you may review the items carefully to determine which to remove.
+      Below {{ duplicateSysIds.length === 1 ? 'is' : 'are' }} the {{ duplicateSysIds.length }} duplicate sysId{{ duplicateSysIds.length === 1 ? '' : 's' }} found along with their corresponding items. By clicking, you may review the items to determine which to remove. SysId conflicts are often the result of a bug, bugs can be reported <a href="https://github.com/Yonava/HonorsPlatform/issues" target="_blank">here</a>.
     </p>
 
     <v-divider class="mt-3"></v-divider>
@@ -138,12 +140,13 @@
 
     <v-btn
       @click="close"
+      :loading="syncing"
       block
       class="mt-4"
       variant="outlined"
       color="red"
     >
-      Exit
+      Done Remediating
     </v-btn>
 
   </v-sheet>
@@ -166,6 +169,7 @@ const duplicateSysIds = ref<string[]>([])
 const allItems = ref<SheetItemWithPanelName[]>([])
 const removingItem = ref(false)
 const itemHasBeenRemoved = ref(false)
+const syncing = ref(false)
 
 const headerRow = (item: SheetItemWithPanelName) => {
   const panel = panels[item.panelName]
@@ -241,10 +245,11 @@ const removeItemFromSystem = async (item: SheetItemWithPanelName,) => {
 
 }
 
-const close = () => {
-  useDialog().close()
+const close = async () => {
+  syncing.value = true
   if (itemHasBeenRemoved.value) {
-    useDocumentCache().forceConnectedClientsToRefresh()
+    await useDocumentCache().forceConnectedClientsToRefresh()
   }
+  useDialog().close()
 }
 </script>

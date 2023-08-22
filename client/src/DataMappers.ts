@@ -104,8 +104,8 @@ export const map = <T extends SheetItem>(spreadsheetMatrix: string[][], headerRo
   if (duplicateSysIds.size > 0) {
     useDialog().open({
       body: {
-        title: 'Important!',
-        description: `This program uses a unique identifier for every item in the system called a sysId. This sysId is used for essential tasks including managing the addition and deletion of data associated with the item. This error means that there are two or more items with the same sysId which can lead to serious consequences such as data loss for the items using duplicate identifiers. We strongly encourage remediating this issue before continuing.`,
+        title: 'Important Message!',
+        description: `This program uses a unique identifier for every item in the system called a sysId. This sysId is used for essential tasks including managing the addition and deletion of data associated with the item. If you are reading this message, it means that there are two or more items with the same sysId which can lead to serious consequences such as data loss for the items using duplicate identifiers. We strongly encourage remediating this issue before continuing.`,
         buttons: [
           {
             text: 'Ignore & Continue',
