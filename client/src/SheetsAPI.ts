@@ -11,7 +11,7 @@ function requestHeaders() {
   return {
     headers: {
       Authorization: `Bearer ${localStorage.getItem(local.googleOAuthAccessToken) }`,
-    }
+    } as const
   }
 }
 
@@ -66,6 +66,19 @@ export async function clearByRow(range: Range, row: number) {
   } catch {
     await useAuth().authorize();
     await clearByRow(range, row);
+  }
+}
+
+export async function clearByRowData(range: Range, data: string[]) {
+  try {
+    await axios.delete(`/api/range/${range}`, { data, ...requestHeaders() });
+  } catch (e: any) {
+    if (e.response.status === 400) {
+      await useAuth().authorize();
+      await clearByRowData(range, data);
+    } else {
+      throw e;
+    }
   }
 }
 

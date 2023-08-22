@@ -19,8 +19,6 @@
         :disabled="posting"
         :items="expiryDateOptions"
         variant="outlined"
-        item-title="text"
-        item-value="dateOfExpiry"
         label="Remove After"
         hint="How long do you want the announcement to stay up for?"
         persistent-hint
@@ -41,10 +39,10 @@
       ></v-select>
 
       <v-btn
-        v-if="!posting"
         @click="postNewAnnouncement"
         :disabled="!announcement"
-        :color="getActivePanel.color + '-darken-2'"
+        :loading="posting"
+        :color="getActivePanel.color + '-darken-1'"
         size="large"
         class="mt-4"
       >
@@ -52,20 +50,6 @@
           mdi-message-arrow-right
         </v-icon>
         Post
-      </v-btn>
-
-      <v-btn
-        v-else
-        disabled
-        color="primary"
-        size="large"
-      >
-        Posting...
-        <v-progress-circular
-          indeterminate
-          size="24"
-          color="white"
-        ></v-progress-circular>
       </v-btn>
 
     </v-card>
@@ -97,11 +81,6 @@ const { open, close } = dialog;
 const announcement = ref('');
 const posting = ref(false);
 
-type ExpiryDateOption = {
-  text: string
-  dateOfExpiry: Date | ''
-}[]
-
 const thingsThatWillNeverHappen = [
   'When Pigs Fly 🐷🛩️',
   'MySNHU Becomes User Friendly',
@@ -122,33 +101,14 @@ const thingsThatWillNeverHappen = [
   'Unicorns Are Discovered 🦄✨',
 ]
 
-
-const expiryDateOptions: ExpiryDateOption = [
-  {
-    text: thingsThatWillNeverHappen[Math.floor(Math.random() * thingsThatWillNeverHappen.length)],
-    dateOfExpiry: '',
-  },
-  {
-    text: 'A Day',
-    dateOfExpiry: new Date(Date.now() + 1000 * 60 * 60 * 24),
-  },
-  {
-    text: 'A Week',
-    dateOfExpiry: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
-  },
-  {
-    text: 'A Month',
-    dateOfExpiry: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30),
-  },
-  {
-    text: 'A Year',
-    dateOfExpiry: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365),
-  },
-  {
-    text: 'Custom',
-    dateOfExpiry: '',
-  }
-]
+const expiryDateOptions = [
+  thingsThatWillNeverHappen[Math.floor(Math.random() * thingsThatWillNeverHappen.length)],
+  'A Day',
+  'A Week',
+  'A Month',
+  'A Year',
+  'Custom'
+] as const
 
 const expiryDate = ref(expiryDateOptions[0])
 
@@ -183,9 +143,12 @@ const postNewAnnouncement = async () => {
     posterName: googleProfile.value.name,
     posterPhoto: googleProfile.value.picture,
     datePosted: new Date().toString(),
-    expiryDate: expiryDate.value.dateOfExpiry.toString(),
+    expiryDate: expiryDate.value.toString(),
     panelType: panelType.value.join(', '),
   })
 
+  posting.value = false
+
+  close()
 }
 </script>

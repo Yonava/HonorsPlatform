@@ -221,6 +221,28 @@ app.delete("/api/range/:range/:row", async (req, res) => {
   }
 });
 
+app.delete("/api/range/:range", async (req, res) => {
+  const { range } = req.params;
+  const { authorization } = req.headers;
+  const accessToken = authorization.split(' ')[1];
+
+  console.log('hitting 5.5', accessToken)
+
+  const { body: data } = req;
+
+  try {
+    const sheet = new GoogleSheet(accessToken);
+    await sheet.deleteRowByRowData(range, data);
+    res.json({ success: true });
+  } catch (e) {
+    if (e === 'ROW_NOT_FOUND') {
+      res.status(401).json({ error: 'ROW_NOT_FOUND' });
+    } else {
+      res.status(401).json({ error: 'Forbidden' });
+    }
+  }
+});
+
 app.post("/api/range/:range", async (req, res) => {
   const { range } = req.params;
   const data = req.body;

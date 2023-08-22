@@ -77,6 +77,15 @@ module.exports = class GoogleSheet {
     });
   }
 
+  async deleteRowByRowData(range, data) {
+    const rangeData = await this.getRange(range);
+    const rowToDelete = rangeData.findIndex(row => row.join('') === data.join(''));
+    if (rowToDelete === -1) {
+      throw new Error('ROW_NOT_FOUND');
+    }
+    await this.deleteByRow(range, rowToDelete + 1);
+  }
+
   async updateByRow(range, row, data) {
     await this.sheets.spreadsheets.values.update(
       this.writable(`${range}!A${row}:Z${row}`, data)
