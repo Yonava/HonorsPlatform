@@ -6,82 +6,96 @@
     <p>
       Below are all the {{ duplicateSysIds.length }} duplicate sysId{{ duplicateSysIds.length === 1 ? '' : 's' }} found along with their corresponding items. By clicking, you may review the items carefully to determine which to remove.
     </p>
-    <v-divider class="my-3"></v-divider>
+    <v-divider class="mt-3"></v-divider>
     <div
-      v-for="sysId in duplicateSysIds"
-      :key="sysId"
+      :style="{
+        overflowY: 'auto',
+        maxHeight: '500px',
+      }"
     >
-      <h3 class="my-2">
-        Items For SysId "{{ sysId }}":
-      </h3>
       <div
-        class="d-flex flex-row"
-        :style="{
-          gap: '10px',
-          flexWrap: 'wrap',
-        }"
+        v-for="sysId in duplicateSysIds"
+        :key="sysId"
       >
+        <h3 class="my-2">
+          Items For SysId "{{ sysId }}":
+        </h3>
         <div
-          v-for="item in allItems.filter(item => item.sysId === sysId)"
-          :key="item.sysId"
+          class="d-flex flex-row"
+          :style="{
+            gap: '10px',
+            flexWrap: 'wrap',
+          }"
         >
+          <div
+            v-for="item in allItems.filter(item => item.sysId === sysId)"
+            :key="item.sysId"
+          >
 
-          <v-dialog max-width="550">
+            <v-dialog max-width="550">
 
-            <template v-slot:activator="{ props }">
+              <template v-slot:activator="{ props }">
 
-              <v-btn
-                v-bind="props"
-                :color="panels[item.panelName].color + '-darken-1'"
-                rounded
-              >
-                {{ title(item) || '(Untitled)' }}
-              </v-btn>
-
-            </template>
-
-            <v-sheet class="pa-4">
-
-                <h1>
-                  {{ panels[item.panelName].title.singular }} - {{ title(item) || '(Untitled)' }}
-                </h1>
-
-                <v-divider class="my-2"></v-divider>
-
-                <div
-                  :style="{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-                    gap: '10px',
-                    maxHeight: '500px',
-                    overflowY: 'auto',
-                  }"
+                <v-btn
+                  v-bind="props"
+                  :color="panels[item.panelName].color + '-darken-1'"
+                  rounded
                 >
+                  {{ title(item) || '(Untitled)' }}
+                </v-btn>
+
+              </template>
+
+              <v-sheet class="pa-4">
+
+                  <h1>
+                    {{ panels[item.panelName].title.singular }} - {{ title(item) || '(Untitled)' }}
+                  </h1>
+
+                  <v-divider class="mt-2"></v-divider>
+
                   <div
-                    v-for="(headerField, index) in headerRow(item)"
-                    :key="headerField"
+                    :style="{
+                      display: 'grid',
+                      gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                      gap: '10px',
+                      maxHeight: '500px',
+                      overflowY: 'auto',
+                    }"
+                    class="pt-2"
                   >
-                    <div>
+                    <div
+                      v-for="(headerField, index) in headerRow(item)"
+                      :key="headerField"
+                    >
                       <div>
-                        <strong>{{ headerField }}:</strong>
-                      </div>
-                      <div v-if="unmappedItem(item)[index]">
-                        {{ unmappedItem(item)[index] }}
-                      </div>
-                      <div
-                        v-else
-                        style="color: red;"
-                      >
-                        (No {{ headerField }})
+
+                        <div>
+                          <strong>
+                            {{ headerField }}:
+                          </strong>
+                        </div>
+
+                        <div v-if="unmappedItem(item)[index]">
+                          {{ unmappedItem(item)[index] }}
+                        </div>
+
+                        <div
+                          v-else
+                          style="color: red;"
+                        >
+                          (No {{ headerField }})
+                        </div>
+
                       </div>
                     </div>
                   </div>
-                </div>
 
-            </v-sheet>
+              </v-sheet>
 
-          </v-dialog>
+            </v-dialog>
 
+          </div>
         </div>
       </div>
     </div>

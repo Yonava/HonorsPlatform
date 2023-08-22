@@ -78,12 +78,21 @@ export const useDialog = defineStore("dialog", {
       }
     },
     open(options?: { body?: DialogBody; component?: DialogComponent, persistent?: boolean }) {
+
       this.setPersistent(options?.persistent ?? false);
-      if (this.show) {
+      if (this.show && !this.persistent) {
+
+        // if the dialog that is already open is the same as the one we're trying to open, don't do anything
+        if (this.body.title === options?.body?.title || this.component?.render === options?.component?.render) {
+          return;
+        }
+
         this.close();
+
         setTimeout(() => {
           this.open(options);
         }, 500)
+
         return;
       }
       clearTimeout(this.contentTimeout);

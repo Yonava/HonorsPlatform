@@ -119,10 +119,7 @@ export const map = <T extends SheetItem>(spreadsheetMatrix: string[][], headerRo
             onClick: () => {
               useDialog().open({
                 component: {
-                  render: DuplicateSysIdRemediation,
-                  props: {
-                    duplicateSysIds: Array.from(duplicateSysIds),
-                  }
+                  render: DuplicateSysIdRemediation
                 }
               });
             },
