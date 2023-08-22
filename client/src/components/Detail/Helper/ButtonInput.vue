@@ -1,6 +1,6 @@
 <template>
   <v-btn
-    :color="panel.color + '-darken-2'"
+    :color="panel.color + '-darken-1'"
     :disabled="disabled"
     size="x-small"
     class="mb-3"

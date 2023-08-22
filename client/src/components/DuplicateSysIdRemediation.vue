@@ -120,6 +120,7 @@
                   <v-spacer></v-spacer>
                   <v-btn
                     @click="removeItemFromSystem(item)"
+                    :disabled="readOnlyMode"
                     :loading="removingItem || !item.dialog"
                     color="red"
                   >
@@ -160,7 +161,12 @@ import { useDocumentCache } from '../store/useDocumentCache';
 import { headerRowMemo } from '../SheetsAPI';
 import { mappers } from '../DataMappers';
 import { clearByRowData } from '../SheetsAPI';
+import { useSheetManager } from '../store/useSheetManager';
 import { useDialog } from '../store/useDialog';
+import { storeToRefs } from 'pinia';
+
+const sheetManager = useSheetManager();
+const { readOnlyMode } = storeToRefs(sheetManager);
 
 // panelName where the item is found + conflictId as a replacement to discern separate items with the same sysId
 type SheetItemWithPanelName = SheetItem & { panelName: PanelName, conflictId: string, dialog: boolean }
