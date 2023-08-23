@@ -1,102 +1,45 @@
+
 <template>
-  <ListItemFrame :item="item">
-    <div class="d-flex flex-row">
-      <div
-        class="d-flex flex-row align-baseline flex-wrap"
-        style="font-weight: 900; font-size: 1.5em; line-height: 1; gap: 6px;"
-      >
-        {{ item.title || '(No Title)' }}
-        <span
-          style="font-weight: 300; font-size: 0.6em"
-        >
-          <div
-            :style="student.style"
-            class="d-flex flew-row align-center"
-          >
-            <v-icon
-              class="mr-1"
-              style="opacity: 0.75"
-            >
-              {{ student.icon }}
-            </v-icon>
-            <p>
-              {{ student.text }}
-            </p>
-            <v-tooltip
-              :disabled="smAndDown"
-              activator="parent"
-              location="bottom"
-            >{{ student.tooltip }}</v-tooltip>
-          </div>
-        </span>
-      </div>
-      <v-spacer></v-spacer>
-      <v-sheet
-        :color="decisionStatus.color"
-        :style="{
-          height: '25px',
-          color: 'white',
-          borderRadius: '25px',
-          textTransform: 'capitalize',
-          whiteSpace: 'nowrap',
+  <LIFrame
+    :item="item"
+    :styled="styled"
+    :bottomCorners="[
+      student,
+      {
+        prop: 'mentor',
+        text: item.mentor || '(No Mentor)',
+        icon: 'human-male-board',
+      }
+    ]"
+  >
+
+    <template #left>
+
+      <LITitle
+        :primary="{
+          text: item.title || '(No Title)',
         }"
-        class="px-2 py-1 d-flex flex-row align-center ml-1"
-        elevation="1"
-      >
-        <v-icon class="mr-1">
-          {{ decisionStatus.icon }}
-        </v-icon>
-        <span>
-          {{ decisionStatus.text }}
-        </span>
-        <v-tooltip
-          :disabled="smAndDown"
-          activator="parent"
-          location="bottom"
-        >Thesis Proposal {{ decisionStatus.text }}</v-tooltip>
-      </v-sheet>
-    </div>
-    <div
-      class="d-flex flex-column mt-5"
-      style="font-size: 0.9em;"
-    >
-      <div class="d-flex flex-row">
-        <div class="d-flex flex-row align-center">
-          <v-icon
-            class="mr-1"
-            style="opacity: 0.75"
-          >
-            mdi-human-male-board
-          </v-icon>
-          <p>
-            {{ item.mentor || '(No Mentor)' }}
-          </p>
-          <v-tooltip
-            :disabled="smAndDown"
-            activator="parent"
-            location="bottom"
-          >Faculty Mentor</v-tooltip>
-        </div>
-        <v-spacer></v-spacer>
-        <div class="d-flex flex-row align-center">
-          <span :style="termStyle">
-            {{ item.term || '(No Term)' }}
-            <v-tooltip
-              :disabled="smAndDown"
-              activator="parent"
-              location="bottom"
-            >{{ termTooltip }}</v-tooltip>
-          </span>
-          <v-icon
-            class="ml-1"
-            style="opacity: 0.75"
-          >
-            mdi-calendar
-          </v-icon>
-        </div>
-      </div>
-    </div>
-  </ListItemFrame>
+        :secondary="{
+          text: item.term || '(No Term)',
+          tooltip: termTooltip,
+          error: !termValid
+        }"
+      />
+
+    </template>
+
+    <template #right>
+
+      <LIEmblem
+        :color="decisionStatus.color"
+        :text="decisionStatus.text"
+        :icon="decisionStatus.icon"
+        :tooltip="decisionStatus.tooltip"
+      />
+
+    </template>
+
+  </LIFrame>
 </template>
 
 <script setup lang="ts">
@@ -105,10 +48,15 @@ import { Thesis } from '../../SheetTypes'
 import { termValidator } from '../../TermValidator'
 import { useDisplay } from 'vuetify'
 import { useStudentInfo } from './useStudentInfo'
-import ListItemFrame from './ListItemFrame.vue'
+import {
+  LIFrame,
+  LITitle,
+  LIEmblem,
+} from './ListItemParts/ListItemExports'
 
 const props = defineProps<{
-  item: Thesis
+  item: Thesis,
+  styled?: boolean
 }>()
 
 const { smAndDown } = useDisplay()
@@ -121,18 +69,8 @@ const termTooltip = computed(() => {
   }
 })
 
-const termStyle = computed(() => {
-  if (termValidator(props.item.term)) {
-    return {
-      'font-weight': '300',
-      'color': 'black'
-    }
-  } else {
-    return {
-      'font-weight': '900',
-      'color': 'red'
-    }
-  }
+const termValid = computed(() => {
+  return termValidator(props.item.term)
 })
 
 const decisionStatus = computed(() => {
@@ -140,26 +78,30 @@ const decisionStatus = computed(() => {
   if (decision === 'Approved') {
     return {
       color: 'green',
-      icon: 'mdi-check',
-      text: 'Approved'
+      icon: 'check',
+      text: 'Approved',
+      tooltip: 'Approved By Honors Committee'
     }
   } else if (decision === 'Rejected') {
     return {
       color: 'red',
-      icon: 'mdi-close',
-      text: 'Rejected'
+      icon: 'close',
+      text: 'Rejected',
+      tooltip: 'Rejected By Honors Committee'
     }
   } else if (decision === 'Pending') {
     return {
       color: 'grey',
-      icon: 'mdi-minus',
-      text: 'Pending'
+      icon: 'minus',
+      text: 'Pending',
+      tooltip: 'Pending Approval By Honors Committee'
     }
   } else {
     return {
       color: 'grey',
-      icon: 'mdi-minus',
-      text: 'No Decision'
+      icon: 'minus',
+      text: 'No Decision',
+      tooltip: 'Honors Committee Approval Decision Not In System'
     }
   }
 })

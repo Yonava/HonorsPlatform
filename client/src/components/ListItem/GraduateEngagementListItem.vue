@@ -20,9 +20,9 @@
 
       <LIEmblem
         :color="getActivePanel.color"
-        :text="dateTimeDisplay"
-        tooltip="Event Date"
+        :text="dateTimeDisplay || '(No Date)'"
         :icon="item.dateTime ? 'calendar' : 'alert'"
+        tooltip="Event Date"
       />
 
     </template>
