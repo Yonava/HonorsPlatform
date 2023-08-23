@@ -49,7 +49,7 @@
                   :color="panels[item.panelName].color + '-darken-1'"
                   rounded
                 >
-                  {{ title(item) || '(Untitled)' }}
+                  {{ title(item) }}
                 </v-btn>
 
               </template>
@@ -65,7 +65,7 @@
               >
 
                 <h1>
-                  {{ panels[item.panelName].title.singular }} - {{ title(item) || '(Untitled)' }}
+                  {{ panels[item.panelName].title.singular }} - {{ title(item) }}
                 </h1>
 
                 <v-divider class="mt-2"></v-divider>

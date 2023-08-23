@@ -1,37 +1,42 @@
 <template>
-  <ListItemFrame
+  <LIFrame
     :item="item"
     :styled="styled"
   >
+
     <div class="d-flex flex-row">
-      <div>
-        <v-icon
-          v-if="item.athletics"
-          class="mr-2"
-        >
-          {{ 'mdi-' + athleticOptions[item.athletics] }}
-        </v-icon>
-        <v-tooltip
-          :disabled="smAndDown"
-          activator="parent"
-          location="bottom"
-        >{{ 'Athlete: ' + item.athletics }}</v-tooltip>
-      </div>
+
+      <LIIcon
+        v-if="item.athletics"
+        :icon="athleticOptions[item.athletics]"
+        :tooltip="`Participates In ${item.athletics}`"
+      />
+
       <div style="font-weight: 900; font-size: 1.5em; line-height: 1">
+
         {{ item.name || '(No Name)' }}
+
         <span
           class="mr-1"
           style="font-weight: 300; font-size: 0.6em"
         >
+
           {{ item.id || '(No ID)' }}
+
           <v-tooltip
             :disabled="smAndDown"
             activator="parent"
             location="bottom"
-          >Student ID</v-tooltip>
+          >
+            Student ID
+          </v-tooltip>
+
         </span>
+
       </div>
+
       <v-spacer></v-spacer>
+
       <v-sheet
         :color="status.color"
         :style="{
@@ -44,7 +49,9 @@
         class="px-2"
         elevation="1"
       >
+
         {{ status.status }}
+
         <v-tooltip
           :disabled="smAndDown"
           activator="parent"
@@ -52,27 +59,36 @@
         >
           {{ status.tooltip }}
         </v-tooltip>
+
       </v-sheet>
+
     </div>
+
     <div
       class="d-flex flex-column mt-5"
       style="font-size: 0.9em;"
     >
       <div class="d-flex flex-row">
+
         <div class="d-flex flex-row">
+
           <v-icon
             class="mr-1"
             style="opacity: 0.75"
           >
             mdi-email
           </v-icon>
-          <p :style="{
-            color: emailValid ? 'black' : 'red',
-            textDecoration: emailValid ? 'none' : 'line-through',
-            fontWeight: emailValid ? 'normal' : 'bold',
-          }">
+
+          <p
+            :style="{
+              color: emailValid ? 'black' : 'red',
+              textDecoration: emailValid ? 'none' : 'line-through',
+              fontWeight: emailValid ? 'normal' : 'bold',
+            }"
+          >
             {{ item.email || '(No Email)' }}
           </p>
+
           <v-tooltip
             :disabled="smAndDown || emailValid"
             activator="parent"
@@ -80,29 +96,29 @@
           >
             Email is invalid
           </v-tooltip>
+
         </div>
+
         <v-spacer></v-spacer>
+
         <div class="d-flex">
+
           <p>
             {{ item.year || '(No Class Year)' }}
           </p>
+
           <v-icon
             class="ml-1"
             style="opacity: 0.75"
           >
             mdi-briefcase
           </v-icon>
-          <!-- <v-tooltip
-            :disabled="smAndDown"
-            activator="parent"
-            location="bottom"
-          >
-            Class Year
-          </v-tooltip> -->
+
         </div>
+
       </div>
     </div>
-  </ListItemFrame>
+  </LIFrame>
 </template>
 
 <script setup lang="ts">
@@ -111,7 +127,7 @@ import { Student } from '../../SheetTypes'
 import { athleticOptions, statusOptions } from '../../StudentTools'
 import { emailValidator } from '../../EmailUtilities'
 import { useDisplay } from 'vuetify'
-import ListItemFrame from './ListItemFrame.vue'
+import { LIFrame, LIIcon } from './ListItemParts/ListItemExports'
 
 const props = defineProps<{
   item: Student,
@@ -126,12 +142,6 @@ const status = computed(() => {
     tooltip: props.item.activeStatus ? 'Invalid Status' : 'No Status Assigned',
     status: props.item.activeStatus || 'No Status'
   }
-})
-
-// save logic for when list item property toggle is added
-const points = computed(() => {
-  if (!props.item.points) return 0
-  return props.item.points.toLocaleString()
 })
 
 const emailValid = computed(() => emailValidator(props.item.email))
