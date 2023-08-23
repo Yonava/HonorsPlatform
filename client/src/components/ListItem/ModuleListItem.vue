@@ -5,34 +5,47 @@
   >
     <div class="d-flex flex-row">
       <div v-if="overOneYearInProgress && !item.docuSignCompleted">
+
         <v-icon
           class="mr-2"
           color="red"
         >
           mdi-alert
         </v-icon>
+
         <v-tooltip
           :disabled="smAndDown"
           activator="parent"
           location="bottom"
-        >{{ item.courseCode + ' In Progress For Over 1 Year' }}</v-tooltip>
+        >
+          {{ item.courseCode + ' In Progress For Over 1 Year' }}
+        </v-tooltip>
       </div>
       <div style="font-weight: 900; font-size: 1.5em; line-height: 1.25">
+
         <span>
           {{ item.courseCode || '(No Course)' }}
           <v-tooltip
             :disabled="smAndDown"
             activator="parent"
             location="bottom"
-          >Course Code</v-tooltip>
+          >
+            Course Code
+          </v-tooltip>
         </span>
+
         <span :style="term.style">
+
           {{ item.term || '(No Term)' }}
+
           <v-tooltip
             :disabled="smAndDown"
             activator="parent"
             location="bottom"
-          >{{ term.tooltip }}</v-tooltip>
+          >
+            {{ term.tooltip }}
+          </v-tooltip>
+
         </span>
       </div>
       <v-spacer></v-spacer>

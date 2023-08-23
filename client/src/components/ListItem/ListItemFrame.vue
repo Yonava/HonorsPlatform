@@ -1,5 +1,7 @@
 <template>
   <div style="height: 100%; position: relative">
+
+    <!-- if item styled (ie being served from PanelList) -->
     <div
       v-if="styled"
       @dragstart="dragStart"
@@ -16,6 +18,7 @@
       ]"
       style="height: 100%;"
     >
+
       <div
         :style="{
           transition: hovered || isPinned ? '300ms ease-in-out' : '100ms',
@@ -27,22 +30,28 @@
           opacity: hovered || isPinned ? '1' : '0'
         }"
       >
+
+        <!-- item quick actions -->
         <div
           class="d-flex flex-column"
           style="position: relative; height: 100%; gap: 2px; transform: translateY(-5px)"
         >
+
           <div
             @click.stop="togglePin"
             @mouseover="hoverData['pin'] = true"
             @mouseleave="hoverData['pin'] = false"
           >
+
             <v-icon>
               mdi-pin{{ hoverData['pin'] || isPinned ? '' : '-outline' }}
             </v-icon>
+
             <v-tooltip activator="parent">
               {{ isPinned ? 'Unpin' : 'Pin' }}
             </v-tooltip>
           </div>
+
           <div
             v-for="{ icon, onClick, tooltip, condition = () => true } in sidebarActionButtons"
             :key="icon"
@@ -50,20 +59,25 @@
             @mouseover="hoverData[icon] = true"
             @mouseleave="hoverData[icon] = false"
           >
+
             <v-icon
               v-if="condition()"
             >
               {{ icon }}{{ hoverData[icon] ? '' : '-outline' }}
             </v-icon>
+
             <v-tooltip
               activator="parent"
             >
               {{ tooltip }}
             </v-tooltip>
+
           </div>
         </div>
       </div>
+
       <v-spacer></v-spacer>
+
       <div
         class="d-flex align-center"
         :style="{
@@ -76,6 +90,8 @@
           class="d-flex flex-column"
           style="position: relative; height: 60px; transform: translateY(-5px)"
         >
+
+          <!-- accounts engaging item -->
           <div
             v-for="(account, i) in accounts"
             :key="account.id"
@@ -99,12 +115,17 @@
               }"
             />
           </div>
+
         </div>
+
         <div style="width: 100%">
           <slot></slot>
         </div>
+
       </div>
     </div>
+
+    <!-- if not styled (ie served from PanelCover for Delete Suggestions) -->
     <div
       v-else
       @dragstart="dragStart"
@@ -113,6 +134,7 @@
     >
       <slot></slot>
     </div>
+
   </div>
 </template>
 
@@ -200,6 +222,7 @@ type SidebarActionButton = {
   condition?: () => boolean
 }
 
+// quick actions for each panel
 const panelSpecificActions: { [key in PanelName]: SidebarActionButton } = {
   'STUDENTS': {
     condition: () => !!canEmail.value,
