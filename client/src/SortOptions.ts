@@ -4,6 +4,7 @@ export const sortOptions = {
   STUDENTS: [
     {
       label: 'Name',
+      prop: 'name',
       tooltip: 'Sort by name',
       icon: {
         asc: 'mdi-sort-alphabetical-ascending',
@@ -13,6 +14,7 @@ export const sortOptions = {
     },
     {
       label: 'Points',
+      prop: 'points',
       tooltip: 'Sort by number of points',
       icon: {
         asc: 'mdi-sort-numeric-ascending',
@@ -26,6 +28,7 @@ export const sortOptions = {
     },
     {
       label: 'Active Status',
+      prop: 'activeStatus',
       tooltip: 'Sort by students\' status in the program',
       icon: {
         asc: 'mdi-sort-ascending',
@@ -35,6 +38,7 @@ export const sortOptions = {
     },
     {
       label: 'Year',
+      prop: 'year',
       tooltip: 'Sort by class year',
       icon: {
         asc: 'mdi-calendar-import',
@@ -62,6 +66,7 @@ export const sortOptions = {
   GRADUATES: [
     {
       label: 'Name',
+      prop: 'name',
       tooltip: 'Sort by name',
       icon: {
         asc: 'mdi-sort-alphabetical-ascending',
@@ -71,6 +76,7 @@ export const sortOptions = {
     },
     {
       label: 'Grad Date',
+      prop: 'graduationDate',
       tooltip: 'Sort by graduation date',
       icon: {
         asc: 'mdi-calendar-import',
@@ -95,6 +101,7 @@ export const sortOptions = {
   MODULES: [
     {
       label: 'Course Code',
+      prop: 'courseCode',
       tooltip: 'Sort by course code',
       icon: {
         asc: 'mdi-sort-numeric-ascending',
@@ -104,6 +111,7 @@ export const sortOptions = {
     },
     {
       label: 'Term',
+      prop: 'term',
       tooltip: 'Sort by term (semester code)',
       icon: {
         asc: 'mdi-sort-alphabetical-ascending',
@@ -113,6 +121,7 @@ export const sortOptions = {
     },
     {
       label: 'Instructor',
+      prop: 'instructor',
       tooltip: 'Sort by instructor',
       icon: {
         asc: 'mdi-human-male-board',
@@ -122,6 +131,7 @@ export const sortOptions = {
     },
     {
       label: 'DocuSign',
+      prop: 'docuSignCompleted',
       tooltip: 'Sort by DocuSign status',
       icon: {
         asc: 'mdi-file-document-outline',
@@ -150,6 +160,7 @@ export const sortOptions = {
   COMPLETED_MODULES: [
     {
       label: 'Date Completed',
+      prop: 'completedDate',
       tooltip: 'Sort by date completed',
       icon: {
         asc: 'mdi-calendar-import',
@@ -170,6 +181,7 @@ export const sortOptions = {
     },
     {
       label: 'Instructor',
+      prop: 'instructor',
       tooltip: 'Sort by instructor',
       icon: {
         asc: 'mdi-human-male-board',
@@ -179,6 +191,7 @@ export const sortOptions = {
     },
     {
       label: 'Course Code',
+      prop: 'courseCode',
       tooltip: 'Sort by course code',
       icon: {
         asc: 'mdi-sort-numeric-ascending',
@@ -188,6 +201,7 @@ export const sortOptions = {
     },
     {
       label: 'Term',
+      prop: 'term',
       tooltip: 'Sort by term (semester code)',
       icon: {
         asc: 'mdi-sort-alphabetical-ascending',
@@ -199,6 +213,7 @@ export const sortOptions = {
   THESES: [
     {
       label: 'Decision',
+      prop: 'decision',
       tooltip: 'Sort by decision regarding thesis approval',
       icon: {
         asc: 'mdi-check',
@@ -208,6 +223,7 @@ export const sortOptions = {
     },
     {
       label: 'Term',
+      prop: 'term',
       tooltip: 'Sort by term (semester code)',
       icon: {
         asc: 'mdi-sort-alphabetical-ascending',
@@ -217,6 +233,7 @@ export const sortOptions = {
     },
     {
       label: 'Faculty Mentor',
+      prop: 'mentor',
       tooltip: 'Sort by faculty mentor',
       icon: {
         asc: 'mdi-human-male-board',
@@ -228,6 +245,7 @@ export const sortOptions = {
   GRADUATE_ENGAGEMENTS: [
     {
       label: 'Event',
+      prop: 'event',
       tooltip: 'Sort by name of event',
       icon: {
         asc: 'mdi-sort-alphabetical-ascending',
@@ -237,6 +255,7 @@ export const sortOptions = {
     },
     {
       label: 'Date',
+      prop: 'dateTime',
       tooltip: 'Sort by date of event',
       icon: {
         asc: 'mdi-calendar-import',
