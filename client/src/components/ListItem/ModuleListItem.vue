@@ -22,10 +22,15 @@
       />
 
       <LITitle
-        :primaryText="item.courseCode || '(No Course Code)'"
-        :secondaryText="item.term || '(No Term)'"
-        primaryTooltip="Course Code"
-        secondaryTooltip="Student ID"
+        :primary="{
+          text: item.courseCode || '(No Course Code)',
+          tooltip: 'Course Code',
+        }"
+        :secondary="{
+          text: item.term || '(No Term)',
+          tooltip: termValidator(item.term) ? 'Term' : 'Term (Potentially Invalid)',
+          error: !termValidator(item.term)
+        }"
       />
 
     </template>

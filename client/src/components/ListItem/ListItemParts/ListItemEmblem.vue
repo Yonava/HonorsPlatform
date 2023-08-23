@@ -8,9 +8,16 @@
       whiteSpace: 'nowrap',
       textTransform: 'capitalize',
     }"
-    class="px-2"
+    class="px-3 py-1 d-flex flex-row align-center"
     elevation="1"
   >
+
+    <v-icon
+      v-if="icon"
+      class="mr-1"
+    >
+      {{ 'mdi-' + icon }}
+    </v-icon>
 
     {{ text }}
 
@@ -33,6 +40,7 @@ const { smAndDown } = useDisplay()
 const props = defineProps<{
   color: string,
   text: string,
+  icon?: string,
   tooltip?: string,
 }>()
 </script>

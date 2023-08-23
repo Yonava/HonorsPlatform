@@ -26,9 +26,13 @@
       />
 
       <LITitle
-        :primaryText="item.name || '(No Name)'"
-        :secondaryText="item.id || '(No ID)'"
-        secondaryTooltip="Student ID"
+        :primary="{
+          text: item.name || '(No Name)',
+        }"
+        :secondary="{
+          text: item.id || '(No ID)',
+          tooltip: 'Student ID',
+        }"
       />
 
     </template>

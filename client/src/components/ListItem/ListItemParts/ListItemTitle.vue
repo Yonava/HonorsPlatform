@@ -8,16 +8,20 @@
   >
 
     <!-- primary title -->
-    <span>
+    <span
+      :style="{
+        color: primary.error ? 'red' : 'black'
+      }"
+    >
 
-      {{ primaryText }}
+      {{ primary.text }}
 
       <v-tooltip
-        :disabled="smAndDown || !primaryTooltip"
+        :disabled="smAndDown || !primary.tooltip"
         activator="parent"
         location="bottom"
       >
-        {{ primaryTooltip }}
+        {{ primary.tooltip }}
       </v-tooltip>
 
     </span>
@@ -25,17 +29,21 @@
     <!-- secondary text -->
     <span
       class="mr-1"
-      style="font-weight: 300; font-size: 0.6em"
+      :style="{
+        fontWeight: secondary.error ? 900 : 300,
+        fontSize: '0.6em',
+        color: secondary.error ? 'red' : 'black'
+      }"
     >
 
-      {{ secondaryText }}
+      {{ secondary.text }}
 
       <v-tooltip
-        :disabled="smAndDown || !secondaryText"
+        :disabled="smAndDown || !secondary.text"
         activator="parent"
         location="bottom"
       >
-        {{ secondaryTooltip }}
+        {{ secondary.tooltip }}
       </v-tooltip>
 
     </span>
@@ -50,9 +58,15 @@ import { useDisplay } from 'vuetify'
 const { smAndDown } = useDisplay()
 
 const props = defineProps<{
-  primaryText: string
-  primaryTooltip?: string
-  secondaryText: string
-  secondaryTooltip?: string
+  primary: {
+    text: string,
+    tooltip?: string,
+    error?: boolean
+  },
+  secondary: {
+    text: string,
+    tooltip?: string,
+    error?: boolean
+  }
 }>()
 </script>
