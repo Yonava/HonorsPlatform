@@ -120,9 +120,9 @@
 
         <div style="width: 100%">
           <div class="d-flex flex-row">
-            <slot name="top-left"></slot>
+            <slot name="left"></slot>
             <v-spacer></v-spacer>
-            <slot name="top-right"></slot>
+            <slot name="right"></slot>
           </div>
           <LIBottomCorner :data="bottomCorners" />
         </div>
@@ -137,7 +137,14 @@
       @dragend="useSheetManager().listItemBeingDragged = null"
       :draggable="mdAndUp && !isSelected"
     >
-      <slot></slot>
+      <div style="width: 100%">
+        <div class="d-flex flex-row">
+          <slot name="left"></slot>
+          <v-spacer></v-spacer>
+          <slot name="right"></slot>
+        </div>
+        <LIBottomCorner :data="bottomCorners" />
+      </div>
     </div>
 
   </div>

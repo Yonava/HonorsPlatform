@@ -1,11 +1,21 @@
 <template>
   <LIFrame
     :item="item"
-    :bottomCorners="cornerData"
     :styled="styled"
+    :bottomCorners="[
+      {
+        icon: 'mdi-email',
+        text: item.email || '(No Email)',
+        error: !emailValid
+      },
+      {
+        icon: 'mdi-briefcase',
+        text: item.year || '(No Class Year)',
+      }
+    ]"
   >
 
-    <template #top-left>
+    <template #left>
 
       <LIIcon
         v-if="item.athletics"
@@ -21,7 +31,7 @@
 
     </template>
 
-    <template #top-right>
+    <template #right>
 
       <LIEmblem
         :color="status.color"
@@ -60,16 +70,4 @@ const status = computed(() => {
 })
 
 const emailValid = computed(() => emailValidator(props.item.email))
-
-const cornerData = computed(() => [
-  {
-    icon: 'mdi-email',
-    text: props.item.email || '(No Email)',
-    error: !emailValid.value
-  },
-  {
-    icon: 'mdi-briefcase',
-    text: props.item.year || '(No Class Year)',
-  }
-])
 </script>
