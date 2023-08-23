@@ -119,7 +119,12 @@
         </div>
 
         <div style="width: 100%">
-          <slot></slot>
+          <div class="d-flex flex-row">
+            <slot name="top-left"></slot>
+            <v-spacer></v-spacer>
+            <slot name="top-right"></slot>
+          </div>
+          <LIBottomCorner :data="bottomCorners" />
         </div>
 
       </div>
@@ -149,6 +154,7 @@ import { useStudentMatcher } from '../../StudentMatcher'
 import { getPanel, PanelName } from '../../Panels'
 import { storeToRefs } from 'pinia'
 import { useSocket } from '../../store/useSocket'
+import { LIBottomCorner } from './ListItemParts/ListItemExports'
 
 const { mdAndUp } = useDisplay()
 
@@ -168,6 +174,7 @@ const hovered = ref(false)
 
 const props = defineProps<{
   item: SheetItem,
+  bottomCorners: any,
   styled?: boolean
 }>()
 

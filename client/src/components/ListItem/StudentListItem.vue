@@ -1,10 +1,11 @@
 <template>
   <LIFrame
     :item="item"
+    :bottomCorners="cornerData"
     :styled="styled"
   >
 
-    <div class="d-flex flex-row">
+    <template #top-left>
 
       <LIIcon
         v-if="item.athletics"
@@ -18,7 +19,9 @@
         secondaryTooltip="Student ID"
       />
 
-      <v-spacer></v-spacer>
+    </template>
+
+    <template #top-right>
 
       <LIEmblem
         :color="status.color"
@@ -26,11 +29,7 @@
         :tooltip="status.tooltip"
       />
 
-    </div>
-
-    <LIBottomCorner
-      :data="cornerData"
-    />
+    </template>
 
   </LIFrame>
 </template>
@@ -45,7 +44,6 @@ import {
   LIIcon,
   LITitle,
   LIEmblem,
-  LIBottomCorner
 } from './ListItemParts/ListItemExports'
 
 const props = defineProps<{
