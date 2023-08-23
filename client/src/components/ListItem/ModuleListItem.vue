@@ -28,8 +28,8 @@
         }"
         :secondary="{
           text: item.term || '(No Term)',
-          tooltip: termValidator(item.term) ? 'Term' : 'Term (Potentially Invalid)',
-          error: !termValidator(item.term)
+          tooltip: termValid ? 'Term' : 'Term (Potentially Invalid)',
+          error: !termValid
         }"
       />
 
@@ -149,25 +149,8 @@ const docuSignStatus = computed(() => {
   }
 })
 
-const term = computed(() => {
-  if (termValidator(props.item.term)) {
-    return {
-      tooltip: 'Term',
-      style: {
-        fontSize: '0.6em',
-        fontWeight: 400
-      }
-    }
-  } else {
-    return {
-      tooltip: 'Term (Potentially Invalid)',
-      style: {
-        color: 'red',
-        fontWeight: 900,
-        fontSize: '0.6em'
-      }
-    }
-  }
+const termValid = computed(() => {
+  return termValidator(props.item.term)
 })
 
 const student = computed(() => {
