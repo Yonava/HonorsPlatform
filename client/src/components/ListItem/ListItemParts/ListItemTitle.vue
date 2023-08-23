@@ -28,6 +28,7 @@
 
     <!-- secondary text -->
     <span
+      v-if="secondary"
       class="mr-1"
       :style="{
         fontWeight: secondary.error ? 900 : 300,
@@ -63,7 +64,7 @@ const props = defineProps<{
     tooltip?: string,
     error?: boolean
   },
-  secondary: {
+  secondary?: {
     text: string,
     tooltip?: string,
     error?: boolean
