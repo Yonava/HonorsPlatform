@@ -4,6 +4,7 @@
     :styled="styled"
     :bottom-corners="[
       {
+        prop: 'completedDate',
         text: item.completedDate ? `Completed ${item.completedDate}` : 'No Completion Date',
         icon: 'calendar-check',
         tooltip: 'Completion Date',
