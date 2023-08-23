@@ -21,49 +21,35 @@ export function useStudentInfo(studentSysId: string) {
     if (studentMatch.value.error === 'NOT_FOUND') {
       return {
         text: 'No Student Found',
-        style: {
-          color: 'red',
-          fontWeight: 900
-        },
+        error: true,
         tooltip: `Could Not Find Student`,
         icon: 'mdi-alert-circle'
       }
     } else if (studentMatch.value.error === 'NOT_LINKED') {
       return {
         text: 'No Student Linked',
-        style: {
-          color: 'red',
-          fontWeight: 900
-        },
+        error: true,
         tooltip: 'Not Linked To A Student or Graduate',
         icon: 'mdi-account-off'
       }
     } else if (studentMatch.value.foundIn === 'STUDENTS') {
       return {
         text: studentMatch.value.name || 'No Name',
-        style: {
-          fontWeight: 400
-        },
+        error: false,
         tooltip: idText.value,
         icon: studentPanel.icon
       }
     } else if (studentMatch.value.foundIn === 'GRADUATES') {
       return {
         text: studentMatch.value.name || 'No Name',
-        style: {
-          color: 'red',
-          fontWeight: 900
-        },
+        error: false,
         tooltip: 'This Student Has Graduated - ' + idText.value,
         icon: graduatePanel.icon
       }
     } else {
       return {
         text: 'Problem Linking Student',
-        style: {
-          color: 'red',
-          fontWeight: 900
-        },
+        error: true,
         tooltip: 'Contact Developer',
         icon: 'mdi-alert-circle'
       }

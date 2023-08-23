@@ -4,12 +4,14 @@
     :styled="styled"
     :bottomCorners="[
       {
-        icon: 'mdi-email',
+        prop: 'email',
+        icon: 'email',
         text: item.email || '(No Email)',
         error: !emailValid
       },
       {
-        icon: 'mdi-briefcase',
+        prop: 'year',
+        icon: 'briefcase',
         text: item.year || '(No Class Year)',
       }
     ]"

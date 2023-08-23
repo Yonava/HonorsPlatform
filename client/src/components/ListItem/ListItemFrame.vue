@@ -163,6 +163,23 @@ import { storeToRefs } from 'pinia'
 import { useSocket } from '../../store/useSocket'
 import { LIBottomCorner } from './ListItemParts/ListItemExports'
 
+type CornerData = {
+  text: string,
+  icon: string,
+  // property in item being displayed
+  prop?: string,
+  // if true, text will appear in an error state (red)
+  error?: boolean,
+  // text on tooltip
+  tooltip?: string,
+}
+
+const props = defineProps<{
+  item: SheetItem,
+  bottomCorners: [CornerData] | [CornerData, CornerData]
+  styled?: boolean
+}>()
+
 const { mdAndUp } = useDisplay()
 
 const { getActivePanel, activateListTransition, setPanel } = useSheetManager()
@@ -178,12 +195,6 @@ const accounts = computed(() => {
 })
 
 const hovered = ref(false)
-
-const props = defineProps<{
-  item: SheetItem,
-  bottomCorners: any,
-  styled?: boolean
-}>()
 
 const { studentMatch } = useStudentMatcher(props.item?.studentSysId)
 

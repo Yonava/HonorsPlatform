@@ -9,24 +9,18 @@
 
         <div
           v-if="corners.left"
-          class="d-flex flex-row"
+          :class="div('left').class"
+          :style="div('left').style"
         >
 
           <v-icon
             class="mr-1"
             style="opacity: 0.75"
           >
-            {{ corners.left.icon }}
+            {{ iconify(corners.left.icon) }}
           </v-icon>
 
-          <p
-            :style="{
-              color: corners.left.error ? 'red' : 'black',
-              fontWeight: corners.left.error ? 'bold' : 'normal',
-            }"
-          >
-            {{ corners.left.text }}
-          </p>
+          {{ corners.left.text }}
 
           <v-tooltip
             :disabled="smAndDown || !corners.left.tooltip"
@@ -46,17 +40,18 @@
 
         <div
           v-if="corners.right"
-          class="d-flex flex-row"
+          :class="div('right').class"
+          :style="div('right').style"
         >
 
-          <p
-            :style="{
-              color: corners.right.error ? 'red' : 'black',
-              fontWeight: corners.right.error ? 'bold' : 'normal',
-            }"
+          {{ corners.right.text }}
+
+          <v-icon
+            class="ml-1"
+            style="opacity: 0.75"
           >
-            {{ corners.right.text }}
-          </p>
+            {{ iconify(corners.right.icon) }}
+          </v-icon>
 
           <v-tooltip
             :disabled="smAndDown || !corners.right.tooltip"
@@ -65,13 +60,6 @@
           >
             {{ corners.right.tooltip }}
           </v-tooltip>
-
-          <v-icon
-            class="ml-1"
-            style="opacity: 0.75"
-          >
-            {{ corners.right.icon }}
-          </v-icon>
 
         </div>
 
@@ -105,4 +93,25 @@ const corners = computed(() => {
     right,
   }
 })
+
+const iconify = (icon: string) => {
+  if (icon.startsWith('mdi-')) {
+    return icon
+  }
+  return `mdi-${icon}`
+}
+
+const div = (side: 'left' | 'right') => {
+  const corner = corners.value[side]
+  return {
+    class: [
+      'd-flex',
+      'flex-row',
+    ],
+    style: {
+      color: corner.error ? 'red' : 'black',
+      fontWeight: corner.error ? 'bold' : 'normal',
+    },
+  }
+}
 </script>

@@ -1,6 +1,9 @@
 <template>
   <div>
-    <v-icon class="mr-2">
+    <v-icon
+      :color="color"
+      class="mr-2"
+    >
       {{ 'mdi-' + icon }}
     </v-icon>
 
@@ -22,5 +25,6 @@ const { smAndDown } = useDisplay()
 const props = defineProps<{
   icon: string,
   tooltip: string,
+  color?: string,
 }>()
 </script>

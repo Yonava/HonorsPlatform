@@ -1,125 +1,48 @@
 <template>
-  <ListItemFrame
+  <LIFrame
     :item="item"
     :styled="styled"
+    :bottom-corners="[
+      {
+        icon: 'human-male-board',
+        text: item.instructor || '(No Instructor)',
+        tooltip: 'Instructor',
+      },
+      student
+    ]"
   >
-    <div class="d-flex flex-row">
-      <div v-if="overOneYearInProgress && !item.docuSignCompleted">
 
-        <v-icon
-          class="mr-2"
-          color="red"
-        >
-          mdi-alert
-        </v-icon>
+    <template #left>
 
-        <v-tooltip
-          :disabled="smAndDown"
-          activator="parent"
-          location="bottom"
-        >
-          {{ item.courseCode + ' In Progress For Over 1 Year' }}
-        </v-tooltip>
-      </div>
-      <div style="font-weight: 900; font-size: 1.5em; line-height: 1.25">
+      <LIIcon
+        v-if="overOneYearInProgress"
+        icon="alert"
+        color="red"
+        tooltip="Over One Year In Progress"
+      />
 
-        <span>
-          {{ item.courseCode || '(No Course)' }}
-          <v-tooltip
-            :disabled="smAndDown"
-            activator="parent"
-            location="bottom"
-          >
-            Course Code
-          </v-tooltip>
-        </span>
+      <LITitle
+        :primaryText="item.courseCode || '(No Course Code)'"
+        :secondaryText="item.term || '(No Term)'"
+        primaryTooltip="Course Code"
+        secondaryTooltip="Student ID"
+      />
 
-        <span :style="term.style">
+    </template>
 
-          {{ item.term || '(No Term)' }}
+    <template #right>
 
-          <v-tooltip
-            :disabled="smAndDown"
-            activator="parent"
-            location="bottom"
-          >
-            {{ term.tooltip }}
-          </v-tooltip>
-
-        </span>
-      </div>
-      <v-spacer></v-spacer>
-      <v-sheet
+      <LIEmblem
         :color="docuSignStatus.color"
-        :style="{
-          height: '25px',
-          color: 'white',
-          borderRadius: '25px',
-          whiteSpace: 'nowrap',
-          textTransform: 'capitalize',
-        }"
-        class="px-3 py-1 d-flex flex-row align-center"
-        elevation="1"
-      >
-        <v-icon class="mr-1">
-          {{ docuSignStatus.icon }}
-        </v-icon>
-        <span>
-          {{ docuSignStatus.text }}
-        </span>
-        <v-tooltip
-          :disabled="smAndDown"
-          activator="parent"
-          location="bottom"
-        >{{ docuSignStatus.tooltip }}</v-tooltip>
-      </v-sheet>
-    </div>
-    <div
-      class="d-flex flex-column mt-5"
-      style="font-size: 0.9em;"
-    >
-      <div class="d-flex flex-row">
-        <div class="d-flex flew-row align-center">
-          <v-icon
-            class="mr-1"
-            style="opacity: 0.75"
-          >
-            mdi-human-male-board
-          </v-icon>
-          <p>
-            {{ item.instructor || '(No Instructor)' }}
-          </p>
-          <v-tooltip
-            :disabled="smAndDown"
-            activator="parent"
-            location="bottom"
-          >Instructor</v-tooltip>
-        </div>
-        <v-spacer></v-spacer>
-        <div
-          :style="student.style"
-          class="d-flex flew-row align-center"
-        >
-          <p>
-            {{ student.text }}
-          </p>
-          <v-icon
-            class="ml-1"
-            style="opacity: 0.75"
-          >
-            {{ student.icon }}
-          </v-icon>
-          <v-tooltip
-            :disabled="smAndDown"
-            activator="parent"
-            location="bottom"
-          >
-            {{ student.tooltip }}
-          </v-tooltip>
-        </div>
-      </div>
-    </div>
-  </ListItemFrame>
+        :text="docuSignStatus.text"
+        :tooltip="docuSignStatus.tooltip"
+        :icon="docuSignStatus.icon"
+      />
+
+    </template>
+
+  </LIFrame>
+
 </template>
 
 <script setup lang="ts">
@@ -127,15 +50,17 @@ import { useStudentInfo } from './useStudentInfo'
 import { computed } from 'vue'
 import { Module } from '../../SheetTypes'
 import { termValidator } from '../../TermValidator'
-import { useDisplay } from 'vuetify'
-import ListItemFrame from './ListItemFrame.vue'
+import {
+  LIFrame,
+  LIIcon,
+  LITitle,
+  LIEmblem,
+} from './ListItemParts/ListItemExports'
 
 const props = defineProps<{
   item: Module,
   styled: boolean
 }>()
-
-const { smAndDown } = useDisplay()
 
 const overOneYearInProgress = computed(() => {
 
@@ -190,28 +115,28 @@ const docuSignStatus = computed(() => {
 
   if (invalid) {
     return {
-      icon: 'mdi-file-document-alert-outline',
+      icon: 'file-document-alert-outline',
       text: 'Invalid Date',
       color: 'red',
       tooltip: 'Either the created or completed date for the DocuSign is invalid.'
     }
   } else if (props.item.docuSignCompleted) {
     return {
-      icon: 'mdi-file-document-check-outline',
+      icon: 'file-document-check-outline',
       text: 'Completed',
       color: 'green',
       tooltip: `DocuSign Completed ${daysSinceDate(props.item.docuSignCompleted)} (${props.item.docuSignCompleted})`
     }
   } else if (props.item.docuSignCreated) {
     return {
-      icon: 'mdi-file-document-outline',
+      icon: 'file-document-outline',
       text: 'In Progress',
       color: 'blue',
       tooltip: `DocuSign Created ${daysSinceDate(props.item.docuSignCreated)} (${props.item.docuSignCreated})`
     }
   } else {
     return {
-      icon: 'mdi-file-document-alert-outline',
+      icon: 'file-document-alert-outline',
       text: 'Not Started',
       color: 'red',
       tooltip: 'DocuSign Not Started'
