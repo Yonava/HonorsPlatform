@@ -134,6 +134,7 @@ export const useAuth = defineStore('auth', {
     },
     async forceAuthorize(url?: string) {
       const redirectUrl = url ?? await this.getURL();
+      localStorage.removeItem(local.closeAfterAuth)
       window.location.replace(redirectUrl)
     },
     async authorize() {

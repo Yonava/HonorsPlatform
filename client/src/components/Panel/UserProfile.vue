@@ -83,7 +83,7 @@
             Active On:
           </h3>
           <v-sheet
-            :color="getActivePanel.color"
+            :color="getActivePanel.color + '-darken-1'"
             style="width: 100%; border-radius: 10px"
             class="pa-1 d-flex align-center flex-column justify-center"
           >
@@ -105,7 +105,7 @@
             ></div>
             <div v-if="itemFocused">
               <h2>
-                {{ itemFocused[getActivePanel.properties.title] }}
+                {{ itemFocused[getActivePanel.properties.title] || '(Untitled)' }}
               </h2>
             </div>
           </v-sheet>

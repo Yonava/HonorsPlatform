@@ -51,7 +51,7 @@ module.exports = class GoogleSheet {
     try {
       await this.sheets.spreadsheets.values.update({
         spreadsheetId: this.spreadsheetId,
-        range: 'Temporary Data!Z50',
+        range: 'Students!Z50',
         valueInputOption: 'RAW',
         resource: {
           values: [['']]

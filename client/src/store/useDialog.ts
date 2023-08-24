@@ -40,6 +40,17 @@ type PanelCoverData = {
   loading: boolean;
 }
 
+type SnackbarOptions = {
+  text?: string;
+  color?: string;
+  action?: {
+    onClick: () => void,
+    text: string,
+  } | null;
+  timeout?: number;
+  closeable?: boolean;
+}
+
 export const useDialog = defineStore("dialog", {
   state: () => ({
     panelCover: {} as Record<Panel['title']['plural'], PanelCoverData>,
@@ -52,7 +63,15 @@ export const useDialog = defineStore("dialog", {
     component: null as DialogComponent | null,
     persistent: false,
     contentTimeout: null as any,
-    contentTimeoutDuration: 300
+    contentTimeoutDuration: 300,
+    snackbar: {
+      show: false,
+      text: '',
+      color: 'primary',
+      action: null as DialogButton | null,
+      timeout: 5000,
+      closeable: true
+    }
   }),
   getters: {
     getPanelCover(state) {
@@ -65,6 +84,19 @@ export const useDialog = defineStore("dialog", {
     }
   },
   actions: {
+    openSnackbar(options: SnackbarOptions = {}) {
+      this.snackbar = {
+        show: true,
+        text: options.text ?? '',
+        color: options.color ?? '',
+        action: options.action ?? null,
+        timeout: options.timeout ?? 5000,
+        closeable: options.closeable ?? true
+      }
+    },
+    closeSnackbar() {
+      this.snackbar.show = false;
+    },
     setPersistent(persistent: boolean) {
       this.persistent = persistent;
     },
