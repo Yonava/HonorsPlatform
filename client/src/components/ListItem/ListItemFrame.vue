@@ -118,7 +118,12 @@
 
         </div>
 
-        <div style="width: 100%">
+        <div
+          :style="{
+            width: accounts.length > 0 ? 'calc(100% - 40px)' : '100%',
+          }"
+        >
+
           <div class="d-flex flex-row">
             <slot name="left"></slot>
             <v-spacer></v-spacer>
