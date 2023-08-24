@@ -128,3 +128,15 @@ export async function getUserProfileData(): Promise<any> {
     throw new Error("Unable to get user profile data");
   }
 }
+
+export async function getUserSheetPermissions(): Promise<{ read: boolean, write: boolean }> {
+  try {
+    const { data } = await axios.get("/api/user/permissions", requestHeaders());
+    if (!data) {
+      throw new Error("No user permissions data received");
+    }
+    return data;
+  } catch {
+    throw new Error("Unable to get user permissions data");
+  }
+}

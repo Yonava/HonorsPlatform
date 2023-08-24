@@ -81,6 +81,23 @@ app.get('/api/user', async (req, res) => {
   }
 });
 
+// get user permissions for sheet
+app.get('/api/user/permissions', async (req, res) => {
+  const { authorization } = req.headers;
+  const accessToken = authorization.split(' ')[1];
+
+  console.log('hitting get user permissions', accessToken)
+
+  try {
+    const sheet = new GoogleSheet(accessToken);
+    const { read, write } = await sheet.getSheetPermissions();
+    res.json({ read, write });
+  } catch (e) {
+    console.log(e)
+    res.status(401).json({ error: 'Forbidden' });
+  }
+});
+
 app.get('/api/auth/url', (req, res) => {
   res.json({ url: getAuthUrl() });
 });
@@ -98,17 +115,6 @@ app.get('/api/auth/:authCode', async (req, res) => {
     const { access_token: accessToken } = tokens;
     const profile = await getGoogleProfileData(accessToken);
 
-    // check if user has access to sheet
-    const sheet = new GoogleSheet(accessToken);
-    const hasAccess = await sheet.checkAccess();
-    if (!hasAccess) {
-      res.json({
-        error: errors.NO_SHEET_ACCESS
-      })
-
-      return;
-    }
-
     console.assert(accessToken && profile, 'Auth entry point failed');
 
     if (!accessToken || !profile) {
@@ -117,7 +123,7 @@ app.get('/api/auth/:authCode', async (req, res) => {
 
     res.json({
       accessToken,
-      profile
+      profile,
     });
   } catch (e) {
     console.log(e)

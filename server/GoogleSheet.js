@@ -40,16 +40,43 @@ module.exports = class GoogleSheet {
   }
 
   // ping to check if access token is valid
-  async checkAccess() {
+  async getSheetPermissions() {
+
+    const perms = {
+      read: false,
+      write: false,
+    }
+
+    // test write access
+    try {
+      await this.sheets.spreadsheets.values.update({
+        spreadsheetId: this.spreadsheetId,
+        range: 'Temporary Data!Z50',
+        valueInputOption: 'RAW',
+        resource: {
+          values: [['']]
+        }
+      });
+      return {
+        read: true,
+        write: true,
+      };
+    } catch (err) {
+      perms.write = false;
+    }
+
+    // test read access as fallback
     try {
       await this.sheets.spreadsheets.get({
         spreadsheetId: this.spreadsheetId,
         ranges: [],
       });
-      return true;
+      perms.read = true;
     } catch (err) {
-      return false;
+      perms.read = false;
     }
+
+    return perms;
   }
 
   async getRange(range) {

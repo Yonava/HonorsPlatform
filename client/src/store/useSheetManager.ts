@@ -88,6 +88,12 @@ export const useSheetManager = defineStore('sheetManager', {
         this.listTransitionActive = false
       }, activeDurationInMs)
     },
+    setReadOnlyMode(readOnly: boolean) {
+      this.readOnlyMode = readOnly
+    },
+    toggleReadOnlyMode() {
+      this.readOnlyMode = !this.readOnlyMode
+    },
     setSearchFilter(filter: string) {
       this.searchFilter = filter;
     },

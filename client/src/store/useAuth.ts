@@ -3,7 +3,8 @@ import axios from "axios";
 import router from "../router";
 import { useDialog } from "./useDialog";
 import { local } from "../Locals";
-import { getUserProfileData } from "../SheetsAPI";
+import { getUserProfileData, getUserSheetPermissions } from "../SheetsAPI";
+import { useSheetManager } from "./useSheetManager";
 import { useSocket } from "./useSocket";
 
 export type GoogleProfile = {
@@ -25,7 +26,8 @@ export type ServerErrors =
   'NO_ACCESS_TOKEN' |
   'REMOTE_LOGOUT' |
   'LOGOUT' |
-  'SOCKET_EXCEPTION'
+  'SOCKET_EXCEPTION' |
+  'PERMISSION_REQUEST_FAILED'
 
 export const useAuth = defineStore('auth', {
   state: () => ({
@@ -64,6 +66,19 @@ export const useAuth = defineStore('auth', {
           throw new Error('Session expired')
         }
       }
+
+      try {
+        const { read, write } = await getUserSheetPermissions()
+        if (!read) {
+          location.replace('/auth?error=NO_SHEET_ACCESS')
+          throw new Error('No sheet access')
+        } else if (!write) {
+          useSheetManager().setReadOnlyMode(true)
+        }
+      } catch (e) {
+        location.replace('/auth?error=PERMISSION_REQUEST_FAILED')
+        throw new Error('No sheet access')
+      }
     },
     async userLoginFlow(googleOAuthCode: string) {
 
@@ -73,7 +88,13 @@ export const useAuth = defineStore('auth', {
 
       let authUrl = `/api/auth/${encodeURIComponent(googleOAuthCode)}`
 
-      const { data } = await axios.get(authUrl)
+      const { data } = await axios.get(authUrl) as {
+        data: {
+          accessToken: string,
+          profile: GoogleProfile,
+          error?: ServerErrors
+        }
+      }
       const { error } = data as { error?: ServerErrors }
 
       if (error) {
@@ -83,7 +104,6 @@ export const useAuth = defineStore('auth', {
 
       this.setGoogleProfile(data.profile)
       localStorage.setItem(local.googleOAuthAccessToken, data.accessToken)
-
 
       const { connect, disconnect } = useSocket()
 
