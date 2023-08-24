@@ -9,8 +9,11 @@
 
         <div
           v-if="corners.left"
-          :class="div('left').class"
-          :style="div('left').style"
+          class="truncate"
+          :style="{
+            ...div('left').style,
+            width: `calc(100% - ${rightDivWidth}px)`,
+          }"
         >
 
           <v-icon
@@ -39,8 +42,8 @@
       <slot name="right">
 
         <div
+          ref="rightDiv"
           v-if="corners.right"
-          :class="div('right').class"
           :style="div('right').style"
         >
 
@@ -70,7 +73,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import { useDisplay } from 'vuetify'
 
 const { smAndDown } = useDisplay()
@@ -85,6 +88,14 @@ type CornerData = {
 const props = defineProps<{
   data?: [CornerData] | [CornerData, CornerData],
 }>()
+
+const rightDiv = ref<HTMLElement | null>(null)
+const rightDivWidth = ref<number | null>(null)
+
+onMounted(() => {
+  const minimumLeftRightSeparationPx = 15
+  rightDivWidth.value = rightDiv.value.clientWidth + minimumLeftRightSeparationPx
+})
 
 const corners = computed(() => {
   const [left, right] = props.data ?? []
@@ -104,14 +115,18 @@ const iconify = (icon: string) => {
 const div = (side: 'left' | 'right') => {
   const corner = corners.value[side]
   return {
-    class: [
-      'd-flex',
-      'flex-row',
-    ],
     style: {
       color: corner.error ? 'red' : 'black',
       fontWeight: corner.error ? 'bold' : 'normal',
+      whiteSpace: 'nowrap',
     },
   }
 }
 </script>
+
+<style scoped>
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+</style>

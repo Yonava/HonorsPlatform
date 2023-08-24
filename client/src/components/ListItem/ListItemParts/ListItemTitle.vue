@@ -3,14 +3,16 @@
     :style="{
       fontWeight: 900,
       fontSize: '1.5em',
-      lineHeight: 1
+      lineHeight: 1,
     }"
+    class="truncate mr-3"
   >
 
     <!-- primary title -->
     <span
       :style="{
-        color: primary.error ? 'red' : 'black'
+        color: primary.error ? 'red' : 'black',
+        whitespace: 'nowrap'
       }"
     >
 
@@ -71,3 +73,14 @@ const props = defineProps<{
   }
 }>()
 </script>
+
+<style scoped>
+
+.truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 300;
+}
+
+</style>

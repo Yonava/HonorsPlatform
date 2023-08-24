@@ -45,8 +45,10 @@
           :style="{
             height: getPanelCover.show ? 'calc(100vh - 64px)' : '',
             overflow: getPanelCover.show ? 'hidden' : 'auto',
-            minWidth: mdAndUp ? `${panelListWidth}px` : '',
-            maxWidth: mdAndUp ? `${panelListWidth}px` : '',
+            minWidth: mdAndUp ? `${itemListWidth}px` : '',
+            maxWidth: mdAndUp ? `${itemListWidth}px` : '',
+            pointerEvents: panelListCollapsed ? 'none' : 'auto',
+            transition: itemListTransition ? 'min-width 0.2s ease-in-out, max-width 0.2s ease-in-out' : '',
           }"
           class="d-flex flex-grow-1 flex-column align-center"
         >
@@ -139,6 +141,9 @@ const showLogo = computed(() => {
   return mdAndUp.value && !focusedItemSysId.value && !listItemBeingDragged.value
 })
 
+const panelListCollapsed = ref(false)
+const itemListTransition = ref(false)
+
 const panelHopBindings = () => {
   const panelKeys = Object.keys(panels) as (keyof typeof panels)[]
   return panelKeys.reduce((acc, key, i) => {
@@ -149,6 +154,13 @@ const panelHopBindings = () => {
 
 useKeyBindings({
   'r': () => getAllDocuments({ forceCacheRefresh: true }),
+  'p': () => {
+    panelListCollapsed.value = !panelListCollapsed.value
+    itemListTransition.value = true
+    setTimeout(() => {
+      itemListTransition.value = false
+    }, 200)
+  },
   ...panelHopBindings()
 })
 
@@ -176,11 +188,15 @@ const resizeStart = (e: MouseEvent) => {
 }
 
 const resizeMove = (e: MouseEvent) => {
-  const [smallestAllowed, largestAllowed] = [400, 600]
-  if (!resizing.value) {
+
+  const [smallestAllowed, largestAllowed] = [350, 550]
+
+  if (!resizing.value || panelListCollapsed.value) {
     return
   }
+
   const newWidth = e.clientX - sortPanelWidth
+
   if (newWidth < smallestAllowed || newWidth > largestAllowed) {
     return
   }
@@ -199,6 +215,13 @@ const resizeEnd = () => {
   document.removeEventListener('mousemove', resizeMove)
   document.removeEventListener('mouseup', resizeEnd)
 }
+
+const itemListWidth = computed(() => {
+  if (panelListCollapsed.value) {
+    return 1
+  }
+  return panelListWidth.value
+})
 
 watch(pinnedSysIds, (newIds) => {
   const storableIds = newIds.join(',')
