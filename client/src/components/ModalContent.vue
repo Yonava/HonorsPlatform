@@ -3,6 +3,7 @@
     <div v-if="!xs">
       <v-dialog
         v-model="showDialog"
+        :persistent="persistent"
         width="600"
       >
         <slot></slot>
@@ -32,6 +33,10 @@
 <script setup lang="ts">
 import { useDisplay } from 'vuetify'
 import { computed, ref, watchEffect } from 'vue'
+import { useDialog } from '../store/useDialog';
+import { storeToRefs } from 'pinia';
+
+const { persistent } = storeToRefs(useDialog())
 
 const { xs } = useDisplay()
 
@@ -50,7 +55,6 @@ const showDialog = computed({
   get: () => props.modelValue,
   set: (v) => emits('update:modelValue', v)
 })
-
 
 const showNavDrawer = ref(false)
 watchEffect(() => {

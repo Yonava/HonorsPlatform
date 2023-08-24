@@ -9,6 +9,7 @@
         prop: 'mentor',
         text: item.mentor || '(No Mentor)',
         icon: 'human-male-board',
+        tooltip: 'Faculty Mentor',
       }
     ]"
   >
@@ -46,7 +47,6 @@
 import { computed } from 'vue'
 import { Thesis } from '../../SheetTypes'
 import { termValidator } from '../../TermValidator'
-import { useDisplay } from 'vuetify'
 import { useStudentInfo } from './useStudentInfo'
 import {
   LIFrame,
@@ -58,8 +58,6 @@ const props = defineProps<{
   item: Thesis,
   styled?: boolean
 }>()
-
-const { smAndDown } = useDisplay()
 
 const termTooltip = computed(() => {
   if (termValidator(props.item.term)) {

@@ -213,7 +213,6 @@ input.title-variant {
   border: none;
   outline: none;
   width: 100%;
-  margin-bottom: 1rem;
   font-size: 3rem;
 }
 </style>

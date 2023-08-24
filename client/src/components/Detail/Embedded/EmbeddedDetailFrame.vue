@@ -1,23 +1,48 @@
 <template>
-  <ModalContent v-model="showDialog">
+  <ModalContent
+    v-model="showDialog"
+
+  >
     <div class="d-flex justify-center align-center">
       <v-card
-        class="pa-5"
         :width="xs ? '100%' : '550'"
+        class="pa-5"
         elevation="0"
       >
+
+        <div
+          v-if="xs"
+          class="d-flex flex-row justify-center align-center mb-5"
+        >
+          <slot name="close-button">
+            <v-btn
+              @click="showDialog = false"
+              color="red"
+              variant="outlined"
+            >
+              close
+            </v-btn>
+          </slot>
+          <v-spacer></v-spacer>
+          <slot name="right-button"></slot>
+        </div>
+
         <v-sheet
           :color="getActiveEmbeddedPanel.color + '-darken-2'"
           class="py-2 px-4 d-flex align-center"
           style="font-weight: bold; color: white; border-radius: 20px; width: 120%"
         >
+
           <v-icon class="mr-2">
             {{ getActiveEmbeddedPanel.icon }}
           </v-icon>
+
           <span>
             {{ getActiveEmbeddedPanel.title.singular }}
           </span>
+
         </v-sheet>
+
         <EmbeddedInput
           v-if="focusedEmbeddedItem"
           :item="focusedEmbeddedItem"
@@ -27,25 +52,42 @@
             type: 'title-variant'
           }"
         />
-        <slot></slot>
 
-        <CustomFields
-          v-if="focusedEmbeddedItem"
-          :item="focusedEmbeddedItem"
-          input-medium="EMBEDDED"
-        />
+        <v-divider></v-divider>
 
-        <EmbeddedInput
-          v-if="focusedEmbeddedItem"
-          :item="focusedEmbeddedItem"
-          prop="note"
-          :input="{
-            type: 'textarea',
+        <div
+          :style="{
+            maxHeight: xs ? '' : 'calc(100vh - 500px)',
+            overflow: 'auto',
           }"
-          label="Note"
-        />
+          class="pt-4"
+        >
 
-        <v-card-actions class="pa-0">
+          <slot></slot>
+
+          <CustomFields
+            v-if="focusedEmbeddedItem"
+            :item="focusedEmbeddedItem"
+            input-medium="EMBEDDED"
+          />
+
+          <EmbeddedInput
+            v-if="focusedEmbeddedItem"
+            :item="focusedEmbeddedItem"
+            prop="note"
+            :input="{
+              type: 'textarea',
+            }"
+            label="Note"
+          />
+
+        </div>
+
+        <v-card-actions
+          v-if="!xs"
+          class="pa-0"
+        >
+
           <v-btn
             @click="showDialog = false"
             color="red"
@@ -53,8 +95,11 @@
           >
             close
           </v-btn>
+
           <v-spacer></v-spacer>
+
           <slot name="right-button"></slot>
+
         </v-card-actions>
       </v-card>
     </div>
