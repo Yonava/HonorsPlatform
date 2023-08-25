@@ -43,6 +43,7 @@ type PanelCoverData = {
 type SnackbarOptions = {
   text?: string;
   color?: string;
+  img?: string;
   action?: {
     onClick: () => void,
     text: string,
@@ -67,6 +68,7 @@ export const useDialog = defineStore("dialog", {
     snackbar: {
       show: false,
       text: '',
+      img: '',
       color: 'primary',
       action: null as DialogButton | null,
       timeout: 5000,
@@ -87,6 +89,7 @@ export const useDialog = defineStore("dialog", {
     openSnackbar(options: SnackbarOptions = {}) {
       this.snackbar = {
         show: true,
+        img: options.img ?? '',
         text: options.text ?? '',
         color: options.color ?? '',
         action: options.action ?? null,

@@ -8,6 +8,7 @@ import { useSyncState } from "./useSyncState";
 import { storeToRefs } from "pinia";
 import { setSelectedItem } from '../components/Panel/SetSelectedItem'
   import { useSocket } from "./useSocket";
+import { useDialog } from "./useDialog";
 
 type GetAllDocuments = {
   showLoading?: boolean;
@@ -410,6 +411,8 @@ export const useDocumentCache = defineStore("documentCache", {
         const itemToTheRight = selectedItems[indexOfFocusedItemInSelected + 1];
         const nextFocusedItem = itemToTheRight || itemToTheLeft;
         setFocusedItem(nextFocusedItem.sysId);
+      } else if (itemBeingRemovedIsFocused) {
+        setFocusedItem("")
       }
 
       const indexOfItemInSelected = selectedItems.findIndex((selectedItem) => selectedItem.sysId === item.sysId);
@@ -510,10 +513,11 @@ export const useDocumentCache = defineStore("documentCache", {
 
       const panel = panels[panelName];
 
+      let title = item[panel.properties.title]
+      title ||= panel.title.singular
+
       if (showWarning) {
         try {
-          let title = item[panel.properties.title]
-          title = title ? `"${title}"` : panel.title.singular
           await warn({
             title: `Delete ${title}?`
           })
@@ -529,7 +533,7 @@ export const useDocumentCache = defineStore("documentCache", {
         });
       }
 
-      const { sysId, row } = item;
+      const { sysId, row } = item as { sysId: string, row: number }
 
       if (this.itemPostedToSheet(item)) {
         this.deleteItemCache(sysId, panelName);
@@ -539,6 +543,10 @@ export const useDocumentCache = defineStore("documentCache", {
         console.error("useDocumentCache: deleteItem started processing without item being saved to sheet!");
         return;
       }
+
+      useDialog().openSnackbar({
+        text: `${title} Deleted`,
+      })
 
       useSyncState().$reset();
 

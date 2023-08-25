@@ -5,7 +5,8 @@ import { useAuth, type GoogleProfile } from "./useAuth";
 import { useSyncState } from "./useSyncState";
 import { useSheetManager } from "./useSheetManager";
 import { useDocumentCache } from "./useDocumentCache";
-import { PanelName } from "../Panels";
+import { useDialog } from "./useDialog";
+import { type PanelName, panels } from "../Panels";
 import type { SheetItem, Announcement } from "../SheetTypes";
 
 type ActionPayload =
@@ -47,6 +48,10 @@ type ActionPayload =
 } | {
   action: 'announce',
   payload: Announcement
+}
+
+type ActionPayloadWithGoogleId = ActionPayload & {
+  googleId: string
 }
 
 type LastActionData = {
@@ -91,6 +96,9 @@ export const useSocket = defineStore("socket", {
         }
       });
     },
+    getConnectedAccountByGoogleId: (state) => (googleId: string) => {
+      return state.connectedSockets.find(socket => socket.id === googleId)
+    }
   },
   actions: {
     async connect() {
@@ -161,7 +169,10 @@ export const useSocket = defineStore("socket", {
       }
     },
     emitUserAction(action: ActionPayload) {
-      this.socket.emit('userAction', action)
+      this.socket.emit('userAction', {
+        ...action,
+        googleId: useAuth().googleProfile?.id
+      })
     },
     emitUserFocus() {
       const { googleProfile } = useAuth()
@@ -265,8 +276,22 @@ export const useSocket = defineStore("socket", {
         },
         {
           name: 'userAction',
-          action: (userAction: ActionPayload) => {
-            const { action } = userAction
+          action: (userAction: ActionPayloadWithGoogleId) => {
+            const {
+              focusedItemSysId,
+              focusedEmbeddedItem,
+              getActivePanel,
+              getActiveEmbeddedPanel,
+              setPanel
+            } = useSheetManager()
+            const { openSnackbar } = useDialog()
+            const { action, googleId } = userAction
+            const googleProfileOfActor = this.getConnectedAccountByGoogleId(googleId)
+            const actor = {
+              name: googleProfileOfActor?.given_name ?? 'Someone',
+              picture: googleProfileOfActor?.picture,
+            }
+
             switch (action) {
               case 'add':
                 const { addItemCache } = useDocumentCache()
@@ -274,6 +299,21 @@ export const useSocket = defineStore("socket", {
                 break
 
               case 'delete':
+
+                if (focusedItemSysId === userAction.payload.sysId) {
+                  openSnackbar({
+                    text: `${actor.name} Has Deleted The ${getActivePanel.title.singular} You Were Viewing`,
+                    img: actor.picture,
+                    timeout: 10_000,
+                  })
+                } else if (focusedEmbeddedItem?.sysId === userAction.payload.sysId) {
+                  openSnackbar({
+                    text: `${actor.name} Has Deleted The ${getActiveEmbeddedPanel.title.singular} You Were Viewing`,
+                    img: actor.picture,
+                    timeout: 10_000,
+                  })
+                }
+
                 const { deleteItemCache } = useDocumentCache()
                 deleteItemCache(userAction.payload.sysId, userAction.payload.panelName)
                 break
@@ -284,6 +324,20 @@ export const useSocket = defineStore("socket", {
                 break
 
               case 'prop-update':
+
+                const changeStudentSysId = userAction.payload.prop === 'studentSysId'
+                const studentSysIdMovedAway = changeStudentSysId && focusedItemSysId !== userAction.payload.value
+                const embeddedItemBeingUpdated = focusedEmbeddedItem?.sysId === userAction.payload.sysId
+                if (embeddedItemBeingUpdated && studentSysIdMovedAway) {
+                  openSnackbar({
+                    text: `${actor.name} Has Changed Which ${getActivePanel.title.singular} This ${getActiveEmbeddedPanel.title.singular} Is Associated With`,
+                    img: actor.picture,
+                    timeout: 10_000,
+                  })
+                  // Look into moving this elsewhere
+                  useSheetManager().setFocusedEmbeddedItem(null)
+                }
+
                 const { getItemBySysId } = useDocumentCache()
                 const item = getItemBySysId(userAction.payload.sysId, userAction.payload.panelName)
                 if (!item) {
@@ -302,6 +356,21 @@ export const useSocket = defineStore("socket", {
                 break
 
               case 'move':
+
+                const oldPanelTitle = panels[userAction.payload.oldPanelName].title.singular
+                const newPanelTitle = panels[userAction.payload.newPanelName].title.plural
+
+                if (
+                  focusedItemSysId === userAction.payload.item.sysId ||
+                  focusedEmbeddedItem?.sysId === userAction.payload.item.sysId
+                ) {
+                  openSnackbar({
+                    text: `${actor.name} Has Moved This ${oldPanelTitle} To ${newPanelTitle}`,
+                    img: actor.picture,
+                    timeout: 10_000,
+                  })
+                }
+
                 const { moveItemBetweenListsCache } = useDocumentCache()
                 moveItemBetweenListsCache({
                   item: userAction.payload.item,

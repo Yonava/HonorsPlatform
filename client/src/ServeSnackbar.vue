@@ -5,7 +5,15 @@
       :color="snackbar.color"
       :timeout="snackbar.timeout"
     >
-      {{ snackbar.text }}
+      <div class="d-flex flex-row align-center">
+        <img
+          v-if="snackbar.img"
+          :src="snackbar.img"
+          style="width: 34px; height: 34px; border-radius: 50%; margin-right: 8px;"
+        />
+
+        {{ snackbar.text }}
+      </div>
 
       <v-spacer></v-spacer>
 
@@ -13,7 +21,7 @@
 
         <v-btn
           v-if="snackbar.action"
-          @click="snackbar.action.onClick()"
+          @click="snackbar.action.onClick(); snackbar.show = false"
           variant="text"
         >
           {{ snackbar.action.text }}

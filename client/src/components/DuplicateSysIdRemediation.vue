@@ -124,7 +124,7 @@
                     :loading="removingItem || !item.dialog"
                     color="red"
                   >
-                    Remove {{ title(item) }} From System
+                    Remove {{ title(item) }}
                   </v-btn>
                 </div>
 

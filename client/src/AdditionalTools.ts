@@ -7,6 +7,14 @@ import CreateTempSheet from './components/CreateTempSheet.vue'
 export const tools = {
   STUDENTS: [
     {
+      name: 'Preview Snackbar',
+      handler: () => {
+        useDialog().openSnackbar({
+          text: 'This is a preview of the snackbar.'
+        })
+      }
+    },
+    {
       name: 'Toggle Read-Only Mode',
       handler: () => {
         useSheetManager().readOnlyMode = !useSheetManager().readOnlyMode
