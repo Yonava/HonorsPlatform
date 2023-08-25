@@ -90,10 +90,13 @@ const props = defineProps<{
 }>()
 
 const rightDiv = ref<HTMLElement | null>(null)
-const rightDivWidth = ref<number | null>(null)
+const rightDivWidth = ref<number>(0)
 
 onMounted(() => {
   const minimumLeftRightSeparationPx = 15
+  if (!rightDiv.value) {
+    return
+  }
   rightDivWidth.value = rightDiv.value.clientWidth + minimumLeftRightSeparationPx
 })
 

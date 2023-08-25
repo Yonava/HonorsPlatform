@@ -3,40 +3,40 @@
     <div v-if="!xs">
       <v-dialog
         v-model="showDialog"
-        :persistent="persistent"
+        :persistent="persistent && show"
         width="600"
       >
         <slot></slot>
       </v-dialog>
     </div>
     <div v-else>
-    <v-navigation-drawer
-      v-model="showNavDrawer"
-      temporary
-      touchless
-      rounded
-      location="bottom"
-      style="width: 100%; height: calc(100vh - 175px);"
-    >
-      <v-sheet
-        :color="color"
-        class="xs-outer-wrapper"
+      <v-navigation-drawer
+        v-model="showNavDrawer"
+        touchless
+        rounded
+        location="bottom"
+        style="width: 100%; height: calc(100vh - 175px);"
       >
-        <slot></slot>
-        <div style="margin-bottom: 175px"></div>
-      </v-sheet>
-    </v-navigation-drawer>
+        <v-sheet
+          :color="color"
+          class="xs-outer-wrapper"
+        >
+          <slot></slot>
+          <div style="margin-bottom: 175px"></div>
+        </v-sheet>
+      </v-navigation-drawer>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { useDisplay } from 'vuetify'
-import { computed, ref, watchEffect } from 'vue'
+import { computed, ref, watchEffect, watch } from 'vue'
 import { useDialog } from '../store/useDialog';
 import { storeToRefs } from 'pinia';
 
-const { persistent } = storeToRefs(useDialog())
+const { close } = useDialog()
+const { persistent, show } = storeToRefs(useDialog())
 
 const { xs } = useDisplay()
 
@@ -53,7 +53,9 @@ const emits = defineEmits([
 
 const showDialog = computed({
   get: () => props.modelValue,
-  set: (v) => emits('update:modelValue', v)
+  set: (v) => {
+    emits('update:modelValue', v)
+  }
 })
 
 const showNavDrawer = ref(false)
@@ -64,6 +66,12 @@ watchEffect(() => {
     }, 100)
   } else {
     showNavDrawer.value = false
+  }
+})
+
+watch(showNavDrawer, (v) => {
+  if (!v) {
+    close()
   }
 })
 </script>

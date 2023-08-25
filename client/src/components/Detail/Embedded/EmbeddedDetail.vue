@@ -101,6 +101,7 @@ const addEmbeddedItem = async () => {
 }
 
 const deleteEmbeddedItem = async (item: SheetItem) => {
+  console.log('deleting embedded item', item, getActiveEmbeddedPanel.panelName)
   await deleteItem({
     item,
     panelName: getActiveEmbeddedPanel.panelName,

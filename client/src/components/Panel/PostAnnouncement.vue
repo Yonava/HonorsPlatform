@@ -76,7 +76,7 @@ const sheetManager = useSheetManager();
 const { getActivePanel } = storeToRefs(sheetManager);
 
 const dialog = useDialog();
-const { open, close } = dialog;
+const { open, close, openSnackbar } = dialog;
 
 const announcement = ref('');
 const posting = ref(false);
@@ -148,6 +148,10 @@ const postNewAnnouncement = async () => {
   })
 
   posting.value = false
+
+  openSnackbar({
+    text: 'Announcement Posted',
+  })
 
   close()
 }
