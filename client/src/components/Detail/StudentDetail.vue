@@ -62,7 +62,7 @@
             :item="student"
             prop="athletics"
             :input="{
-              type: 'autocomplete',
+              type: smAndDown ? 'select' : 'autocomplete',
               items: Object.keys(athleticOptions),
             }"
             :icon="athleticOptions[student.athletics]"
@@ -185,6 +185,9 @@ import { ref, computed } from 'vue'
 import type { Student } from '../../SheetTypes'
 import { useMoveItem } from '../../MoveItems'
 import { storeToRefs } from "pinia";
+import { useDisplay } from "vuetify/lib/framework.mjs";
+
+const { smAndDown } = useDisplay();
 
 const { setPanel, getActivePanel } = useSheetManager();
 const { readOnlyMode } = storeToRefs(useSheetManager());

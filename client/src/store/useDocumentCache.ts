@@ -511,6 +511,15 @@ export const useDocumentCache = defineStore("documentCache", {
         return;
       }
 
+      const { emitUserAction } = useSocket()
+      await emitUserAction({
+        action: 'delete',
+        payload: {
+          sysId: item.sysId,
+          panelName
+        }
+      })
+
       const panel = panels[panelName];
 
       let title = item[panel.properties.title]
@@ -549,15 +558,6 @@ export const useDocumentCache = defineStore("documentCache", {
       })
 
       useSyncState().$reset();
-
-      const { emitUserAction } = useSocket()
-      emitUserAction({
-        action: 'delete',
-        payload: {
-          sysId,
-          panelName
-        }
-      })
     },
     addItemCache(item: types.SheetItem, panelName: PanelName) {
       const { activateListTransition, getActivePanel } = useSheetManager();
@@ -628,54 +628,57 @@ export const useDocumentCache = defineStore("documentCache", {
       return itemInList;
     },
     async updateItem(options: UpdateItem) {
-      const { getActivePanel } = useSheetManager();
-      const { setProcessing } = useSyncState();
 
-      const {
-        item,
-        panelName = getActivePanel.panelName,
-      } = options;
-
-      const panel = panels[panelName];
-
-      if (!this.itemPostedToSheet(item)) {
-        setProcessing(true);
-        const row = await postInRange(
-          panel.sheetRange,
-          await panel.mappers.unmap([item])
-        )
-        console.log("useDocumentCache: Posted to row", row)
-        item.row = row
-
-        useSyncState().$reset();
-
-        const { emitUserAction } = useSocket()
-        emitUserAction({
-          action: 'add',
-          payload: {
-            item,
-            panelName
-          }
-        })
-
-        return;
-      }
-
-      const itemInList = this.updateItemCache(item, panelName);
-
-      if (!itemInList || !item.row) {
-        return
-      }
-
-      setProcessing(true);
-
-      await updateByRow(
-        panel.sheetRange,
-        item.row,
-        await panel.mappers.unmap([item])
-      )
-
+      console.log('update request made')
       useSyncState().$reset();
+      // const { getActivePanel } = useSheetManager();
+      // const { setProcessing } = useSyncState();
+
+      // const {
+      //   item,
+      //   panelName = getActivePanel.panelName,
+      // } = options;
+
+      // const panel = panels[panelName];
+
+      // if (!this.itemPostedToSheet(item)) {
+      //   setProcessing(true);
+      //   const row = await postInRange(
+      //     panel.sheetRange,
+      //     await panel.mappers.unmap([item])
+      //   )
+      //   console.log("useDocumentCache: Posted to row", row)
+      //   item.row = row
+
+      //   useSyncState().$reset();
+
+      //   const { emitUserAction } = useSocket()
+      //   emitUserAction({
+      //     action: 'add',
+      //     payload: {
+      //       item,
+      //       panelName
+      //     }
+      //   })
+
+      //   return;
+      // }
+
+      // const itemInList = this.updateItemCache(item, panelName);
+
+      // if (!itemInList || !item.row) {
+      //   return
+      // }
+
+      // setProcessing(true);
+
+      // await updateByRow(
+      //   panel.sheetRange,
+      //   item.row,
+      //   await panel.mappers.unmap([item])
+      // )
+
+      // useSyncState().$reset();
     },
     moveItemBetweenListsCache({ item, oldPanelName, newPanelName }: MoveItemBetweenListsCache) {
       this.addItemCache(item, newPanelName);

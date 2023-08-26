@@ -184,7 +184,7 @@ export const unmap = <T extends SheetItem>(sheetItems: T[], headerRow: readonly 
     const row = [
       item.sysId,
       ...nonCustomFields,
-      item.note,
+      item.note ?? '',
     ];
 
     const keys = Object.keys(item) as (keyof T)[];

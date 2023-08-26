@@ -22,7 +22,7 @@
         v-if="activeInput.variant === 'string'"
         v-model="content"
         v-bind="$attrs"
-        @input="broadcast(prop)"
+        @input="input"
         :prepend-inner-icon="activeIcon"
         :readonly="readOnlyMode"
         :variant="inputVariant"
@@ -34,7 +34,7 @@
         v-else-if="activeInput.variant === 'number'"
         v-model.number="content"
         v-bind="$attrs"
-        @input="broadcast(prop)"
+        @input="input"
         :prepend-inner-icon="activeIcon"
         :readonly="readOnlyMode"
         :variant="inputVariant"
@@ -47,7 +47,7 @@
       v-else-if="activeInput.type === 'autocomplete'"
       v-model="content"
       v-bind="$attrs"
-      @update:model-value="broadcast(prop)"
+      @update:model-value="input"
       :items="activeInput.items"
       :prepend-inner-icon="activeIcon"
       :readonly="readOnlyMode"
@@ -58,7 +58,7 @@
       v-else-if="activeInput.type === 'select'"
       v-model="content"
       v-bind="$attrs"
-      @update:model-value="broadcast(prop)"
+      @update:model-value="input"
       :items="activeInput.items"
       :prepend-inner-icon="activeIcon"
       :readonly="readOnlyMode"
@@ -69,7 +69,7 @@
       v-else-if="activeInput.type === 'textarea'"
       v-model="content"
       v-bind="$attrs"
-      @input="broadcast(prop)"
+      @input="input"
       prepend-inner-icon="mdi-note"
       :readonly="readOnlyMode"
       auto-grow
@@ -80,7 +80,7 @@
       v-else-if="activeInput.type === 'title'"
       v-model="content"
       v-bind="$attrs"
-      @input="broadcast(prop)"
+      @input="input"
       :readonly="readOnlyMode"
       type="text"
       class="title"
@@ -90,7 +90,7 @@
       v-else-if="activeInput.type === 'title-variant'"
       v-model="content"
       v-bind="$attrs"
-      @input="broadcast(prop)"
+      @input="input"
       :readonly="readOnlyMode"
       type="text"
       class="title-variant mt-2"
@@ -106,6 +106,7 @@ import { useBroadcastThroughSocket } from '../../../TrackItemForUpdate'
 import { useSheetManager } from '../../../store/useSheetManager';
 import { storeToRefs } from 'pinia';
 import type { SheetItem } from '../../../SheetTypes'
+import { useUpdateManager } from '../../../store/useUpdateManager';
 
 const { readOnlyMode } = storeToRefs(useSheetManager())
 
@@ -156,6 +157,12 @@ const props = defineProps<{
 
 const { broadcast } = useBroadcastThroughSocket(props.inputMedium)
 
+const { trackItemForUpdate } = useUpdateManager()
+
+const input = () => {
+  // broadcast(props.prop)
+}
+
 const buttonClicked = () => {
   if (!props.item) {
     return
@@ -174,8 +181,8 @@ const activeInput = computed(() => {
 })
 
 const activeIcon = computed(() => {
-  const iconProp = props.icon ?? null
-  return iconProp ? `mdi-${iconProp}` : null
+  const iconProp = props.icon ?? undefined
+  return iconProp ? `mdi-${iconProp}` : undefined
 })
 
 const content = computed({
@@ -187,9 +194,16 @@ const content = computed({
     return props.item[props.prop]
   },
   set: (v: string) => {
+
+    trackItemForUpdate({
+      item: props.item,
+      panelName: props.inputMedium === 'DETAIL' ? useSheetManager().getActivePanel.panelName : useSheetManager().getActiveEmbeddedPanel.panelName
+    })
+
     if (!props.item) {
       return
     }
+
     // @ts-ignore
     props.item[props.prop] = v
   }

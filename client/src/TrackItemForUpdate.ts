@@ -155,15 +155,21 @@ export function useBroadcastThroughSocket(itemType: 'DETAIL' | 'EMBEDDED') {
   const panelName = detailMode ? getActivePanel.value.panelName : getActiveEmbeddedPanel.value.panelName
 
   const broadcast = (prop: string) => {
-    const sysId = detailMode ? getFocusedItem.value?.sysId : focusedEmbeddedItem.value?.sysId
+    const item = detailMode ? getFocusedItem.value : focusedEmbeddedItem.value
 
-    // @ts-ignore
-    const value = detailMode ? getFocusedItem.value?.[prop] : focusedEmbeddedItem.value?.[prop]
-
-    if (!sysId) {
-      console.error('no sysId')
+    if (!item) {
+      console.error('no item')
       return
     }
+
+    // check if prop is a key of item
+    if (!(prop in item)) {
+      console.error('prop not in item')
+      return
+    }
+
+    const value = item[prop as keyof typeof item]
+    const { sysId } = item
 
     emitUserAction({
       action: 'prop-update',
