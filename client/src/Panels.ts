@@ -107,6 +107,7 @@ export const panels = {
   },
   COMPLETED_MODULES: {
     panelName: 'COMPLETED_MODULES',
+    add: addActions.COMPLETED_MODULES,
     components: {
       detail: markRaw(CompletedModuleDetail),
       list: markRaw(CompletedModuleListItem),

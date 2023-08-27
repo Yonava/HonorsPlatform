@@ -6,6 +6,7 @@ import { filterItems } from '../FilterObjects';
 import { useDocumentCache } from './useDocumentCache';
 import { local } from '../Locals';
 import { useSocket } from './useSocket';
+import { useDialog } from './useDialog';
 
 export type JumpObject = {
   value: string,
@@ -16,6 +17,42 @@ export type JumpObject = {
 export type SortOption = {
   func: (a: SheetItem, b: SheetItem) => number,
   ascending: boolean
+}
+
+const runReadOnlyModeSnackbar = (readOnlyMode: boolean) => {
+  if (readOnlyMode) {
+    useDialog().openSnackbar({
+      text: 'You Have Been Placed In Read-Only Mode.',
+      closeable: false,
+      action: {
+        text: 'Learn More',
+        onClick: () => {
+          useDialog().open({
+            body: {
+              title: 'Read-Only Mode 📚',
+              description: 'Read-Only Mode allows you to view the data on the platform without being able to edit it. Contact Honors Program staff to request access to make changes on the platform.',
+              buttons: [
+                {
+                  text: 'Dismiss',
+                  color: 'primary',
+                  onClick: () => {
+                    useDialog().close()
+                  }
+                }
+              ]
+            }
+          })
+        },
+      },
+      timeout: 10_000
+    })
+  } else {
+    console.log('runReadOnlyModeSnackbar: not in read-only mode')
+    useDialog().openSnackbar({
+      text: 'You Have Been Taken Out Of Read-Only Mode.',
+      timeout: 10_000
+    })
+  }
 }
 
 export const useSheetManager = defineStore('sheetManager', {
@@ -90,9 +127,11 @@ export const useSheetManager = defineStore('sheetManager', {
     },
     setReadOnlyMode(readOnly: boolean) {
       this.readOnlyMode = readOnly
+      runReadOnlyModeSnackbar(this.readOnlyMode)
     },
     toggleReadOnlyMode() {
       this.readOnlyMode = !this.readOnlyMode
+      runReadOnlyModeSnackbar(this.readOnlyMode)
     },
     setSearchFilter(filter: string) {
       this.searchFilter = filter;

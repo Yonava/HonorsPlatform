@@ -7,17 +7,9 @@ import CreateTempSheet from './components/CreateTempSheet.vue'
 export const tools = {
   STUDENTS: [
     {
-      name: 'Preview Snackbar',
-      handler: () => {
-        useDialog().openSnackbar({
-          text: 'This is a preview of the snackbar.'
-        })
-      }
-    },
-    {
       name: 'Toggle Read-Only Mode',
       handler: () => {
-        useSheetManager().readOnlyMode = !useSheetManager().readOnlyMode
+        useSheetManager().toggleReadOnlyMode()
       }
     },
     {
@@ -58,12 +50,6 @@ export const tools = {
   ],
   GRADUATES: [
     {
-      name: 'Toggle Read-Only Mode',
-      handler: () => {
-        useSheetManager().readOnlyMode = !useSheetManager().readOnlyMode
-      }
-    },
-    {
       name: 'Suggested Deletions',
       disableInReadOnly: true,
       handler: () => { useDialog().setPanelCover('open') }
@@ -89,12 +75,6 @@ export const tools = {
     }
   ],
   MODULES: [
-    {
-      name: 'Toggle Read-Only Mode',
-      handler: () => {
-        useSheetManager().readOnlyMode = !useSheetManager().readOnlyMode
-      }
-    },
     {
       name: 'Suggested Deletions',
       disableInReadOnly: true,
@@ -122,12 +102,6 @@ export const tools = {
   ],
   COMPLETED_MODULES: [
     {
-      name: 'Toggle Read-Only Mode',
-      handler: () => {
-        useSheetManager().readOnlyMode = !useSheetManager().readOnlyMode
-      }
-    },
-    {
       name: 'Suggested Deletions',
       disableInReadOnly: true,
       handler: () => { useDialog().setPanelCover('open') }
@@ -154,12 +128,6 @@ export const tools = {
   ],
   THESES: [
     {
-      name: 'Toggle Read-Only Mode',
-      handler: () => {
-        useSheetManager().readOnlyMode = !useSheetManager().readOnlyMode
-      }
-    },
-    {
       name: 'Suggested Deletions',
       disableInReadOnly: true,
       handler: () => { useDialog().setPanelCover('open') }
@@ -185,12 +153,6 @@ export const tools = {
     }
   ],
   GRADUATE_ENGAGEMENTS: [
-    {
-      name: 'Toggle Read-Only Mode',
-      handler: () => {
-        useSheetManager().readOnlyMode = !useSheetManager().readOnlyMode
-      }
-    },
     {
       name: 'Suggested Deletions',
       disableInReadOnly: true,
