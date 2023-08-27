@@ -12,7 +12,7 @@
           class="truncate"
           :style="{
             ...div('left').style,
-            width: `calc(100% - ${rightDivWidth}px)`,
+            maxWidth: `calc(100% - ${rightDivWidth}px)`,
           }"
         >
 

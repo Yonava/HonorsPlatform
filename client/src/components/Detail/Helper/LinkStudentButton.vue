@@ -5,7 +5,7 @@
     <div
       v-if="!readOnlyMode"
       @click="linkStudent"
-      :style="linkFrom === 'graduates' ? '' : student.style"
+      :style="buttonStyle"
       class="d-flex flew-row align-center clickable"
     >
       <v-icon
@@ -28,7 +28,7 @@
     <!-- view linked student -->
     <div
       v-else
-      :style="linkFrom === 'graduates' ? '' : student.style"
+      :style="buttonStyle"
       class="d-flex flew-row align-center read-only"
     >
       <v-icon
@@ -47,7 +47,6 @@
 
 <script setup lang="ts">
 import LinkStudent from './LinkStudent.vue'
-import LinkGraduate from './LinkGraduate.vue'
 import { useStudentInfo } from '../../ListItem/useStudentInfo'
 import { useSheetManager } from '../../../store/useSheetManager'
 import { useDialog } from '../../../store/useDialog'
@@ -62,7 +61,7 @@ const { readOnlyMode } = storeToRefs(sheetManager)
 
 const props = defineProps<{
   item: Object & { studentSysId: string },
-  linkFrom?: 'students' | 'graduates'
+  linkFrom?: ('STUDENTS' | 'GRADUATES')[] | 'STUDENTS' | 'GRADUATES',
 }>()
 
 const emits = defineEmits<{
@@ -74,12 +73,24 @@ const student = computed(() => {
   return studentInfo.value
 })
 
+const buttonStyle = computed(() => {
+  if (student.value.error) {
+    return {
+      color: 'red',
+      fontWeight: 'bold',
+    }
+  } else {
+    return {}
+  }
+})
+
 const linkStudent = () => {
   useDialog().open({
     component: {
-      render: props.linkFrom === 'graduates' ? LinkGraduate : LinkStudent,
+      render: LinkStudent,
       props: {
         onUpdate: () => emits('update'),
+        panelNames: props.linkFrom || 'STUDENTS',
       }
     },
   })

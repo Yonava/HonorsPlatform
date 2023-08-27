@@ -5,7 +5,7 @@
   >
     <div class="d-flex flex-row align-center">
       <h1 class="my-2">
-        Select {{ studentPanel.title.singular }}:
+        Select {{ panel.title.singular }}:
       </h1>
       <v-spacer></v-spacer>
       <input
@@ -21,16 +21,16 @@
       style="overflow: auto; height: 420px;"
     >
       <div
-        v-for="student in filteredItems.sort((a, b) => a.name.localeCompare(b.name))"
-        :key="student.sysId"
-        @click="studentLinked(student.sysId)"
+        v-for="item in filteredItems"
+        :key="item.sysId"
+        @click="link(item.sysId)"
         class="d-flex flex-row align-center clickable"
       >
         <h2>
-          {{ student.name || '(No Name)' }}
+          {{ item.name || '(No Name)' }}
         </h2>
         <span style="font-size: 0.9rem;">
-          ({{ student.id || 'No ID' }})
+          ({{ item.id || 'No ID' }})
         </span>
       </div>
       <div
@@ -38,7 +38,7 @@
         class="mt-1"
       >
         <h2 style="color: red">
-          No {{ studentPanel.title.plural }} Found
+          No {{ panel.title.plural }} Found
         </h2>
       </div>
     </div>
@@ -51,33 +51,55 @@ import { useDocumentCache } from '../../../store/useDocumentCache'
 import { useSheetManager } from '../../../store/useSheetManager'
 import { filterItems } from '../../../FilterObjects'
 import { ref, computed } from 'vue'
-import { getPanel } from '../../../Panels'
+import { getPanel, type PanelName } from '../../../Panels'
+import { SheetItem } from '../../../SheetTypes'
 
-const { Students, getItemBySysId } = useDocumentCache()
-
-const studentPanel = getPanel('STUDENTS')
+const { getItems, getItemBySysId } = useDocumentCache()
 
 const filterQuery = ref('')
 
 const props = defineProps<{
   props: {
-    onUpdate: () => void
+    onUpdate: () => void,
+    panelNames: PanelName | PanelName[],
   }
 }>()
 
-const filteredItems = computed(() => {
-  return filterItems(
-    [...Students.list].filter(item => !!item.name || !!item.id),
-    filterQuery.value
-  )
+const panelNames = computed(() => {
+  if (Array.isArray(props.props?.panelNames)) {
+    return props.props?.panelNames
+  } else {
+    return [props.props?.panelNames]
+  }
 })
 
-const studentLinked = (sysId: string) => {
+const panel = computed(() => {
+  return getPanel(panelNames.value[0])
+})
+
+console.log(panel.value)
+
+const items = computed(() => {
+  const allItems = [] as SheetItem[]
+  for (const panelName of panelNames.value) {
+    const panelItems = getItems(panelName)
+    allItems.push(...panelItems)
+  }
+
+  return allItems
+})
+
+const filteredItems = computed(() => {
+  return filterItems(items.value, filterQuery.value)
+    .sort((a, b) => a.name.localeCompare(b.name))
+})
+
+const link = (sysId: string) => {
   const { focusedItemSysId } = useSheetManager()
   const itemToModify = getItemBySysId(focusedItemSysId)
 
   // if itemToModify does not have a studentSysId return and log an error
-  if (!itemToModify?.studentSysId === undefined) {
+  if (itemToModify?.studentSysId === undefined) {
     console.error('Link Student: No studentSysId found on itemToModify')
     return
   }
