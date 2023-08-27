@@ -114,8 +114,6 @@ export const useDialog = defineStore("dialog", {
     },
     open(options?: { body?: DialogBody; component?: DialogComponent, persistent?: boolean }) {
 
-      console.log(this.show)
-
       this.setPersistent(options?.persistent ?? false);
       if (this.show && !this.persistent) {
 

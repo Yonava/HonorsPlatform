@@ -109,11 +109,29 @@
 <script setup lang="ts">
 import CustomFields from '../Helper/CustomFields.vue'
 import EmbeddedInput from './EmbeddedInput.vue'
+import ModalContent from '../../ModalContent.vue'
 import { ref, computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useDisplay } from 'vuetify'
+import { useDocumentCache } from '../../../store/useDocumentCache'
+import { useSyncState } from '../../../store/useSyncState'
 import { useSheetManager } from '../../../store/useSheetManager'
-import ModalContent from '../../ModalContent.vue'
+
+const cleanup = () => {
+
+  if (!focusedEmbeddedItem.value) {
+    return
+  }
+
+  const { processing } = useSyncState()
+  const { itemPostedToSheet, deleteItemCache } = useDocumentCache()
+
+  if (!processing && !itemPostedToSheet(focusedEmbeddedItem.value)) {
+    deleteItemCache(focusedEmbeddedItem.value.sysId, getActiveEmbeddedPanel.value.panelName)
+  }
+
+  setFocusedEmbeddedItem(null)
+}
 
 const {
   getActiveEmbeddedPanel,
@@ -143,7 +161,7 @@ const showDialog = computed({
   set: () => {
     dialogCanOpen.value = false
     setTimeout(() => {
-      setFocusedEmbeddedItem(null)
+      cleanup()
       dialogCanOpen.value = true
     }, 300)
   }

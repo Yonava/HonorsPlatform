@@ -506,15 +506,6 @@ export const useDocumentCache = defineStore("documentCache", {
         return;
       }
 
-      const { emitUserAction } = useSocket()
-      await emitUserAction({
-        action: 'delete',
-        payload: {
-          sysId: item.sysId,
-          panelName
-        }
-      })
-
       const panel = panels[panelName];
 
       let title = item[panel.properties.title]
@@ -550,6 +541,15 @@ export const useDocumentCache = defineStore("documentCache", {
 
       useDialog().openSnackbar({
         text: `${title} Deleted`,
+      })
+
+      const { emitUserAction } = useSocket()
+      await emitUserAction({
+        action: 'delete',
+        payload: {
+          sysId: item.sysId,
+          panelName
+        }
       })
 
       useSyncState().$reset();
@@ -650,7 +650,6 @@ export const useDocumentCache = defineStore("documentCache", {
       )
       item.row = row;
 
-      console.log(oldPanel.sheetRange, oldRow)
       await clearByRow(oldPanel.sheetRange, oldRow);
 
       this.moveItemBetweenListsCache({ item, oldPanelName, newPanelName });

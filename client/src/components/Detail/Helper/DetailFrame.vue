@@ -78,13 +78,23 @@
 import EmbeddedDetail from '../Embedded/EmbeddedDetail.vue'
 import DetailInput from './DetailInput.vue'
 import CustomFields from './CustomFields.vue'
-import { ref, watch } from 'vue'
+import { ref, watch, onUnmounted } from 'vue'
 import { useElementSize } from '@vueuse/core'
 import { useSheetManager } from '../../../store/useSheetManager'
 import { useDialog } from '../../../store/useDialog'
 import { useDocumentCache } from '../../../store/useDocumentCache'
 import { storeToRefs } from 'pinia'
 import type { SheetItem } from '../../../SheetTypes'
+import { useSyncState } from '../../../store/useSyncState'
+
+onUnmounted(() => {
+  const { processing } = useSyncState()
+  const { itemPostedToSheet, deleteItemCache } = useDocumentCache()
+
+  if (!processing && !itemPostedToSheet(props.item)) {
+    deleteItemCache(props.item.sysId)
+  }
+})
 
 const { open, close } = useDialog()
 const { deleteItem } = useDocumentCache()

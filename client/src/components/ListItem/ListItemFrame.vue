@@ -101,7 +101,7 @@
               width: '30px',
               height: '30px',
               borderRadius: '50%',
-              border: '2px solid rgba(255, 255, 255, 1)',
+              border: '1px solid white',
               cursor: 'pointer',
             }"
           >

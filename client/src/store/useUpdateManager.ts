@@ -5,6 +5,7 @@ import { useDocumentCache } from "./useDocumentCache";
 import { batchUpdate, postInRange, type BatchUpdateData } from "../SheetsAPI";
 import { mappers } from "../DataMappers";
 import { useSyncState } from "./useSyncState";
+import { useSocket } from "./useSocket";
 
 type UpdateItem = {
   // key is the sysId
@@ -79,7 +80,7 @@ export const useUpdateManager = defineStore('updateManager', {
         item,
       }
     },
-    manageTimeout() {
+    async manageTimeout() {
       // if the timeout is already set, clear it
       if (this.timeout) {
         clearTimeout(this.timeout)
@@ -134,8 +135,6 @@ export const useUpdateManager = defineStore('updateManager', {
               throw new Error('Column index is greater than 25')
             }
 
-            // update cell with new value
-            console.log(`${panel.sheetRange}!${cells[i]}${item.row} = ${rowItem[i]}`)
             data.push({
               range: `${panel.sheetRange}!${cells[i]}${item.row}`,
               values: [[rowItem[i]]]
@@ -144,7 +143,7 @@ export const useUpdateManager = defineStore('updateManager', {
         }
       }
 
-      if (data.length) {
+      if (data.length > 0) {
         await batchUpdate(data)
       }
 
@@ -159,6 +158,15 @@ export const useUpdateManager = defineStore('updateManager', {
 
       const row = await postInRange(sheetRange, unmap([item]))
       item.row = row
+
+      const { emitUserAction } = useSocket()
+      emitUserAction({
+        action: 'add',
+        payload: {
+          panelName,
+          item,
+        }
+      })
     }
   }
 })
