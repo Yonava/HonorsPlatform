@@ -160,13 +160,19 @@ const { broadcast } = useBroadcastThroughSocket(props.inputMedium)
 const { trackItemForUpdate } = useUpdateManager()
 
 const input = () => {
-  // broadcast(props.prop)
+  broadcast(props.prop)
 }
 
 const buttonClicked = () => {
   if (!props.item) {
     return
   }
+
+  trackItemForUpdate({
+    item: props.item,
+    panelName: props.inputMedium === 'DETAIL' ? useSheetManager().getActivePanel.panelName : useSheetManager().getActiveEmbeddedPanel.panelName
+  })
+
   // @ts-ignore
   props.item[props.prop] = props.button?.newPropValue()
   broadcast(props.prop)
@@ -195,14 +201,14 @@ const content = computed({
   },
   set: (v: string) => {
 
+    if (!props.item) {
+      return
+    }
+
     trackItemForUpdate({
       item: props.item,
       panelName: props.inputMedium === 'DETAIL' ? useSheetManager().getActivePanel.panelName : useSheetManager().getActiveEmbeddedPanel.panelName
     })
-
-    if (!props.item) {
-      return
-    }
 
     // @ts-ignore
     props.item[props.prop] = v

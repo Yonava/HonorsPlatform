@@ -255,8 +255,6 @@ app.post("/api/range/:range", async (req, res) => {
   const { authorization } = req.headers;
   const accessToken = authorization.split(' ')[1];
 
-  console.log('hitting 6', accessToken)
-
   try {
     const sheet = new GoogleSheet(accessToken);
     const rowInsertedAt = await sheet.postInRange(range, data);
@@ -264,6 +262,21 @@ app.post("/api/range/:range", async (req, res) => {
       row: rowInsertedAt,
       success: true
     });
+  } catch (e) {
+    res.status(401).json({ error: 'Forbidden' });
+    return;
+  }
+});
+
+app.put("/api/batch", async (req, res) => {
+  const data = req.body;
+  const { authorization } = req.headers;
+  const accessToken = authorization.split(' ')[1];
+
+  try {
+    const sheet = new GoogleSheet(accessToken);
+    await sheet.batchUpdate(data);
+    res.json({ success: true });
   } catch (e) {
     res.status(401).json({ error: 'Forbidden' });
     return;

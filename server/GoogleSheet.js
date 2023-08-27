@@ -49,6 +49,7 @@ module.exports = class GoogleSheet {
 
     // test write access
     try {
+
       await this.sheets.spreadsheets.values.update({
         spreadsheetId: this.spreadsheetId,
         range: 'Students!Z50',
@@ -57,6 +58,7 @@ module.exports = class GoogleSheet {
           values: [['']]
         }
       });
+
       return {
         read: true,
         write: true,
@@ -67,10 +69,12 @@ module.exports = class GoogleSheet {
 
     // test read access as fallback
     try {
+
       await this.sheets.spreadsheets.get({
         spreadsheetId: this.spreadsheetId,
         ranges: [],
       });
+
       perms.read = true;
     } catch (err) {
       perms.read = false;
@@ -119,6 +123,17 @@ module.exports = class GoogleSheet {
     );
   }
 
+  async batchUpdate(data) {
+    console.log('batch update', data)
+    await this.sheets.spreadsheets.values.batchUpdate({
+      spreadsheetId: this.spreadsheetId,
+      resource: {
+        data,
+        valueInputOption: 'RAW',
+      }
+    });
+  }
+
   async postInRange(range, data) {
     const rangeData = await this.getRange(range);
 
@@ -134,6 +149,7 @@ module.exports = class GoogleSheet {
 
     let insertRow = rangeData.findIndex(row => row.join('') === '');
     insertRow = insertRow === -1 ? rangeData.length + 1 : insertRow + 1;
+
     await this.sheets.spreadsheets.values.update(
       this.writable(`${range}!A${insertRow}:Z${insertRow}`, data)
     );

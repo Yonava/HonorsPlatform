@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 import { type PanelName, panels } from "../Panels";
 import { SheetItem } from "../SheetTypes";
 import { useDocumentCache } from "./useDocumentCache";
-import { useSocket } from "./useSocket";
+import { batchUpdate, postInRange, type BatchUpdateData } from "../SheetsAPI";
 import { mappers } from "../DataMappers";
 import { useSyncState } from "./useSyncState";
 
@@ -115,10 +115,18 @@ export const useUpdateManager = defineStore('updateManager', {
 
       const sysIds = Object.keys(this.updater) as string[]
 
+      const data: BatchUpdateData = []
+
       for (const sysId of sysIds) {
         const { item, originalRowItem, panelName } = this.updater[sysId]
         const rowItem = mappers[panelName].unmap([item])[0]
         const panel = panels[panelName]
+
+        if (typeof item.row !== 'number') {
+          await this.postItem({ item, panelName })
+          continue
+        }
+
         for (let i = 0; i < rowItem.length; i++) {
           if (rowItem[i] !== originalRowItem[i]) {
 
@@ -128,13 +136,29 @@ export const useUpdateManager = defineStore('updateManager', {
 
             // update cell with new value
             console.log(`${panel.sheetRange}!${cells[i]}${item.row} = ${rowItem[i]}`)
+            data.push({
+              range: `${panel.sheetRange}!${cells[i]}${item.row}`,
+              values: [[rowItem[i]]]
+            })
           }
         }
+      }
+
+      if (data.length) {
+        await batchUpdate(data)
       }
 
       this.updater = {}
 
       useSyncState().$reset()
+    },
+    async postItem({ item, panelName }: UpdateProperty) {
+
+      const { sheetRange } = panels[panelName]
+      const { unmap } = mappers[panelName]
+
+      const row = await postInRange(sheetRange, unmap([item]))
+      item.row = row
     }
   }
 })

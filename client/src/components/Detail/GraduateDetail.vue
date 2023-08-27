@@ -72,7 +72,6 @@ import {
   phoneValidator,
 } from "../../EmailUtilities";
 import { studentIdRule } from "../../StudentTools";
-import { useUpdateItem } from "../../TrackItemForUpdate";
 import type { Graduate } from "../../SheetTypes";
 import { useSheetManager } from "../../store/useSheetManager";
 import { useMoveItem } from "../../MoveItems";
@@ -87,6 +86,5 @@ const props = defineProps<{
 
 const grad = computed(() => props.item);
 
-useUpdateItem(grad);
 const { moveItem, movingItem, panelOnceMoved } = useMoveItem()
 </script>

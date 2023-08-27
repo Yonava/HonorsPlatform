@@ -140,3 +140,17 @@ export async function getUserSheetPermissions(): Promise<{ read: boolean, write:
     throw new Error("Unable to get user permissions data");
   }
 }
+
+export type BatchUpdateData = {
+  range: `${Range}!${string}${number}`;
+  values: string[][]
+}[];
+
+export async function batchUpdate(data: BatchUpdateData) {
+  try {
+    await axios.put("/api/batch", data, requestHeaders());
+  } catch {
+    await useAuth().authorize();
+    await batchUpdate(data);
+  }
+}

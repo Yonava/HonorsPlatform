@@ -52,10 +52,10 @@
 </template>
 
 <script setup lang="ts">
-import { useUpdateItem } from '../../../TrackItemForUpdate'
 import { computed, toRefs } from 'vue'
 import { SheetItem } from '../../../SheetTypes'
 import { useSheetManager } from '../../../store/useSheetManager'
+import { useUpdateManager } from '../../../store/useUpdateManager'
 import { useDocumentCache } from '../../../store/useDocumentCache'
 import { storeToRefs } from 'pinia'
 
@@ -64,7 +64,10 @@ const { getActivePanel, getActiveEmbeddedPanel, setFocusedEmbeddedItem } = sheet
 const { loadingItems, focusedEmbeddedItem, readOnlyMode } = storeToRefs(sheetManager)
 
 const documents = useDocumentCache()
-const { deleteItem, addItem, updateItem } = documents
+const { deleteItem, addItem } = documents
+
+const updateManager = useUpdateManager()
+const { postItem } = updateManager
 
 const { filterBy, text } = getActivePanel.embedded
 
@@ -73,7 +76,6 @@ const props = defineProps<{
 }>()
 
 const { list: items } = toRefs(documents[getActiveEmbeddedPanel.sheetRange])
-useUpdateItem(focusedEmbeddedItem, getActiveEmbeddedPanel.panelName)
 
 const displayedItems = computed(() => {
   if (!props.item[filterBy.outer]) {
@@ -85,8 +87,9 @@ const displayedItems = computed(() => {
 const addEmbeddedItem = async () => {
   // edge case for when parent panel is not yet saved to the sheet
   if (!props.item.row) {
-    updateItem({
-      item: props.item
+    postItem({
+      item: props.item,
+      panelName: getActiveEmbeddedPanel.panelName,
     })
   }
 
