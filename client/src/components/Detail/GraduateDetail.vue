@@ -11,21 +11,25 @@
         />
       </DetailHeader>
 
-      <DetailInput
-        :item="grad"
-        prop="email"
-        :rules="[(v) => emailValidator(v) || 'Invalid email']"
-        label="Email"
-        icon="email"
-      />
+      <InputCoupler>
 
-      <DetailInput
-        :item="grad"
-        prop="phone"
-        :rules="[(v) => phoneValidator(v) || 'Invalid phone number']"
-        label="Phone"
-        icon="phone"
-      />
+        <DetailInput
+          :item="grad"
+          prop="email"
+          :rules="[(v) => emailValidator(v) || 'Invalid email']"
+          label="Email"
+          icon="email"
+        />
+
+        <DetailInput
+          :item="grad"
+          prop="phone"
+          :rules="[(v) => phoneValidator(v) || 'Invalid phone number']"
+          label="Phone"
+          icon="phone"
+        />
+
+      </InputCoupler>
 
       <DetailInput
         :item="grad"
@@ -65,6 +69,7 @@ import IDInput from "./Helper/IDInput.vue";
 import DetailFrame from "./Helper/DetailFrame.vue";
 import DetailHeader from "./Helper/DetailHeader.vue";
 import DetailInput from "./Helper/DetailInput.vue";
+import InputCoupler from "./Helper/InputCoupler.vue";
 
 import { computed } from "vue";
 import {

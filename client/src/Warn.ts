@@ -7,7 +7,9 @@ type WarnOptions = {
   persistent?: boolean
 }
 
-export const warn = (options: WarnOptions = {}): Promise<string> => {
+type States = 'CONFIRMED' | 'CANCELLED' | 'CANCELLED_BACKGROUND'
+
+export const warn = (options: WarnOptions = {}): Promise<States> => {
 
   const {
     title = 'Warning',
@@ -23,7 +25,7 @@ export const warn = (options: WarnOptions = {}): Promise<string> => {
     setTimeout(() => {
       dismissWatcher = watch(() => useDialog().show, (v) => {
         if (!v) {
-          reject('warn: cancelled by user — background')
+          reject('CANCELLED_BACKGROUND')
           dismissWatcher()
         }
       })
@@ -43,7 +45,7 @@ export const warn = (options: WarnOptions = {}): Promise<string> => {
             color: 'red',
             onClick: () => {
               dismissWatcher()
-              reject('warn: cancelled by user')
+              reject('CANCELLED')
               close()
             }
           },
@@ -52,7 +54,7 @@ export const warn = (options: WarnOptions = {}): Promise<string> => {
             color: 'green',
             onClick: async () => {
               dismissWatcher()
-              resolve('warn: confirmed by user')
+              resolve('CONFIRMED')
               close()
             }
           }

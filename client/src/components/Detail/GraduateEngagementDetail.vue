@@ -7,8 +7,8 @@
       >
         <LinkStudentButton
           @update="broadcastThroughSocket('studentSysId')"
-          linkFrom="graduates"
           :item="event"
+          linkFrom="GRADUATES"
         />
       </DetailHeader>
 
