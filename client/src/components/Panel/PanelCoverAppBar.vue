@@ -165,6 +165,8 @@ const deleteItems = async (itemsToDelete: SheetItem[]) => {
     ...newSheetData
   ])
 
+  console.log('forceConnectedClientsToRefresh')
+
   await forceConnectedClientsToRefresh()
 
   close()

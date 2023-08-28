@@ -105,8 +105,12 @@ export const useSheetManager = defineStore('sheetManager', {
       return state.panel;
     },
     getActiveEmbeddedPanel(state) {
-      const embeddedPanel = getPanel(state.panel.embedded.panel)
-      return embeddedPanel ?? null
+      const { panel } = state
+      if (!panel?.embedded) {
+        return null
+      }
+      const { panel: embeddedPanelName } = panel?.embedded
+      return getPanel(embeddedPanelName)
     },
     getPinnedItem: (state) => (item: SheetItem) => {
       return state.pinnedSysIds.find((sysId) => item.sysId === sysId)

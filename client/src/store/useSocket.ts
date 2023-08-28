@@ -349,6 +349,7 @@ export const useSocket = defineStore("socket", {
 
               case 'refresh':
                 const { getAllDocuments } = useDocumentCache()
+                console.log('Refreshing cache')
                 getAllDocuments({
                   showLoading: false,
                   forceCacheRefresh: true

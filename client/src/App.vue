@@ -1,8 +1,8 @@
 <template>
   <v-app>
-    <router-view />
     <ServeSnackbar />
     <ServeDialog />
+    <router-view />
   </v-app>
 </template>
 

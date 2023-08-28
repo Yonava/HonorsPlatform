@@ -10,27 +10,6 @@ import { warn } from './Warn'
 export const tools = {
   STUDENTS: [
     {
-      name: 'Warn Me',
-      handler: async () => {
-        try {
-          await warn()
-        } catch (e: any) {
-          if (e === 'CANCELLED_BACKGROUND') {
-            console.log('warn was cancelled in the background')
-          } else {
-            useDialog().open({
-              persistent: true,
-              body: {
-                title: 'You Cancelled On Me',
-                description: 'Not in the background!!!!',
-
-              }
-            })
-          }
-        }
-      }
-    },
-    {
       name: 'Toggle Read-Only Mode',
       handler: () => {
         useSheetManager().toggleReadOnlyMode()
@@ -99,6 +78,12 @@ export const tools = {
     }
   ],
   MODULES: [
+    {
+      name: 'Refresh',
+      handler: () => {
+        useDocumentCache().forceConnectedClientsToRefresh()
+      },
+    },
     {
       name: 'Suggested Deletions',
       disableInReadOnly: true,
