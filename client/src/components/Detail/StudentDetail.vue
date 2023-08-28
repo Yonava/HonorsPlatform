@@ -185,6 +185,8 @@ import type { Student } from '../../SheetTypes'
 import { useMoveItem } from '../../MoveItems'
 import { storeToRefs } from "pinia";
 import { useDisplay } from "vuetify/lib/framework.mjs";
+import { useBroadcastThroughSocket } from "../../TrackItemForUpdate";
+import { useUpdateManager } from "../../store/useUpdateManager";
 
 const { smAndDown } = useDisplay();
 
@@ -248,10 +250,22 @@ const viewThesis = async () => {
   });
 }
 
+const { broadcast } = useBroadcastThroughSocket('DETAIL');
+
 const addStudentNote = (event: { initials: string; note: string, date: string }) => {
+
   const { initials, note, date } = event;
   if (student.value.note) student.value.note += "\n\n";
   student.value.note += `${initials} (${date}): ${note}`;
-  broadcastThroughSocket('note')
+
+  showAddNote.value = false;
+
+  broadcast('note')
+
+  const { trackItemForUpdate } = useUpdateManager();
+  trackItemForUpdate({
+    panelName: getActivePanel.panelName,
+    item: student.value,
+  })
 }
 </script>
