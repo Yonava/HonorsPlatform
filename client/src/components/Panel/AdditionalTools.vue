@@ -18,6 +18,13 @@
         class="type-list-item"
       >
         {{ tool.name }}
+        <v-tooltip
+          v-if="tool.tooltip"
+          :disabled="smAndDown"
+          activator="parent"
+        >
+          test
+        </v-tooltip>
       </v-list-item>
     </v-list>
 
@@ -29,6 +36,9 @@ import { useSheetManager } from '../../store/useSheetManager'
 import { storeToRefs } from 'pinia'
 import { ref, computed } from 'vue'
 import { tools } from '../../AdditionalTools'
+import { useDisplay } from 'vuetify/lib/framework.mjs'
+
+const { smAndDown } = useDisplay()
 
 const showing = ref(false)
 
@@ -36,7 +46,10 @@ const sheetManager = useSheetManager()
 const { getActivePanel, readOnlyMode } = storeToRefs(sheetManager)
 
 const activeTools = computed(() => {
-  return tools[getActivePanel.value.panelName] ?? []
+  return [
+    ...tools[getActivePanel.value.panelName],
+    ...tools['ALL']
+  ]
 })
 
 const object = computed(() => {

@@ -1,25 +1,50 @@
 import { useDialog } from './store/useDialog'
 import { useDocumentCache } from './store/useDocumentCache'
-import { useSheetManager } from './store/useSheetManager'
 import IncrementStudentYearDialog from './components/IncrementStudentYear.vue'
 import CreateTempSheet from './components/CreateTempSheet.vue'
+import type { PanelName } from './Panels'
 
+type Tool = {
+  name: string,
+  disableInReadOnly?: boolean,
+  handler: () => void,
+  tooltip?: string,
+}
 
-import { warn } from './Warn'
+type Tools = {
+  [key in (PanelName | 'ALL')]: Tool[]
+}
 
-export const tools = {
-  STUDENTS: [
-    {
-      name: 'Toggle Read-Only Mode',
-      handler: () => {
-        useSheetManager().toggleReadOnlyMode()
-      }
-    },
+export const tools: Tools = {
+  ALL: [
     {
       name: 'Suggested Deletions',
       disableInReadOnly: true,
-      handler: () => { useDialog().setPanelCover('open') }
+      handler: () => {
+        useDialog().setPanelCover('open')
+      }
     },
+    {
+      name: 'Create Temporary Sheet',
+      disableInReadOnly: true,
+      handler: async () => {
+        useDialog().open({
+          component: {
+            render: CreateTempSheet
+          }
+        })
+      }
+    },
+    {
+      name: 'Refresh Data',
+      handler: () => {
+        useDocumentCache().getAllDocuments({
+          forceCacheRefresh: true,
+        });
+      }
+    }
+  ],
+  STUDENTS: [
     {
       name: 'Increment Student Year',
       disableInReadOnly: true,
@@ -31,160 +56,10 @@ export const tools = {
         })
       }
     },
-    {
-      name: 'Create Temporary Sheet',
-      disableInReadOnly: true,
-      handler: async () => {
-        useDialog().open({
-          component: {
-            render: CreateTempSheet
-          }
-        })
-      }
-    },
-    {
-      name: 'Refresh Data',
-      handler: () => {
-        useDocumentCache().getAllDocuments({
-          forceCacheRefresh: true,
-        });
-      }
-    }
   ],
-  GRADUATES: [
-    {
-      name: 'Suggested Deletions',
-      disableInReadOnly: true,
-      handler: () => { useDialog().setPanelCover('open') }
-    },
-    {
-      name: 'Create Temporary Sheet',
-      disableInReadOnly: true,
-      handler: async () => {
-        useDialog().open({
-          component: {
-            render: CreateTempSheet
-          }
-        })
-      }
-    },
-    {
-      name: 'Refresh Data',
-      handler: () => {
-        useDocumentCache().getAllDocuments({
-          forceCacheRefresh: true,
-        });
-      }
-    }
-  ],
-  MODULES: [
-    {
-      name: 'Refresh',
-      handler: () => {
-        useDocumentCache().forceConnectedClientsToRefresh()
-      },
-    },
-    {
-      name: 'Suggested Deletions',
-      disableInReadOnly: true,
-      handler: () => { useDialog().setPanelCover('open') }
-    },
-    {
-      name: 'Create Temporary Sheet',
-      disableInReadOnly: true,
-      handler: async () => {
-        useDialog().open({
-          component: {
-            render: CreateTempSheet
-          }
-        })
-      }
-    },
-    {
-      name: 'Refresh Data',
-      handler: () => {
-        useDocumentCache().getAllDocuments({
-          forceCacheRefresh: true,
-        });
-      }
-    }
-  ],
-  COMPLETED_MODULES: [
-    {
-      name: 'Suggested Deletions',
-      disableInReadOnly: true,
-      handler: () => { useDialog().setPanelCover('open') }
-    },
-    {
-      name: 'Create Temporary Sheet',
-      disableInReadOnly: true,
-      handler: async () => {
-        useDialog().open({
-          component: {
-            render: CreateTempSheet
-          }
-        })
-      }
-    },
-    {
-      name: 'Refresh Data',
-      handler: () => {
-        useDocumentCache().getAllDocuments({
-          forceCacheRefresh: true,
-        });
-      }
-    }
-  ],
-  THESES: [
-    {
-      name: 'Suggested Deletions',
-      disableInReadOnly: true,
-      handler: () => { useDialog().setPanelCover('open') }
-    },
-    {
-      name: 'Create Temporary Sheet',
-      disableInReadOnly: true,
-      handler: async () => {
-        useDialog().open({
-          component: {
-            render: CreateTempSheet
-          }
-        })
-      }
-    },
-    {
-      name: 'Refresh Data',
-      handler: () => {
-        useDocumentCache().getAllDocuments({
-          forceCacheRefresh: true,
-        });
-      }
-    }
-  ],
-  GRADUATE_ENGAGEMENTS: [
-    {
-      name: 'Suggested Deletions',
-      disableInReadOnly: true,
-      handler: () => { useDialog().setPanelCover('open') }
-    },
-    {
-      name: 'Create Temporary Sheet',
-      disableInReadOnly: true,
-      handler: async () => {
-        useDialog().open({
-          component: {
-            render: CreateTempSheet
-          }
-        })
-      }
-    },
-    {
-      name: 'Refresh Data',
-      handler: () => {
-        useDocumentCache().getAllDocuments({
-          forceCacheRefresh: true,
-        });
-      }
-    }
-  ]
+  GRADUATES: [],
+  MODULES: [],
+  COMPLETED_MODULES: [],
+  THESES: [],
+  GRADUATE_ENGAGEMENTS: []
 }

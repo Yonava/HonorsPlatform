@@ -100,7 +100,7 @@ const gradEngagementDeletions = async () => {
       }
     } else if (studentMatch.value.foundIn === 'STUDENTS') {
       deletionData.status = "danger"
-      deletionData.flaggedBecause.push(`is still a ${studentPanel.title.singular}`)
+      deletionData.flaggedBecause.push(`${studentMatch.value.name || '(No Name)'} is still a ${studentPanel.title.singular}`)
     }
 
     return deletionData
@@ -144,12 +144,12 @@ const thesisDeletions = async () => {
       }
     } else if (studentMatch.value.foundIn === 'GRADUATES') {
       deletionData.status = "danger"
-      deletionData.flaggedBecause.push(`${studentPanel.title.singular} has graduated`)
+      deletionData.flaggedBecause.push(`${studentMatch.value.name || '(No Name)'} has graduated`)
     }
 
     if (!thesis.mentor) {
       deletionData.status ??= 'warn'
-      deletionData.flaggedBecause.push("no mentor")
+      deletionData.flaggedBecause.push("no faculty mentor")
     }
 
     return deletionData
@@ -220,7 +220,7 @@ const completedModuleDeletions = async () => {
       }
     } else if (studentMatch.value.foundIn === 'GRADUATES') {
       deletionData.status = "danger"
-      deletionData.flaggedBecause.push(`${studentPanel.title.singular} has graduated`)
+      deletionData.flaggedBecause.push(`${studentMatch.value.name || '(No Name)'} has graduated`)
     }
 
     return deletionData
@@ -298,7 +298,7 @@ const moduleDeletions = async () => {
       }
     } else if (studentMatch.value.foundIn === 'GRADUATES') {
       deletionData.status = "danger"
-      deletionData.flaggedBecause.push(`${studentPanel.title.singular} has graduated`)
+      deletionData.flaggedBecause.push(`${studentMatch.value.name || '(No Name)'} has graduated`)
     }
 
     return deletionData
@@ -427,6 +427,7 @@ export const getSuggestedDeletions = async (panelObject?: Panel) => {
     .filter(deletion => !!deletion.status)
 
   const currentItems = useDialog().getPanelCover.deletionItems
+
   if (currentItems.length === 0) {
     return newDeleteSuggestions.sort(sortItems)
   } else {

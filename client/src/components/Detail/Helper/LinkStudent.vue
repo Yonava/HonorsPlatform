@@ -37,9 +37,42 @@
         v-if="filteredItems.length === 0 && filterQuery.length > 0"
         class="mt-1"
       >
-        <h2 style="color: red">
+
+        <h2
+          class="mb-2"
+          style="color: red"
+        >
           No {{ panel.title.plural }} Found
         </h2>
+
+        <v-btn
+          v-if="panel.panelName === studentPanel.panelName && additionalPanel === null"
+          @click="additionalPanel = graduatePanel.panelName"
+          :color="graduatePanel.color + '-darken-1'"
+        >
+          <v-icon
+            size="24"
+            class="mr-2"
+          >
+            {{ graduatePanel.icon }}
+          </v-icon>
+          Try Searching In {{ graduatePanel.title.plural }}
+        </v-btn>
+
+        <v-btn
+          v-else-if="panel.panelName === graduatePanel.panelName && additionalPanel === null"
+          @click="additionalPanel = studentPanel.panelName"
+          :color="studentPanel.color + '-darken-1'"
+        >
+          <v-icon
+            size="24"
+            class="mr-2"
+          >
+            {{ studentPanel.icon }}
+          </v-icon>
+          Try Searching In {{ studentPanel.title.plural }}
+        </v-btn>
+
       </div>
     </div>
   </v-sheet>
@@ -54,7 +87,11 @@ import { ref, computed } from 'vue'
 import { getPanel, type PanelName } from '../../../Panels'
 import { useUpdateManager } from '../../../store/useUpdateManager'
 import { useSocket } from '../../../store/useSocket'
-import { get } from '@vueuse/core'
+
+const studentPanel = getPanel('STUDENTS')
+const graduatePanel = getPanel('GRADUATES')
+
+const additionalPanel = ref<PanelName | null>(null)
 
 const { getItems, getItemBySysId } = useDocumentCache()
 
@@ -71,7 +108,14 @@ const panel = computed(() => {
 })
 
 const items = computed(() => {
-  return getItems(props.props.panelName) || []
+  if (additionalPanel.value) {
+    return [
+      ...getItems(props.props.panelName) ?? [],
+      ...getItems(additionalPanel.value) ?? [],
+    ]
+  }
+
+  return getItems(props.props.panelName) ?? []
 })
 
 const filteredItems = computed(() => {
@@ -90,7 +134,7 @@ const link = (sysId: string) => {
   }
 
   const { trackItemForUpdate } = useUpdateManager()
-  console.log('Link Student: Tracking item for update', itemToModify, props.props.panelName)
+
   const { getActivePanel } = useSheetManager()
   trackItemForUpdate({
     item: itemToModify,
