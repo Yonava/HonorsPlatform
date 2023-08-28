@@ -61,25 +61,6 @@ export const useUpdateManager = defineStore('updateManager', {
   }),
   getters: {},
   actions: {
-    addItemToUpdater(sysId: string, panelName: PanelName) {
-
-      if (!sysId) {
-        throw new Error(`sysId is required`)
-      }
-
-      const { getItemBySysId } = useDocumentCache()
-      const item = getItemBySysId(sysId, panelName)
-
-      if (!item) {
-        throw new Error(`Could not find item with sysId ${sysId} in panel ${panelName}`)
-      }
-
-      this.updater[sysId] = {
-        panelName,
-        originalRowItem: mappers[panelName].unmap(item),
-        item,
-      }
-    },
     async manageTimeout() {
       // if the timeout is already set, clear it
       if (this.timeout) {
@@ -119,7 +100,12 @@ export const useUpdateManager = defineStore('updateManager', {
       const data: BatchUpdateData = []
 
       for (const sysId of sysIds) {
-        const { item, originalRowItem, panelName } = this.updater[sysId]
+        const { item, originalRowItem, panelName } = this.updater[sysId] as {
+          item: SheetItem,
+          originalRowItem: any[],
+          panelName: PanelName
+        }
+
         const rowItem = mappers[panelName].unmap([item])[0]
         const panel = panels[panelName]
 

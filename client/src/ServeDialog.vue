@@ -15,9 +15,9 @@
 </template>
 
 <script setup lang="ts">
-import ModalContent from '../ModalContent.vue'
-import DefaultDialogContent from '../DefaultDialogContent.vue'
-import { useDialog } from '../../store/useDialog'
+import ModalContent from './components/ModalContent.vue'
+import DefaultDialogContent from './components/DefaultDialogContent.vue'
+import { useDialog } from './store/useDialog'
 import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
 

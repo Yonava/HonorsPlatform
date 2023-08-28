@@ -118,6 +118,7 @@ export const map = <T extends SheetItem>(spreadsheetMatrix: string[][], headerRo
             text: 'Remediate',
             onClick: () => {
               useDialog().open({
+                persistent: true,
                 component: {
                   render: DuplicateSysIdRemediation
                 }

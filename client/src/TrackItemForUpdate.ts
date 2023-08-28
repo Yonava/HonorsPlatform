@@ -1,37 +1,6 @@
 import { storeToRefs } from "pinia";
 import { useSheetManager } from "./store/useSheetManager";
-import { type Ref } from "vue";
-import type { SheetItem } from "./SheetTypes";
-import { type PanelName } from "./Panels";
 import { useSocket } from "./store/useSocket";
-
-export function useUpdateItem<T extends SheetItem>(item: Ref<T | null>, panelNameParam?: PanelName) {
-  const { getActivePanel } = storeToRefs(useSheetManager());
-  const panelName = panelNameParam ?? getActivePanel.value.panelName
-
-  type Primitive = string | number | boolean
-
-  const broadcastThroughSocket = (property: keyof T, value?: Primitive) => {
-    if (!item.value) {
-      return
-    }
-
-    const { emitUserAction } = useSocket()
-    emitUserAction({
-      action: 'prop-update',
-      payload: {
-        sysId: item.value.sysId,
-        prop: property,
-        value: value ?? item.value[property],
-        panelName,
-      }
-    })
-  }
-
-  return {
-    broadcastThroughSocket
-  }
-}
 
 export function useBroadcastThroughSocket(itemType: 'DETAIL' | 'EMBEDDED') {
   const { emitUserAction } = useSocket()

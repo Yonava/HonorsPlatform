@@ -52,7 +52,9 @@ import { useSheetManager } from '../../../store/useSheetManager'
 import { filterItems } from '../../../FilterObjects'
 import { ref, computed } from 'vue'
 import { getPanel, type PanelName } from '../../../Panels'
-import { SheetItem } from '../../../SheetTypes'
+import { useUpdateManager } from '../../../store/useUpdateManager'
+import { useSocket } from '../../../store/useSocket'
+import { get } from '@vueuse/core'
 
 const { getItems, getItemBySysId } = useDocumentCache()
 
@@ -60,33 +62,16 @@ const filterQuery = ref('')
 
 const props = defineProps<{
   props: {
-    onUpdate: () => void,
-    panelNames: PanelName | PanelName[],
+    panelName: PanelName,
   }
 }>()
 
-const panelNames = computed(() => {
-  if (Array.isArray(props.props?.panelNames)) {
-    return props.props?.panelNames
-  } else {
-    return [props.props?.panelNames]
-  }
-})
-
 const panel = computed(() => {
-  return getPanel(panelNames.value[0])
+  return getPanel(props.props.panelName)
 })
-
-console.log(panel.value)
 
 const items = computed(() => {
-  const allItems = [] as SheetItem[]
-  for (const panelName of panelNames.value) {
-    const panelItems = getItems(panelName)
-    allItems.push(...panelItems)
-  }
-
-  return allItems
+  return getItems(props.props.panelName) || []
 })
 
 const filteredItems = computed(() => {
@@ -104,8 +89,27 @@ const link = (sysId: string) => {
     return
   }
 
+  const { trackItemForUpdate } = useUpdateManager()
+  console.log('Link Student: Tracking item for update', itemToModify, props.props.panelName)
+  const { getActivePanel } = useSheetManager()
+  trackItemForUpdate({
+    item: itemToModify,
+    panelName: getActivePanel.panelName,
+  })
+
   itemToModify.studentSysId = sysId
-  props.props?.onUpdate()
+
+  const { emitUserAction } = useSocket()
+  emitUserAction({
+    action: 'prop-update',
+    payload: {
+      panelName: getActivePanel.panelName,
+      sysId: itemToModify.sysId,
+      prop: 'studentSysId',
+      value: itemToModify.studentSysId,
+    }
+  })
+
   useDialog().close()
 }
 </script>

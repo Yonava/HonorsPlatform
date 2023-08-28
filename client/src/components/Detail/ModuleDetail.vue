@@ -5,10 +5,7 @@
         :item="module"
         placeholder="Course Code"
       >
-        <LinkStudentButton
-          @update="broadcastThroughSocket('studentSysId')"
-          :item="module"
-        />
+        <LinkStudentButton :item="module"/>
       </DetailHeader>
 
       <DetailInput
@@ -106,7 +103,6 @@ import { termValidator, getCurrentTerm } from '../../TermValidator'
 import { useInstructorAutoComplete } from '../../InstructorAutoComplete'
 import { getPanel } from '../../Panels'
 import { useMoveItem } from '../../MoveItems'
-import { useUpdateItem } from '../../TrackItemForUpdate'
 import { useSheetManager } from '../../store/useSheetManager'
 import { storeToRefs } from 'pinia'
 
@@ -131,8 +127,6 @@ const {
   suggestionToString,
   suggestedInstructor
 } = useInstructorAutoComplete(instructor)
-
-const { broadcastThroughSocket } = useUpdateItem(module)
 
 const { moveItem, movingItem, panelOnceMoved } = useMoveItem()
 </script>

@@ -84,7 +84,6 @@
         </span>
       </div>
     </v-main>
-    <ServeDialog />
     <ItemDetailSM />
   </div>
 </template>
@@ -102,7 +101,6 @@ import PanelCoverAppBar from '../components/Panel/PanelCoverAppBar.vue'
 import PanelList from '../components/Panel/PanelList.vue'
 import SortPanel from '../components/Panel/SortPanel.vue'
 import AppBar from '../components/Panel/AppBar.vue'
-import ServeDialog from '../components/Panel/ServeDialog.vue'
 import PanelCover from '../components/Panel/PanelCover.vue'
 import ItemDetail from '../components/Panel/ItemDetail.vue'
 import { useKeyBindings } from '../KeyBindings'

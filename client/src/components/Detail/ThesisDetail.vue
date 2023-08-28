@@ -138,7 +138,6 @@ import {
 import { useSheetManager } from '../../store/useSheetManager'
 import { useDocumentCache } from '../../store/useDocumentCache'
 import { useDialog } from '../../store/useDialog'
-import { useUpdateItem } from '../../TrackItemForUpdate'
 import { storeToRefs } from 'pinia'
 
 const { readOnlyMode } = storeToRefs(useSheetManager())
@@ -165,8 +164,6 @@ const {
   suggestionSelected,
   suggestionToString
 } = useInstructorAutoComplete(instructor)
-
-const { broadcastThroughSocket } = useUpdateItem(thesis)
 
 const student = computed(() => {
   const { studentMatch } = useStudentMatcher(thesis.value.studentSysId)
@@ -204,7 +201,7 @@ const viewProfileButton = computed(() => {
                     component: {
                       render: LinkStudent,
                       props: {
-                        onUpdate: () => broadcastThroughSocket('studentSysId')
+                        panelName: studentPanel.panelName,
                       }
                     }
                   })

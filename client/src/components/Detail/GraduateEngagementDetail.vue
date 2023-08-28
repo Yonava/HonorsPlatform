@@ -6,7 +6,6 @@
         placeholder="Event Name"
       >
         <LinkStudentButton
-          @update="broadcastThroughSocket('studentSysId')"
           :item="event"
           linkFrom="GRADUATES"
         />
@@ -38,15 +37,12 @@ import LinkStudentButton from './Helper/LinkStudentButton.vue'
 
 import type { GradEngagement } from '../../SheetTypes'
 import { computed } from 'vue'
-import { useUpdateItem } from '../../TrackItemForUpdate'
 
 const props = defineProps<{
   item: GradEngagement
 }>()
 
 const event = computed(() => props.item)
-
-const { broadcastThroughSocket } = useUpdateItem(event)
 
 const getNewDate = () => {
   const date = new Date()

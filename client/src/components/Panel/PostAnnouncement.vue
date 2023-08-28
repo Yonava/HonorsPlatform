@@ -57,7 +57,6 @@
 </template>
 
 <script setup lang="ts">
-import InputCoupler from '../Detail/Helper/InputCoupler.vue';
 import { useDialog } from '../../store/useDialog';
 import { ref } from 'vue';
 import { useAuth } from '../../store/useAuth';
@@ -90,14 +89,11 @@ const thingsThatWillNeverHappen = [
   'Doing Taxes Becomes Fun',
   'SNHU Wins A Football Game',
   'The Heat Death Of The Universe',
-  'SNHU Ranks #1 Nationwide On US News & World Report',
+  'SNHU Ranks #1 On US News & World Report',
   'A Third Party Candidate Wins The Presidency',
-  'Mark Zuckerberg Becomes A Human',
   'Jeff Bezos Runs Out Of Money',
-  'Nancy Pelosis Stock Portfolio Tanks',
   'Big Banks Discover Morality',
   'The US Government Stops Printing Money',
-  'The NSA Stops Spying On You',
   'Unicorns Are Discovered 🦄✨',
 ]
 

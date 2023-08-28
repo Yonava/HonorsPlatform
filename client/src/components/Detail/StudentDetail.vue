@@ -180,7 +180,6 @@ import {
 } from "../../StudentTools";
 import { useSheetManager } from "../../store/useSheetManager";
 import { useDocumentCache } from "../../store/useDocumentCache";
-import { useUpdateItem } from "../../TrackItemForUpdate";
 import { ref, computed } from 'vue'
 import type { Student } from '../../SheetTypes'
 import { useMoveItem } from '../../MoveItems'
@@ -199,7 +198,6 @@ const props = defineProps<{
 
 const student = computed(() => props.item);
 
-const { broadcastThroughSocket } = useUpdateItem(student);
 const { moveItem, movingItem, panelOnceMoved } = useMoveItem();
 
 const statusOptionIcon = computed(() => {

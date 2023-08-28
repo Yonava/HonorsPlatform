@@ -5,10 +5,7 @@
         :item="completedModule"
         placeholder="Course Code"
       >
-        <LinkStudentButton
-          @update="broadcastThroughSocket('studentSysId')"
-          :item="completedModule"
-        />
+        <LinkStudentButton :item="completedModule" />
       </DetailHeader>
 
 
@@ -128,7 +125,6 @@ import { type CompletedModule, grades } from '../../SheetTypes'
 import { useSheetManager } from '../../store/useSheetManager'
 import { useMoveItem } from '../../MoveItems'
 import { computed } from 'vue'
-import { useUpdateItem } from '../../TrackItemForUpdate'
 import { useInstructorAutoComplete } from '../../InstructorAutoComplete'
 import { getCurrentTerm, termValidator } from '../../TermValidator'
 import { storeToRefs } from 'pinia'
@@ -152,6 +148,4 @@ const {
 } = useInstructorAutoComplete(instructor)
 
 const { moveItem, movingItem, panelOnceMoved } = useMoveItem()
-
-const { broadcastThroughSocket } = useUpdateItem(completedModule)
 </script>

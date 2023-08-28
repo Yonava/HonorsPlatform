@@ -61,7 +61,7 @@ const { readOnlyMode } = storeToRefs(sheetManager)
 
 const props = defineProps<{
   item: Object & { studentSysId: string },
-  linkFrom?: ('STUDENTS' | 'GRADUATES')[] | 'STUDENTS' | 'GRADUATES',
+  linkFrom?: 'STUDENTS' | 'GRADUATES',
 }>()
 
 const emits = defineEmits<{
@@ -89,8 +89,7 @@ const linkStudent = () => {
     component: {
       render: LinkStudent,
       props: {
-        onUpdate: () => emits('update'),
-        panelNames: props.linkFrom || 'STUDENTS',
+        panelName: props.linkFrom || 'STUDENTS',
       }
     },
   })

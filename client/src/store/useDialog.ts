@@ -118,7 +118,7 @@ export const useDialog = defineStore("dialog", {
       if (this.show && !this.persistent) {
 
         // if the dialog that is already open is the same as the one we're trying to open, don't do anything
-        if (this.body.title === options?.body?.title || this.component?.render === options?.component?.render) {
+        if (this.body.title === options?.body?.title) {
           return;
         }
 
