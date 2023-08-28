@@ -1,4 +1,13 @@
-# Current Version: prerelease 0.90
+# Current Version: prerelease 0.91
+
+### prerelease 0.91 (Aug. 27)
+- Feature / Better Updates: Updates now go through the useUpdateManager pinia store instead of TrackItemForUpdate. New batch update endpoints mean previous full row mapping methodology has been replaced with percise cell updates for better audit trails on Google Sheets
+- Feature / Snackbars: Snackbars have been added to useDialog for extra information when an item is deleted, another user acts in a manner that interferes with the flow of your editing process (aka deletes an item or changes embedded item studentSysId) and other relevant scenarios
+- Feature / Duplicate Sys Id Remediation: Data Mappers now detect if there are duplicate sysIds and will alert the user if there are including giving the user the ability to overview what is causing the problem and preform a special row delete action to percisely resolve conflicts
+- Improvment: List Item components have been completely revamped and modularized, text on list items truncates with ellipsis as opposed to new-lining
+- Improvement: Logging into the platform with View/Comment perms on Google Sheets will automatically switch your session to read-only
+- Student athletics changes from v-autocomplete to v-select on touch devices
+- Added "Current Time" button to Graduate Engagement Detail
 
 ### prerelease 0.90 (Aug. 21)
 - Feature / Read-Only Mode: Users are now able to place themselves in and be placed in read-only mode through the additional tools menu. Read-only mode toggles off the ability to make any changes to data on the platform including the ability to make announcements. In addition, access to features such as "Create Registrar List" as well as "Generate Mass Email" are disabled
