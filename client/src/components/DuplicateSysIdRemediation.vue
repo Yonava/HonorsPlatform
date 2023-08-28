@@ -135,6 +135,22 @@
           </div>
         </div>
       </div>
+
+      <div
+        v-if="duplicateSysIds.length === 0"
+        class="mt-3 d-flex align-center"
+      >
+        <h3
+          class="my-2"
+          style="color: green;"
+        >
+          <v-icon>
+            mdi-check
+          </v-icon>
+          No Duplicate SysIds Found
+        </h3>
+      </div>
+
     </div>
 
     <v-divider></v-divider>
