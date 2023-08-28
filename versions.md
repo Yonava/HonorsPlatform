@@ -6,6 +6,7 @@
 - Feature / Duplicate Sys Id Remediation: Data Mappers now detect if there are duplicate sysIds and will alert the user if there are including giving the user the ability to overview what is causing the problem and preform a special row delete action to percisely resolve conflicts
 - Improvment: List Item components have been completely revamped and modularized, text on list items truncates with ellipsis as opposed to new-lining
 - Improvement: Logging into the platform with View/Comment perms on Google Sheets will automatically switch your session to read-only
+- Added the "p" shortcut to completely collapse the panel list
 - Student athletics changes from v-autocomplete to v-select on touch devices
 - Added "Current Time" button to Graduate Engagement Detail
 
