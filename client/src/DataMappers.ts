@@ -157,7 +157,7 @@ export const map = <T extends SheetItem>(spreadsheetMatrix: string[][], headerRo
       }, {} as Record<keyof Omit<T, keyof SheetEntry>, any>),
 
       // note is the last column of all SheetItems
-      note: row[headerRow.length + 1],
+      note: row[headerRow.length + 1] ?? '',
 
       // custom fields
       ...row.reduce((acc, curr, index) => {
