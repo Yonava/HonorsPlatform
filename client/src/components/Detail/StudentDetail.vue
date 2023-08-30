@@ -254,18 +254,18 @@ const { broadcast } = useBroadcastThroughSocket('DETAIL');
 
 const addStudentNote = (event: { initials: string; note: string, date: string }) => {
 
-  const { initials, note, date } = event;
-  if (student.value.note) student.value.note += "\n\n";
-  student.value.note += `${initials} (${date}): ${note}`;
-
-  showAddNote.value = false;
-
-  broadcast('note')
-
   const { trackItemForUpdate } = useUpdateManager();
   trackItemForUpdate({
     panelName: getActivePanel.panelName,
     item: student.value,
   })
+
+  const { initials, note, date } = event;
+  if (student.value.note) student.value.note += "\n\n";
+  student.value.note += `${initials} (${date}): ${note}`;
+
+  broadcast('note')
+
+  showAddNote.value = false;
 }
 </script>
