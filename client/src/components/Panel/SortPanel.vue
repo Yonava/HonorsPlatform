@@ -19,7 +19,7 @@
       <div
         v-for="sortOption in getActivePanel.sortOptions"
         :key="sortOption.label"
-        @click="setSort(sortOption.func, sortOption.prop)"
+        @click="setSort(sortOption.func, sortOption.prop, sortOption.label)"
         :style="{
           transition: 'background 200ms ease-in-out',
           background: isSelected(sortOption) ? 'rgba(255, 255, 255, 0.1)' : '',
@@ -60,8 +60,9 @@ const { activeSort, getActivePanel } = storeToRefs(sheetManager);
 
 const ascending = ref(true);
 
-const setSort = (func: (a: any, b: any) => number, prop: string) => {
+const setSort = (func: (a: any, b: any) => number, prop: string, label: string) => {
   setSortPinia({
+    label,
     func,
     prop,
     ascending: ascending.value,

@@ -212,6 +212,16 @@ export const sortOptions = {
   ],
   THESES: [
     {
+      label: 'Title',
+      prop: 'title',
+      tooltip: 'Sort by thesis title',
+      icon: {
+        asc: 'mdi-sort-alphabetical-ascending',
+        desc: 'mdi-sort-alphabetical-descending'
+      },
+      func: (a: Thesis, b: Thesis) => a.title.localeCompare(b.title)
+    },
+    {
       label: 'Decision',
       prop: 'decision',
       tooltip: 'Sort by decision regarding thesis approval',
@@ -240,6 +250,34 @@ export const sortOptions = {
         desc: 'mdi-human-male-board',
       },
       func: (a: Thesis, b: Thesis) => a.mentor.localeCompare(b.mentor)
+    },
+    {
+      label: 'Proposal Received',
+      prop: 'proposalReceived',
+      tooltip: 'Sort by date proposal was received',
+      icon: {
+        asc: 'mdi-calendar-import',
+        desc: 'mdi-calendar-export'
+      },
+      func: (a: Thesis, b: Thesis) => {
+        const aDate = new Date(a.proposalReceived);
+        const bDate = new Date(b.proposalReceived);
+        return aDate.getTime() - bDate.getTime();
+      }
+    },
+    {
+      label: 'Draft Received',
+      prop: 'draftReceived',
+      tooltip: 'Sort by date draft was received',
+      icon: {
+        asc: 'mdi-calendar-import',
+        desc: 'mdi-calendar-export'
+      },
+      func: (a: Thesis, b: Thesis) => {
+        const aDate = new Date(a.draftReceived);
+        const bDate = new Date(b.draftReceived);
+        return aDate.getTime() - bDate.getTime();
+      }
     }
   ],
   GRADUATE_ENGAGEMENTS: [

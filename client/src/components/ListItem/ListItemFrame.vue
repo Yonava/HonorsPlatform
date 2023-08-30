@@ -205,19 +205,39 @@ const displayedProps: { [key in PanelName]: string[] } = {
     'email',
   ],
   GRADUATE_ENGAGEMENTS: [],
-  MODULES: [],
-  COMPLETED_MODULES: [],
-  THESES: [],
+  MODULES: [
+    'courseCode',
+    'term',
+    'instructor',
+    'studentSysId',
+    'docuSignCreated',
+    'docuSignCompleted'
+  ],
+  COMPLETED_MODULES: [
+    'grade',
+    'term',
+    'courseCode',
+    'completedDate',
+    'studentSysId'
+  ],
+  THESES: [
+    'mentor',
+    'title',
+    'term',
+    'studentSysId',
+    'decision'
+  ],
 }
 
 const bottomCornersUsingSort = computed(() => {
 
-  const { prop: sortProp } = activeSort.value
+  const { prop: sortProp, label: sortLabel } = activeSort.value
   const { panelName, propIcons } = getActivePanel.value
 
   const sortPropItem = {
     text: props.item[sortProp] || '(None)',
     icon: propIcons[sortProp] || 'mdi-sort',
+    tooltip: sortLabel
   }
 
   if (!activeSort.value.prop || displayedProps[panelName].includes(sortProp)) {

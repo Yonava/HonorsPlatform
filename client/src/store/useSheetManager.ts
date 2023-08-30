@@ -17,7 +17,8 @@ export type JumpObject = {
 export type SortOption = {
   func: ((a: SheetItem, b: SheetItem) => number) | null,
   ascending: boolean,
-  prop: string
+  prop: string,
+  label: string
 }
 
 const runReadOnlyModeSnackbar = (readOnlyMode: boolean) => {
@@ -248,7 +249,8 @@ export const useSheetManager = defineStore('sheetManager', {
       this.sort = {
         func: null,
         ascending: true,
-        prop: ''
+        prop: '',
+        label: ''
       };
     },
     setFocusedItem(sysId: string) {
