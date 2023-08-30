@@ -57,6 +57,15 @@ export const panels = {
     color: 'blue',
     icon: 'mdi-account',
     sheetRange: 'Students',
+    propIcons: {
+      'id': 'numeric',
+      'name': 'account',
+      'email': 'email',
+      'points': 'ticket',
+      'activeStatus': 'check-circle',
+      'year': 'calendar',
+      'athletics': 'soccer',
+    },
     mappers: {
       map: mapStudents,
       unmap: unmapStudents
@@ -95,6 +104,14 @@ export const panels = {
     color: 'orange',
     icon: 'mdi-book-open-variant',
     sheetRange: 'Modules',
+    propIcons: {
+      'studentSysId': 'account',
+      'courseCode': 'book-open-variant',
+      'term': 'calendar',
+      'instructor': 'account',
+      'docuSignCreated': 'calendar',
+      'docuSignCompleted': 'calendar',
+    },
     mappers: {
       map: mapModules,
       unmap: unmapModules
@@ -119,6 +136,16 @@ export const panels = {
     color: 'red',
     icon: 'mdi-book',
     sheetRange: 'Completed Modules',
+    propIcons: {
+      'studentSysId': 'account',
+      'courseCode': 'book',
+      'term': 'calendar',
+      'instructor': 'account',
+      'docuSignCreated': 'calendar',
+      'docuSignCompleted': 'calendar',
+      'completedDate': 'calendar',
+      'grade': 'numeric',
+    },
     mappers: {
       map: mapCompletedModules,
       unmap: unmapCompletedModules
@@ -143,6 +170,17 @@ export const panels = {
     color: 'green',
     icon: 'mdi-application-edit-outline',
     sheetRange: 'Theses',
+    propIcons: {
+      'studentSysId': 'account',
+      'title': 'application-edit-outline',
+      'proposalReceived': 'calendar',
+      'breakoutRoom': 'calendar',
+      'decision': 'calendar',
+      'term': 'calendar',
+      'mentor': 'account',
+      'mentorEmail': 'email',
+      'draftReceived': 'calendar',
+    },
     mappers: {
       map: mapTheses,
       unmap: unmapTheses
@@ -167,6 +205,21 @@ export const panels = {
     color: 'purple',
     icon: 'mdi-account-school',
     sheetRange: 'Graduates',
+    propIcons: {
+      'id': 'numeric',
+      'name': 'account',
+      'phone': 'phone',
+      'email': 'email',
+      'graduationDate': 'calendar',
+    },
+    listItem: {
+      title: {
+        primary: 'name',
+        secondary: 'id'
+      },
+      emblem: 'graduationDate',
+      bottomCorner: ['email', 'phone']
+    },
     mappers: {
       map: mapGraduates,
       unmap: unmapGraduates
@@ -205,6 +258,11 @@ export const panels = {
     color: 'pink',
     icon: 'mdi-account-tie',
     sheetRange: 'Grad Engagements',
+    propIcons: {
+      'studentSysId': 'account',
+      'event': 'account-tie',
+      'dateTime': 'calendar',
+    },
     mappers: {
       map: mapGradEngagements,
       unmap: unmapGradEngagements

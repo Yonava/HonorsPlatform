@@ -23,7 +23,7 @@
             {{ iconify(corners.left.icon) }}
           </v-icon>
 
-          {{ corners.left.text }}
+          {{ textify(corners.left.text) }}
 
           <v-tooltip
             :disabled="smAndDown || !corners.left.tooltip"
@@ -47,7 +47,7 @@
           :style="div('right').style"
         >
 
-          {{ corners.right.text }}
+          {{ textify(corners.right.text) }}
 
           <v-icon
             class="ml-1"
@@ -109,18 +109,29 @@ const corners = computed(() => {
 })
 
 const iconify = (icon: string) => {
+
+  if (!icon) {
+    return ''
+  }
+
   if (icon.startsWith('mdi-')) {
     return icon
   }
+
   return `mdi-${icon}`
+}
+
+const textify = (text: string) => {
+  const canParseAsNumber = !isNaN(Number(text))
+  return canParseAsNumber ? Number(text).toLocaleString() : text
 }
 
 const div = (side: 'left' | 'right') => {
   const corner = corners.value[side]
   return {
     style: {
-      color: corner.error ? 'red' : 'black',
-      fontWeight: corner.error ? 'bold' : 'normal',
+      color: corner?.error ? 'red' : 'black',
+      fontWeight: corner?.error ? 'bold' : 'normal',
       whiteSpace: 'nowrap',
     },
   }

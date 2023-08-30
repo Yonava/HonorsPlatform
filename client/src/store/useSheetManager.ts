@@ -15,8 +15,9 @@ export type JumpObject = {
 };
 
 export type SortOption = {
-  func: (a: SheetItem, b: SheetItem) => number,
-  ascending: boolean
+  func: ((a: SheetItem, b: SheetItem) => number) | null,
+  ascending: boolean,
+  prop: string
 }
 
 const runReadOnlyModeSnackbar = (readOnlyMode: boolean) => {
@@ -65,7 +66,8 @@ export const useSheetManager = defineStore('sheetManager', {
     loadingItems: false,
     sort: {
       func: null as ((a: SheetItem, b: SheetItem) => number) | null,
-      ascending: true
+      ascending: true,
+      prop: ''
     } as SortOption,
     listItemBeingDragged: null as SheetItem | null,
     focusedItemSysId: '',
@@ -157,10 +159,7 @@ export const useSheetManager = defineStore('sheetManager', {
       this.pinnedSysIds = localStorage.getItem(local.pinned(this.panel.panelName))?.split(',') || []
       this.setSearchFilter('');
 
-      this.sort = {
-        func: null,
-        ascending: true
-      };
+      this.clearSort();
 
       getAllDocuments({
         showLoading: false
@@ -244,6 +243,13 @@ export const useSheetManager = defineStore('sheetManager', {
       if (!sortObject.ascending) {
         itemsOnActivePanel.reverse();
       }
+    },
+    clearSort() {
+      this.sort = {
+        func: null,
+        ascending: true,
+        prop: ''
+      };
     },
     setFocusedItem(sysId: string) {
       this.focusedItemSysId = sysId

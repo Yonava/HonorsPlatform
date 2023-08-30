@@ -129,7 +129,7 @@
             <v-spacer></v-spacer>
             <slot name="right"></slot>
           </div>
-          <LIBottomCorner :data="bottomCorners" />
+          <LIBottomCorner :data="bottomCornersUsingSort" />
         </div>
 
       </div>
@@ -148,7 +148,7 @@
           <v-spacer></v-spacer>
           <slot name="right"></slot>
         </div>
-        <LIBottomCorner :data="bottomCorners" />
+        <LIBottomCorner :data="bottomCornersUsingSort" />
       </div>
     </div>
 
@@ -179,15 +179,66 @@ type CornerData = {
   tooltip?: string,
 }
 
+const sheetManager = useSheetManager()
+const { activateListTransition, setPanel } = useSheetManager()
+const { getActivePanel, activeSort } = storeToRefs(sheetManager)
+
 const props = defineProps<{
   item: SheetItem,
   bottomCorners: [CornerData] | [CornerData, CornerData]
   styled?: boolean
 }>()
 
+const displayedProps: { [key in PanelName]: string[] } = {
+  STUDENTS: [
+    'name',
+    'id',
+    'athletics',
+    'email',
+    'activeStatus',
+    'year'
+  ],
+  GRADUATES: [
+    'name',
+    'id',
+    'phone',
+    'email',
+  ],
+  GRADUATE_ENGAGEMENTS: [],
+  MODULES: [],
+  COMPLETED_MODULES: [],
+  THESES: [],
+}
+
+const bottomCornersUsingSort = computed(() => {
+
+  const { prop: sortProp } = activeSort.value
+  const { panelName, propIcons } = getActivePanel.value
+
+  const sortPropItem = {
+    text: props.item[sortProp] || '(None)',
+    icon: propIcons[sortProp] || 'mdi-sort',
+  }
+
+  if (!activeSort.value.prop || displayedProps[panelName].includes(sortProp)) {
+    return props.bottomCorners
+  } else if (props.bottomCorners.length === 2) {
+    return [
+      sortPropItem,
+      props.bottomCorners[1],
+    ]
+  } else if (props.bottomCorners.length === 1) {
+    return [
+      sortPropItem,
+      props.bottomCorners[0],
+    ]
+  } else {
+    return [sortPropItem]
+  }
+})
+
 const { mdAndUp } = useDisplay()
 
-const { getActivePanel, activateListTransition, setPanel } = useSheetManager()
 const { readOnlyMode } = storeToRefs(useSheetManager())
 const { getSelectedItems, deleteItem } = useDocumentCache()
 const { focusData, getUniqueConnectedSockets } = storeToRefs(useSocket())
@@ -329,7 +380,7 @@ const panelSpecificActions: { [key in PanelName]: SidebarActionButton } = {
 }
 
 const sidebarActionButtons = computed(() => {
-  const panelSpecificAction = panelSpecificActions[getActivePanel.panelName]
+  const panelSpecificAction = panelSpecificActions[getActivePanel.value.panelName]
 
   const deleteAction: SidebarActionButton = {
     icon: 'mdi-delete',
