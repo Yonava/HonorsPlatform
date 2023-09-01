@@ -5,10 +5,7 @@
         :item="thesis"
         :placeholder="`${getActivePanel.title.singular} Title`"
       >
-        <LinkStudentButton
-          @update="broadcastThroughSocket('studentSysId')"
-          :item="thesis"
-        />
+        <LinkStudentButton :item="thesis" />
       </DetailHeader>
 
       <InputCoupler>
@@ -21,7 +18,7 @@
             text: 'Current Term',
             newPropValue: () => getCurrentTerm(),
           }"
-          :rules="[(v) => termValidator(v) || 'Potentially invalid term']"
+          :rules="[(v) => termValidator(v) || 'Potentially Invalid Term']"
           label="Term"
           icon="calendar"
         />
@@ -33,8 +30,8 @@
           label="Decision"
           :button="{
             condition: !thesis.decision,
-            text: 'Mark as Pending',
-            newPropValue: () => 'Pending',
+            text: `Mark as ${Object.keys(approvalStates)[0]}`,
+            newPropValue: () => Object.keys(approvalStates)[0],
           }"
           :input="{
             type: 'select',
@@ -149,9 +146,9 @@ const props = defineProps<{
 }>()
 
 const approvalStates = {
+  'Pending': 'alert-circle',
   'Approved': 'check-circle',
-  'Rejected': 'close-circle',
-  'Pending': 'alert-circle'
+  'Rejected': 'close-circle'
 }
 
 const thesis = computed(() => props.item)
@@ -208,16 +205,9 @@ const viewProfileButton = computed(() => {
                 },
               },
               {
-                text: 'Delete',
-                color: 'red-darken-2',
-                onClick: () => deleteItem({
-                  item: thesis.value
-                })
-              },
-              {
                 text: 'Dismiss',
                 color: 'red',
-                onClick: () => close()
+                onClick: close
               },
             ],
           },
@@ -254,13 +244,6 @@ const viewProfileButton = computed(() => {
             description: `The ${studentPanel.title.singular} that this ${getActivePanel.title.singular} was linked to no longer exists. Please relink or delete.`,
             buttons: [
               {
-                text: 'Delete',
-                color: 'red-darken-2',
-                onClick: () => deleteItem({
-                  item: thesis.value
-                })
-              },
-              {
                 text: 'Relink',
                 color: studentPanel.color,
                 onClick: () => {
@@ -268,7 +251,7 @@ const viewProfileButton = computed(() => {
                     component: {
                       render: LinkStudent,
                       props: {
-                        onUpdate: () => broadcastThroughSocket('studentSysId')
+                        panelName: studentPanel.panelName,
                       }
                     }
                   })
@@ -277,7 +260,7 @@ const viewProfileButton = computed(() => {
               {
                 text: 'Dismiss',
                 color: 'red',
-                onClick: () => close()
+                onClick: close
               },
             ],
           },

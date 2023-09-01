@@ -17,11 +17,11 @@
         <DetailInput
           :item="student"
           prop="email"
-          :rules="[(v) => emailValidator(v) || 'Invalid email']"
+          :rules="[(v) => emailValidator(v) || 'Invalid Email']"
           label="Email"
           icon="email"
           :button="{
-            condition: !student.email,
+            condition: !!student.name && !student.email,
             text: `New ${getActivePanel.title.singular} Email`,
             newPropValue: () => getStudentEmail(student.name),
           }"
@@ -37,6 +37,11 @@
               type: 'select',
               items: statusOptionLabels,
             }"
+            :button="{
+              condition: !student.activeStatus,
+              text: 'Mark As ' + statusOptionLabels[0],
+              newPropValue: () => statusOptionLabels[0],
+            }"
             :icon="statusOptionIcon"
             label="Active Status"
           />
@@ -48,6 +53,11 @@
             :input="{
               type: 'select',
               items: yearOptions,
+            }"
+            :button="{
+              condition: !student.year,
+              text: 'Mark As ' + yearOptions[0],
+              newPropValue: () => yearOptions[0],
             }"
             icon="briefcase"
             label="Year"

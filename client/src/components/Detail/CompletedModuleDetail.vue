@@ -30,6 +30,11 @@
             type: 'select',
             items: grades.map(grade => !grade ? 'Ungraded' : grade),
           }"
+          :button="{
+            condition: !completedModule.grade,
+            text: 'Mark As ' + grades[0],
+            newPropValue: () => grades[0],
+          }"
           label="Grade"
           icon="star"
         />
@@ -39,7 +44,7 @@
       <DetailInput
         :item="completedModule"
         prop="term"
-        :rules="[(v) => termValidator(v) || 'Potentially invalid term']"
+        :rules="[(v) => termValidator(v) || 'Potentially Invalid Term']"
         :button="{
           condition: !completedModule.term,
           text: 'Current Term',
@@ -130,7 +135,7 @@ import { getCurrentTerm, termValidator } from '../../TermValidator'
 import { storeToRefs } from 'pinia'
 
 const sheetManager = useSheetManager()
-const { getActivePanel, readOnlyMode } = storeToRefs(sheetManager)
+const { readOnlyMode } = storeToRefs(sheetManager)
 
 const props = defineProps<{
   item: CompletedModule

@@ -10,11 +10,12 @@
       <v-spacer></v-spacer>
       <input
         v-model="filterQuery"
+        @click.stop
         placeholder="Quick Lookup"
         style="border: 1px solid black; border-radius: 50px; height: 40px; width: 50%;"
         class="px-3 py-1"
         type="text"
-      >
+      />
     </div>
     <div
       class="mb-6"

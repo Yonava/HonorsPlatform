@@ -64,10 +64,6 @@ const props = defineProps<{
   linkFrom?: 'STUDENTS' | 'GRADUATES',
 }>()
 
-const emits = defineEmits<{
-  'update': [void]
-}>()
-
 const student = computed(() => {
   const { studentInfo } = useStudentInfo(props.item.studentSysId)
   return studentInfo.value

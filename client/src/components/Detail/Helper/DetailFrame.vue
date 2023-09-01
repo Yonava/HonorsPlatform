@@ -92,6 +92,7 @@ onUnmounted(() => {
   const { itemPostedToSheet, deleteItemCache } = useDocumentCache()
 
   if (!processing && !itemPostedToSheet(props.item)) {
+    console.log(getActivePanel.value.panelName)
     deleteItemCache(props.item.sysId)
   }
 })
