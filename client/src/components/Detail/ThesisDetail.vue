@@ -184,33 +184,14 @@ const viewProfileButton = computed(() => {
       color: 'red-darken-4',
       icon: 'mdi-account-off',
       onClick: () => {
-        const { open, close } = useDialog()
+        const { open } = useDialog()
         open({
-          body: {
-            title: `No ${studentPanel.title.singular} Linked`,
-            description: `This ${getActivePanel.title.singular.toLowerCase()} is not linked to a ${studentPanel.title.singular.toLowerCase()}. Link a ${studentPanel.title.singular.toLowerCase()} or delete.`,
-            buttons: [
-              {
-                text: `Link ${studentPanel.title.singular}`,
-                color: studentPanel.color,
-                onClick: () => {
-                  open({
-                    component: {
-                      render: LinkStudent,
-                      props: {
-                        panelName: studentPanel.panelName,
-                      }
-                    }
-                  })
-                },
-              },
-              {
-                text: 'Dismiss',
-                color: 'red',
-                onClick: close
-              },
-            ],
-          },
+          component: {
+            render: LinkStudent,
+            props: {
+              panelName: studentPanel.panelName,
+            }
+          }
         })
       },
     }
