@@ -15,7 +15,7 @@
 - Feature / Custom Fields: Custom fields can now be added to every panel with first class support for sockets, read-only mode, and embedded panel views.
 - Improvement: Previously cramped input fields (especially at smaller device sizes and on side by side editing) have been modified to take up more space and scale to adjust automatically as width changes using the new InputCoupler API
 - Graduate panel and Student panel ID inputs have been merged and improved with the new IDInput API
-- New Pinia store "useSocket" added to accommodate more robust and better seperation of concern for socket IO functionality
+- New Pinia store "useSocket" added to accommodate a more robust socket architecture and add an additional layer for seperation of concerns
 - Added timestamps to posted announcements
 
 ### prerelease 0.89 (Aug. 13)
