@@ -1,9 +1,9 @@
 # Current Version: prerelease 0.91
 
 ### prerelease 0.91 (Aug. 27)
-- Feature / Better Updates: Updates now go through the useUpdateManager pinia store instead of TrackItemForUpdate. New batch update endpoints mean previous full row mapping methodology has been replaced with percise cell updates for better audit trails on Google Sheets
+- Feature / Better Updates: Updates now go through the useUpdateManager pinia store instead of TrackItemForUpdate. New batch update endpoints mean previous full row mapping methodology has been replaced with precise cell updates for better audit trails on Google Sheets
 - Feature / Snackbars: Snackbars have been added to useDialog for extra information when an item is deleted, another user acts in a manner that interferes with the flow of your editing process (aka deletes an item or changes embedded item studentSysId) and other relevant scenarios
-- Feature / Duplicate Sys Id Remediation: Data Mappers now detect if there are duplicate sysIds and will alert the user if there are including giving the user the ability to overview what is causing the problem and preform a special row delete action to percisely resolve conflicts
+- Feature / Duplicate Sys Id Remediation: Data Mappers now detect if there are duplicate sysIds and will alert the user if there are including giving the user the ability to overview what is causing the problem and preform a special row delete action to precisely resolve conflicts
 - Improvement: List Item components have been completely revamped and modularized, text on list items truncates with ellipsis as opposed to new-lining
 - Improvement: Logging into the platform with View/Comment perms on Google Sheets will automatically switch your session to read-only
 - Added the "p" shortcut to completely collapse the panel list
@@ -15,7 +15,7 @@
 - Feature / Custom Fields: Custom fields can now be added to every panel with first class support for sockets, read-only mode, and embedded panel views.
 - Improvement: Previously cramped input fields (especially at smaller device sizes and on side by side editing) have been modified to take up more space and scale to adjust automatically as width changes using the new InputCoupler API
 - Graduate panel and Student panel ID inputs have been merged and improved with the new IDInput API
-- New Pinia store "useSocket" added to accommodate a more robust socket architecture and add an additional layer for seperation of concerns
+- New Pinia store "useSocket" added to accommodate a more robust socket architecture and add an additional layer for separation of concerns
 - Added timestamps to posted announcements
 
 ### prerelease 0.89 (Aug. 13)
@@ -29,12 +29,12 @@
 - Various bug fixes to improve system stability and reliability
 
 ### prerelease 0.88 (Aug. 2)
-- Feature / Live Collaboration: The Honors Program platform is live. Edits are broadcasted between clients for a truely collaborative exprience
+- Feature / Live Collaboration: The Honors Program platform is live. Edits are broadcasted between clients for a truely collaborative experience
 - Feature / Google Profiles: Added Google Profile Info API to always see which account you are editing on
 - Feature / Drag to Move: Item can now be dragged to trigger moving it to a different panel
 - Improvement: The ability to logout has been added so users with mutliple accounts can switch which account they are using
 - Refresh Data has been removed and added to Additional Tools
-- Moved Selected Item navigation drawer for SM devices to ItemDetailSM.vue and improved gittery behavior
+- Moved Selected Item navigation drawer for SM devices to ItemDetailSM.vue and fixed jittery behavior
 - useDocumentCache code refactor for clarity, cleanliness, and consistency
 - Changed focusedItem to focusedItemSysId
 - Fixed bug causing application after google auth to unintentionally close if spawned from a third party link
@@ -44,7 +44,7 @@
 - Improvement: Added tooltips to all sort options
 - Removed phone number sort option on Graduates panel because who sorts by phone number 😂
 - Added Locals file for standardizing localStorage namespaces
-- Added useMoveItem composable for standardizing and streamlining the process of moving any item to any other compoatible panel
+- Added useMoveItem composable for standardizing and streamlining the process of moving any item to any other compatible panel
 - Expanded warn API to add "persistent" option
 
 ### prerelease 0.87 (Jul. 19)
@@ -54,7 +54,7 @@
 - Sidebar list now animates when user pins items or an item is added to the list
 - Expanded the useDialog API to include options for props and persistence
 - Tweaked the UI and calendar icons for the Sort Panel
-- Replaced "Points" with "Class Year" on student list item, and changed the Class Year icon to "mdi-breifcase"
+- Replaced "Points" with "Class Year" on student list item, and changed the Class Year icon to "mdi-briefcase"
 - Added custom tooltips for each student "Status"
 - Added the "properties" object to each panel to standardize the utilities of variously named properties within each panels unique SheetItem
 - Added easter egg icons 🦄
@@ -63,7 +63,7 @@
 - Improvement: Registrar list builder will now try to find graduate match for module if student is not found
 - Efficiency improvement on mass delete. Replaces range as opposed to deleting one-by-one
 - Fixed tooltip message for useStudentInfo
-- Fixed bug that caused selected panels to not propogate updates properly
+- Fixed bug that caused selected panels to not propagate updates properly
 
 ### prerelease 0.86 (Jul. 15)
 - Feature / Multi-Profile Editing: Drag & drop items from the item list to create a custom side-by-side workspace
@@ -74,7 +74,7 @@
 ### prerelease 0.85 (Jul. 9)
 - Improved Data Modeling: Added Student Sys ID to data layer across all panels dependent on students or graduates.
 - Fixed bug that caused items to duplicate when moved between ranges without document refresh
-- Student Match darastically improved and moved into its own composable
+- StudentMatch API drastically improved and moved into its own composable
 - StudentLink and StudentLinkButton added to all panels dependent on students or graduates to relink on the fly
 - Student IDs can now finally be edited!
 - Students and Graduates can now hold modules and engagements without the need for an ID
@@ -143,7 +143,7 @@
 - Bug Fix: 3 second buffer added to thesis unlock to allow freshly inserted StudentId time to propagate
 
 ### prerelease 0.76 (Jun. 7)
-- Feature: Add API for frictionless experience adding an item, including self removing empty items and add button UI feedback
+- Feature: Add API for friction-free experience adding an item, including self removing empty items and add button UI feedback
 
 ### prerelease 0.75 (Jun. 6)
 - Feature: new "Create Temporary Sheet" tool on every panel allows users to create a temporary speadsheet with a subset of the columns/properties available on each panel configurable through a new dialog.
