@@ -29,6 +29,9 @@ export type ServerErrors =
   'SOCKET_EXCEPTION' |
   'PERMISSION_REQUEST_FAILED'
 
+const getAuthErrorURL = (error: ServerErrors) => `/auth?error=${error}`
+const serverAuthEndpoint = '/api/auth'
+
 export const useAuth = defineStore('auth', {
   state: () => ({
     pendingAuthorization: null as Promise<string> | null,
@@ -43,7 +46,7 @@ export const useAuth = defineStore('auth', {
       this.googleProfile = profile
     },
     async getURL(): Promise<string> {
-      const response = await axios.get('/api/auth/url')
+      const response = await axios.get(`${serverAuthEndpoint}/url`)
       if (!response.data.url) {
         throw new Error('No URL received')
       }
@@ -54,7 +57,7 @@ export const useAuth = defineStore('auth', {
       const accessToken = localStorage.getItem(local.googleOAuthAccessToken)
 
       if (!accessToken) {
-        location.replace('/auth?error=NO_ACCESS_TOKEN')
+        location.replace(getAuthErrorURL('NO_ACCESS_TOKEN'))
         throw new Error('No access token found')
       }
 
@@ -62,33 +65,34 @@ export const useAuth = defineStore('auth', {
         try {
           this.googleProfile = await getUserProfileData()
         } catch (e) {
-          location.replace('/auth?error=SESSION_EXPIRED')
+          location.replace(getAuthErrorURL('SESSION_EXPIRED'))
           throw new Error('Session expired')
         }
       }
 
       try {
-        const { read, write } = await getUserSheetPermissions()
-        if (!read) {
-          location.replace('/auth?error=NO_SHEET_ACCESS')
+        const { read: hasReadPerms, write: hasWritePerms } = await getUserSheetPermissions()
+        if (!hasReadPerms) {
+          location.replace(getAuthErrorURL('NO_SHEET_ACCESS'))
           throw new Error('No sheet access')
-        } else if (!write) {
+        } else if (!hasWritePerms) {
           useSheetManager().setReadOnlyMode(true)
         }
       } catch (e) {
-        location.replace('/auth?error=PERMISSION_REQUEST_FAILED')
-        throw new Error('No sheet access')
+        location.replace(getAuthErrorURL('PERMISSION_REQUEST_FAILED'))
+        throw new Error('Could not access permission status of user')
       }
     },
     async userLoginFlow(googleOAuthCode: string) {
 
       localStorage.setItem(local.timeOfLastAuth, Date.now().toString())
+
       localStorage.removeItem(local.closeAfterAuth)
       localStorage.removeItem(local.googleOAuthCode)
 
-      let authUrl = `/api/auth/${encodeURIComponent(googleOAuthCode)}`
+      const oauthCodeValidationURI = `${serverAuthEndpoint}/${encodeURIComponent(googleOAuthCode)}`
 
-      const { data } = await axios.get(authUrl) as {
+      const { data } = await axios.get(oauthCodeValidationURI) as {
         data: {
           accessToken: string,
           profile: GoogleProfile,
@@ -98,7 +102,7 @@ export const useAuth = defineStore('auth', {
       const { error } = data as { error?: ServerErrors }
 
       if (error) {
-        location.replace(`/auth?error=${error}`)
+        location.replace(getAuthErrorURL(error))
         throw new Error(error)
       }
 

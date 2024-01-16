@@ -37,3 +37,6 @@ export const useSheetsAPI = defineStore('sheetsAPI', {
       if (this.isProcessingRequests) {
         return;
       }
+    }
+  }
+})
