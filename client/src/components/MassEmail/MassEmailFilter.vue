@@ -94,6 +94,31 @@ const selectedOperand = ref("I")
 const quantity = ref("")
 const sheetItems = ref([])
 
+const operandButtons = [
+  {
+    text: "Includes",
+    shortText: "Includes",
+    value: "I"
+  },
+  {
+    text: "Equals",
+    shortText: "=",
+    value: "="
+  },
+  {
+    text: "Greater Than",
+    shortText: ">",
+    value: ">"
+  },
+  {
+    text: "Less Than",
+    shortText: "<",
+    value: "<"
+  },
+] as const;
+
+type Operand = typeof operandButtons[number]['value']
+
 watch(selectedHeader, () => {
   quantity.value = "";
 });
@@ -179,28 +204,4 @@ const emails = computed(() => {
 watch(emails, (newVal) => {
   emits('subset', newVal);
 }, { immediate: true });
-
-const operandButtons = [
-  {
-    text: "Includes",
-    shortText: "Includes",
-    value: "I"
-  },
-  {
-    text: "Equals",
-    shortText: "=",
-    value: "="
-  },
-  {
-    text: "Greater Than",
-    shortText: ">",
-    value: ">"
-  },
-  {
-    text: "Less Than",
-    shortText: "<",
-    value: "<"
-  },
-];
-
 </script>
