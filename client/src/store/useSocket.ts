@@ -200,7 +200,7 @@ export const useSocket = defineStore("socket", {
       this.socket.emit('userLogout', googleProfile.id)
     },
     async checkForActionsDuringDisconnect(lastAction: LastActionData) {
-      const { time, serverIsUp } = lastAction
+      const { time: timeOfLastBroadcastedAction, serverIsUp } = lastAction
       const { getAllDocuments } = useDocumentCache()
       const { waitUntilSynced } = useSyncState()
 
@@ -223,21 +223,21 @@ export const useSocket = defineStore("socket", {
         return
       }
 
-      if (!time) {
+      if (!timeOfLastBroadcastedAction) {
         // If no time is returned, and the server is up, that means no actions occurred, we are done here
         console.log('No actions recorded on server, despite server being up')
         return
       }
 
-      const actionOccurredDuringDisconnect = this.timeOfSocketDisconnect < new Date(time)
+      const actionOccurredDuringDisconnect = this.timeOfSocketDisconnect < new Date(timeOfLastBroadcastedAction)
 
       if (!actionOccurredDuringDisconnect) {
         // If the last action occurred before the socket disconnected, we are done here
-        console.log('No actions occurred during disconnect')
+        console.log('No actions occurred while disconnected')
         return
       }
 
-      // Uh oh, it looks like we may have missed some actions, so we need to refresh
+      // Uh oh, it looks like we may have missed some actions, so we need to refresh the cache
       console.log('Missed actions, refreshing cache')
       getAllDocuments({
         forceCacheRefresh: true
@@ -308,7 +308,7 @@ export const useSocket = defineStore("socket", {
                   })
                 } else if (focusedEmbeddedItem?.sysId === userAction.payload.sysId) {
                   openSnackbar({
-                    text: `${actor.name} Has Deleted The ${getActiveEmbeddedPanel.title.singular} You Were Viewing`,
+                    text: `${actor.name} Has Deleted The ${getActiveEmbeddedPanel?.title.singular} You Were Viewing`,
                     img: actor.picture,
                     timeout: 10_000,
                   })
@@ -330,7 +330,7 @@ export const useSocket = defineStore("socket", {
                 const embeddedItemBeingUpdated = focusedEmbeddedItem?.sysId === userAction.payload.sysId
                 if (embeddedItemBeingUpdated && studentSysIdMovedAway) {
                   openSnackbar({
-                    text: `${actor.name} Has Changed Which ${getActivePanel.title.singular} This ${getActiveEmbeddedPanel.title.singular} Is Associated With`,
+                    text: `${actor.name} Has Changed Which ${getActivePanel.title.singular} This ${getActiveEmbeddedPanel?.title.singular} Is Associated With`,
                     img: actor.picture,
                     timeout: 10_000,
                   })
