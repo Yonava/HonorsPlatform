@@ -1,5 +1,10 @@
 <template>
-  <v-sheet class="pa-5">
+  <v-sheet
+    @click.stop
+    class="pa-5"
+    style="border-radius: 20px; position: relative; width: 400px"
+    elevation="7"
+  >
     <h1>
       Compose Mass Email
     </h1>

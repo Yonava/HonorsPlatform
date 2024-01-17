@@ -39,21 +39,31 @@
         View Profile
       </v-tooltip>
     </div>
-    <v-btn
-      @click="$router.push({ name: 'registrar' })"
-      :disabled="readOnlyMode"
-      icon
+
+    <v-menu
+      :offset="[10, 0]"
+      location="top"
     >
-      <v-icon>
-        mdi-list-box-outline
-      </v-icon>
-      <v-tooltip
-        activator="parent"
-        location="end"
-      >
-        Create Registrar List
-      </v-tooltip>
-    </v-btn>
+      <template v-slot:activator="{ props }">
+        <v-btn
+          v-bind="props"
+          :disabled="readOnlyMode"
+          icon
+        >
+          <v-icon>
+            mdi-list-box-outline
+          </v-icon>
+          <v-tooltip
+            activator="parent"
+            location="end"
+          >
+            Create Registrar List
+          </v-tooltip>
+        </v-btn>
+      </template>
+
+      <BuildRegistrarList />
+    </v-menu>
 
     <v-menu
       :offset="[10, 0]"
@@ -89,6 +99,7 @@ import { useSheetManager } from '../../store/useSheetManager';
 import { storeToRefs } from 'pinia';
 import UserProfile from './UserProfile.vue';
 import MassEmailMenu from './MassEmailMenu.vue';
+import BuildRegistrarList from './BuildRegistrarList.vue';
 
 const auth = useAuth();
 const { googleProfile } = storeToRefs(auth);

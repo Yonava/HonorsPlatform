@@ -2,8 +2,7 @@ import { createWebHistory, createRouter } from 'vue-router'
 import Panel from '../views/PanelPage.vue'
 import Leaderboard from '../views/LeaderboardPage.vue'
 import Auth from '../views/AuthPage.vue'
-import Registrar from '../views/BuildRegistrarList.vue'
-import Email from '../views/ComposeMassEmail.vue'
+import Registrar from '../components/Panel/BuildRegistrarList.vue'
 
 import { useDocumentCache } from '../store/useDocumentCache'
 import { useSocket } from '../store/useSocket'
@@ -26,19 +25,9 @@ const routes = [
     component: Auth
   },
   {
-    path: '/registrar',
-    name: 'registrar',
-    component: Registrar
-  },
-  {
     path: '/leaderboard',
     name: 'leaderboard',
     component: Leaderboard
-  },
-  {
-    path: '/email',
-    name: 'email',
-    component: Email
   }
 ] as const
 
@@ -52,11 +41,9 @@ router.beforeEach(async (to, from) => {
   const defaultTitle = 'Honors Program'
   const name = to.name as string ?? defaultTitle
   const goingTo = to.name as typeof routes[number]['name']
-  const routesWithData: typeof routes[number]['name'][] = ['panel', 'registrar', 'email']
+  const comingFrom = from.name as typeof routes[number]['name']
 
-  const sameRoute = to.name === from.name
-
-  if (routesWithData.includes(goingTo) && !sameRoute) {
+  if (goingTo === 'panel' && comingFrom !== 'panel') {
     const { getAllDocuments } = useDocumentCache()
     const { connect } = useSocket()
     const { authorizeSession } = useAuth()
@@ -65,9 +52,7 @@ router.beforeEach(async (to, from) => {
     await connect()
   }
 
-  if (name === defaultTitle || to.name === 'panel') {
-    return
-  }
+  if (name === defaultTitle || to.name === 'panel') return
   document.title = `${name[0].toUpperCase()}${name.slice(1)} - Honors Program`
 })
 
