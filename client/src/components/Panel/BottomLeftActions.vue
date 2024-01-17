@@ -62,7 +62,13 @@
         </v-btn>
       </template>
 
-      <BuildRegistrarList />
+      <v-sheet
+        @click.stop
+        style="border-radius: 20px; position: relative; width: 300px"
+        elevation="7"
+      >
+        <BuildRegistrarList />
+      </v-sheet>
     </v-menu>
 
     <v-menu
@@ -86,14 +92,19 @@
         </v-btn>
       </template>
 
-      <MassEmailMenu />
+      <v-sheet
+        @click.stop
+        style="border-radius: 20px; position: relative; width: 400px"
+        elevation="7"
+      >
+        <MassEmailMenu />
+      </v-sheet>
     </v-menu>
 
   </div>
 </template>
 
 <script setup lang="ts">
-import { useDisplay } from 'vuetify';
 import { useAuth } from '../../store/useAuth';
 import { useSheetManager } from '../../store/useSheetManager';
 import { storeToRefs } from 'pinia';
@@ -106,6 +117,4 @@ const { googleProfile } = storeToRefs(auth);
 
 const sheetManager = useSheetManager();
 const { readOnlyMode } = storeToRefs(sheetManager);
-
-const { smAndDown } = useDisplay();
 </script>

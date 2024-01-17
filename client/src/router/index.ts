@@ -2,7 +2,6 @@ import { createWebHistory, createRouter } from 'vue-router'
 import Panel from '../views/PanelPage.vue'
 import Leaderboard from '../views/LeaderboardPage.vue'
 import Auth from '../views/AuthPage.vue'
-import Registrar from '../components/Panel/BuildRegistrarList.vue'
 
 import { useDocumentCache } from '../store/useDocumentCache'
 import { useSocket } from '../store/useSocket'

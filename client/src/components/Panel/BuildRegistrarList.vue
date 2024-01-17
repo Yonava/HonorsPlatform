@@ -1,10 +1,5 @@
 <template>
-  <v-sheet
-    @click.stop
-    class="pa-5"
-    style="border-radius: 20px; position: relative; width: 300px"
-    elevation="7"
-  >
+  <v-sheet class="pa-5">
     <v-text-field
       v-model="userEnteredTerm"
       @keyup.enter="generateRegistrarList"
@@ -77,10 +72,6 @@ async function generateRegistrarList() {
   loading.value = false;
   success.value = true;
   hasSucceeded.value = true;
-}
-
-function goBack() {
-  history.back();
 }
 
 const button = computed(() => {

@@ -17,16 +17,6 @@
       class="pa-4"
     >
       <div class="d-flex">
-
-        <!-- TODO enable when leaderboard is back online -->
-        <!-- <v-btn icon>
-          <v-icon
-            @click="$router.push({ name: 'leaderboard' })"
-            icon="mdi-podium"
-            size="large"
-          ></v-icon>
-        </v-btn> -->
-
         <ActiveAccounts />
         <v-spacer></v-spacer>
         <Announcements />
@@ -50,35 +40,28 @@
         Add {{ getActivePanel.title.singular }}
       </v-btn>
 
-      <v-btn
-        @click="$router.push({ name: 'registrar' })"
+      <NavDrawerBlockBtn
+        @click="useDialog().open({
+          component: {
+            render: BuildRegistrarList
+          },
+        })"
         :disabled="readOnlyMode"
-        style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240)"
-        class="mt-3"
-        block
+        icon="mdi-list-box-outline"
       >
-        <v-icon
-          icon="mdi-list-box-outline"
-          size="large"
-          class="mr-2"
-        ></v-icon>
-        Registrar List
-      </v-btn>
+        Create Registrar List
+      </NavDrawerBlockBtn>
 
-      <v-btn
-        @click="$router.push({ name: 'email' })"
-        :disabled="readOnlyMode"
-        style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240)"
-        class="mt-3"
-        block
+      <NavDrawerBlockBtn
+        @click="useDialog().open({
+          component: {
+            render: MassEmailMenu
+          },
+        })"
+        icon="mdi-email-outline"
       >
-        <v-icon
-          icon="mdi-email-fast-outline"
-          size="large"
-          class="mr-2"
-        ></v-icon>
-        Mass Email
-      </v-btn>
+        Compose Mass Email
+      </NavDrawerBlockBtn>
 
       <AdditionalTools>
         <template #showing="{ toolsAvailable }">
@@ -216,19 +199,6 @@
 
           </template>
         </AdditionalTools>
-
-        <!-- TODO enable when leaderboard is back online -->
-        <!-- <v-btn icon>
-          <v-icon
-            @click="$router.push({ name: 'leaderboard' })"
-            icon="mdi-podium"
-            size="large"
-          ></v-icon>
-          <v-tooltip :disabled="smAndDown" activator="parent" location="bottom"
-            >View Points Leaderboard</v-tooltip
-          >
-        </v-btn> -->
-
       </div>
 
       <div v-else-if="!searchMode">
@@ -252,6 +222,9 @@ import Announcements from "./AnnouncementMenu.vue";
 import AdditionalTools from "../../components/Panel/AdditionalTools.vue";
 import PanelTitle from "./PanelTitle.vue";
 import ActiveAccounts from "./ActiveAccounts.vue";
+import NavDrawerBlockBtn from "./NavDrawerBlockBtn.vue";
+import BuildRegistrarList from "./BuildRegistrarList.vue";
+import MassEmailMenu from "./MassEmailMenu.vue";
 
 import { ref, computed, watchEffect } from "vue";
 import { useDisplay } from "vuetify";
