@@ -21,18 +21,18 @@ const savedToSheet = (item: SheetItem, panel?: Panel) => {
   panel ??= getActivePanel
   const isSaved = typeof item.row === "number"
   if (!isSaved) {
-    const secondsWasted = 5
+    const SECONDS_TO_WASTE = 5
     open({
       persistent: true,
       body: {
         title: `Nothing to Move!`,
-        description: `It isn't very practical to move nothing, is it? Try adding something to this ${panel.title.singular.toLowerCase()} before bothering me about moving it. In fact, just for that, I'm going to waste ${secondsWasted} seconds of your time.`,
+        description: `It isn't very practical to move nothing, is it? Try adding something to this ${panel.title.singular.toLowerCase()} before bothering me about moving it. In fact, just for that, I'm going to waste ${SECONDS_TO_WASTE} seconds of your time.`,
         buttons: [
           {
-            text: `Dismiss (Wait ${secondsWasted} Seconds Once Clicked)`,
+            text: `Dismiss (Wait ${SECONDS_TO_WASTE} Seconds Once Clicked)`,
             color: 'red',
             onClick: () => {
-              setTimeout(close, secondsWasted * 1000)
+              setTimeout(close, SECONDS_TO_WASTE * 1000)
             }
           }
         ]

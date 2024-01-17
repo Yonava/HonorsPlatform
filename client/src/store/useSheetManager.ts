@@ -7,19 +7,13 @@ import { useDocumentCache } from './useDocumentCache';
 import { local } from '../Locals';
 import { useSocket } from './useSocket';
 import { useDialog } from './useDialog';
+import type { SortOption } from '../SortOptions';
 
 export type JumpObject = {
   value: string,
   key?: string, // defaults to 'sysId'
   fallbackFn?: () => void // If the item you are jumping to is not found, this function will be called
 };
-
-export type SortOption = {
-  func: ((a: SheetItem, b: SheetItem) => number) | null,
-  ascending: boolean,
-  prop: string,
-  label: string
-}
 
 const runReadOnlyModeSnackbar = (readOnlyMode: boolean) => {
   if (readOnlyMode) {
@@ -66,9 +60,10 @@ export const useSheetManager = defineStore('sheetManager', {
     pinnedSysIds: [] as string[],
     loadingItems: false,
     sort: {
-      func: null as ((a: SheetItem, b: SheetItem) => number) | null,
+      func: null,
       ascending: true,
-      prop: ''
+      prop: '',
+      label: ''
     } as SortOption,
     listItemBeingDragged: null as SheetItem | null,
     focusedItemSysId: '',

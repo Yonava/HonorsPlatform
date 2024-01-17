@@ -306,4 +306,15 @@ export const sortOptions = {
       }
     }
   ]
+} as const;
+
+export type DefaultSortOption = {
+  func: null,
+  ascending: true,
+  prop: '',
+  label: ''
 }
+
+export type EachSortOption = typeof sortOptions[keyof typeof sortOptions][number];
+type EachSortOptionWithAscending = EachSortOption & { ascending: boolean }
+export type SortOption = EachSortOptionWithAscending | DefaultSortOption;

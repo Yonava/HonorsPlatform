@@ -14,7 +14,7 @@ import DuplicateSysIdRemediation from "./components/DuplicateSysIdRemediation.vu
 
 import { type PanelName } from "./Panels";
 
-// the index where all SheetItems stored on Google Sheets must have their unique sysId
+// the index where all SheetItems stored on Google Sheets store their unique sysId
 const SYS_ID_INDEX = 0;
 
 const sharedSheetItemProps: (keyof SheetEntry)[] = [

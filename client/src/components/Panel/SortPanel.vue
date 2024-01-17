@@ -19,7 +19,7 @@
       <div
         v-for="sortOption in getActivePanel.sortOptions"
         :key="sortOption.label"
-        @click="setSort(sortOption.func, sortOption.prop, sortOption.label)"
+        @click="setSort(sortOption)"
         :style="{
           transition: 'background 200ms ease-in-out',
           background: isSelected(sortOption) ? 'rgba(255, 255, 255, 0.1)' : '',
@@ -48,6 +48,7 @@
 
 <script setup lang="ts">
 import { useSheetManager } from "../../store/useSheetManager";
+import type { EachSortOption } from "../../SortOptions";
 import { storeToRefs } from "pinia";
 import { useDisplay } from "vuetify";
 import { ref } from "vue";
@@ -60,17 +61,15 @@ const { activeSort, getActivePanel } = storeToRefs(sheetManager);
 
 const ascending = ref(true);
 
-const setSort = (func: (a: any, b: any) => number, prop: string, label: string) => {
+const setSort = (sort: EachSortOption) => {
   setSortPinia({
-    label,
-    func,
-    prop,
+    ...sort,
     ascending: ascending.value,
   });
   ascending.value = !ascending.value;
 };
 
-const isSelected = (sort) => activeSort.value.func === sort.func;
+const isSelected = (sort: EachSortOption) => activeSort.value.func === sort.func;
 </script>
 
 <style scoped>
