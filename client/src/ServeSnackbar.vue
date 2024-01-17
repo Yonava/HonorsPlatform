@@ -28,7 +28,7 @@
         </v-btn>
 
         <v-btn
-          v-if="snackbar.closeable"
+          v-if="snackbar.closable"
           @click="snackbar.show = false"
           variant="text"
         >

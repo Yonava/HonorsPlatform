@@ -51,7 +51,7 @@ import { useSheetManager } from "../../store/useSheetManager";
 import type { EachSortOption } from "../../SortOptions";
 import { storeToRefs } from "pinia";
 import { useDisplay } from "vuetify";
-import { ref } from "vue";
+import { ref, computed } from "vue";
 
 const { xs } = useDisplay();
 

@@ -369,7 +369,7 @@ export const useSocket = defineStore("socket", {
                     text: `${actor.name} Has Moved This ${oldPanelTitle} To ${newPanelTitle}`,
                     img: actor.picture,
                     timeout: 10_000,
-                    closeable: false,
+                    closable: false,
                     action: {
                       text: 'Go',
                       onClick: () => {

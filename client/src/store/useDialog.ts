@@ -49,7 +49,7 @@ type SnackbarOptions = {
     text: string,
   } | null;
   timeout?: number;
-  closeable?: boolean;
+  closable?: boolean;
 }
 
 export const useDialog = defineStore("dialog", {
@@ -72,7 +72,7 @@ export const useDialog = defineStore("dialog", {
       color: 'primary',
       action: null as DialogButton | null,
       timeout: 5000,
-      closeable: true
+      closable: true
     }
   }),
   getters: {
@@ -94,7 +94,7 @@ export const useDialog = defineStore("dialog", {
         color: options.color ?? '',
         action: options.action ?? null,
         timeout: options.timeout ?? 5000,
-        closeable: options.closeable ?? true
+        closable: options.closable ?? true
       }
     },
     closeSnackbar() {
