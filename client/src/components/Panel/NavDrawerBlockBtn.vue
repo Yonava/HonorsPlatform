@@ -5,6 +5,7 @@
     class="mt-3"
   >
     <v-icon
+      v-if="icon"
       :icon="icon"
       size="large"
       class="mr-2"
@@ -15,6 +16,6 @@
 
 <script setup lang="ts">
 defineProps<{
-  icon: string,
+  icon?: string,
 }>()
 </script>

@@ -22,30 +22,17 @@
         <Announcements />
       </div>
 
-      <v-btn
-        v-if="getActivePanel.add"
+      <NavDrawerBlockBtn
         @click="add.fire"
-        :loading="add.loading"
         :disabled="readOnlyMode"
-        style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240)"
-        class="mt-5"
-        block
+        :loading="add.loading"
+        :icon="addIcon"
       >
-        <v-icon
-          size="large"
-          class="mr-2"
-        >
-          {{ add.success ? 'mdi-check' : 'mdi-plus' }}
-        </v-icon>
         Add {{ getActivePanel.title.singular }}
-      </v-btn>
+      </NavDrawerBlockBtn>
 
       <NavDrawerBlockBtn
-        @click="useDialog().open({
-          component: {
-            render: BuildRegistrarList
-          },
-        })"
+        @click="registrarAction"
         :disabled="readOnlyMode"
         icon="mdi-list-box-outline"
       >
@@ -53,11 +40,7 @@
       </NavDrawerBlockBtn>
 
       <NavDrawerBlockBtn
-        @click="useDialog().open({
-          component: {
-            render: MassEmailMenu
-          },
-        })"
+        @click="emailAction"
         icon="mdi-email-outline"
       >
         Compose Mass Email
@@ -65,15 +48,12 @@
 
       <AdditionalTools>
         <template #showing="{ toolsAvailable }">
-          <v-btn
+          <NavDrawerBlockBtn
             v-if="toolsAvailable"
-            style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240)"
-            class="mt-3"
-            block
+            icon="mdi-hammer"
           >
-            <v-icon icon="mdi-hammer" size="large" class="mr-2"></v-icon>
             Additional Tools
-          </v-btn>
+          </NavDrawerBlockBtn>
         </template>
       </AdditionalTools>
 
@@ -249,6 +229,22 @@ const searchText = computed({
 const navDrawer = ref(false);
 const searchMode = ref(false);
 
+const registrarAction = () => {
+  useDialog().open({
+    component: {
+      render: BuildRegistrarList
+    },
+  })
+}
+
+const emailAction = () => {
+  useDialog().open({
+    component: {
+      render: MassEmailMenu
+    },
+  })
+}
+
 const add = ref({
   loading: false,
   success: false,
@@ -263,6 +259,10 @@ const add = ref({
       add.value.success = false;
     }, 3000);
   },
+});
+
+const addIcon = computed(() => {
+  return add.value.success ? "mdi-check" : "mdi-plus";
 });
 
 useKeyBindings({
