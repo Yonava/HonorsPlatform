@@ -93,11 +93,11 @@ export const useSheetManager = defineStore('sheetManager', {
     },
     setReadOnlyMode(readOnly: boolean) {
       this.readOnlyMode = readOnly
-      readOnly ? readonlySnackbar.activated() : readonlySnackbar.deactivated()
+      readOnly ? readonlySnackbar().activated() : readonlySnackbar().deactivated()
     },
     toggleReadOnlyMode() {
       this.readOnlyMode = !this.readOnlyMode
-      this.readOnlyMode ? readonlySnackbar.activated() : readonlySnackbar.deactivated()
+      this.readOnlyMode ? readonlySnackbar().activated() : readonlySnackbar().deactivated()
     },
     setSearchFilter(filter: string) {
       this.searchFilter = filter;
