@@ -57,17 +57,13 @@
           v-if="mdAndUp"
           @mousedown="resizeStart"
           :color="resizing ? getActivePanel.color : 'transparent'"
-          :style="{
-            width: '3px',
-            height: '100%',
-            cursor: 'col-resize',
-            position: 'absolute',
-            zIndex: 100,
-            left: `${proposedWidth + SIDEBAR_WIDTH_PX}px`,
-          }"
+          :style="panelListResizeTabStyles"
         ></v-sheet>
+
         <ItemDetail v-if="mdAndUp"/>
+
       </div>
+
       <div v-if="showLogo">
         <img
           src="../assets/honorsLogo.jpeg"
@@ -77,8 +73,11 @@
           {{ version }}
         </span>
       </div>
+
     </v-main>
+
     <ItemDetailSM />
+
   </div>
 </template>
 
@@ -128,6 +127,17 @@ const panelCoverStyles = computed(() => {
     overflow: 'auto',
     transform: getPanelCover.value.show ? 'translateX(0)' : 'translateX(-100%)',
     transition: 'transform 0.2s ease-in-out',
+  } satisfies StyleValue
+})
+
+const panelListResizeTabStyles = computed(() => {
+  return {
+    width: '3px',
+    height: '100%',
+    cursor: 'col-resize',
+    position: 'absolute',
+    zIndex: 100,
+    left: `${proposedWidth.value + SIDEBAR_WIDTH_PX}px`,
   } satisfies StyleValue
 })
 
@@ -190,6 +200,7 @@ const resizing = ref(false)
 const panelListWidth = ref(getPanelListWidth())
 const proposedWidth = ref(panelListWidth.value)
 const panelParent = ref<HTMLDivElement>()
+
 const SIDEBAR_WIDTH_PX = 80
 
 const resizeStart = () => {

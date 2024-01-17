@@ -15,15 +15,19 @@
           <h1>
             {{ panelTitle }}
           </h1>
-          <p
+
+          <h5
             :style="{
+              width: '40px',
               opacity: loadingItems ? 0 : 1,
-              width: '35px'
+              borderRadius: '50px',
+              fontWeight: '900',
             }"
-            class="ml-2"
+            class="ml-2 px-2 text-black bg-white text-center"
           >
-            ({{ filteredItems.length }})
-          </p>
+            {{ filteredItems.length }}
+          </h5>
+
         </div>
       </template>
 

@@ -31,6 +31,13 @@
         <UserProfile />
 
       </v-menu>
+
+      <v-tooltip
+        activator="parent"
+        location="end"
+      >
+        View Profile
+      </v-tooltip>
     </div>
     <v-btn
       @click="$router.push({ name: 'registrar' })"
@@ -47,22 +54,31 @@
         Create Registrar List
       </v-tooltip>
     </v-btn>
-    <v-btn
-      @click="$router.push({ name: 'email' })"
-      :disabled="readOnlyMode"
-      icon
+
+    <v-menu
+      :offset="[10, 0]"
+      location="top"
     >
-      <v-icon>
-        mdi-email-fast-outline
-      </v-icon>
-      <v-tooltip
-        :disabled="smAndDown"
-        activator="parent"
-        location="end"
-      >
-        Compose Mass Email
-      </v-tooltip>
-    </v-btn>
+      <template v-slot:activator="{ props }">
+        <v-btn
+          v-bind="props"
+          icon
+        >
+          <v-icon>
+            mdi-email-outline
+          </v-icon>
+          <v-tooltip
+            activator="parent"
+            location="end"
+          >
+            Compose Mass Email
+          </v-tooltip>
+        </v-btn>
+      </template>
+
+      <MassEmailMenu />
+    </v-menu>
+
   </div>
 </template>
 
@@ -72,6 +88,7 @@ import { useAuth } from '../../store/useAuth';
 import { useSheetManager } from '../../store/useSheetManager';
 import { storeToRefs } from 'pinia';
 import UserProfile from './UserProfile.vue';
+import MassEmailMenu from './MassEmailMenu.vue';
 
 const auth = useAuth();
 const { googleProfile } = storeToRefs(auth);

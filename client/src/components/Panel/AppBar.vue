@@ -16,7 +16,7 @@
       "
       class="pa-4"
     >
-      <div class="d-flex flex-row" style="width: 100%">
+      <div class="d-flex">
 
         <!-- TODO enable when leaderboard is back online -->
         <!-- <v-btn icon>
