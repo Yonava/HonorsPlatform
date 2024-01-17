@@ -1,55 +1,48 @@
 <template>
-  <div id="panel-parent">
+  <div ref="panelParent">
+
     <v-sheet
       class="background-matte"
       :color="`${getActivePanel.color}-lighten-4`"
     ></v-sheet>
+
     <transition>
       <PanelCoverAppBar v-if="getPanelCover.show" />
       <AppBar v-else />
     </transition>
+
     <v-main>
       <div
         :style="{
           position: 'relative',
           height: 'calc(100vh - 64px)'
         }"
-        class="d-flex flex-row"
+        class="d-flex"
       >
+
         <v-sheet
-          :style="{
-            zIndex: '99',
-            position: 'absolute',
-            width: mdAndUp ? (panelListWidth + 80) + 'px' : '100%',
-            height: mdAndUp ? '100%' : 'calc(100vh - 64px)',
-            overflow: 'auto',
-            transform: getPanelCover.show ? 'translateX(0)' : 'translateX(-100%)',
-            transition: 'transform 0.2s ease-in-out',
-          }"
-          :color="getActivePanel.color + '-lighten-4'"
+          :style="panelCoverStyles"
+          :color="`${getActivePanel.color}-lighten-4`"
         >
           <PanelCover />
         </v-sheet>
+
         <v-sheet
           v-if="smAndUp"
           :color="`${getActivePanel.color}-darken-2`"
+          :style="{
+            minWidth: `${SIDEBAR_WIDTH_PX}px`,
+          }"
           class="d-flex align-center flex-column flex-start pt-3"
-          style="min-width: 80px; max-width: 80px; height: 100%; background: green"
         >
           <SortPanel />
           <v-spacer></v-spacer>
           <BottomLeftActions />
         </v-sheet>
+
         <div
           ref="panelList"
-          :style="{
-            height: getPanelCover.show ? 'calc(100vh - 64px)' : '',
-            overflow: getPanelCover.show ? 'hidden' : 'auto',
-            minWidth: mdAndUp ? `${itemListWidth}px` : '',
-            maxWidth: mdAndUp ? `${itemListWidth}px` : '',
-            pointerEvents: panelListCollapsed ? 'none' : 'auto',
-            transition: itemListTransition ? 'min-width 0.2s ease-in-out, max-width 0.2s ease-in-out' : '',
-          }"
+          :style="panelListStyles"
           class="d-flex flex-grow-1 flex-column align-center"
         >
           <v-sheet
@@ -59,6 +52,7 @@
             <PanelList />
           </v-sheet>
         </div>
+
         <v-sheet
           v-if="mdAndUp"
           @mousedown="resizeStart"
@@ -69,7 +63,7 @@
             cursor: 'col-resize',
             position: 'absolute',
             zIndex: 100,
-            left: `${proposedWidth + sortPanelWidth}px`,
+            left: `${proposedWidth + SIDEBAR_WIDTH_PX}px`,
           }"
         ></v-sheet>
         <ItemDetail v-if="mdAndUp"/>
@@ -92,7 +86,8 @@
 import {
   ref,
   computed,
-  watch
+  watch,
+  StyleValue
 } from 'vue'
 import { useRoute } from 'vue-router'
 import BottomLeftActions from '../components/Panel/BottomLeftActions.vue'
@@ -112,6 +107,29 @@ import { useDialog } from '../store/useDialog'
 import { storeToRefs } from 'pinia'
 import { panels, version } from '../Panels'
 import { useStalePageDetector } from '../StalePageDetector'
+
+const panelListStyles = computed(() => {
+  return {
+    height: getPanelCover.value.show ? 'calc(100vh - 64px)' : '',
+    overflow: getPanelCover.value.show ? 'hidden' : 'auto',
+    minWidth: mdAndUp.value ? `${itemListWidth.value}px` : '',
+    maxWidth: mdAndUp.value ? `${itemListWidth.value}px` : '',
+    pointerEvents: panelListCollapsed.value ? 'none' : 'auto',
+    transition: itemListTransition.value ? 'min-width 0.2s ease-in-out, max-width 0.2s ease-in-out' : '',
+  } satisfies StyleValue
+})
+
+const panelCoverStyles = computed(() => {
+  return {
+    zIndex: '99',
+    position: 'absolute',
+    width: mdAndUp.value ? (panelListWidth.value + 80) + 'px' : '100%',
+    height: mdAndUp.value ? '100%' : 'calc(100vh - 64px)',
+    overflow: 'auto',
+    transform: getPanelCover.value.show ? 'translateX(0)' : 'translateX(-100%)',
+    transition: 'transform 0.2s ease-in-out',
+  } satisfies StyleValue
+})
 
 useStalePageDetector()
 const { setPanel } = useSheetManager()
@@ -147,7 +165,7 @@ const panelHopBindings = () => {
   return panelKeys.reduce((acc, key, i) => {
     acc[i + 1] = () => setPanel(key)
     return acc
-  }, {})
+  }, {} as Record<number, () => void>)
 }
 
 useKeyBindings({
@@ -162,52 +180,39 @@ useKeyBindings({
   ...panelHopBindings()
 })
 
-const getDefaultWidth = () => {
+const getPanelListWidth = () => {
+  const DEFAULT_PANEL_LIST_WIDTH = 480
   const localPanelListWidth = localStorage.getItem(local.panelListWidth)
-  if (localPanelListWidth) {
-    return parseInt(localPanelListWidth)
-  } else {
-    return 480
-  }
+  return localPanelListWidth ? parseInt(localPanelListWidth) : DEFAULT_PANEL_LIST_WIDTH
 }
 
 const resizing = ref(false)
-const panelListWidth = ref(getDefaultWidth())
+const panelListWidth = ref(getPanelListWidth())
 const proposedWidth = ref(panelListWidth.value)
-const sortPanelWidth = 80
+const panelParent = ref<HTMLDivElement>()
+const SIDEBAR_WIDTH_PX = 80
 
-const resizeStart = (e: MouseEvent) => {
+const resizeStart = () => {
   resizing.value = true
-  const panelParent = document.getElementById('panel-parent')!
-  panelParent.style.userSelect = 'none'
+  if (!panelParent.value) throw new Error('panelParent is not defined')
+  panelParent.value.style.userSelect = 'none'
   proposedWidth.value = panelListWidth.value
   document.addEventListener('mousemove', resizeMove)
   document.addEventListener('mouseup', resizeEnd)
 }
 
 const resizeMove = (e: MouseEvent) => {
-
-  const [smallestAllowed, largestAllowed] = [350, 550]
-
-  if (!resizing.value || panelListCollapsed.value) {
-    return
-  }
-
-  const newWidth = e.clientX - sortPanelWidth
-
-  if (newWidth < smallestAllowed || newWidth > largestAllowed) {
-    return
-  }
+  const [smallestAllowedPx, largestAllowedPx] = [350, 550]
+  if (!resizing.value || panelListCollapsed.value) return
+  const newWidth = e.clientX - SIDEBAR_WIDTH_PX
+  if (newWidth < smallestAllowedPx || newWidth > largestAllowedPx) return
   proposedWidth.value = newWidth
 }
 
 const resizeEnd = () => {
   resizing.value = false
-  const panelParent = document.getElementById('panel-parent')
-  if (!panelParent) {
-    throw new Error('panel-parent not found')
-  }
-  panelParent.style.userSelect = 'auto'
+  if (!panelParent.value) throw new Error('panelParent is not defined')
+  panelParent.value.style.userSelect = 'auto'
   panelListWidth.value = proposedWidth.value
   localStorage.setItem(local.panelListWidth, panelListWidth.value.toString())
   document.removeEventListener('mousemove', resizeMove)
