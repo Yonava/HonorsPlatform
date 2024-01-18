@@ -25,7 +25,6 @@ import { markRaw } from 'vue';
 import * as types from './SheetTypes';
 
 import { sortOptions } from './SortOptions'
-import { addActions } from './AddActions';
 
 import {
   mapStudents,
@@ -45,7 +44,6 @@ import {
 export const panels = {
   STUDENTS: {
     panelName: 'STUDENTS',
-    add: addActions.STUDENTS,
     components: {
       detail: markRaw(StudentDetail),
       list: markRaw(StudentListItem),
@@ -92,7 +90,6 @@ export const panels = {
   },
   MODULES: {
     panelName: 'MODULES',
-    add: addActions.MODULES,
     components: {
       detail: markRaw(ModuleDetail),
       list: markRaw(ModuleListItem)
@@ -124,7 +121,6 @@ export const panels = {
   },
   COMPLETED_MODULES: {
     panelName: 'COMPLETED_MODULES',
-    add: addActions.COMPLETED_MODULES,
     components: {
       detail: markRaw(CompletedModuleDetail),
       list: markRaw(CompletedModuleListItem),
@@ -158,7 +154,6 @@ export const panels = {
   },
   THESES: {
     panelName: 'THESES',
-    add: addActions.THESES,
     components: {
       detail: markRaw(ThesisDetail),
       list: markRaw(ThesisListItem),
@@ -193,7 +188,6 @@ export const panels = {
   },
   GRADUATES: {
     panelName: 'GRADUATES',
-    add: addActions.GRADUATES,
     components: {
       detail: markRaw(GraduateDetail),
       list: markRaw(GraduateListItem),
@@ -246,7 +240,6 @@ export const panels = {
   },
   GRADUATE_ENGAGEMENTS: {
     panelName: 'GRADUATE_ENGAGEMENTS',
-    add: addActions.GRADUATE_ENGAGEMENTS,
     components: {
       detail: markRaw(GraduateEngagementDetail),
       list: markRaw(GraduateEngagementListItem),

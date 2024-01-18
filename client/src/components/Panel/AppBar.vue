@@ -1,5 +1,17 @@
 <template>
   <div>
+    <AppBarLg
+      v-if="mdAndUp"
+      :color="appBarColor"
+      class="app-bar px-5"
+    />
+    <AppBarSm
+      v-else
+      :color="appBarColor"
+      class="app-bar px-5"
+    />
+  </div>
+  <!-- <div>
     <v-navigation-drawer
       v-if="xs"
       v-model="navDrawer"
@@ -193,10 +205,13 @@
 
       </div>
     </v-app-bar>
-  </div>
+  </div> -->
 </template>
 
 <script setup lang="ts">
+import AppBarLg from "./AppBarLg.vue";
+import AppBarSm from "./AppBarSm.vue";
+
 import SortPanel from "./SortPanel.vue";
 import Announcements from "./AnnouncementMenu.vue";
 import AdditionalTools from "../../components/Panel/AdditionalTools.vue";
@@ -220,11 +235,6 @@ const { show: dialogOpen } = storeToRefs(useDialog())
 const { getSelectedItems } = useDocumentCache();
 const { searchFilter, getActivePanel, readOnlyMode } = storeToRefs(useSheetManager());
 const { setSearchFilter } = useSheetManager();
-
-const searchText = computed({
-  get: () => searchFilter.value,
-  set: (v) => setSearchFilter(v),
-});
 
 const navDrawer = ref(false);
 const searchMode = ref(false);

@@ -1,8 +1,8 @@
 <template>
   <v-btn
     block
-    style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240)"
-    class="mt-3"
+    style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240);"
+    class=""
   >
     <v-icon
       v-if="icon"
