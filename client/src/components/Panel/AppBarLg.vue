@@ -6,8 +6,13 @@
     <div style="width: 175px">
       <AddItemBtn />
     </div>
-    <Announcements />
-    <AdditionalTools />
+    <div
+      class="d-flex justify-space-around ml-4"
+      style="width: 100px"
+    >
+      <Announcements />
+      <AdditionalTools />
+    </div>
   </v-app-bar>
 </template>
 

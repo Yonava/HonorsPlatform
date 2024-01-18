@@ -38,13 +38,6 @@
         class="type-list-item"
       >
         {{ tool.name }}
-        <v-tooltip
-          v-if="tool.tooltip"
-          :disabled="smAndDown"
-          activator="parent"
-        >
-          test
-        </v-tooltip>
       </v-list-item>
     </v-list>
 
