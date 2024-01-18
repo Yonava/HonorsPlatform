@@ -1,16 +1,16 @@
 <template>
-  <div>
-    <AppBarLg
-      v-if="mdAndUp"
-      :color="appBarColor"
-      class="app-bar px-5"
-    />
-    <AppBarSm
-      v-else
-      :color="appBarColor"
-      class="app-bar px-5"
-    />
-  </div>
+
+  <AppBarLg
+    v-if="mdAndUp"
+    :color="appBarColor"
+    class="px-5"
+  />
+  <AppBarSm
+    v-else
+    :color="appBarColor"
+    class="px-5"
+  />
+
   <!-- <div>
     <v-navigation-drawer
       v-if="xs"
@@ -233,54 +233,17 @@ import { storeToRefs } from "pinia";
 
 const { show: dialogOpen } = storeToRefs(useDialog())
 const { getSelectedItems } = useDocumentCache();
-const { searchFilter, getActivePanel, readOnlyMode } = storeToRefs(useSheetManager());
-const { setSearchFilter } = useSheetManager();
+const { getActivePanel } = storeToRefs(useSheetManager());
 
 const navDrawer = ref(false);
-const searchMode = ref(false);
 
-const registrarAction = () => {
-  useDialog().open({
-    component: {
-      render: BuildRegistrarList
-    },
-  })
-}
-
-const emailAction = () => {
-  useDialog().open({
-    component: {
-      render: MassEmailMenu
-    },
-  })
-}
-
-const add = ref({
-  loading: false,
-  success: false,
-  fire: async () => {
-    if (!getActivePanel.value.add) return;
-    if (add.value.loading || add.value.success) return;
-    add.value.loading = true;
-    await getActivePanel.value.add();
-    add.value.loading = false;
-    add.value.success = true;
-    setTimeout(() => {
-      add.value.success = false;
-    }, 3000);
-  },
-});
-
-const addIcon = computed(() => {
-  return add.value.success ? "mdi-check" : "mdi-plus";
-});
 
 useKeyBindings({
   "/": () => document.getElementById("input")!.focus(),
   "a": () => add.value.fire(),
 });
 
-const { mdAndUp, smAndUp, smAndDown, xs } = useDisplay();
+const { mdAndUp } = useDisplay();
 
 const appBarColor = computed(() => {
   return getActivePanel.value.color + '-darken-2'
@@ -291,20 +254,9 @@ watchEffect(() => {
     navDrawer.value = false;
   }
 });
-
-watchEffect(() => {
-  if (getActivePanel.value) {
-    add.value.loading = false;
-    add.value.success = false;
-  }
-});
 </script>
 
 <style scoped>
-.app-bar {
-  transition: 300ms;
-}
-
 h1.title {
   font-weight: 700;
   user-select: none;

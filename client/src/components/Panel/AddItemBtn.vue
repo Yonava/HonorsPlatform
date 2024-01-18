@@ -13,7 +13,7 @@ import { useSheetManager } from '../../store/useSheetManager';
 import { useDocumentCache } from '../../store/useDocumentCache';
 import { storeToRefs } from 'pinia';
 import NavDrawerBlockBtn from './NavDrawerBlockBtn.vue';
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 
 const { getActivePanel } = storeToRefs(useSheetManager());
 const { addItem } = useDocumentCache();
@@ -35,4 +35,6 @@ const action = async () => {
   success.value = true;
   setTimeout(() => success.value = false, 2000);
 }
+
+watch(getActivePanel, () => success.value = false)
 </script>
