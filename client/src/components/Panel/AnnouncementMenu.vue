@@ -1,32 +1,38 @@
 <template>
-  <v-menu v-model="active">
+  <v-menu v-model="open">
     <template v-slot:activator="{ props }">
-      <v-btn
+      <div
         v-bind="props"
         @click="badgeNumber = 0"
-        icon
       >
-        <v-badge
-          v-if="badgeNumber > 0 && !cacheRefreshInProgress"
-          :content="badgeNumber"
-          size="small"
-          color="red"
+        <slot
+          name="activator"
+          v-bind="{ badgeNumber, tooltipText, open }"
         >
-          <v-icon>
-            {{ icon }}
-          </v-icon>
-        </v-badge>
-        <v-icon v-else>
-          {{ icon }}
-        </v-icon>
-        <v-tooltip
-          :disabled="smAndDown || active"
-          activator="parent"
-          location="bottom"
-        >
-          {{ tooltipText }}
-        </v-tooltip>
-      </v-btn>
+          <v-btn icon>
+            <v-badge
+              v-if="badgeNumber > 0 && !cacheRefreshInProgress"
+              :content="badgeNumber"
+              size="small"
+              color="red"
+            >
+              <v-icon>
+                {{ icon }}
+              </v-icon>
+            </v-badge>
+            <v-icon v-else>
+              {{ icon }}
+            </v-icon>
+            <v-tooltip
+              :disabled="smAndDown || open"
+              activator="parent"
+              location="bottom"
+            >
+              {{ tooltipText }}
+            </v-tooltip>
+          </v-btn>
+        </slot>
+      </div>
     </template>
 
     <v-list
@@ -124,7 +130,7 @@ import { storeToRefs } from 'pinia';
 import { useDocumentCache } from '../../store/useDocumentCache'
 import { useDisplay } from 'vuetify'
 
-const { mdAndUp, smAndDown } = useDisplay()
+const { smAndDown } = useDisplay()
 
 const { Announcements, cacheRefreshInProgress } = storeToRefs(useDocumentCache())
 
@@ -139,7 +145,7 @@ const announcements = computed(() => {
 
 const badgeNumber = ref(0)
 const previousListLength = ref(0)
-const active = ref(false)
+const open = ref(false)
 
 const tooltipText = computed(() => {
   if (announcements.value.length === 0) {
@@ -163,7 +169,7 @@ const icon = computed(() => {
   const announcementsUnViewed = badgeNumber.value > 0
 
   const innerIcon = cacheRefreshInProgress.value ? 'processing' : announcementsUnViewed ? 'alert' : 'check'
-  const outlined = active.value ? '' : '-outline'
+  const outlined = open.value ? '' : '-outline'
 
   return `mdi-message-${innerIcon}${outlined}`
 })
