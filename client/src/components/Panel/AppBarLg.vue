@@ -3,9 +3,7 @@
     <PanelTitle />
     <AppBarSearch />
     <v-spacer></v-spacer>
-    <div style="width: 175px">
-      <AddItemBtn />
-    </div>
+    <AddItemBtn />
     <div
       class="d-flex justify-space-around ml-4"
       style="width: 100px"

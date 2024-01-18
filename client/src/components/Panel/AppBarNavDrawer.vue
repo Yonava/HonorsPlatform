@@ -56,7 +56,6 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
 import { useDialog } from "../../store/useDialog";
 import { useSheetManager } from "../../store/useSheetManager";
 import { storeToRefs } from "pinia";
@@ -73,6 +72,10 @@ import { version } from "../../Panels";
 
 const { readOnlyMode } = storeToRefs(useSheetManager())
 
+defineProps<{
+  color: string,
+}>()
+
 const registrarAction = () => {
   useDialog().open({
     component: {
@@ -88,8 +91,4 @@ const emailAction = () => {
     },
   })
 }
-
-defineProps<{
-  color: string,
-}>()
 </script>

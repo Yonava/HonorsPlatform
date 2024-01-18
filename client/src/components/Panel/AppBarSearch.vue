@@ -4,7 +4,7 @@
     placeholder="Search"
     class="search-input"
     type="text"
-    id="input"
+    id="search-bar"
   />
 </template>
 
@@ -18,7 +18,7 @@ const { searchFilter } = storeToRefs(useSheetManager())
 <style scoped>
 .search-input {
   background: rgba(0, 0, 0, 0.3);
-  color: rgb(240, 240, 240);
+  color: rgb(236, 236, 236);
   border-radius: 50px;
   padding: 3px;
   padding-left: 15px;
@@ -28,7 +28,6 @@ const { searchFilter } = storeToRefs(useSheetManager())
   font-size: 1.4em;
   font-weight: 200;
   box-shadow: 2px 1px 4px rgba(0, 0, 0, 0.5);
-  margin-left: 25px;
   transition: 0.3s ease;
 }
 
@@ -46,6 +45,6 @@ const { searchFilter } = storeToRefs(useSheetManager())
 }
 
 .search-input::placeholder {
-  color: rgba(255, 255, 255, 0.569);
+  color: rgb(209, 209, 209);
 }
 </style>

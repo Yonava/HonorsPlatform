@@ -1,11 +1,13 @@
 <template>
-  <NavDrawerBlockBtn
-    @click="action"
-    :style="style"
-    :icon="icon"
-  >
-    {{ text }}
-  </NavDrawerBlockBtn>
+  <div>
+    <NavDrawerBlockBtn
+      @click="action"
+      :style="style"
+      :icon="icon"
+    >
+      {{ text }}
+    </NavDrawerBlockBtn>
+  </div>
 </template>
 
 <script setup lang="ts">

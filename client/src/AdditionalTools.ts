@@ -6,8 +6,8 @@ import type { PanelName } from './Panels'
 
 type Tool = {
   name: string,
-  disableInReadOnly?: boolean,
   handler: () => void,
+  disableInReadOnly?: boolean,
   tooltip?: string,
 }
 

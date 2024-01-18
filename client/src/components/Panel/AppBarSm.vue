@@ -7,18 +7,23 @@
     :color="color"
     v-bind="$attrs"
   >
-    <PanelTitle />
-    <v-spacer></v-spacer>
-
+    <AppBarSearch
+      v-if="searching"
+      style="width: 100%"
+      class="mr-3"
+    />
+    <PanelTitle v-else />
+    <v-spacer v-if="!searching"></v-spacer>
     <div
       class="d-flex"
       style="gap: 4px"
     >
       <v-btn
+        @click="searching = !searching"
         icon
       >
         <v-icon
-          icon="mdi-magnify"
+          :icon="searchIcon"
           size="large"
         ></v-icon>
       </v-btn>
@@ -39,9 +44,12 @@
 <script setup lang="ts">
 import PanelTitle from "./PanelTitle.vue";
 import AppBarNavDrawer from "./AppBarNavDrawer.vue";
-import { ref } from "vue";
+import AppBarSearch from "./AppBarSearch.vue";
+import { ref, computed } from "vue";
 
 const open = ref(false)
+const searching = ref(false)
+const searchIcon = computed(() => searching.value ? "mdi-close" : "mdi-magnify")
 
 defineProps<{
   color: string
