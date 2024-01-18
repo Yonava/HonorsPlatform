@@ -28,7 +28,7 @@
         </v-sheet>
 
         <v-sheet
-          v-if="smAndUp"
+          v-if="mdAndUp"
           :color="`${getActivePanel.color}-darken-2`"
           :style="{
             minWidth: `${SIDEBAR_WIDTH_PX}px`,
@@ -179,6 +179,7 @@ const panelHopBindings = () => {
 }
 
 useKeyBindings({
+  '/': () => document.getElementById("search-bar")!.focus(),
   'r': () => getAllDocuments({ forceCacheRefresh: true }),
   'p': () => {
     panelListCollapsed.value = !panelListCollapsed.value

@@ -1,7 +1,7 @@
 <template>
   <v-app-bar :color="color">
     <PanelTitle />
-    <AppBarSearch />
+    <AppBarSearch class="ml-4" />
     <v-spacer></v-spacer>
     <AddItemBtn />
     <div

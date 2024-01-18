@@ -19,7 +19,7 @@
       style="gap: 4px"
     >
       <v-btn
-        @click="searching = !searching"
+        @click="toggleSearch"
         icon
       >
         <v-icon
@@ -45,13 +45,35 @@
 import PanelTitle from "./PanelTitle.vue";
 import AppBarNavDrawer from "./AppBarNavDrawer.vue";
 import AppBarSearch from "./AppBarSearch.vue";
-import { ref, computed } from "vue";
+import { ref, computed, watchEffect } from "vue";
+import { useDialog } from "../../store/useDialog";
+import { useSheetManager } from "../../store/useSheetManager";
+import { storeToRefs } from "pinia";
+
+defineProps<{
+  color: string
+}>()
+
+const { show: dialogOpen } = storeToRefs(useDialog())
+const { focusedItemSysId } = storeToRefs(useSheetManager())
 
 const open = ref(false)
 const searching = ref(false)
 const searchIcon = computed(() => searching.value ? "mdi-close" : "mdi-magnify")
 
-defineProps<{
-  color: string
-}>()
+const toggleSearch = () => {
+  searching.value = !searching.value
+  if (searching.value) {
+    setTimeout(() => {
+      const searchBar = document.getElementById("search-bar")!
+      searchBar.focus()
+    })
+  }
+}
+
+watchEffect(() => {
+  if (dialogOpen.value || focusedItemSysId.value) {
+    open.value = false
+  }
+});
 </script>
