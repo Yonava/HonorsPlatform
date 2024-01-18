@@ -272,8 +272,7 @@ export type PanelName = keyof typeof panels;
 
 export type PanelRange = typeof panels[PanelName]['sheetRange'];
 
-export type GetSheetItemType<T extends PanelRange> = T extends 'Students' ? types.Student : T extends 'Modules' ? types.Module : T extends 'Completed Modules' ? types.CompletedModule : T extends 'Graduates' ? types.Graduate : T extends 'Theses' ? types.Thesis : T extends 'Grad Engagements' ? types.GradEngagement : never;
-
 export type Panel = typeof panels[PanelName];
 export const getPanel = (panelName: PanelName) => panels[panelName];
-export const version = 'prerelease v0.91.5 (beta)'
+
+export const version = 'prerelease v0.91.6 (beta)';
