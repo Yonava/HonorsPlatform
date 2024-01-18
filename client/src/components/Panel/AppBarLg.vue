@@ -7,6 +7,7 @@
       <AddItemBtn />
     </div>
     <Announcements />
+    <AdditionalTools />
   </v-app-bar>
 </template>
 
@@ -15,6 +16,7 @@ import PanelTitle from "./PanelTitle.vue";
 import AppBarSearch from "./AppBarSearch.vue";
 import AddItemBtn from "./AddItemBtn.vue";
 import Announcements from "./AnnouncementMenu.vue";
+import AdditionalTools from "./AdditionalTools.vue";
 
 defineProps<{
   color: string

@@ -1,11 +1,31 @@
 <template>
-  <v-menu v-model="showing">
+  <v-menu v-model="open">
     <template v-slot:activator="{ props }">
       <div v-bind="props">
         <slot
-          name="showing"
-          v-bind="object"
-        ></slot>
+          name="activator"
+          v-bind="{ open, activeTools }"
+        >
+          <v-btn
+            v-if="activeTools.length"
+            icon
+          >
+
+            <v-icon
+              icon="mdi-hammer"
+              size="large"
+            ></v-icon>
+
+            <v-tooltip
+              :disabled="smAndDown || open"
+              activator="parent"
+              location="bottom"
+            >
+              Additional Tools
+            </v-tooltip>
+
+          </v-btn>
+        </slot>
       </div>
     </template>
 
@@ -40,7 +60,7 @@ import { useDisplay } from 'vuetify/lib/framework.mjs'
 
 const { smAndDown } = useDisplay()
 
-const showing = ref(false)
+const open = ref(false)
 
 const sheetManager = useSheetManager()
 const { getActivePanel, readOnlyMode } = storeToRefs(sheetManager)
@@ -50,13 +70,6 @@ const activeTools = computed(() => {
     ...tools[getActivePanel.value.panelName],
     ...tools['ALL']
   ]
-})
-
-const object = computed(() => {
-  return {
-    showing: showing.value,
-    toolsAvailable: activeTools.value.length > 0
-  }
 })
 </script>
 
