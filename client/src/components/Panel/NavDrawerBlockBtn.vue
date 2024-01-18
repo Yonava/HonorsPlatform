@@ -1,8 +1,7 @@
 <template>
   <v-btn
+    :style="styles"
     block
-    style="background: rgba(0, 0, 0, 0.4); color: rgb(240, 240, 240);"
-    class=""
   >
     <v-icon
       v-if="icon"
@@ -15,7 +14,19 @@
 </template>
 
 <script setup lang="ts">
-defineProps<{
+import type { StyleValue } from "vue"
+import { computed } from "vue"
+
+const props = defineProps<{
   icon?: string,
+  style?: StyleValue
 }>()
+
+const styles = computed(() => {
+  const passedInStyles = props.style ?? {}
+  return Object.assign({
+    background: 'rgba(0, 0, 0, 0.4)',
+    color: 'rgb(240, 240, 240)'
+  }, passedInStyles)
+})
 </script>
