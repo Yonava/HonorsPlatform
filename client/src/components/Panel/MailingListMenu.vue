@@ -15,8 +15,8 @@
         v-for="list in mailingLists"
         :key="list.id"
         @click="composeEmail(list)"
-        @mouseenter="hoveredMailingListId = list.id"
-        @mouseleave="hoveredMailingListId = ''; emailAddressesCopied = false"
+        @mouseenter="mouseEnteredList(list)"
+        @mouseleave="mouseLeftList"
         :color="color(list)"
         class="d-flex align-center justify-space-between py-2 px-3"
         style="border-radius: 5px; cursor: pointer;"
@@ -72,6 +72,15 @@ import { emailValidator } from '../../EmailUtilities';
 const { Students, Graduates } = useDocumentCache()
 
 const hoveredMailingListId = ref('')
+
+const mouseEnteredList = (list: MailingList) => {
+  hoveredMailingListId.value = list.id;
+}
+
+const mouseLeftList = () => {
+  hoveredMailingListId.value = '';
+  emailAddressesCopied.value = false
+}
 
 const color = (list: MailingList) => {
   if (hoveredMailingListId.value === list.id) {
@@ -149,6 +158,22 @@ const editList = (list: MailingList) => {
   // })
 }
 
+const copyEmailAddresses = (list: MailingList) => {
+  try {
+    navigator.clipboard.writeText(emailString(list))
+    useDialog().openSnackbar({
+      text: `Copied ${list.recipientSysIds.length} email addresses to clipboard`,
+      closable: false
+    })
+  } catch (e) {
+    console.error(e)
+    useDialog().openSnackbar({
+      text: `Failed to copy email addresses to clipboard`,
+      closable: false
+    })
+  }
+}
+
 const emailString = (list: MailingList) => {
   return list.recipientSysIds
     .map(sysId => {
@@ -169,26 +194,7 @@ const actions = ref([
    {
     icon: computed(() => emailAddressesCopied.value ? 'mdi-check' : 'mdi-content-copy'),
     tooltip: 'Copy Email Addresses',
-    showOnDefaultLists: true,
-    onClick: (list: MailingList) => {
-      try {
-        navigator.clipboard.writeText(emailString(list))
-        emailAddressesCopied.value = true
-        setTimeout(() => {
-          emailAddressesCopied.value = false
-        }, 3000)
-        useDialog().openSnackbar({
-          text: `Copied ${list.recipientSysIds.length} email addresses to clipboard`,
-          closable: false
-        })
-      } catch (e) {
-        console.error(e)
-        useDialog().openSnackbar({
-          text: `Failed to copy email addresses to clipboard`,
-          closable: false
-        })
-      }
-    }
+    onClick: copyEmailAddresses
   },
   {
     icon: 'mdi-pencil',
