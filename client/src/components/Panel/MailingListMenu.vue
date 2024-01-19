@@ -66,7 +66,7 @@ import type { MailingList } from './MailingListAudiences';
 import { useDialog } from '../../store/useDialog';
 import { panels } from '../../Panels';
 import { local } from '../../Locals';
-import { useStorage } from '@vueuse/core';
+import { set, useStorage } from '@vueuse/core';
 import { emailValidator } from '../../EmailUtilities';
 
 const { Students, Graduates } = useDocumentCache()
@@ -161,6 +161,8 @@ const editList = (list: MailingList) => {
 const copyEmailAddresses = (list: MailingList) => {
   try {
     navigator.clipboard.writeText(emailString(list))
+    emailAddressesCopied.value = true
+    setTimeout(() => emailAddressesCopied.value = false, 3000)
     useDialog().openSnackbar({
       text: `Copied ${list.recipientSysIds.length} email addresses to clipboard`,
       closable: false

@@ -3,6 +3,9 @@
     <PanelTitle />
     <AppBarSearch class="ml-4" />
     <v-spacer></v-spacer>
+    <div class="mr-4">
+      <ActiveAccounts />
+    </div>
     <AddItemBtn />
     <div
       class="d-flex justify-space-around ml-4"
@@ -20,6 +23,7 @@ import AppBarSearch from "./AppBarSearch.vue";
 import AddItemBtn from "./AddItemBtn.vue";
 import Announcements from "./AnnouncementMenu.vue";
 import AdditionalTools from "./AdditionalTools.vue";
+import ActiveAccounts from "./ActiveAccounts.vue";
 
 defineProps<{
   color: string

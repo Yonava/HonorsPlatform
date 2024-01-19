@@ -67,7 +67,9 @@
 
       <v-text-field
         v-model="tempId"
+        @keyup.enter="saveId"
         :rules="props.rules"
+        autofocus
         label="Student ID"
         class="mb-2"
       ></v-text-field>
@@ -103,6 +105,7 @@ import type { Student, Graduate } from '../../../SheetTypes'
 import { useDisplay } from 'vuetify/lib/framework.mjs';
 import { storeToRefs } from 'pinia';
 import { useBroadcastThroughSocket } from '../../../TrackItemForUpdate';
+import { useUpdateManager } from '../../../store/useUpdateManager';
 
 const { broadcast } = useBroadcastThroughSocket('DETAIL')
 
@@ -111,7 +114,7 @@ const tempId = ref('')
 
 const { xs } = useDisplay()
 const sheetManager = useSheetManager()
-const { readOnlyMode } = storeToRefs(sheetManager)
+const { readOnlyMode, getActivePanel } = storeToRefs(sheetManager)
 
 const props = defineProps<{
   item: Student | Graduate,
@@ -119,7 +122,12 @@ const props = defineProps<{
 }>()
 
 const saveId = () => {
+  if (invalidId.value) return
   idDialog.value = false
+  useUpdateManager().trackItemForUpdate({
+    item: props.item,
+    panelName: getActivePanel.value.panelName
+  })
   props.item.id = tempId.value
   broadcast('id')
 }

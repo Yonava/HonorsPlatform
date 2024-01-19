@@ -21,6 +21,7 @@ type UpdateProperty = {
   panelName: PanelName
 }
 
+// TODO: replace with unicode method
 const cells: Record<number, string> = {
   0: 'A',
   1: 'B',
