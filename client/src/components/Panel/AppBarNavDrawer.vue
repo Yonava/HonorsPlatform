@@ -29,7 +29,7 @@
         @click="emailAction"
         icon="mdi-email-outline"
       >
-        Compose Mass Email
+        My Mailing Lists
       </NavDrawerBlockBtn>
 
       <AdditionalTools>

@@ -1,5 +1,5 @@
 <template>
-  <v-sheet class="pa-5">
+  <v-sheet class="px-5 py-3">
     <h1>
       Your Mailing Lists ({{ mailingLists.length }})
     </h1>
@@ -14,8 +14,9 @@
       <v-sheet
         v-for="list in mailingLists"
         :key="list.id"
+        @click="composeEmail(list)"
         @mouseenter="hoveredMailingListId = list.id"
-        @mouseleave="hoveredMailingListId = ''"
+        @mouseleave="hoveredMailingListId = ''; emailAddressesCopied = false"
         :color="color(list)"
         class="d-flex align-center justify-space-between py-2 px-3"
         style="border-radius: 5px; cursor: pointer;"
@@ -23,33 +24,21 @@
         <h3>
           {{ list.name }}
         </h3>
-        <div class="d-flex">
+        <div class="d-flex align-center">
           <h5>
-            {{ list.recipientSysIds.length }} Recipients
+            {{ numberOfRecipientsText(list) }}
           </h5>
           <div
             v-if="showActions(list)"
             class="d-flex ml-3"
-            style="width: 50px; gap: 6px"
+            style="gap: 6px"
           >
-            <div>
-              <v-icon
-                @click.stop="editList(list)"
-              >
-                mdi-pencil
+            <div v-for="action in actions">
+              <v-icon @click.stop="action.onClick(list)">
+                {{ action.icon }}
               </v-icon>
               <v-tooltip activator="parent" location="bottom">
-                Edit {{ list.name }}
-              </v-tooltip>
-            </div>
-            <div>
-              <v-icon
-                @click.stop="deleteList(list)"
-              >
-                mdi-delete
-              </v-icon>
-              <v-tooltip activator="parent" location="bottom">
-                Delete {{ list.name }}
+                {{ action.tooltip }}
               </v-tooltip>
             </div>
           </div>
@@ -78,6 +67,7 @@ import { useDialog } from '../../store/useDialog';
 import { panels } from '../../Panels';
 import { local } from '../../Locals';
 import { useStorage } from '@vueuse/core';
+import { emailValidator } from '../../EmailUtilities';
 
 const { Students, Graduates } = useDocumentCache()
 
@@ -88,6 +78,12 @@ const color = (list: MailingList) => {
     return list.color + '-darken-2'
   }
   return list.color
+}
+
+const numberOfRecipientsText = (list: MailingList) => {
+  const numberOfRecipients = list.recipientSysIds.length
+  if (numberOfRecipients === 1) return '1 recipient'
+  return `${numberOfRecipients} recipients`
 }
 
 const defaultLists = [
@@ -141,6 +137,70 @@ const deleteList = (list: MailingList) => {
     }
   })
 }
+
+const editList = (list: MailingList) => {
+  // useDialog().open({
+  //   component: {
+  //     render: MailingListEditor,
+  //     props: {
+  //       list
+  //     }
+  //   }
+  // })
+}
+
+const emailString = (list: MailingList) => {
+  return list.recipientSysIds
+    .map(sysId => {
+      const student = Students.list.find(s => s.sysId === sysId)
+      const graduate = Graduates.list.find(s => s.sysId === sysId)
+      return student?.email ?? graduate?.email ?? ''
+    })
+    .filter(email => !!email)
+    .filter(email => emailValidator(email))
+    .join(',')
+}
+
+const composeEmail = (list: MailingList) => window.open(`mailto:${emailString(list)}`)
+
+const emailAddressesCopied = ref(false)
+
+const actions = ref([
+   {
+    icon: computed(() => emailAddressesCopied.value ? 'mdi-check' : 'mdi-content-copy'),
+    tooltip: 'Copy Email Addresses',
+    showOnDefaultLists: true,
+    onClick: (list: MailingList) => {
+      try {
+        navigator.clipboard.writeText(emailString(list))
+        emailAddressesCopied.value = true
+        setTimeout(() => {
+          emailAddressesCopied.value = false
+        }, 3000)
+        useDialog().openSnackbar({
+          text: `Copied ${list.recipientSysIds.length} email addresses to clipboard`,
+          closable: false
+        })
+      } catch (e) {
+        console.error(e)
+        useDialog().openSnackbar({
+          text: `Failed to copy email addresses to clipboard`,
+          closable: false
+        })
+      }
+    }
+  },
+  {
+    icon: 'mdi-pencil',
+    tooltip: 'Edit',
+    onClick: editList
+  },
+  {
+    icon: 'mdi-delete',
+    tooltip: 'Delete',
+    onClick: deleteList
+  },
+])
 </script>
 
 <style scoped>

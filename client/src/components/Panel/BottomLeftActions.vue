@@ -87,7 +87,7 @@
             activator="parent"
             location="end"
           >
-            Compose Mass Email
+            My Mailing Lists
           </v-tooltip>
         </v-btn>
       </template>

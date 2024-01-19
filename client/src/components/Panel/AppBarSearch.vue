@@ -18,7 +18,7 @@ const { searchFilter } = storeToRefs(useSheetManager())
 <style scoped>
 .search-input {
   background: rgba(0, 0, 0, 0.3);
-  color: rgb(236, 236, 236);
+  color: rgb(243, 243, 243);
   border-radius: 50px;
   padding: 3px;
   padding-left: 15px;
@@ -45,6 +45,6 @@ const { searchFilter } = storeToRefs(useSheetManager())
 }
 
 .search-input::placeholder {
-  color: rgb(209, 209, 209);
+  color: rgb(237, 237, 237);
 }
 </style>
