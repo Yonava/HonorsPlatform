@@ -12,13 +12,20 @@
       style="overflow: auto; gap: 8px"
     >
       <v-btn
-        v-for="i in 10"
-        :key="i"
-        color="primary"
+        v-for="audience in audiences"
+        @click="addAudience(audience)"
+        :key="audience.name"
+        :color="audience.color"
         rounded
       >
-        Category {{ i }}
+        {{ audience.name }}
       </v-btn>
+      <h3
+        v-if="!audiences.length"
+        class="text-red"
+      >
+        No More Target Audiences
+      </h3>
     </div>
     <h3 class="mt-3">
       Search For Specific Students
@@ -87,10 +94,19 @@
 import { computed, ref } from 'vue'
 import { useDocumentCache } from '../../store/useDocumentCache';
 import { filterItems } from '../../FilterObjects';
+import { getMailingListAudiences, type Audience } from './MailingListAudiences';
 
 const recipientSysIds = ref(new Set<string>())
 const hoveredStudentSysId = ref('')
 const search = ref('')
+
+const selectedAudiences = ref(new Set<string>())
+const audiences = computed(() => getMailingListAudiences().filter(a => !selectedAudiences.value.has(a.name)))
+
+const addAudience = (audience: Audience) => {
+  selectedAudiences.value.add(audience.name)
+  audience.recipientSysIds.forEach(sysId => recipientSysIds.value.add(sysId))
+}
 
 const { Students, Graduates } = useDocumentCache()
 
