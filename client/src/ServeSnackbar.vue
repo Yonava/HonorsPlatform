@@ -21,7 +21,7 @@
 
         <v-btn
           v-if="snackbar.action"
-          @click="snackbar.action.onClick(); snackbar.show = false"
+          @click.stop="snackbar.action.onClick(); snackbar.show = false"
           variant="text"
         >
           {{ snackbar.action.text }}

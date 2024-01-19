@@ -23,9 +23,37 @@
         <h3>
           {{ list.name }}
         </h3>
-        <h5>
-          {{ list.recipientSysIds.length }} Recipients
-        </h5>
+        <div class="d-flex">
+          <h5>
+            {{ list.recipientSysIds.length }} Recipients
+          </h5>
+          <div
+            v-if="showActions(list)"
+            class="d-flex ml-3"
+            style="width: 50px; gap: 6px"
+          >
+            <div>
+              <v-icon
+                @click.stop="editList(list)"
+              >
+                mdi-pencil
+              </v-icon>
+              <v-tooltip activator="parent" location="bottom">
+                Edit {{ list.name }}
+              </v-tooltip>
+            </div>
+            <div>
+              <v-icon
+                @click.stop="deleteList(list)"
+              >
+                mdi-delete
+              </v-icon>
+              <v-tooltip activator="parent" location="bottom">
+                Delete {{ list.name }}
+              </v-tooltip>
+            </div>
+          </div>
+        </div>
       </v-sheet>
       <v-sheet
         class="add-list-box d-flex align-center justify-center pa-2"
@@ -62,26 +90,31 @@ const color = (list: MailingList) => {
   return list.color
 }
 
-const studentList = {
-  name: 'All Students',
-  id: 'default-students',
-  recipientSysIds: Students.list.map(s => s.sysId),
-  color: panels['STUDENTS'].color
+const defaultLists = [
+  {
+    name: 'All Students',
+    id: 'default-students',
+    recipientSysIds: Students.list.map(s => s.sysId),
+    color: panels['STUDENTS'].color
+  },
+  {
+    name: 'All Graduates',
+    id: 'default-graduates',
+    recipientSysIds: Graduates.list.map(s => s.sysId),
+    color: panels['GRADUATES'].color
+  }
+] satisfies MailingList[]
+
+const showActions = (list: MailingList) => {
+  const isDefaultList = defaultLists.find(l => l.id === list.id)
+  return isDefaultList ? false : hoveredMailingListId.value === list.id
 }
 
-const graduateList = {
-  name: 'All Graduates',
-  id: 'default-graduates',
-  recipientSysIds: Graduates.list.map(s => s.sysId),
-  color: panels['GRADUATES'].color
-}
-
-const storedMailingLists = useStorage(local.mailingLists, [])
+const storedMailingLists = useStorage<MailingList[]>(local.mailingLists, [])
 
 const mailingLists = computed(() => {
   return [
-    studentList,
-    graduateList,
+    ...defaultLists,
     ...storedMailingLists.value
   ]
 })
@@ -90,6 +123,21 @@ const createList = () => {
   useDialog().open({
     component: {
       render: MailingListBuilder
+    }
+  })
+}
+
+const deleteList = (list: MailingList) => {
+  const index = storedMailingLists.value.findIndex(l => l.id === list.id)
+  storedMailingLists.value.splice(index, 1)
+  useDialog().openSnackbar({
+    text: `Deleted ${list.name}`,
+    closable: false,
+    action: {
+      text: 'Undo',
+      onClick: () => {
+        storedMailingLists.value.splice(index, 0, list)
+      }
     }
   })
 }

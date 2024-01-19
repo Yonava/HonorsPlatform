@@ -168,7 +168,7 @@ const createList = () => {
     name: 'New Mailing List',
     id: Date.now().toString(),
     recipientSysIds: [...recipientSysIds.value],
-    color: 'blue'
+    color: 'red'
   })
   useDialog().close()
 }
