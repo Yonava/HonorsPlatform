@@ -14,11 +14,11 @@
       <v-sheet
         v-for="list in mailingLists"
         :key="list.id"
-        @mouseenter="list.color += '-darken-2'"
-        @mouseleave="list.color = list.color.replace('-darken-2', '')"
+        @mouseenter="hoveredMailingListId = list.id"
+        @mouseleave="hoveredMailingListId = ''"
+        :color="color(list)"
         class="d-flex align-center justify-space-between py-2 px-3"
         style="border-radius: 5px; cursor: pointer;"
-        :color="list.color"
       >
         <h3>
           {{ list.name }}
@@ -45,17 +45,22 @@ import { ref, computed } from 'vue'
 import { useDocumentCache } from '../../store/useDocumentCache';
 import MailingListBuilder from './MailingListBuilder.vue';
 import MailingListEditor from './MailingListEditor.vue';
+import type { MailingList } from './MailingListAudiences';
 import { useDialog } from '../../store/useDialog';
 import { panels } from '../../Panels';
-
-type MailingList = {
-  name: string
-  id: string
-  recipientSysIds: string[]
-  color: string
-}
+import { local } from '../../Locals';
+import { useStorage } from '@vueuse/core';
 
 const { Students, Graduates } = useDocumentCache()
+
+const hoveredMailingListId = ref('')
+
+const color = (list: MailingList) => {
+  if (hoveredMailingListId.value === list.id) {
+    return list.color + '-darken-2'
+  }
+  return list.color
+}
 
 const studentList = {
   name: 'All Students',
@@ -71,7 +76,15 @@ const graduateList = {
   color: panels['GRADUATES'].color
 }
 
-const mailingLists = ref<MailingList[]>([studentList, graduateList])
+const storedMailingLists = useStorage(local.mailingLists, [])
+
+const mailingLists = computed(() => {
+  return [
+    studentList,
+    graduateList,
+    ...storedMailingLists.value
+  ]
+})
 
 const createList = () => {
   useDialog().open({

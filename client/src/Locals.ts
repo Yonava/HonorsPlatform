@@ -15,4 +15,6 @@ export const local = {
   closeAfterAuth: 'close-window',
   // width of the list item container on panel page
   panelListWidth: 'panel-list-width',
+  // stores user generated mailing lists
+  mailingLists: 'mailing-lists',
 } as const

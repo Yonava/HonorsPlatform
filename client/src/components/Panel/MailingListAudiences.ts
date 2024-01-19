@@ -16,10 +16,38 @@ export const getMailingListAudiences = () => {
     recipientSysIds: Graduates.list.map(graduate => graduate.sysId)
   } as const;
 
+  const studentsWorkingOnModules = {
+    name: 'Students Working on Modules',
+    color: panels['MODULES'].color,
+    recipientSysIds: Modules.list.map(module => module.studentSysId)
+  }
+
+  const studentsWithOver1000Points = {
+    name: 'Students with over 1000 points',
+    color: 'red',
+    recipientSysIds: Students.list.filter(student => student.points > 1000).map(student => student.sysId)
+  }
+
+  const studentsEngagedInAthletics = {
+    name: 'Students Engaged in Athletics',
+    color: 'green',
+    recipientSysIds: Students.list.filter(student => student.athletics).map(student => student.sysId)
+  }
+
   return [
     allStudents,
     allGraduates,
+    studentsWorkingOnModules,
+    studentsWithOver1000Points,
+    studentsEngagedInAthletics
   ] as const;
+}
+
+export type MailingList = {
+  name: string
+  id: string
+  recipientSysIds: string[]
+  color: string
 }
 
 export type Audience = ReturnType<typeof getMailingListAudiences>[number]

@@ -15,7 +15,7 @@
         v-for="audience in audiences"
         @click="addAudience(audience)"
         :key="audience.name"
-        :color="audience.color"
+        :color="audience.color + '-darken-2'"
         rounded
       >
         {{ audience.name }}
@@ -46,18 +46,26 @@
         @mouseenter="hoveredStudentSysId = student.sysId"
         @mouseleave="hoveredStudentSysId = ''"
         :key="student.sysId"
+        :color="color(student)"
         class="d-flex align-center justify-space-between py-2 px-3 student-list-item"
         style="border-radius: 5px; cursor: pointer;"
-        :color="color(student)"
       >
         <h3>
           {{ student.name || '(No Name)' }}
-          <span style="font-size: 0.75rem">({{ student.id || 'No ID' }})</span>
+          <span style="font-size: 0.75rem">
+            ({{ student.id || 'No ID' }})
+          </span>
         </h3>
         <h5>
           {{ student.email || 'No Email' }}
         </h5>
       </v-sheet>
+      <h3
+        v-if="!filteredStudents.length"
+        class="text-red"
+      >
+        Cannot Find A Match For Your Search "{{ search }}"
+      </h3>
     </div>
     <v-sheet
       class="d-flex flex-wrap align-content-start pa-2 mb-4"
@@ -73,7 +81,9 @@
           <span class="mr-2" style="font-weight: 600">
             {{ student.name }}
           </span>
-          <v-icon @click="toggleRecipient(student)">mdi-close-circle</v-icon>
+          <v-icon @click="toggleRecipient(student)">
+            mdi-close-circle
+          </v-icon>
         </v-sheet>
       </div>
     </v-sheet>
@@ -94,7 +104,11 @@
 import { computed, ref } from 'vue'
 import { useDocumentCache } from '../../store/useDocumentCache';
 import { filterItems } from '../../FilterObjects';
-import { getMailingListAudiences, type Audience } from './MailingListAudiences';
+import { getMailingListAudiences } from './MailingListAudiences';
+import type { MailingList, Audience } from './MailingListAudiences';
+import { useDialog } from '../../store/useDialog';
+import { useStorage } from '@vueuse/core';
+import { local } from '../../Locals';
 
 const recipientSysIds = ref(new Set<string>())
 const hoveredStudentSysId = ref('')
@@ -147,4 +161,15 @@ const createListBtnText = computed(() => {
   }
   return `Create Mailing List (${recipientSysIds.value.size} Recipients)`
 })
+
+const createList = () => {
+  const mailingLists = useStorage<MailingList[]>(local.mailingLists, [])
+  mailingLists.value.push({
+    name: 'New Mailing List',
+    id: Date.now().toString(),
+    recipientSysIds: [...recipientSysIds.value],
+    color: 'blue'
+  })
+  useDialog().close()
+}
 </script>
