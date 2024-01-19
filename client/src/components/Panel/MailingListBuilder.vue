@@ -67,26 +67,11 @@
         Cannot Find A Match For Your Search "{{ search }}"
       </h3>
     </div>
-    <v-sheet
-      class="d-flex flex-wrap align-content-start pa-2 mb-4"
-      style="gap: 7px; height: 200px; overflow: auto; border-radius: 10px;"
-      color="grey-lighten-3"
-    >
-      <div v-for="student in studentsInList">
-        <v-sheet
-          class="pa-1 pl-3"
-          color="blue-darken-1"
-          style="border-radius: 50px"
-        >
-          <span class="mr-2" style="font-weight: 600">
-            {{ student.name }}
-          </span>
-          <v-icon @click="toggleRecipient(student)">
-            mdi-close-circle
-          </v-icon>
-        </v-sheet>
-      </div>
-    </v-sheet>
+    <NameBox
+      @remove="toggleRecipient($event)"
+      :items="studentsInList"
+      :display="student => student.name"
+    />
     <div class="d-flex justify-end">
       <v-btn
         :disabled="!recipientSysIds.size"
@@ -109,6 +94,7 @@ import type { MailingList, Audience } from './MailingListAudiences';
 import { useDialog } from '../../store/useDialog';
 import { useStorage } from '@vueuse/core';
 import { local } from '../../Locals';
+import NameBox from './NameBox.vue';
 
 const recipientSysIds = ref(new Set<string>())
 const hoveredStudentSysId = ref('')

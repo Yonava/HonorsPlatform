@@ -67,7 +67,7 @@ const toggleSearch = () => {
     setTimeout(() => {
       const searchBar = document.getElementById("search-bar")!
       searchBar.focus()
-    })
+    }, 10)
   }
 }
 
