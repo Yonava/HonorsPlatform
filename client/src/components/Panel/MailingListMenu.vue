@@ -4,19 +4,19 @@
       Your Mailing Lists ({{ mailingLists.length }})
     </h1>
     <h3>
-      Select a list to view its recipients
+      Select a list to begin composing an email
     </h3>
     <v-divider class="my-2"></v-divider>
     <div
       class="d-flex flex-column"
-      style="height: 300px; overflow-y: scroll; gap: 5px;"
+      style="height: 250px; overflow-y: scroll; gap: 5px;"
     >
       <v-sheet
         v-for="list in mailingLists"
         :key="list.id"
-        @mouseenter="list.color += '-darken-3'"
-        @mouseleave="list.color = list.color.replace('-darken-3', '')"
-        class="d-flex align-center justify-space-between pa-2"
+        @mouseenter="list.color += '-darken-2'"
+        @mouseleave="list.color = list.color.replace('-darken-2', '')"
+        class="d-flex align-center justify-space-between py-2 px-3"
         style="border-radius: 5px; cursor: pointer;"
         :color="list.color"
       >
@@ -30,7 +30,7 @@
       <v-sheet
         class="add-list-box d-flex align-center justify-center pa-2"
         style="border-radius: 5px; cursor: pointer; border: 1px dashed #7b7b7b;"
-        @click=""
+        @click="createList"
       >
         <v-icon color="grey-darken-2">
           mdi-plus
@@ -43,6 +43,9 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useDocumentCache } from '../../store/useDocumentCache';
+import MailingListBuilder from './MailingListBuilder.vue';
+import MailingListEditor from './MailingListEditor.vue';
+import { useDialog } from '../../store/useDialog';
 import { panels } from '../../Panels';
 
 type MailingList = {
@@ -69,10 +72,18 @@ const graduateList = {
 }
 
 const mailingLists = ref<MailingList[]>([studentList, graduateList])
+
+const createList = () => {
+  useDialog().open({
+    component: {
+      render: MailingListBuilder
+    }
+  })
+}
 </script>
 
 <style scoped>
 .add-list-box:hover {
-  background-color: #f5f5f5;
+  background-color: #d5d5d5;
 }
 </style>
