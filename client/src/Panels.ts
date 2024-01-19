@@ -22,8 +22,6 @@ import GraduateEngagementListItem from './components/ListItem/GraduateEngagement
 
 import { markRaw } from 'vue';
 
-import * as types from './SheetTypes';
-
 import { sortOptions } from './SortOptions'
 
 import {
@@ -273,6 +271,6 @@ export type PanelName = keyof typeof panels;
 export type PanelRange = typeof panels[PanelName]['sheetRange'];
 
 export type Panel = typeof panels[PanelName];
-export const getPanel = (panelName: PanelName) => panels[panelName];
+export const getPanel = <T extends PanelName>(panelName: T) => panels[panelName];
 
 export const version = 'prerelease v0.91.6 (beta)';

@@ -1,12 +1,15 @@
 <template>
   <v-sheet class="pa-5">
+
     <v-text-field
       v-model="userEnteredTerm"
       @keyup.enter="generateRegistrarList"
       :rules="[(v) => termValidator(v) || 'Potentially invalid term']"
+      autofocus
       variant="outlined"
       label="Term"
     ></v-text-field>
+
     <v-btn
       @click="generateRegistrarList"
       :loading="loading"
@@ -14,9 +17,12 @@
       :color="button.color"
       size="x-large"
       block
-    >{{ button.text }}</v-btn>
+    >
+      {{ button.text }}
+    </v-btn>
+
     <v-btn
-      v-if="hasSucceeded"
+      v-if="listWasGenerated"
       size="small"
       href="https://docs.google.com/spreadsheets/d/1bW-aQRn-GAbTsNkV2VB9xtBFT3n-LPrSJXua_NA2G6Y/edit#gid=810473563"
       target="_blank"
@@ -25,6 +31,7 @@
     >
       view new registrar list
     </v-btn>
+
   </v-sheet>
 </template>
 
@@ -35,13 +42,12 @@ import { ref, computed, watch } from "vue";
 import { termValidator, getCurrentTerm } from "../../TermValidator";
 
 const loading = ref(false);
-const userEnteredTerm = ref(getCurrentTerm());
 const success = ref(false);
+const userEnteredTerm = ref(getCurrentTerm());
 
-// if the user has successfully generated at least one registrar list
-const hasSucceeded = ref(false);
+const listWasGenerated = ref(false);
 
-async function generateRegistrarList() {
+const generateRegistrarList = async () => {
   loading.value = true;
 
   const { "Completed Modules": CompletedModules, getItemBySysId } = useDocumentCache();
@@ -49,17 +55,21 @@ async function generateRegistrarList() {
   const modulesInTerm = CompletedModules.list.filter((module) => {
     if (!module.term) return false
     return module.term.toLowerCase() === userEnteredTerm.value.toLowerCase();
-  }).map((module) => {
-    const student = getItemBySysId(module.studentSysId, 'STUDENTS') ?? getItemBySysId(module.studentSysId, 'GRADUATES')
+  })
+
+  const registrarListRows = modulesInTerm.map((module) => {
+    const id = module.studentSysId
+    const student = getItemBySysId(id, 'STUDENTS') ?? getItemBySysId(id, 'GRADUATES')
+    if (!student) return null
     return [
       student.id,
       student.name,
       student.email,
       module.courseCode
     ]
-  });
+  }).filter((row) => row !== null) as string[][]
 
-  modulesInTerm.unshift([
+  registrarListRows.unshift([
     "Student ID",
     "Name",
     "Email",
@@ -67,11 +77,11 @@ async function generateRegistrarList() {
     `Generated on ${new Date().toLocaleString('en-US')} for ${userEnteredTerm.value.toUpperCase()}`
   ]);
 
-  await replaceRange('Registrar List', modulesInTerm);
+  await replaceRange('Registrar List', registrarListRows);
 
   loading.value = false;
   success.value = true;
-  hasSucceeded.value = true;
+  listWasGenerated.value = true;
 }
 
 const button = computed(() => {

@@ -66,7 +66,7 @@ import Announcements from "./AnnouncementMenu.vue";
 import AdditionalTools from "./AdditionalTools.vue";
 import NavDrawerBlockBtn from "./NavDrawerBlockBtn.vue";
 import SortPanel from "./SortPanel.vue";
-import MassEmailMenu from "./MassEmailMenu.vue";
+import MailingListMenu from "./MailingListMenu.vue";
 import BuildRegistrarList from "./BuildRegistrarList.vue";
 import { version } from "../../Panels";
 
@@ -87,7 +87,7 @@ const registrarAction = () => {
 const emailAction = () => {
   useDialog().open({
     component: {
-      render: MassEmailMenu
+      render: MailingListMenu
     },
   })
 }

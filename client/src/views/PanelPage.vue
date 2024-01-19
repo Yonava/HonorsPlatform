@@ -6,10 +6,8 @@
       :color="`${getActivePanel.color}-lighten-4`"
     ></v-sheet>
 
-    <transition>
-      <PanelCoverAppBar v-if="getPanelCover.show" />
-      <AppBar v-else />
-    </transition>
+    <PanelCoverAppBar v-if="getPanelCover.show" />
+    <AppBar v-else />
 
     <v-main>
       <div
@@ -269,15 +267,5 @@ img.honors-logo {
   left: 0;
   height: 130%;
   width: 130%;
-}
-
-.v-enter-active,
-.v-leave-active {
-  transition: 200ms ease;
-}
-
-.v-enter-from,
-.v-leave-to {
-  opacity: 0;
 }
 </style>

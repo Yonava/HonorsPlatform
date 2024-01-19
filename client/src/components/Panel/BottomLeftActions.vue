@@ -97,7 +97,7 @@
         style="border-radius: 20px; position: relative; width: 400px"
         elevation="7"
       >
-        <MassEmailMenu />
+        <MailingListMenu />
       </v-sheet>
     </v-menu>
 
@@ -109,7 +109,7 @@ import { useAuth } from '../../store/useAuth';
 import { useSheetManager } from '../../store/useSheetManager';
 import { storeToRefs } from 'pinia';
 import UserProfile from './UserProfile.vue';
-import MassEmailMenu from './MassEmailMenu.vue';
+import MailingListMenu from './MailingListMenu.vue';
 import BuildRegistrarList from './BuildRegistrarList.vue';
 
 const auth = useAuth();

@@ -9,7 +9,6 @@ export type SheetItem = Module | Graduate | Student | CompletedModule | Thesis |
 export const grades = ["High Pass", "Pass", "Low Pass", "Fail", null] as const;
 export type Grade = typeof grades[number];
 
-
 type Primitive = string | number | boolean | null | undefined;
 
 type CustomField = {
