@@ -28,7 +28,7 @@
 
     <v-btn
       :disabled="!recipientSysIds.size"
-      color="blue-darken-1"
+      :color="`${mailingList.color}-darken-1`"
       @click="close"
       class="my-2"
     >
@@ -40,12 +40,12 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { useDocumentCache } from '../../store/useDocumentCache';
-import type { MailingList } from './MailingListAudiences';
-import { useDialog } from '../../store/useDialog';
 import { useStorage } from '@vueuse/core';
-import { local } from '../../Locals';
+import { useDocumentCache } from '@store/useDocumentCache';
+import { useDialog } from '@store/useDialog';
+import { local } from '@locals';
 import NameBox from './MailingListNameBox.vue';
+import type { MailingList } from './MailingListAudiences';
 import StudentSearch from './MailingListStudentSearch.vue';
 import ColorPalette from './MailingListColorPalette.vue';
 
@@ -95,4 +95,4 @@ const toggleRecipient = (student: { sysId: string }) => {
   outline: none;
   background: transparent;
 }
-</style>
+</style>./MailingLists/MailingListAudiences

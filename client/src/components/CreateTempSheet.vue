@@ -30,9 +30,9 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { useDialog } from '@store/useDialog'
+import { useSheetManager } from '@store/useSheetManager'
 import { headerRowMemo, replaceRange } from '../SheetsAPI'
-import { useDialog } from '../store/useDialog'
-import { useSheetManager } from '../store/useSheetManager'
 
 const activePanel = useSheetManager().panel
 

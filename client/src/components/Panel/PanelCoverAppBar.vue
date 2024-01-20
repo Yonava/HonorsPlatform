@@ -73,17 +73,15 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useDialog } from "../../store/useDialog";
-import { useSheetManager } from "../../store/useSheetManager";
 import { storeToRefs } from "pinia";
-import { useDocumentCache } from '../../store/useDocumentCache';
-import { useSyncState } from '../../store/useSyncState'
-import { useAuth } from '../../store/useAuth';
+import { useDisplay } from 'vuetify';
+import { useDialog } from "@store/useDialog";
+import { useSheetManager } from "@store/useSheetManager";
+import { useDocumentCache } from '@store/useDocumentCache';
+import { useSyncState } from '@store/useSyncState'
 import type { SheetItem } from '../../SheetTypes'
 import { headerRowMemo, replaceRange } from '../../SheetsAPI';
-import { warn } from '../../Warn'
-
-import { useDisplay } from 'vuetify'
+import { warn } from '../../Warn';
 
 const { setPanelCover, open, close } = useDialog();
 const { getPanelCover, getListOfFlaggedItems } = storeToRefs(useDialog());

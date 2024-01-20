@@ -17,11 +17,11 @@
 </template>
 
 <script setup lang="ts">
-import { useDisplay } from 'vuetify';
-import { useSheetManager } from '../../store/useSheetManager';
-import { useDocumentCache } from '../../store/useDocumentCache';
-import { storeToRefs } from 'pinia';
 import { computed, ref, watch } from 'vue';
+import { storeToRefs } from 'pinia';
+import { useDisplay } from 'vuetify';
+import { useSheetManager } from '@store/useSheetManager';
+import { useDocumentCache } from '@store/useDocumentCache';
 
 const { getActivePanel, focusedItemSysId } = storeToRefs(useSheetManager())
 const { getSelectedItems, setSelectedItems } = useDocumentCache()

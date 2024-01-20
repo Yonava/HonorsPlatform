@@ -32,7 +32,10 @@
         {{ student.email || "No Email" }}
       </h5>
     </v-sheet>
-    <h3 v-if="!filteredStudents.length" class="text-red">
+    <h3
+      v-if="!filteredStudents.length"
+      class="text-red"
+    >
       Cannot Find A Match For Your Search "{{ search }}"
     </h3>
   </div>
@@ -40,8 +43,8 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import type { Student, Graduate } from '../../SheetTypes';
-import { filterItems } from '../../FilterObjects';
+import type { Student, Graduate } from '../../../SheetTypes';
+import { filterItems } from '../../../FilterObjects';
 
 const search = ref('')
 const hoveredStudentSysId = ref('')

@@ -65,7 +65,6 @@ import IDInput from "./Helper/IDInput.vue";
 import DetailFrame from "./Helper/DetailFrame.vue";
 import DetailHeader from "./Helper/DetailHeader.vue";
 import DetailInput from "./Helper/DetailInput.vue";
-
 import { computed } from "vue";
 import {
   emailValidator,
@@ -73,7 +72,7 @@ import {
 } from "../../EmailUtilities";
 import { studentIdRule } from "../../StudentTools";
 import type { Graduate } from "../../SheetTypes";
-import { useSheetManager } from "../../store/useSheetManager";
+import { useSheetManager } from "@store/useSheetManager";
 import { useMoveItem } from "../../MoveItems";
 import { storeToRefs } from "pinia";
 

@@ -1,8 +1,8 @@
-import { Panel, getPanel } from "./Panels";
+import { Panel, getPanel } from "@panels";
 import { useStudentMatcher } from "./StudentMatcher";
-import { useSheetManager } from './store/useSheetManager'
-import { useDocumentCache } from "./store/useDocumentCache";
-import { useDialog } from "./store/useDialog";
+import { useSheetManager } from '@store/useSheetManager'
+import { useDocumentCache } from "@store/useDocumentCache";
+import { useDialog } from "@store/useDialog";
 import {
   SheetItem,
   Student,

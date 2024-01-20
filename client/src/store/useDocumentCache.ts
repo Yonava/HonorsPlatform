@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { getRange, clearByRow, updateByRow, postInRange, getRanges, replaceRange } from '../SheetsAPI';
+import { getRange, clearByRow, postInRange, getRanges } from '../SheetsAPI';
 import { panels, Panel, PanelName, getPanel } from "../Panels";
 import * as types from "../SheetTypes";
 import { useSheetManager } from "./useSheetManager";

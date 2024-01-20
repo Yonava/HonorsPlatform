@@ -46,8 +46,8 @@ import PanelTitle from "./PanelTitle.vue";
 import AppBarNavDrawer from "./AppBarNavDrawer.vue";
 import AppBarSearch from "./AppBarSearch.vue";
 import { ref, computed, watchEffect } from "vue";
-import { useDialog } from "../../store/useDialog";
-import { useSheetManager } from "../../store/useSheetManager";
+import { useDialog } from "@store/useDialog";
+import { useSheetManager } from "@store/useSheetManager";
 import { storeToRefs } from "pinia";
 
 defineProps<{

@@ -106,10 +106,10 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import { storeToRefs } from "pinia";
-import { useSheetManager } from "../../store/useSheetManager";
 import { useDisplay } from "vuetify";
-import { panels, Panel } from "../../Panels";
-import { useSocket } from "../../store/useSocket";
+import { panels, Panel } from "@panels";
+import { useSheetManager } from "@store/useSheetManager";
+import { useSocket } from "@store/useSocket";
 
 const { getUniqueConnectedSockets, focusData } = storeToRefs(useSocket());
 const { lgAndUp } = useDisplay();

@@ -47,11 +47,11 @@
 </template>
 
 <script setup lang="ts">
-import { useSheetManager } from "../../store/useSheetManager";
-import type { EachSortOption } from "../../SortOptions";
+import { ref } from "vue";
 import { storeToRefs } from "pinia";
 import { useDisplay } from "vuetify";
-import { ref, computed } from "vue";
+import { useSheetManager } from "@store/useSheetManager";
+import type { EachSortOption } from "../../SortOptions";
 
 const { xs } = useDisplay();
 

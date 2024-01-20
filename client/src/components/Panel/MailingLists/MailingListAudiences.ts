@@ -1,5 +1,5 @@
-import { useDocumentCache } from '../../store/useDocumentCache'
-import { panels } from '../../Panels'
+import { useDocumentCache } from '@store/useDocumentCache'
+import { panels } from '@panels'
 
 export const getMailingListAudiences = () => {
   const { Students, Graduates, Modules } = useDocumentCache()

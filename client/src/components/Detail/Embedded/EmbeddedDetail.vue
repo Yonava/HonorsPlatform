@@ -54,9 +54,9 @@
 <script setup lang="ts">
 import { computed, toRefs } from 'vue'
 import { SheetItem } from '../../../SheetTypes'
-import { useSheetManager } from '../../../store/useSheetManager'
-import { useUpdateManager } from '../../../store/useUpdateManager'
-import { useDocumentCache } from '../../../store/useDocumentCache'
+import { useSheetManager } from '@store/useSheetManager'
+import { useUpdateManager } from '@store/useUpdateManager'
+import { useDocumentCache } from '@store/useDocumentCache'
 import { storeToRefs } from 'pinia'
 
 const sheetManager = useSheetManager()

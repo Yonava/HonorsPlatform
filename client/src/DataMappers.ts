@@ -9,7 +9,7 @@ import {
   SheetItem,
 } from "./SheetTypes";
 
-import { useDialog } from "./store/useDialog";
+import { useDialog } from "@store/useDialog";
 import DuplicateSysIdRemediation from "./components/DuplicateSysIdRemediation.vue";
 
 import { type PanelName } from "./Panels";

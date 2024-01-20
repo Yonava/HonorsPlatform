@@ -171,15 +171,15 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import { panels, type PanelName } from '../Panels';
+import { storeToRefs } from 'pinia';
+import { panels, type PanelName } from '@panels';
+import { useDocumentCache } from '@store/useDocumentCache';
+import { useSheetManager } from '@store/useSheetManager';
+import { useDialog } from '@store/useDialog';
 import type { SheetItem } from '../SheetTypes';
-import { useDocumentCache } from '../store/useDocumentCache';
 import { headerRowMemo } from '../SheetsAPI';
 import { mappers } from '../DataMappers';
 import { clearByRowData } from '../SheetsAPI';
-import { useSheetManager } from '../store/useSheetManager';
-import { useDialog } from '../store/useDialog';
-import { storeToRefs } from 'pinia';
 
 const sheetManager = useSheetManager();
 const { readOnlyMode } = storeToRefs(sheetManager);

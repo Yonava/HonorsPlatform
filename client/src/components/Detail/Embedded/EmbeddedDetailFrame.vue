@@ -113,9 +113,9 @@ import ModalContent from '../../ModalContent.vue'
 import { ref, computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useDisplay } from 'vuetify'
-import { useDocumentCache } from '../../../store/useDocumentCache'
-import { useSyncState } from '../../../store/useSyncState'
-import { useSheetManager } from '../../../store/useSheetManager'
+import { useDocumentCache } from '@store/useDocumentCache'
+import { useSyncState } from '@store/useSyncState'
+import { useSheetManager } from '@store/useSheetManager'
 
 const cleanup = () => {
 

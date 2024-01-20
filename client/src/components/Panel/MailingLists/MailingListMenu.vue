@@ -59,15 +59,15 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { useDocumentCache } from '../../store/useDocumentCache';
+import { useStorage } from '@vueuse/core';
+import { useDocumentCache } from '@store/useDocumentCache';
+import { useDialog } from '@store/useDialog';
 import MailingListBuilder from './MailingListBuilder.vue';
 import MailingListEditor from './MailingListEditor.vue';
 import type { MailingList } from './MailingListAudiences';
-import { useDialog } from '../../store/useDialog';
-import { panels } from '../../Panels';
-import { local } from '../../Locals';
-import { set, useStorage } from '@vueuse/core';
-import { emailValidator } from '../../EmailUtilities';
+import { panels } from '@panels';
+import { local } from '@locals';
+import { emailValidator } from '../../../EmailUtilities';
 
 const { Students, Graduates } = useDocumentCache()
 
@@ -215,4 +215,4 @@ const actions = ref([
 .add-list-box:hover {
   background-color: #d5d5d5;
 }
-</style>
+</style>./MailingLists/MailingListAudiences

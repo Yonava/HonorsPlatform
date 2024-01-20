@@ -56,8 +56,8 @@
 </template>
 
 <script setup lang="ts">
-import { useDialog } from "../../store/useDialog";
-import { useSheetManager } from "../../store/useSheetManager";
+import { useDialog } from "../../../store/useDialog";
+import { useSheetManager } from "../../../store/useSheetManager";
 import { storeToRefs } from "pinia";
 import AddItemBtn from "./AddItemBtn.vue";
 import ActiveAccounts from "./ActiveAccounts.vue";
@@ -65,10 +65,10 @@ import Announcements from "./AnnouncementMenu.vue";
 
 import AdditionalTools from "./AdditionalTools.vue";
 import NavDrawerBlockBtn from "./NavDrawerBlockBtn.vue";
-import SortPanel from "./SortPanel.vue";
-import MailingListMenu from "./MailingListMenu.vue";
-import BuildRegistrarList from "./BuildRegistrarList.vue";
-import { version } from "../../Panels";
+import SortPanel from "../SortPanel.vue";
+import MailingListMenu from "../MailingLists/MailingListMenu.vue";
+import BuildRegistrarList from "../BuildRegistrarList.vue";
+import { version } from "../../../Panels";
 
 const { readOnlyMode } = storeToRefs(useSheetManager())
 

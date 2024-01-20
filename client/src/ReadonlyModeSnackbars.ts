@@ -1,4 +1,4 @@
-import { useDialog } from './store/useDialog';
+import { useDialog } from '@store/useDialog';
 
 export const readonlySnackbar = () => {
   const { openSnackbar, open, close } = useDialog();

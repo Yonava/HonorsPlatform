@@ -46,7 +46,7 @@
 
 <script setup lang="ts">
 import { GradEngagement } from "../../../../SheetTypes"
-import { useSheetManager } from '../../../../store/useSheetManager'
+import { useSheetManager } from '@store/useSheetManager'
 import { storeToRefs } from "pinia";
 
 const sheetManager = useSheetManager()

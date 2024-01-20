@@ -109,15 +109,7 @@
     <v-sheet
       @click="logout"
       color="red"
-      :style="{
-        position: 'absolute',
-        bottom: '0',
-        width: '100%',
-        boxShadow: '0 0 5px rgba(0, 0, 0, 0.3)',
-        cursor: 'pointer',
-        textAlign: 'center',
-        borderRadius: '0 0 20px 20px'
-      }"
+      :style="logoutButtonStyle"
       class="py-1"
     >
       <h2>
@@ -133,7 +125,7 @@ import { useSheetManager } from '../../store/useSheetManager';
 import { useDocumentCache } from '../../store/useDocumentCache';
 import { useDialog } from '../../store/useDialog';
 import { storeToRefs } from 'pinia';
-import { computed } from 'vue';
+import { computed, StyleValue } from 'vue';
 import { local } from '../../Locals';
 import PostAnnouncement from './PostAnnouncement.vue';
 import InfoBtn from './InfoBtn.vue';
@@ -148,6 +140,7 @@ const { getActivePanel, focusedItemSysId, readOnlyMode } = storeToRefs(sheetMana
 const { getItemBySysId } = useDocumentCache();
 
 const lastLoginStore = localStorage.getItem(local.timeOfLastAuth);
+
 const lastLogin = computed(() => {
   if (lastLoginStore) {
     const date = new Date(parseInt(lastLoginStore));
@@ -158,6 +151,16 @@ const lastLogin = computed(() => {
   }
   return false;
 });
+
+const logoutButtonStyle = {
+  position: 'absolute',
+  bottom: '0',
+  width: '100%',
+  boxShadow: '0 0 5px rgba(0, 0, 0, 0.3)',
+  cursor: 'pointer',
+  textAlign: 'center',
+  borderRadius: '0 0 20px 20px'
+} satisfies StyleValue;
 
 const minutesSinceLastLogin = computed(() => {
   if (lastLoginStore) {

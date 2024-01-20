@@ -57,13 +57,13 @@
 </template>
 
 <script setup lang="ts">
-import { useDialog } from '../../store/useDialog';
 import { ref } from 'vue';
-import { useAuth } from '../../store/useAuth';
 import { storeToRefs } from 'pinia';
-import { useDocumentCache } from '../../store/useDocumentCache';
-import { useSheetManager } from '../../store/useSheetManager';
-import { panels } from '../../Panels';
+import { useDialog } from '@store/useDialog';
+import { useAuth } from '@store/useAuth';
+import { useDocumentCache } from '@store/useDocumentCache';
+import { useSheetManager } from '@store/useSheetManager';
+import { panels } from '@panels';
 
 const auth = useAuth();
 const { googleProfile } = storeToRefs(auth);

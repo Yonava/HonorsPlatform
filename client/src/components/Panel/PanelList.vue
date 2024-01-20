@@ -59,11 +59,11 @@
 </template>
 
 <script setup lang="ts">
-import { useVirtualList } from '@vueuse/core'
-import { setSelectedItem } from './SetSelectedItem'
-import { useSheetManager } from '../../store/useSheetManager'
-import { storeToRefs } from 'pinia'
 import { watch } from 'vue'
+import { useVirtualList } from '@vueuse/core'
+import { storeToRefs } from 'pinia'
+import { useSheetManager } from '@store/useSheetManager'
+import { setSelectedItem } from './SetSelectedItem'
 
 const sheetManager = useSheetManager()
 const { filteredItems, loadingItems, getActivePanel, searchFilter, listTransitionActive } = storeToRefs(sheetManager)

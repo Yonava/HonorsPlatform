@@ -41,11 +41,11 @@
 
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
-import { panels } from '../../Panels';
-import { useSheetManager } from '../../store/useSheetManager';
-import { useDocumentCache } from '../../store/useDocumentCache';
+import { panels } from '@panels';
+import { useSheetManager } from '@store/useSheetManager';
+import { useDocumentCache } from '@store/useDocumentCache';
 import { useDisplay } from 'vuetify';
-import { useSocket, type ConnectedSocket } from '../../store/useSocket';
+import { useSocket, type ConnectedSocket } from '@store/useSocket';
 
 const { smAndDown, xs } = useDisplay()
 const { setPanel } = useSheetManager()

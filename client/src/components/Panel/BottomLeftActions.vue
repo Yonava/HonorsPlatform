@@ -105,11 +105,11 @@
 </template>
 
 <script setup lang="ts">
-import { useAuth } from '../../store/useAuth';
-import { useSheetManager } from '../../store/useSheetManager';
+import { useAuth } from '@store/useAuth';
+import { useSheetManager } from '@store/useSheetManager';
 import { storeToRefs } from 'pinia';
 import UserProfile from './UserProfile.vue';
-import MailingListMenu from './MailingListMenu.vue';
+import MailingListMenu from './MailingLists/MailingListMenu.vue';
 import BuildRegistrarList from './BuildRegistrarList.vue';
 
 const auth = useAuth();

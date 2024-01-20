@@ -9,7 +9,7 @@
 </template>
 
 <script setup lang="ts">
-import { useSheetManager } from "../../store/useSheetManager";
+import { useSheetManager } from "@store/useSheetManager";
 import { storeToRefs } from "pinia";
 
 const { searchFilter } = storeToRefs(useSheetManager())

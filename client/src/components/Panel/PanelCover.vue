@@ -106,14 +106,14 @@
 
 <script setup lang="ts">
 import { watchEffect, computed } from "vue";
-import { useDialog } from "../../store/useDialog";
-import { useSheetManager } from "../../store/useSheetManager";
 import { storeToRefs } from "pinia";
+import { useDialog } from "@store/useDialog";
+import { useSheetManager } from "@store/useSheetManager";
+import { useDocumentCache } from "@store/useDocumentCache";
 import { getSuggestedDeletions } from "../../DeleteSuggestions";
 import { useIncrementalRender } from "../../useIncrementalRender";
 import { filterItems } from '../../FilterObjects'
 import { setSelectedItem } from "./SetSelectedItem";
-import { useDocumentCache } from "../../store/useDocumentCache";
 
 const { getPanelCover } = storeToRefs(useDialog());
 const { getActivePanel } = storeToRefs(useSheetManager());

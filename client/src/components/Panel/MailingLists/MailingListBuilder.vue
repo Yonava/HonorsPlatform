@@ -38,7 +38,7 @@
     <div class="d-flex justify-end my-2">
       <v-btn
         :disabled="!recipientSysIds.size"
-        color="blue-darken-1"
+        :color="`${color}-darken-1`"
         @click="createList"
       >
         {{ createListBtnText }}
@@ -50,20 +50,20 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { useDocumentCache } from '../../store/useDocumentCache';
-import type { MailingList, Audience } from './MailingListAudiences';
-import { listColors } from './MailingListAudiences';
-import { useDialog } from '../../store/useDialog';
+import { useDocumentCache } from '@store/useDocumentCache';
+import { useDialog } from '@store/useDialog';
 import { useStorage } from '@vueuse/core';
-import { local } from '../../Locals';
+import { local } from '@locals';
+import InfoBtn from '../InfoBtn.vue';
 import NameBox from './MailingListNameBox.vue';
 import StudentSearch from './MailingListStudentSearch.vue';
+import type { MailingList, Audience } from './MailingListAudiences';
 import Audiences from './MailingListAudiences.vue';
-import InfoBtn from './InfoBtn.vue';
+import { listColors } from './MailingListAudiences';
 import ColorPalette from './MailingListColorPalette.vue';
 
 const recipientSysIds = ref(new Set<string>())
-const name = ref('')
+const name = ref('New Mailing List')
 const color = ref(listColors[0])
 
 const { Students, Graduates } = useDocumentCache()
@@ -117,4 +117,4 @@ const createList = () => {
   outline: none;
   background: transparent;
 }
-</style>
+</style>./MailingLists/MailingListAudiences./MailingLists/MailingListAudiences

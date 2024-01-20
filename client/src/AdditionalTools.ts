@@ -1,5 +1,5 @@
-import { useDialog } from './store/useDialog'
-import { useDocumentCache } from './store/useDocumentCache'
+import { useDialog } from '@store/useDialog'
+import { useDocumentCache } from '@store/useDocumentCache'
 import IncrementStudentYearDialog from './components/IncrementStudentYear.vue'
 import CreateTempSheet from './components/CreateTempSheet.vue'
 import type { PanelName } from './Panels'
