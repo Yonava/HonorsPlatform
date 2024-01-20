@@ -1,10 +1,13 @@
 <template>
-  <v-text-field
+  <input
     v-model="search"
-    class="mt-2"
-    label="Students or Graduates"
-    variant="solo"
-  ></v-text-field>
+    @click.stop
+    placeholder="Lookup Students or Graduates"
+    style="border: 1px solid black; border-radius: 50px; height: 40px; width: 50%;"
+    class="px-3 py-1 mb-4"
+    type="text"
+  />
+
   <div
     class="d-flex flex-column mb-4"
     style="height: 200px; overflow: auto; gap: 5px; user-select: none"

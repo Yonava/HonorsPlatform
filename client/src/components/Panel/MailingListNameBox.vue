@@ -1,7 +1,8 @@
 <template>
   <v-sheet
+    v-if="items.length"
     class="d-flex flex-wrap align-content-start pa-2 mb-4"
-    style="gap: 7px; height: 200px; overflow: auto; border-radius: 10px;"
+    style="gap: 7px; height: 150px; overflow: auto; border-radius: 10px;"
     color="grey-lighten-3"
   >
     <div v-for="item in items">

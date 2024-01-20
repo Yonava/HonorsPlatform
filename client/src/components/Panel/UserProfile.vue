@@ -63,16 +63,9 @@
               (just now)
             </span>
           </p>
-          <div class="ml-1">
-            <v-icon size="x-small">
-              mdi-information-outline
-            </v-icon>
-            <v-tooltip
-              activator="parent"
-            >
-              Authorization expires every hour for security reasons
-            </v-tooltip>
-          </div>
+          <InfoBtn class="ml-1">
+            Authorization expires every hour for security reasons
+          </InfoBtn>
         </div>
         <div
           class="my-4"
@@ -143,6 +136,7 @@ import { storeToRefs } from 'pinia';
 import { computed } from 'vue';
 import { local } from '../../Locals';
 import PostAnnouncement from './PostAnnouncement.vue';
+import InfoBtn from './InfoBtn.vue';
 
 const auth = useAuth();
 const { userLogoutFlow } = auth;

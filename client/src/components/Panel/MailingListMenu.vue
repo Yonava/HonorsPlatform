@@ -22,7 +22,7 @@
         style="border-radius: 5px; cursor: pointer;"
       >
         <h3>
-          {{ list.name }}
+          {{ list.name || '(Untitled)' }}
         </h3>
         <div class="d-flex align-center">
           <h5>
@@ -152,7 +152,7 @@ const editList = (mailingList: MailingList) => {
     component: {
       render: MailingListEditor,
       props: {
-        mailingList
+        mailingListId: mailingList.id
       }
     }
   })

@@ -1,18 +1,23 @@
 <template>
   <v-sheet class="px-4 py-2">
-    <h1>
-      Let's Create A New Mailing List
-    </h1>
-    <v-divider class="my-2"></v-divider>
+    <input
+      v-model="name"
+      placeholder="Mailing List Name"
+      type="text"
+      class="edit-title"
+    />
+
     <h3>
-      Select A Target Audience (optional)
+      Add Students By Group
+      <InfoBtn>
+        Automatically include all students that meet the criteria of a group.
+      </InfoBtn>
     </h3>
 
-    <Audiences @selected="audienceSelected($event)" />
-
-    <h3 class="mt-3">
-      Search For Specific Students
-    </h3>
+    <Audiences
+      @selected="audienceSelected($event)"
+      class="mb-4"
+    />
 
     <StudentSearch
       @selected="toggleRecipient($event)"
@@ -26,10 +31,10 @@
       :display="student => student.name"
     />
 
-    <div class="d-flex justify-end">
+    <div class="d-flex justify-end my-2">
       <v-btn
         :disabled="!recipientSysIds.size"
-        color="primary"
+        color="blue-darken-1"
         @click="createList"
       >
         {{ createListBtnText }}
@@ -49,8 +54,10 @@ import { local } from '../../Locals';
 import NameBox from './MailingListNameBox.vue';
 import StudentSearch from './MailingListStudentSearch.vue';
 import Audiences from './MailingListAudiences.vue';
+import InfoBtn from './InfoBtn.vue';
 
 const recipientSysIds = ref(new Set<string>())
+const name = ref('')
 
 const { Students, Graduates } = useDocumentCache()
 
@@ -85,7 +92,7 @@ const createListBtnText = computed(() => {
 const createList = () => {
   const mailingLists = useStorage<MailingList[]>(local.mailingLists, [])
   mailingLists.value.push({
-    name: 'New Mailing List',
+    name: name.value,
     id: Date.now().toString(),
     recipientSysIds: [...recipientSysIds.value],
     color: 'red'
@@ -93,3 +100,14 @@ const createList = () => {
   useDialog().close()
 }
 </script>
+
+<style scoped>
+.edit-title {
+  font-size: 2.5rem;
+  font-weight: 900;
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+}
+</style>
