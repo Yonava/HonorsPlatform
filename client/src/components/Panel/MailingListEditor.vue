@@ -4,7 +4,12 @@
       v-model="mailingList.name"
       placeholder="Mailing List Name"
       type="text"
-      class="edit-title my-2"
+      class="edit-title mt-2"
+    />
+
+    <ColorPalette
+      v-model="mailingList.color"
+      class="mb-3"
     />
 
     <StudentSearch
@@ -40,6 +45,7 @@ import { useStorage } from '@vueuse/core';
 import { local } from '../../Locals';
 import NameBox from './MailingListNameBox.vue';
 import StudentSearch from './MailingListStudentSearch.vue';
+import ColorPalette from './MailingListColorPalette.vue';
 
 const props = defineProps<{
   mailingListId: string

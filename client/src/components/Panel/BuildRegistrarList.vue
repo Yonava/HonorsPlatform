@@ -40,6 +40,7 @@ import { replaceRange } from "../../SheetsAPI";
 import { useDocumentCache } from "../../store/useDocumentCache";
 import { ref, computed, watch } from "vue";
 import { termValidator, getCurrentTerm } from "../../TermValidator";
+import InfoBtn from "./InfoBtn.vue";
 
 const loading = ref(false);
 const success = ref(false);

@@ -66,7 +66,9 @@
     </v-sheet>
 
     <v-sheet v-else>
-      <h1>Done Incrementing Student Year!</h1>
+      <h1>
+        Done Incrementing Student Year!
+      </h1>
       <div style="overflow: auto; max-height: 600px">
         <div v-if="graduatingSeniors.length">
           <h3 style="position: sticky; top: 0; background: white;">
@@ -94,8 +96,7 @@
               Unfortunately, the following students failed to increment:
             </h3>
             <h4>
-              year must either be 'Freshman', 'Sophomore', 'Junior', or 'Senior' to
-              increment
+              We couldn't figure out what year they were in. Please manually update their year.
             </h4>
           </div>
           <v-sheet
@@ -112,12 +113,7 @@
             >
               {{ failure.name }}
               <b>
-                <span v-if="failure.year">
-                  {{ failure.year }}
-                </span>
-                <span v-else>
-                  No Year
-                </span>
+                {{ failure.year || '(No Year)' }}
               </b>
             </v-sheet>
           </v-sheet>
@@ -193,20 +189,25 @@ const isStudentOnIncrementList = (student: Student) => {
 };
 
 const initiateIncrement = async () => {
+
   if (!initiationConfirmed.value) {
     initiationConfirmed.value = true;
     return;
   }
 
   loading.value = true;
+
   try {
+
     const {
-    failedToIncrement: failed,
-    graduatingSeniors: graduated
+      failedToIncrement: failed,
+      graduatingSeniors: graduated
     } = await incrementStudentYear([...studentsToIncrement.value]);
+
     graduatingSeniors.value = graduated;
     failedToIncrement.value = failed;
     success.value = true;
+
   } catch (e) {
     console.error(e);
   } finally {

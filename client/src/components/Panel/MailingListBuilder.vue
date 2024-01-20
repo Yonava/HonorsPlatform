@@ -7,6 +7,8 @@
       class="edit-title"
     />
 
+    <ColorPalette v-model="color" />
+
     <h3>
       Add Students By Group
       <InfoBtn>
@@ -48,6 +50,7 @@
 import { computed, ref } from 'vue'
 import { useDocumentCache } from '../../store/useDocumentCache';
 import type { MailingList, Audience } from './MailingListAudiences';
+import { listColors } from './MailingListAudiences';
 import { useDialog } from '../../store/useDialog';
 import { useStorage } from '@vueuse/core';
 import { local } from '../../Locals';
@@ -55,9 +58,11 @@ import NameBox from './MailingListNameBox.vue';
 import StudentSearch from './MailingListStudentSearch.vue';
 import Audiences from './MailingListAudiences.vue';
 import InfoBtn from './InfoBtn.vue';
+import ColorPalette from './MailingListColorPalette.vue';
 
 const recipientSysIds = ref(new Set<string>())
 const name = ref('')
+const color = ref(listColors[0])
 
 const { Students, Graduates } = useDocumentCache()
 
@@ -95,7 +100,7 @@ const createList = () => {
     name: name.value,
     id: Date.now().toString(),
     recipientSysIds: [...recipientSysIds.value],
-    color: 'red'
+    color: color.value
   })
   useDialog().close()
 }

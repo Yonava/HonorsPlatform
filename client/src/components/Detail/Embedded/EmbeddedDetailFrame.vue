@@ -146,9 +146,8 @@ const props = defineProps<{
   titlePlaceholder: string
 }>()
 
-// @ts-ignore
 const emits = defineEmits<{
-  'update:modelValue': (value: string) => void,
+  (e: 'update:modelValue', value: string): void,
 }>()
 
 const { xs } = useDisplay()

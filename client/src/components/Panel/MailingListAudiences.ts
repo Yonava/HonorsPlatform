@@ -43,11 +43,26 @@ export const getMailingListAudiences = () => {
   ] as const;
 }
 
+export const listColors = [
+  'red',
+  'green',
+  'blue',
+  'yellow',
+  'purple',
+  'orange',
+  'pink',
+  'teal',
+  'cyan',
+  'grey'
+] as const;
+
+export type ListColor = typeof listColors[number]
+
 export type MailingList = {
   name: string
   id: string
   recipientSysIds: string[]
-  color: string
+  color: ListColor
 }
 
 export type Audience = ReturnType<typeof getMailingListAudiences>[number]

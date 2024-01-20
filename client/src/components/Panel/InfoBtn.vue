@@ -1,6 +1,6 @@
 <template>
   <span v-if="!xs">
-    <v-icon size="x-small">
+    <v-icon :size="size">
       mdi-information-outline
     </v-icon>
     <v-tooltip
@@ -22,7 +22,9 @@ const { xs } = useDisplay()
 
 const props = defineProps<{
   location?: 'top' | 'bottom' | 'left' | 'right',
+  size?: 'small' | 'medium' | 'large'
 }>()
 
 const location = props.location ?? 'right'
+const size = props.size ?? 'x-small'
 </script>
