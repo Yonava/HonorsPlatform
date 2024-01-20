@@ -7,6 +7,7 @@ import type { PanelName } from './Panels'
 type Tool = {
   name: string,
   handler: () => void,
+  icon: string
   disableInReadOnly?: boolean,
   tooltip?: string,
 }
@@ -19,6 +20,7 @@ export const tools: Tools = {
   ALL: [
     {
       name: 'Suggested Deletions',
+      icon: 'mdi-delete-alert',
       disableInReadOnly: true,
       handler: () => {
         useDialog().setPanelCover('open')
@@ -27,6 +29,7 @@ export const tools: Tools = {
     {
       name: 'Create Temporary Sheet',
       disableInReadOnly: true,
+      icon: 'mdi-google-spreadsheet',
       handler: async () => {
         useDialog().open({
           component: {
@@ -37,6 +40,7 @@ export const tools: Tools = {
     },
     {
       name: 'Refresh Data',
+      icon: 'mdi-refresh',
       handler: () => {
         useDocumentCache().getAllDocuments({
           forceCacheRefresh: true,
@@ -47,6 +51,7 @@ export const tools: Tools = {
   STUDENTS: [
     {
       name: 'Increment Student Year',
+      icon: 'mdi-numeric-positive-1',
       disableInReadOnly: true,
       handler: async () => {
         useDialog().open({

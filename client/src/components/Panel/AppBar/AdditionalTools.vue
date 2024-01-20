@@ -32,12 +32,18 @@
     <v-list>
       <v-list-item
         v-for="tool in activeTools"
-        :key="tool.name"
         @click="tool.handler"
+        :key="tool.name"
         :disabled="readOnlyMode && tool.disableInReadOnly"
-        class="type-list-item"
       >
-        {{ tool.name }}
+        <template #prepend>
+          <div class="mr-3">
+            <v-icon color="grey-darken-2">{{ tool.icon }}</v-icon>
+          </div>
+        </template>
+        <template #title>
+          {{ tool.name }}
+        </template>
       </v-list-item>
     </v-list>
 

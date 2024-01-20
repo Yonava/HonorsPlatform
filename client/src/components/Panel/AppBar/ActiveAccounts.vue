@@ -44,8 +44,8 @@ import { storeToRefs } from 'pinia';
 import { panels } from '@panels';
 import { useSheetManager } from '@store/useSheetManager';
 import { useDocumentCache } from '@store/useDocumentCache';
-import { useDisplay } from 'vuetify';
 import { useSocket, type ConnectedSocket } from '@store/useSocket';
+import { useDisplay } from 'vuetify';
 
 const { smAndDown, xs } = useDisplay()
 const { setPanel } = useSheetManager()

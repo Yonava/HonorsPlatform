@@ -153,6 +153,12 @@ export async function incrementStudentYear(students: Student[] = useDocumentCach
   const graduatingSeniors: Student[] = []
   const failedToIncrement: Student[] = []
 
+  try {
+    await getHeaderRowCache('Students')
+  } catch (e) {
+    return Promise.reject(e)
+  }
+
   const newStudentYear = (year: YearOption) => {
     if (year.includes('Senior')) {
       return 'Graduate'
@@ -201,9 +207,8 @@ export async function incrementStudentYear(students: Student[] = useDocumentCach
   const allStudents = useDocumentCache().Students.list.filter(student => !graduatingSeniors.some(grad => grad.sysId === student.sysId))
 
   const data = await unmap(allStudents)
-
-  const headerRow = await getHeaderRowCache('Students')
-  await replaceRange('Students', [headerRow, ...data])
+  const studentHeaderRow = await getHeaderRowCache('Students')
+  await replaceRange('Students', [studentHeaderRow, ...data])
 
   await forceConnectedClientsToRefresh()
 

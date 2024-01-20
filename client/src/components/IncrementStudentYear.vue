@@ -209,6 +209,12 @@ const initiateIncrement = async () => {
     success.value = true;
 
   } catch (e) {
+    useDialog().open({
+      body: {
+        title: "Failed to Increment Students",
+        description: "An error occurred while incrementing students. Please refresh your browser and try again.",
+      }
+    })
     console.error(e);
   } finally {
     loading.value = false;
