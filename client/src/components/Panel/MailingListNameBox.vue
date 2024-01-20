@@ -7,8 +7,8 @@
   >
     <div v-for="item in items">
       <v-sheet
+        :color="color + '-darken-1'"
         class="pa-1 pl-3"
-        color="blue-darken-1"
         style="border-radius: 50px"
       >
         <span
@@ -29,6 +29,7 @@
 defineProps<{
   items: any[],
   display: (item: any) => string,
+  color: string
 }>()
 
 const emits = defineEmits([

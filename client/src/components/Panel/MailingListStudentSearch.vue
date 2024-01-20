@@ -49,6 +49,7 @@ const hoveredStudentSysId = ref('')
 const props = defineProps<{
   students: (Student | Graduate)[],
   recipientSysIds: Set<string>,
+  color: string
 }>()
 
 const emits = defineEmits([
@@ -59,9 +60,9 @@ const filteredStudents = computed(() => filterItems(props.students, search.value
 
 const color = <T extends { sysId: string }>(student: T) => {
   if (props.recipientSysIds.has(student.sysId) && hoveredStudentSysId.value == student.sysId) {
-    return 'blue-darken-2'
+    return `${props.color}-darken-2`
   } else if (props.recipientSysIds.has(student.sysId)) {
-    return 'blue-darken-1'
+    return `${props.color}-darken-1`
   } else if (hoveredStudentSysId.value == student.sysId) {
     return 'grey-lighten-1'
   } else {

@@ -16,12 +16,14 @@
       @selected="toggleRecipient($event)"
       :students="students"
       :recipientSysIds="recipientSysIds"
+      :color="mailingList.color"
     />
 
     <NameBox
       @remove="toggleRecipient($event)"
       :items="studentsInList"
       :display="student => student.name"
+      :color="mailingList.color"
     />
 
     <v-btn

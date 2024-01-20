@@ -25,12 +25,14 @@
       @selected="toggleRecipient($event)"
       :students="students"
       :recipientSysIds="recipientSysIds"
+      :color="color"
     />
 
     <NameBox
       @remove="toggleRecipient($event)"
       :items="studentsInList"
       :display="student => student.name"
+      :color="color"
     />
 
     <div class="d-flex justify-end my-2">
