@@ -6,6 +6,7 @@
       v-if="component"
       :is="component.render"
       :props="component.props"
+      v-bind="component.props"
     />
     <DefaultDialogContent
       v-else

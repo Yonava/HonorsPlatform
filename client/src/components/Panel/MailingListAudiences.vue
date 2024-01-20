@@ -7,12 +7,16 @@
       v-for="audience in audiences"
       @click="addAudience(audience)"
       :key="audience.name"
-      :color="audience.color + '-darken-2'"
+      :color="audience.color"
+      class="text-white"
       rounded
     >
       {{ audience.name }}
     </v-btn>
-    <h3 v-if="!audiences.length" class="text-red">
+    <h3
+      v-if="!audiences.length"
+      class="text-red"
+    >
       No More Target Audiences
     </h3>
   </div>

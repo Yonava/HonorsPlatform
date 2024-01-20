@@ -147,15 +147,15 @@ const deleteList = (list: MailingList) => {
   })
 }
 
-const editList = (list: MailingList) => {
-  // useDialog().open({
-  //   component: {
-  //     render: MailingListEditor,
-  //     props: {
-  //       list
-  //     }
-  //   }
-  // })
+const editList = (mailingList: MailingList) => {
+  useDialog().open({
+    component: {
+      render: MailingListEditor,
+      props: {
+        mailingList
+      }
+    }
+  })
 }
 
 const copyEmailAddresses = (list: MailingList) => {

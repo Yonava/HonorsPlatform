@@ -99,24 +99,22 @@ const { getItems, getItemBySysId } = useDocumentCache()
 const filterQuery = ref('')
 
 const props = defineProps<{
-  props: {
-    panelName: PanelName,
-  }
+  panelName: PanelName,
 }>()
 
 const panel = computed(() => {
-  return getPanel(props.props.panelName)
+  return getPanel(props.panelName)
 })
 
 const items = computed(() => {
   if (additionalPanel.value) {
     return [
-      ...getItems(props.props.panelName) ?? [],
+      ...getItems(props.panelName) ?? [],
       ...getItems(additionalPanel.value) ?? [],
     ]
   }
 
-  return getItems(props.props.panelName) ?? []
+  return getItems(props.panelName) ?? []
 })
 
 const filteredItems = computed(() => {

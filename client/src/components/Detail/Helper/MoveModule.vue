@@ -13,7 +13,7 @@
       <div class="d-flex flex-column mb-12 mt-3 mx-12">
         <v-btn
           v-for="grade in grades"
-          :key="grade"
+          :key="grade || 'ungraded'"
           @click="finalGrade = grade"
           :color="grade === finalGrade ? color : 'grey'"
           class="mt-2"
@@ -44,14 +44,16 @@ import { useSheetManager } from '../../../store/useSheetManager'
 import { useSyncState } from '../../../store/useSyncState'
 
 const props = defineProps<{
-  props: {
-    module: Module;
-    resolve?: (reason?: string) => void;
-    reject?: (reason?: any) => void;
-  };
+  module: Module;
+  resolve?: (reason?: string) => void;
+  reject?: (reason?: any) => void;
 }>();
 
-const { module, resolve = null, reject = null } = props.props
+const {
+  module,
+  resolve = null,
+  reject = null
+} = props
 
 const modulePanel = getPanel("MODULES");
 const completedModulePanel = getPanel("COMPLETED_MODULES");
