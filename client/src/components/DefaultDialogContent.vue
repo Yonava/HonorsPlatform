@@ -19,7 +19,7 @@
 </template>
 
 <script setup lang="ts">
-import type { DialogBody } from '../store/useDialog'
+import type { DialogBody } from '@store/useDialog'
 
 const props = defineProps<{
   body: DialogBody

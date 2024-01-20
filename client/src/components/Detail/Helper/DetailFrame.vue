@@ -54,7 +54,7 @@
         >
           <slot name="buttons"></slot>
           <v-btn
-            @click="attemptDelete"
+            @click="deleteItem({ item })"
             :disabled="readOnlyMode"
             size="large"
             color="red"
@@ -75,17 +75,16 @@
 </template>
 
 <script setup lang="ts">
+import { ref, watch, onUnmounted } from 'vue'
+import { useElementSize } from '@vueuse/core'
+import { storeToRefs } from 'pinia'
+import { useSheetManager } from '@store/useSheetManager'
+import { useDocumentCache } from '@store/useDocumentCache'
+import { useSyncState } from '@store/useSyncState'
 import EmbeddedDetail from '../Embedded/EmbeddedDetail.vue'
 import DetailInput from './DetailInput.vue'
 import CustomFields from './CustomFields.vue'
-import { ref, watch, onUnmounted } from 'vue'
-import { useElementSize } from '@vueuse/core'
-import { useSheetManager } from '../../../store/useSheetManager'
-import { useDialog } from '../../../store/useDialog'
-import { useDocumentCache } from '../../../store/useDocumentCache'
-import { storeToRefs } from 'pinia'
 import type { SheetItem } from '../../../SheetTypes'
-import { useSyncState } from '../../../store/useSyncState'
 
 onUnmounted(() => {
   const { processing } = useSyncState()
@@ -96,7 +95,6 @@ onUnmounted(() => {
   }
 })
 
-const { open, close } = useDialog()
 const { deleteItem } = useDocumentCache()
 const { getActivePanel, readOnlyMode } = storeToRefs(useSheetManager())
 
@@ -109,31 +107,6 @@ watch(width, (newWidth) => {
 }, { immediate: true })
 
 const props = defineProps<{
-  item: SheetItem,
-  disableDelete?: boolean,
-  disableReason?: string,
+  item: SheetItem
 }>()
-
-const attemptDelete = () => {
-  if (props.disableDelete) {
-    open({
-      body: {
-        title: 'Cannot Delete',
-        description: props.disableReason,
-        buttons: [
-          {
-            text: 'ok',
-            color: `${getActivePanel.value.color}-darken-2`,
-            onClick: close
-          }
-        ]
-      }
-    })
-    return
-  }
-
-  deleteItem({
-    item: props.item,
-  })
-}
 </script>

@@ -45,10 +45,10 @@
 </template>
 
 <script setup lang="ts">
-import { useSheetManager } from '../../store/useSheetManager'
+import { useSheetManager } from '@store/useSheetManager'
 import { storeToRefs } from 'pinia'
 import { ref, computed } from 'vue'
-import { tools } from '../../AdditionalTools'
+import { tools } from '../../../AdditionalTools'
 import { useDisplay } from 'vuetify/lib/framework.mjs'
 
 const { smAndDown } = useDisplay()

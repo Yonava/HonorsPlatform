@@ -96,15 +96,14 @@ import DetailInput from './Helper/DetailInput.vue'
 import DetailHeader from './Helper/DetailHeader.vue'
 import DetailFrame from './Helper/DetailFrame.vue'
 import LinkStudentButton from './Helper/LinkStudentButton.vue'
-
 import { computed } from 'vue'
+import { storeToRefs } from 'pinia'
+import { useSheetManager } from '@store/useSheetManager'
+import { getPanel } from '@panels'
 import type { Module } from '../../SheetTypes'
 import { termValidator, getCurrentTerm } from '../../TermValidator'
 import { useInstructorAutoComplete } from '../../InstructorAutoComplete'
-import { getPanel } from '../../Panels'
 import { useMoveItem } from '../../MoveItems'
-import { useSheetManager } from '../../store/useSheetManager'
-import { storeToRefs } from 'pinia'
 
 const sheetManager = useSheetManager()
 const { readOnlyMode } = storeToRefs(sheetManager)

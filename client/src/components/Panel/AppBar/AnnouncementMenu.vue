@@ -127,7 +127,7 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import { storeToRefs } from 'pinia';
-import { useDocumentCache } from '../../store/useDocumentCache'
+import { useDocumentCache } from '@store/useDocumentCache'
 import { useDisplay } from 'vuetify'
 
 const { smAndDown } = useDisplay()

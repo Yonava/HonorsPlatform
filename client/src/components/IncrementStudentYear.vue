@@ -132,13 +132,13 @@
 </template>
 
 <script setup lang="ts">
+import { ref, computed, watch } from "vue";
+import { useDialog } from "@store/useDialog";
+import { useDocumentCache } from '@store/useDocumentCache'
+import { useSheetManager } from "@store/useSheetManager";
+import { getPanel, PanelName } from '@panels'
 import { incrementStudentYear } from "../StudentTools";
 import type { Student } from "../SheetTypes";
-import { useDialog } from "../store/useDialog";
-import { useSheetManager } from "../store/useSheetManager";
-import { ref, computed, watch } from "vue";
-import { getPanel, PanelName } from '../Panels'
-import { useDocumentCache } from '../store/useDocumentCache'
 
 const { setPanel } = useSheetManager();
 const { close } = useDialog();
