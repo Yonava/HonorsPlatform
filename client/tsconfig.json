@@ -17,6 +17,8 @@
       "@panels": ["./src/Panels"],
       "@locals": ["./src/Locals"],
       "@components/*": ["./src/components"],
+      "@utils/*": ["./src/utils/*"],
+      "@composables/*": ["./src/composables/*"],
     }
   },
   "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],

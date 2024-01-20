@@ -9,7 +9,7 @@
       <ButtonInput
         v-if="!item.id"
         v-bind="props"
-        @click="tempId = ''"
+        @click="openIdDialog"
       >
         Add Student ID
       </ButtonInput>
@@ -69,7 +69,7 @@
         v-model="tempId"
         @keyup.enter="saveId"
         :rules="props.rules"
-        autofocus
+        ref="idInput"
         label="Student ID"
         class="mb-2"
       ></v-text-field>
@@ -98,16 +98,20 @@
 </template>
 
 <script setup lang="ts">
-import ButtonInput from './ButtonInput.vue';
 import { computed, ref } from 'vue'
-import { useSheetManager } from '../../../store/useSheetManager'
-import type { Student, Graduate } from '../../../SheetTypes'
-import { useDisplay } from 'vuetify/lib/framework.mjs';
 import { storeToRefs } from 'pinia';
+import { useDisplay } from 'vuetify';
+import { useSheetManager } from '@store/useSheetManager'
+import { useUpdateManager } from '@store/useUpdateManager';
+import { useInputFocus } from '@composables/useInputFocus';
+import ButtonInput from './ButtonInput.vue';
+import type { Student, Graduate } from '../../../SheetTypes'
 import { useBroadcastThroughSocket } from '../../../TrackItemForUpdate';
-import { useUpdateManager } from '../../../store/useUpdateManager';
 
 const { broadcast } = useBroadcastThroughSocket('DETAIL')
+
+const idInput = ref(null)
+const { focus } = useInputFocus(idInput)
 
 const idDialog = ref(false)
 const tempId = ref('')
@@ -124,6 +128,7 @@ const props = defineProps<{
 const saveId = () => {
   if (invalidId.value) return
   idDialog.value = false
+  if (props.item.id === tempId.value) return
   useUpdateManager().trackItemForUpdate({
     item: props.item,
     panelName: getActivePanel.value.panelName
@@ -139,6 +144,7 @@ const idChangeCancelled = () => {
 
 const openIdDialog = () => {
   tempId.value = props.item.id
+  focus()
 }
 
 const invalidId = computed(() => {

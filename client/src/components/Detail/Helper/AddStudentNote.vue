@@ -148,6 +148,7 @@ function clearInitials() {
 
 const noteBox = ref(null)
 const initialsBox = ref(null)
+
 const focus = () => {
   setTimeout(() => {
     if (noteBox.value) {

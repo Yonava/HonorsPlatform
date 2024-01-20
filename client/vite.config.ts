@@ -9,6 +9,8 @@ export default defineConfig({
       '@components': '/src/components',
       '@panels': '/src/Panels.ts',
       '@locals': '/src/Locals.ts',
+      '@composables': '/src/composables',
+      '@utils': '/src/utils',
     }
   },
   plugins: [vue()],
