@@ -2,7 +2,7 @@ import { useDialog } from '@store/useDialog'
 import { useDocumentCache } from '@store/useDocumentCache'
 import IncrementStudentYearDialog from './components/IncrementStudentYear.vue'
 import CreateTempSheet from './components/CreateTempSheet.vue'
-import type { PanelName } from './Panels'
+import type { PanelName } from '@panels'
 
 type Tool = {
   name: string,
@@ -22,22 +22,14 @@ export const tools: Tools = {
       name: 'Suggested Deletions',
       icon: 'mdi-delete-alert',
       disableInReadOnly: true,
-      handler: () => {
-        useDialog().setPanelCover('open')
-      },
+      handler: () => useDialog().setPanelCover('open'),
       tooltip: 'View auto curated suggestions on which items to delete'
     },
     {
       name: 'Create Temporary Sheet',
       disableInReadOnly: true,
       icon: 'mdi-google-spreadsheet',
-      handler: async () => {
-        useDialog().open({
-          component: {
-            render: CreateTempSheet
-          }
-        })
-      },
+      handler: () => useDialog().open({ component: CreateTempSheet }),
       tooltip: 'Create a temporary sheet with selected data'
     },
     {
@@ -56,13 +48,7 @@ export const tools: Tools = {
       name: 'Increment Student Year',
       icon: 'mdi-numeric-positive-1',
       disableInReadOnly: true,
-      handler: async () => {
-        useDialog().open({
-          component: {
-            render: IncrementStudentYearDialog
-          }
-        })
-      },
+      handler: () => useDialog().open({ component: IncrementStudentYearDialog }),
       tooltip: 'Move all selected students to the next year (e.g. from freshmen to sophomore)'
     },
   ],

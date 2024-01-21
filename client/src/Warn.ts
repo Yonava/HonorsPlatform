@@ -1,4 +1,4 @@
-import { useDialog } from './store/useDialog'
+import { useDialog, CONTENT_TIMEOUT_DURATION_MS } from '@store/useDialog'
 import { watch } from 'vue'
 
 type WarnOptions = {
@@ -14,13 +14,13 @@ export const warn = (options: WarnOptions = {}): Promise<States> => {
   const {
     title = 'Warning',
     description = 'You are about to perform an action that cannot be undone. Are you sure you want to continue?',
-    persistent = false
   } = options
 
-  const { open, close, contentTimeoutDuration, setPersistent } = useDialog()
+  const { open, close } = useDialog()
 
   return new Promise((resolve, reject) => {
-    let dismissWatcher = () => {}
+    let dismissWatcher = () => { }
+
     // wait for the dialog to open before watching for it to close
     setTimeout(() => {
       dismissWatcher = watch(() => useDialog().show, (v) => {
@@ -29,37 +29,32 @@ export const warn = (options: WarnOptions = {}): Promise<States> => {
           dismissWatcher()
         }
       })
+    }, CONTENT_TIMEOUT_DURATION_MS + 100)
 
-      if (!persistent) {
-        setPersistent(false)
-      }
-    }, contentTimeoutDuration + 100)
     open({
       persistent: true,
-      body: {
-        title,
-        description,
-        buttons: [
-          {
-            text: 'Cancel',
-            color: 'red',
-            onClick: () => {
-              dismissWatcher()
-              reject('CANCELLED')
-              close()
-            }
-          },
-          {
-            text: 'Continue',
-            color: 'green',
-            onClick: async () => {
-              dismissWatcher()
-              resolve('CONFIRMED')
-              close()
-            }
+      title,
+      description,
+      buttons: [
+        {
+          text: 'Cancel',
+          color: 'red',
+          onClick: () => {
+            dismissWatcher()
+            reject('CANCELLED')
+            close()
           }
-        ]
-      }
+        },
+        {
+          text: 'Continue',
+          color: 'green',
+          onClick: async () => {
+            dismissWatcher()
+            resolve('CONFIRMED')
+            close()
+          }
+        }
+      ]
     })
   })
 }

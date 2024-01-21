@@ -1,10 +1,7 @@
 <template>
   <v-sheet>
     <v-card class="px-5 py-4">
-
-      <h1 class="mb-2">
-        Post An Announcement
-      </h1>
+      <h1 class="mb-2">Post An Announcement</h1>
 
       <v-textarea
         v-model="announcement"
@@ -29,7 +26,7 @@
       <v-select
         v-model="panelType"
         variant="outlined"
-        :items="Object.values(panels).map(panel => panel.sheetRange)"
+        :items="Object.values(panels).map((panel) => panel.sheetRange)"
         chips
         label="Post To"
         multiple
@@ -46,24 +43,21 @@
         size="large"
         class="mt-4"
       >
-        <v-icon class="mr-2">
-          mdi-message-arrow-right
-        </v-icon>
+        <v-icon class="mr-2"> mdi-message-arrow-right </v-icon>
         Post
       </v-btn>
-
     </v-card>
   </v-sheet>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { storeToRefs } from 'pinia';
-import { useDialog } from '@store/useDialog';
-import { useAuth } from '@store/useAuth';
-import { useDocumentCache } from '@store/useDocumentCache';
-import { useSheetManager } from '@store/useSheetManager';
-import { panels } from '@panels';
+import { ref } from "vue";
+import { storeToRefs } from "pinia";
+import { useDialog } from "@store/useDialog";
+import { useAuth } from "@store/useAuth";
+import { useDocumentCache } from "@store/useDocumentCache";
+import { useSheetManager } from "@store/useSheetManager";
+import { panels } from "@panels";
 
 const auth = useAuth();
 const { googleProfile } = storeToRefs(auth);
@@ -77,60 +71,60 @@ const { getActivePanel } = storeToRefs(sheetManager);
 const dialog = useDialog();
 const { open, close, openSnackbar } = dialog;
 
-const announcement = ref('');
+const announcement = ref("");
 const posting = ref(false);
 
 const thingsThatWillNeverHappen = [
-  'When Pigs Fly 🐷🛩️',
-  'MySNHU Becomes User Friendly',
-  'Dine SNHU Wins A Michelin Star',
-  'The Penmen Press Goes Mainstream',
-  'Frogs Start Reciting Shakespeare',
-  'Doing Taxes Becomes Fun',
-  'SNHU Wins A Football Game',
-  'The Heat Death Of The Universe',
-  'SNHU Ranks #1 On US News & World Report',
-  'A Third Party Candidate Wins The Presidency',
-  'Jeff Bezos Runs Out Of Money',
-  'Big Banks Discover Morality',
-  'The US Government Stops Printing Money',
-  'Unicorns Are Discovered 🦄✨',
-]
+  "When Pigs Fly 🐷🛩️",
+  "MySNHU Becomes User Friendly",
+  "Dine SNHU Wins A Michelin Star",
+  "The Penmen Press Goes Mainstream",
+  "Frogs Start Reciting Shakespeare",
+  "Doing Taxes Becomes Fun",
+  "SNHU Wins A Football Game",
+  "The Heat Death Of The Universe",
+  "SNHU Ranks #1 On US News & World Report",
+  "A Third Party Candidate Wins The Presidency",
+  "Jeff Bezos Runs Out Of Money",
+  "Big Banks Discover Morality",
+  "The US Government Stops Printing Money",
+  "Unicorns Are Discovered 🦄✨",
+];
 
 const expiryDateOptions = [
-  thingsThatWillNeverHappen[Math.floor(Math.random() * thingsThatWillNeverHappen.length)],
-  'A Day',
-  'A Week',
-  'A Month',
-  'A Year',
-  'Custom'
-] as const
+  thingsThatWillNeverHappen[
+    Math.floor(Math.random() * thingsThatWillNeverHappen.length)
+  ],
+  "A Day",
+  "A Week",
+  "A Month",
+  "A Year",
+  "Custom",
+] as const;
 
-const expiryDate = ref(expiryDateOptions[0])
+const expiryDate = ref(expiryDateOptions[0]);
 
-const panelType = ref<string[]>([])
+const panelType = ref<string[]>([]);
 
 const postNewAnnouncement = async () => {
-  posting.value = true
+  posting.value = true;
 
   if (!googleProfile.value) {
-    console.error('No google profile found')
+    console.error("No google profile found");
     open({
-    body: {
-      title: 'Announcement Failed To Post',
-      description: 'You must be signed in to post an announcement.',
+      title: "Announcement Failed To Post",
+      description: "You must be signed in to post an announcement.",
       buttons: [
         {
-          text: 'OK',
-          color: 'green',
+          text: "OK",
+          color: "green",
           onClick: () => {
-            close()
-          }
-        }
-      ]
-    }
-  })
-    return
+            close();
+          },
+        },
+      ],
+    });
+    return;
   }
 
   await postAnnouncement({
@@ -140,15 +134,15 @@ const postNewAnnouncement = async () => {
     posterPhoto: googleProfile.value.picture,
     datePosted: new Date().toString(),
     expiryDate: expiryDate.value.toString(),
-    panelType: panelType.value.join(', '),
-  })
+    panelType: panelType.value.join(", "),
+  });
 
-  posting.value = false
+  posting.value = false;
 
   openSnackbar({
-    text: 'Announcement Posted',
-  })
+    text: "Announcement Posted",
+  });
 
-  close()
-}
+  close();
+};
 </script>

@@ -11,17 +11,15 @@ export const readonlySnackbar = () => {
       action: {
         text: 'Learn More',
         onClick: () => open({
-          body: {
-            title: 'Read-Only Mode 📚',
-            description: 'Read-Only Mode allows you to view the data on the platform without being able to edit it. Contact Honors Program staff to request access to make changes on the platform.',
-            buttons: [
-              {
-                text: 'Dismiss',
-                color: 'primary',
-                onClick: close
-              }
-            ]
-          }
+          title: 'Read-Only Mode 📚',
+          description: 'Read-Only Mode allows you to view the data on the platform without being able to edit it. Contact Honors Program staff to request access to make changes on the platform.',
+          buttons: [
+            {
+              text: 'Dismiss',
+              color: 'primary',
+              onClick: close
+            }
+          ]
         })
       },
       timeout: SNACKBAR_OPEN_DUR_MS

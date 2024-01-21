@@ -52,20 +52,22 @@ export type DialogComponent = {
   props?: Record<string, any>;
 };
 
-type DialogInstance = (DialogBody | DialogComponent) & {
+type DialogInstanceBase = {
   persistent: boolean;
+  onClose: (...args: any[]) => void;
   resolve: (...args: any[]) => void;
   reject: (...args: any[]) => void;
-  onClose: (...args: any[]) => void;
   id: string;
 }
 
-type OpenOptions<T extends DialogBody | DialogComponent> = T & {
+type DialogInstance = DialogInstanceBase & (DialogBody | DialogComponent);
+
+type OpenOptions = {
   persistent?: boolean;
   onClose?: (...args: any[]) => void;
-}
+} & (DialogBody | DialogComponent);
 
-const CONTENT_TIMEOUT_DURATION_MS = 300;
+export const CONTENT_TIMEOUT_DURATION_MS = 300;
 
 export const useDialog = defineStore("dialog", {
   state: () => ({
@@ -119,9 +121,8 @@ export const useDialog = defineStore("dialog", {
         this.panelCover[panel.title.plural] =  defaultPanelCover();
       }
     },
-    async open<T extends DialogBody | DialogComponent>(options: OpenOptions<T>) {
+    async open(options: OpenOptions) {
 
-      console.log('open dialog');
       await this.close();
 
       const {

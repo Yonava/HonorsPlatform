@@ -54,27 +54,25 @@ const createTempSheet = async () => {
   )
 
   useDialog().open({
-    body: {
-      title: 'Success',
-      description: 'Temporary sheet created successfully.',
-      buttons: [
-        {
-          text: 'Done',
-          color: activePanel.color,
-          onClick: () => {
-            useDialog().close()
-          }
-        },
-        {
-          text: 'Open New Sheet',
-          color: 'success',
-          onClick: () => {
-            const url = 'https://docs.google.com/spreadsheets/d/1bW-aQRn-GAbTsNkV2VB9xtBFT3n-LPrSJXua_NA2G6Y/edit#gid=1991464373'
-            window.open(url, '_blank')
-          }
+    title: 'Success',
+    description: 'Temporary sheet created successfully.',
+    buttons: [
+      {
+        text: 'Done',
+        color: activePanel.color,
+        onClick: () => {
+          useDialog().close()
         }
-      ]
-    }
+      },
+      {
+        text: 'Open New Sheet',
+        color: 'success',
+        onClick: () => {
+          const url = 'https://docs.google.com/spreadsheets/d/1bW-aQRn-GAbTsNkV2VB9xtBFT3n-LPrSJXua_NA2G6Y/edit#gid=1991464373'
+          window.open(url, '_blank')
+        }
+      }
+    ]
   })
 }
 

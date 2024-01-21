@@ -130,11 +130,7 @@ const deleteItems = async (itemsToDelete: SheetItem[]) => {
   })
   await new Promise((resolve) => setTimeout(resolve, 500))
   await useSyncState().waitUntilSynced()
-  open({
-    body: {
-      title: "Your Wish is My Command!",
-    }
-  })
+  open({ title: "Your Wish is My Command!" })
 
   const allItemsOnPanel = [...useDocumentCache()[getActivePanel.value.sheetRange].list]
 
@@ -150,10 +146,8 @@ const deleteItems = async (itemsToDelete: SheetItem[]) => {
 
   if (!headerRow) {
     open({
-      body: {
-        title: "Uh Oh!",
-        description: "Sorry, but something went wrong. Please refresh the page and try again."
-      }
+      title: "Uh Oh!",
+      description: "Sorry, but something went wrong. Please refresh the page and try again."
     })
     throw new Error(`No header row found for sheet range ${sheetRange}`)
   }

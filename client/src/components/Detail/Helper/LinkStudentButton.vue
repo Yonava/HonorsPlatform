@@ -82,12 +82,10 @@ const buttonStyle = computed(() => {
 
 const linkStudent = () => {
   useDialog().open({
-    component: {
-      render: LinkStudent,
-      props: {
-        panelName: props.linkFrom || 'STUDENTS',
-      }
-    },
+    component: LinkStudent,
+    props: {
+      panelName: props.linkFrom || 'STUDENTS',
+    }
   })
 }
 </script>

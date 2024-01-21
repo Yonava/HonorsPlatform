@@ -38,10 +38,8 @@ export const useSyncState = defineStore('syncState', {
 
       if (showDialog) {
         open({
-          persistent: true,
-          body: {
-            title: "Processing Request..."
-          }
+          title: "Processing Request...",
+          persistent: true
         })
       }
 

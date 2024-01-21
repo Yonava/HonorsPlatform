@@ -23,19 +23,17 @@ const savedToSheet = (item: SheetItem, panel?: Panel) => {
     const SECONDS_TO_WASTE = 5
     open({
       persistent: true,
-      body: {
-        title: `Nothing to Move!`,
-        description: `It isn't very practical to move nothing, is it? Try adding something to this ${panel.title.singular.toLowerCase()} before bothering me about moving it. In fact, just for that, I'm going to waste ${SECONDS_TO_WASTE} seconds of your time.`,
-        buttons: [
-          {
-            text: `Dismiss (Wait ${SECONDS_TO_WASTE} Seconds Once Clicked)`,
-            color: 'red',
-            onClick: () => {
-              setTimeout(close, SECONDS_TO_WASTE * 1000)
-            }
+      title: `Nothing to Move!`,
+      description: `It isn't very practical to move nothing, is it? Try adding something to this ${panel.title.singular.toLowerCase()} before bothering me about moving it. In fact, just for that, I'm going to waste ${SECONDS_TO_WASTE} seconds of your time.`,
+      buttons: [
+        {
+          text: `Dismiss (Wait ${SECONDS_TO_WASTE} Seconds Once Clicked)`,
+          color: 'red',
+          onClick: () => {
+            setTimeout(close, SECONDS_TO_WASTE * 1000)
           }
-        ]
-      },
+        }
+      ]
     })
   }
   return isSaved
@@ -73,27 +71,25 @@ export const movementHandlers = {
     }
 
     open({
-      body: {
-        title: `${student.name || studentPanel.title.singular} Graduated`,
-        description: `${student.name || studentPanel.title.singular} has been successfully moved to ${graduatePanel.title.plural}.`,
-        buttons: [
-          {
-            text: "Dismiss",
-            color: studentPanel.color,
-            onClick: close,
+      title: `${student.name || studentPanel.title.singular} Graduated`,
+      description: `${student.name || studentPanel.title.singular} has been successfully moved to ${graduatePanel.title.plural}.`,
+      buttons: [
+        {
+          text: "Dismiss",
+          color: studentPanel.color,
+          onClick: close,
+        },
+        {
+          text: `View new ${graduatePanel.title.singular} profile`,
+          color: graduatePanel.color,
+          onClick: () => {
+            setPanel(graduatePanel.panelName, {
+              value: student.sysId
+            });
+            close();
           },
-          {
-            text: `View new ${graduatePanel.title.singular} profile`,
-            color: graduatePanel.color,
-            onClick: () => {
-              setPanel(graduatePanel.panelName, {
-                value: student.sysId
-              });
-              close();
-            },
-          },
-        ],
-      },
+        },
+      ],
     });
   },
   GRADUATES: async (item: SheetItem) => {
@@ -124,39 +120,35 @@ export const movementHandlers = {
     }
 
     open({
-      body: {
-        title: "Success!",
-        description: `${grad.name || graduatePanel.title.singular} has been moved over to ${studentPanel.title.plural}.`,
-        buttons: [
-          {
-            text: "Dismiss",
-            color: graduatePanel.color,
-            onClick: close,
+      title: "Success!",
+      description: `${grad.name || graduatePanel.title.singular} has been moved over to ${studentPanel.title.plural}.`,
+      buttons: [
+        {
+          text: "Dismiss",
+          color: graduatePanel.color,
+          onClick: close,
+        },
+        {
+          text: `View ${studentPanel.title.singular} Profile`,
+          color: studentPanel.color,
+          onClick: () => {
+            setPanel(studentPanel.panelName, {
+              value: grad.sysId,
+            });
+            close();
           },
-          {
-            text: `View ${studentPanel.title.singular} Profile`,
-            color: studentPanel.color,
-            onClick: () => {
-              setPanel(studentPanel.panelName, {
-                value: grad.sysId,
-              });
-              close();
-            },
-          }
-        ],
-      },
+        }
+      ],
     });
   },
   MODULES: async (item: SheetItem) => {
     await new Promise((resolve, reject) => {
       useDialog().open({
-        component: {
-          render: MoveModule,
-          props: {
-            module: item,
-            resolve,
-            reject
-          }
+        component: MoveModule,
+        props: {
+          module: item,
+          resolve,
+          reject
         }
       })
     })
@@ -191,27 +183,25 @@ export const movementHandlers = {
     })
 
     open({
-      body: {
-        title: `${title} Moved Back Successfully`,
-        description: `${title} has been moved back to ${modulePanel.title.plural}.`,
-        buttons: [
-          {
-            text: 'Dismiss',
-            color: 'red',
-            onClick: () => close(),
+      title: `${title} Moved Back Successfully`,
+      description: `${title} has been moved back to ${modulePanel.title.plural}.`,
+      buttons: [
+        {
+          text: 'Dismiss',
+          color: 'red',
+          onClick: () => close(),
+        },
+        {
+          text: `View ${modulePanel.title.singular}`,
+          color: `${modulePanel.color}-darken-2`,
+          onClick: () => {
+            setPanel(modulePanel.panelName, {
+              value: newItem.sysId
+            })
+            close()
           },
-          {
-            text: `View ${modulePanel.title.singular}`,
-            color: `${modulePanel.color}-darken-2`,
-            onClick: () => {
-              setPanel(modulePanel.panelName, {
-                value: newItem.sysId
-              })
-              close()
-            },
-          }
-        ]
-      },
+        }
+      ]
     })
   },
 }

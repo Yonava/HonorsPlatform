@@ -60,17 +60,20 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useStorage } from '@vueuse/core';
+import { useDisplay } from 'vuetify';
 import { useDocumentCache } from '@store/useDocumentCache';
 import { useDialog } from '@store/useDialog';
+import { panels } from '@panels';
+import { local } from '@locals';
 import MailingListBuilder from './MailingListBuilder.vue';
 import MailingListEditor from './MailingListEditor.vue';
 import type { MailingList } from './MailingListAudiences';
-import { panels } from '@panels';
-import { local } from '@locals';
+import MailingListMenu from './MailingListMenu.vue';
 import { emailValidator } from '../../../EmailUtilities';
 
 const { Students, Graduates } = useDocumentCache()
 
+const { mdAndUp } = useDisplay()
 const hoveredMailingListId = ref('')
 
 const mouseEnteredList = (list: MailingList) => {
@@ -124,12 +127,22 @@ const mailingLists = computed(() => {
   ]
 })
 
-const createList = async () => {
-  useDialog().open({
-    component: MailingListBuilder,
-    persistent: true,
-  })
-}
+const backToMenu = () => mdAndUp.value ? undefined : useDialog().open({
+  component: MailingListMenu
+})
+
+const createList = () => useDialog().open({
+  component: MailingListBuilder,
+  onClose: backToMenu
+})
+
+const editList = (mailingList: MailingList) => useDialog().open({
+  component: MailingListEditor,
+  onClose: backToMenu,
+  props: {
+    mailingListId: mailingList.id
+  }
+})
 
 const deleteList = (list: MailingList) => {
   const index = storedMailingLists.value.findIndex(l => l.id === list.id)
@@ -142,15 +155,6 @@ const deleteList = (list: MailingList) => {
       onClick: () => {
         storedMailingLists.value.splice(index, 0, list)
       }
-    }
-  })
-}
-
-const editList = (mailingList: MailingList) => {
-  useDialog().open({
-    component: MailingListEditor,
-    props: {
-      mailingListId: mailingList.id
     }
   })
 }
@@ -212,4 +216,4 @@ const actions = ref([
 .add-list-box:hover {
   background-color: #d5d5d5;
 }
-</style>./MailingLists/MailingListAudiences
+</style>

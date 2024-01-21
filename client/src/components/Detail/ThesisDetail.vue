@@ -186,11 +186,9 @@ const viewProfileButton = computed(() => {
       onClick: () => {
         const { open } = useDialog()
         open({
-          component: {
-            render: LinkStudent,
-            props: {
-              panelName: studentPanel.panelName,
-            }
+          component: LinkStudent,
+          props: {
+            panelName: studentPanel.panelName,
           }
         })
       },
@@ -220,31 +218,29 @@ const viewProfileButton = computed(() => {
       onClick: () => {
         const { open, close } = useDialog()
         open({
-          body: {
-            title: `Problem Linking ${studentPanel.title.singular}`,
-            description: `The ${studentPanel.title.singular} that this ${getActivePanel.title.singular} was linked to no longer exists. Please relink or delete.`,
-            buttons: [
-              {
-                text: 'Relink',
-                color: studentPanel.color,
-                onClick: () => {
-                  open({
-                    component: {
-                      render: LinkStudent,
-                      props: {
-                        panelName: studentPanel.panelName,
-                      }
+          title: `Problem Linking ${studentPanel.title.singular}`,
+          description: `The ${studentPanel.title.singular} that this ${getActivePanel.title.singular} was linked to no longer exists. Please relink or delete.`,
+          buttons: [
+            {
+              text: 'Relink',
+              color: studentPanel.color,
+              onClick: () => {
+                open({
+                  component: {
+                    render: LinkStudent,
+                    props: {
+                      panelName: studentPanel.panelName,
                     }
-                  })
-                },
+                  }
+                })
               },
-              {
-                text: 'Dismiss',
-                color: 'red',
-                onClick: close
-              },
-            ],
-          },
+            },
+            {
+              text: 'Dismiss',
+              color: 'red',
+              onClick: close
+            },
+          ],
         })
       }
     }

@@ -539,9 +539,7 @@ export const useDocumentCache = defineStore("documentCache", {
         return;
       }
 
-      useDialog().openSnackbar({
-        text: `${title} Deleted`,
-      })
+      useDialog().openSnackbar({ text: `${title} Deleted` })
 
       const { emitUserAction } = useSocket()
       await emitUserAction({

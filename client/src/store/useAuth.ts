@@ -160,17 +160,13 @@ export const useAuth = defineStore('auth', {
 
       useDialog().open({
         persistent: true,
-        body: {
-          title: 'Please Authorize',
-          description: 'Please confirm your identity before continuing. Once completed, your session will automatically resume without any further action required.',
-          buttons: [
-            {
-              text: 'Sign In With Google',
-              color: 'red',
-              onClick: () => this.forceAuthorize()
-            }
-          ]
-        }
+        title: 'Please Authorize',
+        description: 'Please confirm your identity before continuing. Once completed, your session will automatically resume without any further action required.',
+        buttons: [{
+          text: 'Sign In With Google',
+          color: 'red',
+          onClick: () => this.forceAuthorize()
+        }]
       })
 
       this.pendingAuthorization = new Promise((resolve) => {
@@ -180,7 +176,7 @@ export const useAuth = defineStore('auth', {
             clearInterval(interval)
             useDialog().close()
             await this.userLoginFlow(code)
-            resolve('oauth code received')
+            resolve('OAUTH_CODE_RECEIVED')
             this.pendingAuthorization = null
           }
         }, 500)
