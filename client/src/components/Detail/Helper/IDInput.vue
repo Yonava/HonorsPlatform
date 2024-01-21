@@ -110,7 +110,7 @@ import { useBroadcastThroughSocket } from '../../../TrackItemForUpdate';
 
 const { broadcast } = useBroadcastThroughSocket('DETAIL')
 
-const idInput = ref(null)
+const idInput = ref<HTMLElement>()
 const { focus } = useInputFocus(idInput)
 
 const idDialog = ref(false)

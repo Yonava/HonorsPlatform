@@ -6,13 +6,28 @@ type InputFocusOptions = {
   delayMs?: number
 }
 
-export function useInputFocus(el: Ref<HTMLElement>, options: InputFocusOptions = {}) {
+export function useInputFocus<T extends HTMLElement | null | undefined>(
+  el: Ref<T>,
+  options: InputFocusOptions = {}
+) {
   const {
     focusOnMounted = false,
     delayMs = 250
   } = options
 
-  const focus = () => setTimeout(() => el.value?.focus(), delayMs)
+  const engageFocus = () => {
+    if (!el.value) throw 'No element to focus on.'
+    el.value.focus()
+  }
+
+  const focus = async () => {
+    await new Promise(resolve => setTimeout(resolve, delayMs))
+    try {
+      engageFocus()
+    } catch (err) {
+      throw new Error('Failed to engage focus, make sure the element is mounted.')
+    }
+  }
 
   if (focusOnMounted) {
     onMounted(focus)
@@ -21,6 +36,6 @@ export function useInputFocus(el: Ref<HTMLElement>, options: InputFocusOptions =
   return { focus }
 }
 
-export function useAutoFocus(el: Ref<HTMLElement>) {
+export function useAutoFocus<T extends HTMLElement | null | undefined>(el: Ref<T>) {
   return useInputFocus(el, { focusOnMounted: true })
 }

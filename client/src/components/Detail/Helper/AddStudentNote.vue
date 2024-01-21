@@ -96,9 +96,10 @@
 </template>
 
 <script setup lang="ts">
-import ModalContent from '../../ModalContent.vue'
-import { local } from '../../../Locals'
 import { computed, onMounted, ref } from 'vue'
+import { local } from '@locals'
+import { useInputFocus } from '@composables/useInputFocus';
+import ModalContent from '../../ModalContent.vue'
 
 const props = defineProps<{
   show: boolean
@@ -108,6 +109,18 @@ const emits = defineEmits([
   'close',
   'success'
 ])
+
+const noteBox = ref(null)
+const initialsBox = ref(null)
+
+const { focus: focusInitials } = useInputFocus(initialsBox, { delayMs: 10 })
+const { focus: focusNotes } = useInputFocus(noteBox, { delayMs: 10 })
+
+const focus = async () => {
+  await new Promise((resolve) => setTimeout(resolve, 10))
+  if (noteBox.value) return focusNotes()
+  focusInitials()
+}
 
 const show = computed({
   get: () => {
@@ -144,19 +157,6 @@ function clearInitials() {
   inputInitials.value = true
   localStorage.removeItem(local.initials)
   focus()
-}
-
-const noteBox = ref(null)
-const initialsBox = ref(null)
-
-const focus = () => {
-  setTimeout(() => {
-    if (noteBox.value) {
-      noteBox.value.focus()
-    } else if (initialsBox.value) {
-      initialsBox.value.focus()
-    }
-  }, 50)
 }
 
 const addNote = () => {
