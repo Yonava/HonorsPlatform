@@ -1,16 +1,15 @@
 <template>
-  <ModalContent
-    v-model="showDialog"
-  >
+  <ModalContent v-model="showDialog">
     <component
-      v-if="component"
-      :is="component.render"
-      :props="component.props"
-      v-bind="component.props"
+      v-if="componentInstance"
+      :is="componentInstance.component"
+      v-bind="componentInstance.props"
     />
     <DefaultDialogContent
-      v-else
-      :body="body"
+      v-else-if="contentInstance"
+      :title="contentInstance.title"
+      :description="contentInstance.description"
+      :buttons="contentInstance.buttons"
     />
   </ModalContent>
 </template>
@@ -24,14 +23,23 @@ import { storeToRefs } from 'pinia'
 
 const dialogState = useDialog()
 const { close } = dialogState
-const { show, component, body, persistent } = storeToRefs(dialogState)
+const { show, instance } = storeToRefs(dialogState)
+
+const componentInstance = computed(() => {
+  if (!instance.value) return
+  if ('component' in instance.value) return instance.value
+})
+
+const contentInstance = computed(() => {
+  if (!instance.value) return
+  if ('component' in instance.value) return
+  return instance.value
+})
 
 const showDialog = computed({
   get: () => show.value,
   set: () => {
-    if (persistent.value) {
-      return
-    }
+    if (instance.value?.persistent) return
     close()
   }
 })

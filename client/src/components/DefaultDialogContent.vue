@@ -1,13 +1,13 @@
 <template>
   <v-sheet class="pa-5">
     <h1>
-      {{ body.title }}
+      {{ title }}
     </h1>
     <p class="my-3">
-      {{ body.description }}
+      {{ description }}
     </p>
     <v-btn
-      v-for="button in body.buttons"
+      v-for="button in buttons"
       :key="button.text"
       @click="button.onClick"
       :color="button.color"
@@ -19,9 +19,13 @@
 </template>
 
 <script setup lang="ts">
-import type { DialogBody } from '@store/useDialog'
-
-const props = defineProps<{
-  body: DialogBody
+defineProps<{
+  title?: string
+  description?: string
+  buttons?: {
+    text: string
+    color?: string
+    onClick: () => void
+  }[]
 }>()
 </script>

@@ -124,11 +124,10 @@ const mailingLists = computed(() => {
   ]
 })
 
-const createList = () => {
-  useDialog().open({
-    component: {
-      render: MailingListBuilder
-    }
+const createList = async () => {
+  await useDialog().open({
+    component: MailingListBuilder,
+    onClose: createList
   })
 }
 
@@ -149,11 +148,9 @@ const deleteList = (list: MailingList) => {
 
 const editList = (mailingList: MailingList) => {
   useDialog().open({
-    component: {
-      render: MailingListEditor,
-      props: {
-        mailingListId: mailingList.id
-      }
+    component: MailingListEditor,
+    props: {
+      mailingListId: mailingList.id
     }
   })
 }

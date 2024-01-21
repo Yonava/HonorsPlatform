@@ -1,6 +1,6 @@
+import { markRaw, type Component } from "vue";
 import { defineStore } from "pinia";
-import { markRaw } from "vue";
-import { Panel } from "../Panels";
+import { Panel } from "@panels";
 import { useSheetManager } from "./useSheetManager";
 import type { DeletionOutput } from "../DeleteSuggestions";
 import type { SheetItem } from "../SheetTypes";
@@ -19,17 +19,6 @@ export type DialogButton = {
   text: string;
   onClick: () => void;
   color?: string;
-};
-
-export type DialogBody = {
-  title?: string;
-  description?: string;
-  buttons?: DialogButton[];
-};
-
-export type DialogComponent = {
-  render: any;
-  props?: any;
 };
 
 type PanelCoverData = {
@@ -52,19 +41,40 @@ type SnackbarOptions = {
   closable?: boolean;
 }
 
+export type DialogBody = {
+  title?: string;
+  description?: string;
+  buttons?: DialogButton[];
+};
+
+export type DialogComponent = {
+  component: Component;
+  props?: Record<string, any>;
+};
+
+type DialogInstance = (DialogBody | DialogComponent) & {
+  persistent: boolean;
+  resolve: (...args: any[]) => void;
+  reject: (...args: any[]) => void;
+  onClose: (...args: any[]) => void;
+  id: string;
+}
+
+type OpenOptions<T extends DialogBody | DialogComponent> = T & {
+  persistent?: boolean;
+  onClose?: (...args: any[]) => void;
+}
+
+const CONTENT_TIMEOUT_DURATION_MS = 300;
+
 export const useDialog = defineStore("dialog", {
   state: () => ({
-    panelCover: {} as Record<Panel['title']['plural'], PanelCoverData>,
+
+    instance: null as DialogInstance | null,
+    closing: false,
     show: false,
-    body: {
-      title: "",
-      description: "",
-      buttons: []
-    } as DialogBody,
-    component: null as DialogComponent | null,
-    persistent: false,
-    contentTimeout: null as any,
-    contentTimeoutDuration: 300,
+
+    panelCover: {} as Record<Panel['title']['plural'], PanelCoverData>,
     snackbar: {
       show: false,
       text: '',
@@ -100,9 +110,6 @@ export const useDialog = defineStore("dialog", {
     closeSnackbar() {
       this.snackbar.show = false;
     },
-    setPersistent(persistent: boolean) {
-      this.persistent = persistent;
-    },
     setPanelCover(action: 'open' | 'close', panelObject?: Panel) {
       const { getActivePanel } = useSheetManager();
       const panel = panelObject ?? getActivePanel;
@@ -112,53 +119,63 @@ export const useDialog = defineStore("dialog", {
         this.panelCover[panel.title.plural] =  defaultPanelCover();
       }
     },
-    open(options?: { body?: DialogBody; component?: DialogComponent, persistent?: boolean }) {
+    async open<T extends DialogBody | DialogComponent>(options: OpenOptions<T>) {
 
-      this.setPersistent(options?.persistent ?? false);
-      if (this.show && !this.persistent) {
+      console.log('open dialog');
+      await this.close();
 
-        // if the dialog that is already open is the same as the one we're trying to open, don't do anything
-        if (this.body.title === options?.body?.title) {
-          return;
-        }
+      const {
+        onClose = () => {},
+        persistent = false,
+      } = options
 
-        this.close();
-
-        setTimeout(() => {
-          this.open(options);
-        }, 500)
-
-        return;
+      const promise = {
+        resolve: null as any,
+        reject: null as any,
       }
-      clearTimeout(this.contentTimeout);
-      if (options?.component) {
-        this.component = {
-          render: markRaw(options.component.render),
-          props: options.component?.props ?? {}
-        }
-      } else if (options?.body) {
-        this.body = options.body;
-      }
-      this.show = true;
-    },
-    close() {
-      this.show = false;
-      clearInterval(this.contentTimeout);
-      this.contentTimeout = setTimeout(() => {
-        this.component = null;
-        this.body = {
-          title: "",
-          description: "",
-          buttons: []
+
+      const instancePromise = new Promise((resolve, reject) => {
+        promise.resolve = resolve;
+        promise.reject = reject;
+      })
+
+      const newInstance = {
+        persistent,
+        onClose,
+        resolve: promise.resolve,
+        reject: promise.reject,
+        id: Math.random().toString(36).substring(2, 9),
+      } as const
+
+      if ('component' in options) {
+        this.instance = {
+          component: markRaw(options.component),
+          props: options.props ?? {},
+          ...newInstance,
         };
-      }, this.contentTimeoutDuration);
-    },
-    toggle(options?: { body?: DialogBody; component?: any }) {
-      if (this.show) {
-        this.close();
       } else {
-        this.open(options);
+        this.instance = {
+          title: options.title ?? "",
+          description: options.description ?? "",
+          buttons: options.buttons ?? [],
+          ...newInstance,
+        };
       }
+
+      this.show = true;
+
+      return instancePromise;
+    },
+    async close() {
+      if (!this.instance || this.closing) return;
+      this.closing = true;
+      const { resolve, onClose } = this.instance;
+      this.show = false;
+      await new Promise(res => setTimeout(res, CONTENT_TIMEOUT_DURATION_MS));
+      onClose();
+      resolve();
+      this.closing = false;
+      this.instance = null;
     }
   }
 });
