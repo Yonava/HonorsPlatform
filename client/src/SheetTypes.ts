@@ -1,8 +1,5 @@
-import {
-  type StatusOption,
-  type YearOption,
-  athleticOptions
-} from "./StudentTools";
+import { athleticOptions } from "./StudentTools";
+import type { StatusOption, YearOption } from "./StudentTools";
 
 export type SheetItem = Module | Graduate | Student | CompletedModule | Thesis | GradEngagement;
 

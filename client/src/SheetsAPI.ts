@@ -1,6 +1,6 @@
 import axios from "axios";
-import { useAuth } from "./store/useAuth";
-import { local } from "./Locals";
+import { useAuth } from "@store/useAuth";
+import { local } from "@locals";
 
 export type Range = "Students" | "Modules" | "Graduates" | "Completed Modules" | "Announcements" | "Grad Engagements" | "Registrar List" | "Theses" | "Temporary Data";
 

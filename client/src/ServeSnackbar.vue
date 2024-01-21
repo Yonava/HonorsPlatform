@@ -44,7 +44,7 @@
 </template>
 
 <script setup lang="ts">
-import { useDialog } from './store/useDialog';
+import { useDialog } from '@store/useDialog';
 import { storeToRefs } from 'pinia';
 
 const dialogState = useDialog();

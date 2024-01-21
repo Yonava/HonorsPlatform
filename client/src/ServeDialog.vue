@@ -18,11 +18,11 @@
 </template>
 
 <script setup lang="ts">
-import ModalContent from './components/ModalContent.vue'
-import DefaultDialogContent from './components/DefaultDialogContent.vue'
-import { useDialog } from './store/useDialog'
 import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
+import { useDialog } from '@store/useDialog'
+import ModalContent from './components/ModalContent.vue'
+import DefaultDialogContent from './components/DefaultDialogContent.vue'
 
 const dialogState = useDialog()
 const { close } = dialogState
@@ -40,7 +40,7 @@ const contentInstance = computed(() => {
 })
 
 const persistent = computed(() => {
-  if (!instance.value) return
+  if (!instance.value) return false
   return instance.value.persistent
 })
 

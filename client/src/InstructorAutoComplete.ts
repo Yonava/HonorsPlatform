@@ -1,10 +1,6 @@
-import { useDocumentCache } from "./store/useDocumentCache"
-import {
-  type Ref,
-  ref,
-  watch,
-  computed
-} from "vue"
+import { ref, watch, computed } from "vue"
+import type { Ref } from "vue"
+import { useDocumentCache } from "@store/useDocumentCache"
 
 export function useInstructorAutoComplete(instructor: Ref<string>) {
 
