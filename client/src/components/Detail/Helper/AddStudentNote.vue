@@ -99,6 +99,7 @@
 import { computed, onMounted, ref } from 'vue'
 import { local } from '@locals'
 import { useInputFocus } from '@composables/useInputFocus';
+import { useKeyBindings } from '@composables/useKeyBindings';
 import ModalContent from '../../ModalContent.vue'
 
 const props = defineProps<{
@@ -171,6 +172,11 @@ const addNote = () => {
   })
   show.value = false
 }
+
+useKeyBindings({
+  'meta': () => console.log('facebook'),
+  's': () => console.log('facebookS'),
+})
 
 onMounted(() => {
   initials.value = localStorage.getItem(local.initials) || ''

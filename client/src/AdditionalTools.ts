@@ -24,7 +24,8 @@ export const tools: Tools = {
       disableInReadOnly: true,
       handler: () => {
         useDialog().setPanelCover('open')
-      }
+      },
+      tooltip: 'View auto curated suggestions on which items to delete'
     },
     {
       name: 'Create Temporary Sheet',
@@ -36,7 +37,8 @@ export const tools: Tools = {
             render: CreateTempSheet
           }
         })
-      }
+      },
+      tooltip: 'Create a temporary sheet with selected data'
     },
     {
       name: 'Refresh Data',
@@ -45,7 +47,8 @@ export const tools: Tools = {
         useDocumentCache().getAllDocuments({
           forceCacheRefresh: true,
         });
-      }
+      },
+      tooltip: 'Force a refresh to get the latest data'
     }
   ],
   STUDENTS: [
@@ -59,7 +62,8 @@ export const tools: Tools = {
             render: IncrementStudentYearDialog
           }
         })
-      }
+      },
+      tooltip: 'Move all selected students to the next year (e.g. from freshmen to sophomore)'
     },
   ],
   GRADUATES: [],

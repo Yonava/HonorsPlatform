@@ -84,9 +84,17 @@ import {
   ref,
   computed,
   watch,
-  StyleValue
+  type StyleValue
 } from 'vue'
 import { useRoute } from 'vue-router'
+import { storeToRefs } from 'pinia'
+import { useDisplay } from 'vuetify'
+import { local } from '@locals'
+import { panels, version } from '@panels'
+import { useSheetManager } from '@store/useSheetManager'
+import { useDocumentCache } from '@store/useDocumentCache'
+import { useDialog } from '@store/useDialog'
+import { useKeyBindings } from '@composables/useKeyBindings'
 import BottomLeftActions from '../components/Panel/BottomLeftActions.vue'
 import ItemDetailSM from '../components/Panel/ItemDetailSM.vue'
 import PanelCoverAppBar from '../components/Panel/PanelCoverAppBar.vue'
@@ -95,14 +103,6 @@ import SortPanel from '../components/Panel/SortPanel.vue'
 import AppBar from '../components/Panel/AppBar/AppBar.vue'
 import PanelCover from '../components/Panel/PanelCover.vue'
 import ItemDetail from '../components/Panel/ItemDetail.vue'
-import { useKeyBindings } from '../KeyBindings'
-import { useDisplay } from 'vuetify'
-import { local } from '../Locals'
-import { useSheetManager } from '../store/useSheetManager'
-import { useDocumentCache } from '../store/useDocumentCache'
-import { useDialog } from '../store/useDialog'
-import { storeToRefs } from 'pinia'
-import { panels, version } from '../Panels'
 import { useStalePageDetector } from '../StalePageDetector'
 
 const panelListStyles = computed(() => {
@@ -156,10 +156,7 @@ if (route.query.type) {
   pinnedSysIds.value = localStorage.getItem(local.pinned(getActivePanel.value.panelName))?.split(',') || []
 }
 
-const {
-  smAndUp,
-  mdAndUp
-} = useDisplay()
+const { mdAndUp } = useDisplay()
 
 const showLogo = computed(() => {
   return mdAndUp.value && !focusedItemSysId.value && !listItemBeingDragged.value

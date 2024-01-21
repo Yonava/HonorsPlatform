@@ -5,7 +5,7 @@
       v-model="userEnteredTerm"
       @keyup.enter="generateRegistrarList"
       :rules="[(v) => termValidator(v) || 'Potentially invalid term']"
-      autofocus
+      ref="termInput"
       variant="outlined"
       label="Term"
     ></v-text-field>
@@ -36,14 +36,18 @@
 </template>
 
 <script setup lang="ts">
-import { replaceRange } from "../../SheetsAPI";
-import { useDocumentCache } from "../../store/useDocumentCache";
 import { ref, computed, watch } from "vue";
+import { useDocumentCache } from "@store/useDocumentCache";
+import { useAutoFocus } from "@composables/useInputFocus";
+import { replaceRange } from "../../SheetsAPI";
 import { termValidator, getCurrentTerm } from "../../TermValidator";
 
 const loading = ref(false);
 const success = ref(false);
 const userEnteredTerm = ref(getCurrentTerm());
+
+const termInput = ref(null);
+useAutoFocus(termInput);
 
 const listWasGenerated = ref(false);
 

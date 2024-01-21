@@ -11,12 +11,12 @@
 </template>
 
 <script setup lang="ts">
+import { computed, ref, watch } from 'vue';
+import { storeToRefs } from 'pinia';
 import { useSheetManager } from '@store/useSheetManager';
 import { useDocumentCache } from '@store/useDocumentCache';
-import { storeToRefs } from 'pinia';
+import { useKeyBindings } from '@composables/useKeyBindings';
 import NavDrawerBlockBtn from './NavDrawerBlockBtn.vue';
-import { computed, ref, watch } from 'vue';
-import { useKeyBindings } from '../../../KeyBindings';
 
 const { getActivePanel } = storeToRefs(useSheetManager());
 const { addItem } = useDocumentCache();

@@ -1,6 +1,6 @@
 <template>
   <v-menu v-model="open">
-    <template v-slot:activator="{ props }">
+    <template #activator="{ props }">
       <div v-bind="props">
         <slot
           name="activator"
@@ -38,11 +38,16 @@
       >
         <template #prepend>
           <div class="mr-3">
-            <v-icon color="grey-darken-2">{{ tool.icon }}</v-icon>
+            <v-icon color="grey-darken-2">
+              {{ tool.icon }}
+            </v-icon>
           </div>
         </template>
         <template #title>
           {{ tool.name }}
+          <InfoBtn>
+            {{ tool.tooltip }}
+          </InfoBtn>
         </template>
       </v-list-item>
     </v-list>
@@ -51,11 +56,12 @@
 </template>
 
 <script setup lang="ts">
-import { useSheetManager } from '@store/useSheetManager'
-import { storeToRefs } from 'pinia'
 import { ref, computed } from 'vue'
+import { useDisplay } from 'vuetify'
+import { storeToRefs } from 'pinia'
+import { useSheetManager } from '@store/useSheetManager'
+import InfoBtn from '../InfoBtn.vue'
 import { tools } from '../../../AdditionalTools'
-import { useDisplay } from 'vuetify/lib/framework.mjs'
 
 const { smAndDown } = useDisplay()
 

@@ -149,11 +149,11 @@ const open = ref(false)
 
 const tooltipText = computed(() => {
   if (announcements.value.length === 0) {
-    return 'No active announcements'
+    return 'No Active Announcements'
   } else if (announcements.value.length === 1) {
-    return '1 active announcement'
+    return '1 Active Announcement'
   } else {
-    return `${announcements.value.length} active announcements`
+    return `${announcements.value.length} Active Announcements`
   }
 })
 
