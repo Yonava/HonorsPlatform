@@ -3,7 +3,7 @@
     <div v-if="!xs">
       <v-dialog
         v-model="showDialog"
-        :persistent="persistent && show"
+        :persistent="persistent"
         width="600"
       >
         <slot></slot>
@@ -17,10 +17,7 @@
         location="bottom"
         style="width: 100%; height: calc(100vh - 175px);"
       >
-        <v-sheet
-          :color="color"
-          class="xs-outer-wrapper"
-        >
+        <v-sheet class="xs-outer-wrapper">
           <slot></slot>
           <div style="margin-bottom: 175px"></div>
         </v-sheet>
@@ -33,19 +30,14 @@
 import { useDisplay } from 'vuetify'
 import { computed, ref, watchEffect, watch } from 'vue'
 import { useDialog } from '../store/useDialog';
-import { storeToRefs } from 'pinia';
 
 const { close } = useDialog()
-const { persistent, show } = storeToRefs(useDialog())
-
 const { xs } = useDisplay()
 
 const props = defineProps<{
   modelValue: boolean,
-  bgColor?: string,
+  persistent?: boolean
 }>()
-
-const color = computed(() => props.bgColor || 'white')
 
 const emits = defineEmits([
   'update:modelValue'

@@ -1,5 +1,8 @@
 <template>
-  <ModalContent v-model="showDialog">
+  <ModalContent
+    v-model="showDialog"
+    :persistent="persistent"
+  >
     <component
       v-if="componentInstance"
       :is="componentInstance.component"
@@ -34,6 +37,11 @@ const contentInstance = computed(() => {
   if (!instance.value) return
   if ('component' in instance.value) return
   return instance.value
+})
+
+const persistent = computed(() => {
+  if (!instance.value) return
+  return instance.value.persistent
 })
 
 const showDialog = computed({

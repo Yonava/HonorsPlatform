@@ -166,14 +166,18 @@ export const useDialog = defineStore("dialog", {
 
       return instancePromise;
     },
-    async close() {
+    async close(options: { onCloseArgs?: any[], resolveWith?: any } = {}) {
       if (!this.instance || this.closing) return;
+      const {
+        onCloseArgs = [],
+        resolveWith = `DIALOG_INSTANCE_${this.instance.id}_CLOSED`
+      } = options;
       this.closing = true;
       const { resolve, onClose } = this.instance;
       this.show = false;
       await new Promise(res => setTimeout(res, CONTENT_TIMEOUT_DURATION_MS));
-      onClose();
-      resolve();
+      onClose(...onCloseArgs);
+      resolve(resolveWith);
       this.closing = false;
       this.instance = null;
     }

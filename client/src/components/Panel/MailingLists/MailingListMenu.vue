@@ -125,9 +125,9 @@ const mailingLists = computed(() => {
 })
 
 const createList = async () => {
-  await useDialog().open({
+  useDialog().open({
     component: MailingListBuilder,
-    onClose: createList
+    persistent: true,
   })
 }
 
