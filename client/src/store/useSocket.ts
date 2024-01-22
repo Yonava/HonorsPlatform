@@ -209,13 +209,11 @@ export const useSocket = defineStore("socket", {
 
       if (!this.timeOfSocketDisconnect) {
         // If the socket has never disconnected, we are done here
-        console.log('Socket has never disconnected')
         return
       }
 
       if (!serverIsUp) {
         // If the server is not up and we have disconnected, we may have missed some actions, so we need to refresh
-        console.log('Server is stale, refreshing cache')
         getAllDocuments({
           showLoading: false,
           forceCacheRefresh: true
@@ -225,7 +223,6 @@ export const useSocket = defineStore("socket", {
 
       if (!timeOfLastBroadcastedAction) {
         // If no time is returned, and the server is up, that means no actions occurred, we are done here
-        console.log('No actions recorded on server, despite server being up')
         return
       }
 
@@ -233,12 +230,10 @@ export const useSocket = defineStore("socket", {
 
       if (!actionOccurredDuringDisconnect) {
         // If the last action occurred before the socket disconnected, we are done here
-        console.log('No actions occurred while disconnected')
         return
       }
 
       // Uh oh, it looks like we may have missed some actions, so we need to refresh the cache
-      console.log('Missed actions, refreshing cache')
       getAllDocuments({
         forceCacheRefresh: true
       })

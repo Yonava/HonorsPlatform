@@ -10,7 +10,7 @@ import { storeToRefs } from 'pinia'
 import MoveModule from './components/Detail/Helper/MoveModule.vue'
 import { useDialog } from '@store/useDialog'
 import { useSheetManager } from '@store/useSheetManager'
-import { warn } from './Warn'
+import warn from './Warn'
 import { moveToGraduates, moveToStudents } from './StudentTools'
 import { useDocumentCache } from './store/useDocumentCache'
 

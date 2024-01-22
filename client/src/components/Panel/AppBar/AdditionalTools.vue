@@ -45,7 +45,7 @@
         </template>
         <template #title>
           {{ tool.name }}
-          <InfoBtn>
+          <InfoBtn v-if="tool.tooltip">
             {{ tool.tooltip }}
           </InfoBtn>
         </template>

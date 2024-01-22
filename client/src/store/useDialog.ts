@@ -52,10 +52,12 @@ export type DialogComponent = {
   props?: Record<string, any>;
 };
 
+type DialogCloseResolutions = 'BACKGROUND_CLOSE' | 'ACTION_CLOSE'
+
 type DialogInstanceBase = {
   persistent: boolean;
   onClose: (...args: any[]) => void;
-  resolve: (...args: any[]) => void;
+  resolve: (reason: DialogCloseResolutions) => void;
   reject: (...args: any[]) => void;
   id: string;
 }
@@ -135,7 +137,7 @@ export const useDialog = defineStore("dialog", {
         reject: null as any,
       }
 
-      const instancePromise = new Promise((resolve, reject) => {
+      const instancePromise = new Promise<DialogCloseResolutions>((resolve, reject) => {
         promise.resolve = resolve;
         promise.reject = reject;
       })
@@ -167,11 +169,11 @@ export const useDialog = defineStore("dialog", {
 
       return instancePromise;
     },
-    async close(options: { onCloseArgs?: any[], resolveWith?: any } = {}) {
+    async close(options: { onCloseArgs?: any[], resolveWith?: DialogCloseResolutions } = {}) {
       if (!this.instance || this.closing) return;
       const {
         onCloseArgs = [],
-        resolveWith = `DIALOG_INSTANCE_${this.instance.id}_CLOSED`
+        resolveWith = 'ACTION_CLOSE'
       } = options;
       this.closing = true;
       const { resolve, onClose } = this.instance;

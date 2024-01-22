@@ -48,7 +48,9 @@ const showDialog = computed({
   get: () => show.value,
   set: () => {
     if (instance.value?.persistent) return
-    close()
+    close({
+      resolveWith: 'BACKGROUND_CLOSE'
+    })
   }
 })
 </script>

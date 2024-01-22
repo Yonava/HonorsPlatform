@@ -1,13 +1,13 @@
 import { defineStore } from "pinia";
 import { getRange, clearByRow, postInRange, getRanges } from '../SheetsAPI';
-import { panels, Panel, PanelName, getPanel } from "../Panels";
+import { panels, Panel, PanelName, getPanel } from "@panels";
 import * as types from "../SheetTypes";
 import { useSheetManager } from "./useSheetManager";
-import { warn } from "../Warn";
+import warn from "../Warn";
 import { useSyncState } from "./useSyncState";
 import { storeToRefs } from "pinia";
 import { setSelectedItem } from '../components/Panel/SetSelectedItem'
-  import { useSocket } from "./useSocket";
+import { useSocket } from "./useSocket";
 import { useDialog } from "./useDialog";
 
 type GetAllDocuments = {

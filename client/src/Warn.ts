@@ -1,60 +1,43 @@
-import { useDialog, CONTENT_TIMEOUT_DURATION_MS } from '@store/useDialog'
-import { watch } from 'vue'
+import { useDialog, type DialogButton } from '@store/useDialog'
 
-type WarnOptions = {
+export type WarnOptions = {
   title?: string,
   description?: string,
-  persistent?: boolean
+  persistent?: boolean,
+  buttons?: (resolve: (r: States) => void, reject: (r: States) => void) => DialogButton[]
 }
+
+const defaults = {
+  title: 'Warning',
+  description: 'You are about to perform an action that cannot be undone. Are you sure you want to continue?',
+  buttons: (resolve: (r: States) => void, reject: (r: States) => void) => ([
+    {
+      text: 'Cancel',
+      color: 'red',
+      onClick: () => {
+        reject('CANCELLED')
+        useDialog().close()
+      }
+    },
+    {
+      text: 'Continue',
+      color: 'green',
+      onClick: () => {
+        resolve('CONFIRMED')
+        useDialog().close()
+      }
+    }
+  ]),
+  persistent: false,
+} satisfies WarnOptions
 
 type States = 'CONFIRMED' | 'CANCELLED' | 'CANCELLED_BACKGROUND'
 
-export const warn = (options: WarnOptions = {}): Promise<States> => {
+const warn = (options: WarnOptions = {}) => new Promise<States>(async (resolve, reject) => useDialog().open({
+  persistent: options.persistent ?? defaults.persistent,
+  title: options.title ?? defaults.title,
+  description: options.description ?? defaults.description,
+  buttons: options.buttons?.(resolve, reject) ?? defaults.buttons(resolve, reject)
+}).then(res => res === 'BACKGROUND_CLOSE' && reject('CANCELLED_BACKGROUND')))
 
-  const {
-    title = 'Warning',
-    description = 'You are about to perform an action that cannot be undone. Are you sure you want to continue?',
-  } = options
-
-  const { open, close } = useDialog()
-
-  return new Promise((resolve, reject) => {
-    let dismissWatcher = () => { }
-
-    // wait for the dialog to open before watching for it to close
-    setTimeout(() => {
-      dismissWatcher = watch(() => useDialog().show, (v) => {
-        if (!v) {
-          reject('CANCELLED_BACKGROUND')
-          dismissWatcher()
-        }
-      })
-    }, CONTENT_TIMEOUT_DURATION_MS + 100)
-
-    open({
-      persistent: true,
-      title,
-      description,
-      buttons: [
-        {
-          text: 'Cancel',
-          color: 'red',
-          onClick: () => {
-            dismissWatcher()
-            reject('CANCELLED')
-            close()
-          }
-        },
-        {
-          text: 'Continue',
-          color: 'green',
-          onClick: async () => {
-            dismissWatcher()
-            resolve('CONFIRMED')
-            close()
-          }
-        }
-      ]
-    })
-  })
-}
+export default warn

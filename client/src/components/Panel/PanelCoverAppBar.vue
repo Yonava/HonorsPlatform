@@ -81,7 +81,7 @@ import { useDocumentCache } from '@store/useDocumentCache';
 import { useSyncState } from '@store/useSyncState'
 import type { SheetItem } from '../../SheetTypes'
 import { headerRowMemo, replaceRange } from '../../SheetsAPI';
-import { warn } from '../../Warn';
+import warn  from '../../Warn';
 
 const { setPanelCover, open, close } = useDialog();
 const { getPanelCover, getListOfFlaggedItems } = storeToRefs(useDialog());
