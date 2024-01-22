@@ -54,15 +54,15 @@ export type DialogComponent = {
 
 type DialogCloseResolutions = 'BACKGROUND_CLOSE' | 'ACTION_CLOSE'
 
-type DialogInstanceBase = {
+type DialogInstanceBase<T> = {
   persistent: boolean;
   onClose: (...args: any[]) => void;
-  resolve: (reason: DialogCloseResolutions) => void;
+  resolve: (reason: T) => void;
   reject: (...args: any[]) => void;
   id: string;
 }
 
-type DialogInstance = DialogInstanceBase & (DialogBody | DialogComponent);
+type DialogInstance<T = DialogCloseResolutions> = DialogInstanceBase<T> & (DialogBody | DialogComponent);
 
 type OpenOptions = {
   persistent?: boolean;
@@ -123,7 +123,7 @@ export const useDialog = defineStore("dialog", {
         this.panelCover[panel.title.plural] =  defaultPanelCover();
       }
     },
-    async open(options: OpenOptions) {
+    async open<T = DialogCloseResolutions>(options: OpenOptions) {
 
       await this.close();
 
@@ -132,15 +132,17 @@ export const useDialog = defineStore("dialog", {
         persistent = false,
       } = options
 
-      const promise = {
-        resolve: null as any,
-        reject: null as any,
+      const promise: Record<string, any> = {
+        resolve: () => {},
+        reject: () => {},
       }
 
-      const instancePromise = new Promise<DialogCloseResolutions>((resolve, reject) => {
+      const instancePromise = new Promise<DialogCloseResolutions | T>((resolve, reject) => {
         promise.resolve = resolve;
         promise.reject = reject;
       })
+
+      // i need access to resolve and reject in this scope
 
       const newInstance = {
         persistent,
