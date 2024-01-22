@@ -18,7 +18,7 @@ export type GoogleProfile = {
 
 export type ConnectedSocket = GoogleProfile & { socketId: string }
 
-export type ServerErrors =
+export type ServerError =
   'NO_SHEET_ACCESS' |
   'INVALID_ACCESS_TOKEN' |
   'INVALID_OAUTH_CODE' |
@@ -29,29 +29,26 @@ export type ServerErrors =
   'SOCKET_EXCEPTION' |
   'PERMISSION_REQUEST_FAILED'
 
-const getAuthErrorURL = (error: ServerErrors) => `/auth?error=${error}`
-const serverAuthEndpoint = '/api/auth'
+const getAuthErrorURL = <T extends ServerError>(error: T) => `/auth?error=${error}` as const
+const getServerAuthEndpoint = <T extends string>(route: T) => `/api/auth/${route}` as const
 
 export const useAuth = defineStore('auth', {
   state: () => ({
     pendingAuthorization: null as Promise<string> | null,
-    authTimeoutInSeconds: 60,
     googleProfile: null as GoogleProfile | null,
   }),
   actions: {
-    setAuthTimeout(timeout: number) {
-      this.authTimeoutInSeconds = timeout
-    },
     setGoogleProfile(profile: GoogleProfile | null) {
       this.googleProfile = profile
     },
-    async getURL(): Promise<string> {
-      const response = await axios.get(`${serverAuthEndpoint}/url`)
-      if (!response.data.url) {
-        throw new Error('No URL received')
+    async getURL() {
+      const urlRoute = getServerAuthEndpoint('url')
+      try {
+        const { data } = await axios.get<{ url: string }>(urlRoute)
+        return data.url
+      } catch (e) {
+        throw new Error('Could not get auth url')
       }
-      const { url } = response.data
-      return url
     },
     async authorizeSession() {
       const accessToken = localStorage.getItem(local.googleOAuthAccessToken)
@@ -85,38 +82,41 @@ export const useAuth = defineStore('auth', {
     },
     async userLoginFlow(googleOAuthCode: string) {
 
-      localStorage.setItem(local.timeOfLastAuth, Date.now().toString())
-
       localStorage.removeItem(local.closeAfterAuth)
       localStorage.removeItem(local.googleOAuthCode)
 
-      const oauthCodeValidationURI = `${serverAuthEndpoint}/${encodeURIComponent(googleOAuthCode)}`
+      const code = encodeURIComponent(googleOAuthCode)
+      const oauthCodeValidationURI = getServerAuthEndpoint(code)
 
-      const { data } = await axios.get(oauthCodeValidationURI) as {
-        data: {
-          accessToken: string,
-          profile: GoogleProfile,
-          error?: ServerErrors
-        }
-      }
-      const { error } = data as { error?: ServerErrors }
+      const { data } = await axios.get<{
+        accessToken: string,
+        profile: GoogleProfile,
+        error?: ServerError
+      }>(oauthCodeValidationURI)
 
-      if (error) {
-        location.replace(getAuthErrorURL(error))
-        throw new Error(error)
+      if (data?.error) {
+        location.replace(getAuthErrorURL(data.error))
+        throw new Error('Authorization Failed')
       }
 
       this.setGoogleProfile(data.profile)
       localStorage.setItem(local.googleOAuthAccessToken, data.accessToken)
 
-      const { connect, disconnect } = useSocket()
+      const { connect } = useSocket()
 
-      disconnect()
       await connect()
+      const timeSinceEpoch = Date.now()
+      localStorage.setItem(local.timeOfLastAuth, timeSinceEpoch.toString())
+
+      return {
+        status: 'Authorized',
+        at: timeSinceEpoch,
+        user: data.profile
+      }
     },
     userLogoutFlow({ goToAuthPage, broadcastLogoutEvent, error }: {
       goToAuthPage: boolean,
-      error: ServerErrors,
+      error: ServerError,
       broadcastLogoutEvent: boolean,
     }) {
       localStorage.removeItem(local.googleOAuthAccessToken)
@@ -158,17 +158,6 @@ export const useAuth = defineStore('auth', {
       localStorage.removeItem(local.googleOAuthCode)
       localStorage.setItem(local.closeAfterAuth, 'true')
 
-      useDialog().open({
-        persistent: true,
-        title: 'Please Authorize',
-        description: 'Please confirm your identity before continuing. Once completed, your session will automatically resume without any further action required.',
-        buttons: [{
-          text: 'Sign In With Google',
-          color: 'red',
-          onClick: () => this.forceAuthorize()
-        }]
-      })
-
       this.pendingAuthorization = new Promise((resolve) => {
         const interval = setInterval(async () => {
           const code = localStorage.getItem(local.googleOAuthCode)
@@ -180,20 +169,18 @@ export const useAuth = defineStore('auth', {
             this.pendingAuthorization = null
           }
         }, 500)
-
-        setTimeout(() => {
-          clearInterval(interval)
-          if (!this.pendingAuthorization) {
-            return
-          }
-          console.error('Token not received. Request timed out. User redirected to auth page')
-          router.push({
-            name: 'auth'
-          })
-        }, this.authTimeoutInSeconds * 1000)
       })
 
-      return this.pendingAuthorization
+      return useDialog().open<'OAUTH_CODE_RECEIVED'>({
+        persistent: true,
+        title: 'Please Authorize',
+        description: 'Please confirm your identity before continuing. Once completed, your session will automatically resume without any further action required.',
+        buttons: [{
+          text: 'Sign In With Google',
+          color: 'red',
+          onClick: () => this.forceAuthorize()
+        }]
+      })
     }
   }
 })

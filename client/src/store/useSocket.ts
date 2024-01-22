@@ -102,18 +102,11 @@ export const useSocket = defineStore("socket", {
   },
   actions: {
     async connect() {
-      if (this.socket?.connected) {
-        console.log('Socket already connected')
-        return
-      }
+
+      if (this.socket?.connected) throw new Error('Socket Already Connected')
 
       const accessToken = localStorage.getItem(local.googleOAuthAccessToken);
-      if (!accessToken) {
-        console.log('No access token found')
-        return
-      }
-
-      this.disconnect();
+      if (!accessToken) throw new Error('Access Token Must Be Set To Connect To Socket')
 
       const { userLogoutFlow, googleProfile } = useAuth()
 

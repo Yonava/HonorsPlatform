@@ -48,7 +48,7 @@
 
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router'
-import { useAuth, type ServerErrors } from '../store/useAuth'
+import { useAuth, type ServerError } from '../store/useAuth'
 import { onMounted, ref, computed } from 'vue'
 import { local } from '../Locals'
 
@@ -56,7 +56,7 @@ const route = useRoute()
 const router = useRouter()
 const loading = ref(true)
 
-const error = route.query.error as ServerErrors | undefined
+const error = route.query.error as ServerError | undefined
 const title = computed(() => {
   switch (error) {
     case 'NO_SHEET_ACCESS':
