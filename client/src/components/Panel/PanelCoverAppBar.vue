@@ -79,9 +79,9 @@ import { useDialog } from "@store/useDialog";
 import { useSheetManager } from "@store/useSheetManager";
 import { useDocumentCache } from '@store/useDocumentCache';
 import { useSyncState } from '@store/useSyncState'
+import warn from '@utils/Warn';
 import type { SheetItem } from '../../SheetTypes'
 import { headerRowMemo, replaceRange } from '../../SheetsAPI';
-import warn  from '../../Warn';
 
 const { setPanelCover, open, close } = useDialog();
 const { getPanelCover, getListOfFlaggedItems } = storeToRefs(useDialog());
@@ -195,4 +195,4 @@ const deleteItems = async (itemsToDelete: SheetItem[]) => {
 .filter-input::placeholder {
   color: rgba(255, 255, 255, 0.569);
 }
-</style>
+</style>../../utils/Warn

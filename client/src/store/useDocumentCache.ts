@@ -3,7 +3,7 @@ import { getRange, clearByRow, postInRange, getRanges } from '../SheetsAPI';
 import { panels, Panel, PanelName, getPanel } from "@panels";
 import * as types from "../SheetTypes";
 import { useSheetManager } from "./useSheetManager";
-import warn from "../Warn";
+import warn from "@utils/Warn";
 import { useSyncState } from "./useSyncState";
 import { storeToRefs } from "pinia";
 import { setSelectedItem } from '../components/Panel/SetSelectedItem'

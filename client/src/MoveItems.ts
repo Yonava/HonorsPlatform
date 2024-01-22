@@ -1,18 +1,14 @@
-import {
-  getPanel,
-  PanelName,
-  type Panel
-} from './Panels'
+import { getPanel, PanelName, type Panel } from '@panels'
 import type { SheetItem, Student, Graduate, Module, CompletedModule } from './SheetTypes'
 import { ref, computed } from 'vue'
 import { storeToRefs } from 'pinia'
 
-import MoveModule from './components/Detail/Helper/MoveModule.vue'
 import { useDialog } from '@store/useDialog'
 import { useSheetManager } from '@store/useSheetManager'
-import warn from './Warn'
+import { useDocumentCache } from '@store/useDocumentCache'
+import warn from '@utils/Warn'
+import MoveModule from './components/Detail/Helper/MoveModule.vue'
 import { moveToGraduates, moveToStudents } from './StudentTools'
-import { useDocumentCache } from './store/useDocumentCache'
 
 const savedToSheet = (item: SheetItem, panel?: Panel) => {
   const { open, close } = useDialog()
