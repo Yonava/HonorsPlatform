@@ -27,21 +27,22 @@ export type ServerError =
   'REMOTE_LOGOUT' |
   'LOGOUT' |
   'SOCKET_EXCEPTION' |
-  'PERMISSION_REQUEST_FAILED'
+  'PERMISSION_REQUEST_FAILED' |
+  'END_SESSION_FALLBACK'
 
 const getAuthErrorURL = <T extends ServerError>(error: T) => `/auth?error=${error}` as const
 const getServerAuthEndpoint = <T extends string>(route: T) => `/api/auth/${route}` as const
 
 export const useAuth = defineStore('auth', {
   state: () => ({
-    pendingAuthorization: null as Promise<string> | null,
+    authorizationPromptOpen: false,
     googleProfile: null as GoogleProfile | null,
   }),
   actions: {
     setGoogleProfile(profile: GoogleProfile | null) {
       this.googleProfile = profile
     },
-    async getURL() {
+    async getGoogleOAuthURL() {
       const urlRoute = getServerAuthEndpoint('url')
       try {
         const { data } = await axios.get<{ url: string }>(urlRoute)
@@ -104,7 +105,13 @@ export const useAuth = defineStore('auth', {
 
       const { connect } = useSocket()
 
-      await connect()
+      try {
+        await connect()
+      } catch {
+        console.log('Could not connect to socket')
+      }
+      console.log('contine')
+
       const timeSinceEpoch = Date.now()
       localStorage.setItem(local.timeOfLastAuth, timeSinceEpoch.toString())
 
@@ -112,7 +119,7 @@ export const useAuth = defineStore('auth', {
         status: 'Authorized',
         at: timeSinceEpoch,
         user: data.profile
-      }
+      } as const
     },
     userLogoutFlow({ goToAuthPage, broadcastLogoutEvent, error }: {
       goToAuthPage: boolean,
@@ -136,51 +143,55 @@ export const useAuth = defineStore('auth', {
         return
       }
     },
-    async forceAuthorize(url?: string) {
-      const redirectUrl = url ?? await this.getURL();
-      localStorage.removeItem(local.closeAfterAuth)
-      window.location.replace(redirectUrl)
-    },
-    async authorize() {
-      if (this.pendingAuthorization) {
-        return
+    async endSessionAndPromptOAuth(googleAuthUrl?: string) {
+      try {
+        localStorage.removeItem(local.closeAfterAuth)
+        const uri = googleAuthUrl ?? await this.getGoogleOAuthURL()
+        location.replace(uri)
+      } catch {
+        const fallbackUri = getAuthErrorURL('END_SESSION_FALLBACK')
+        location.replace(fallbackUri)
       }
+    },
+    async authorizeBeforeContinuing() {
 
-      const url = await this.getURL()
+      if (this.authorizationPromptOpen) return 'Authorization In Progress'
 
-      // handles phones that don't support popups
-      if (!window.open(url, '_blank')) {
-        this.forceAuthorize(url)
-        return
+      this.authorizationPromptOpen = true
+      const url = await this.getGoogleOAuthURL()
+
+      const popupOpened = window.open(url, '_blank')
+      if (!popupOpened) {
+        this.endSessionAndPromptOAuth(url)
+        throw new Error('Could not open authorization window')
       }
 
       localStorage.removeItem(local.googleOAuthAccessToken)
       localStorage.removeItem(local.googleOAuthCode)
       localStorage.setItem(local.closeAfterAuth, 'true')
 
-      this.pendingAuthorization = new Promise((resolve) => {
-        const interval = setInterval(async () => {
-          const code = localStorage.getItem(local.googleOAuthCode)
-          if (code) {
-            clearInterval(interval)
-            useDialog().close()
-            await this.userLoginFlow(code)
-            resolve('OAUTH_CODE_RECEIVED')
-            this.pendingAuthorization = null
-          }
-        }, 500)
-      })
+      const pollOAuthCode = setInterval(async () => {
+        const code = localStorage.getItem(local.googleOAuthCode)
+        if (code) {
+          await this.userLoginFlow(code)
+          clearInterval(pollOAuthCode)
+          useDialog().close()
+        }
+      }, 500)
 
-      return useDialog().open<'OAUTH_CODE_RECEIVED'>({
+      await useDialog().open({
         persistent: true,
         title: 'Please Authorize',
         description: 'Please confirm your identity before continuing. Once completed, your session will automatically resume without any further action required.',
         buttons: [{
           text: 'Sign In With Google',
           color: 'red',
-          onClick: () => this.forceAuthorize()
+          onClick: () => this.endSessionAndPromptOAuth()
         }]
       })
+
+      this.authorizationPromptOpen = false
+      return 'Authorized'
     }
   }
 })

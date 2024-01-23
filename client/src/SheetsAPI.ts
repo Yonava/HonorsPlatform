@@ -21,7 +21,7 @@ export async function getRange(range: Range): Promise<string[][]> {
     headerRowMemo[range] = data.shift();
     return data;
   } catch {
-    await useAuth().authorize();
+    await useAuth().authorizeBeforeContinuing();
     return getRange(range);
   }
 }
@@ -54,7 +54,7 @@ export async function getRanges(ranges: Range[] = [
       }
     });
   } catch {
-    await useAuth().authorize();
+    await useAuth().authorizeBeforeContinuing();
     await useAuth().pendingAuthorization
     return await getRanges();
   }
@@ -64,7 +64,7 @@ export async function clearByRow(range: Range, row: number) {
   try {
     await axios.delete(`/api/range/${range}/${row}`, requestHeaders());
   } catch {
-    await useAuth().authorize();
+    await useAuth().authorizeBeforeContinuing();
     await clearByRow(range, row);
   }
 }
@@ -74,7 +74,7 @@ export async function clearByRowData(range: Range, data: string[]) {
     await axios.delete(`/api/range/${range}`, { data, ...requestHeaders() });
   } catch (e: any) {
     if (e.response.status === 400) {
-      await useAuth().authorize();
+      await useAuth().authorizeBeforeContinuing();
       await clearByRowData(range, data);
     } else {
       throw e;
@@ -86,7 +86,7 @@ export async function updateByRow(range: Range, row: number, data: string[][]) {
   try {
     await axios.put(`/api/range/${range}/${row}`, data, requestHeaders());
   } catch {
-    await useAuth().authorize();
+    await useAuth().authorizeBeforeContinuing();
     await updateByRow(range, row, data);
   }
 }
@@ -96,7 +96,7 @@ export async function postInRange(range: Range, data: string[][]): Promise<numbe
     const { data: res } = await axios.post(`/api/range/${range}`, data, requestHeaders());
     return res.row;
   } catch {
-    await useAuth().authorize();
+    await useAuth().authorizeBeforeContinuing();
     return await postInRange(range, data);
   }
 }
@@ -112,7 +112,7 @@ export async function replaceRange(range: Range, data: string[][]) {
   try {
     await axios.put(`/api/range/${range}`, data, requestHeaders());
   } catch {
-    await useAuth().authorize();
+    await useAuth().authorizeBeforeContinuing();
     await replaceRange(range, data);
   }
 }
@@ -150,7 +150,7 @@ export async function batchUpdate(data: BatchUpdateData) {
   try {
     await axios.put("/api/batch", data, requestHeaders());
   } catch {
-    await useAuth().authorize();
+    await useAuth().authorizeBeforeContinuing();
     await batchUpdate(data);
   }
 }

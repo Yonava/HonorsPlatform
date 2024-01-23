@@ -33,7 +33,7 @@
         </div>
       </div>
       <v-btn
-        @click="forceAuthorize()"
+        @click="authorize()"
         color="red-darken-2"
         elevation="3"
         class="mb-12"
@@ -86,7 +86,7 @@ const title = computed(() => {
 })
 
 const auth = useAuth()
-const { forceAuthorize, userLoginFlow } = auth
+const { endSessionAndPromptOAuth: authorize, userLoginFlow } = auth
 
 onMounted(async () => {
   // check if google servers have redirected with a code
@@ -105,7 +105,11 @@ onMounted(async () => {
     }
   }
 
-  await userLoginFlow(code)
+  try {
+    await userLoginFlow(code)
+  } catch (e) {
+    console.error('userloginflow error', e)
+  }
 
   router.push({
     name: 'panel'

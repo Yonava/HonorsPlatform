@@ -103,16 +103,14 @@ export const useSocket = defineStore("socket", {
   actions: {
     async connect() {
 
-      if (this.socket?.connected) throw new Error('Socket Already Connected')
+      this.disconnect()
 
       const accessToken = localStorage.getItem(local.googleOAuthAccessToken);
       if (!accessToken) throw new Error('Access Token Must Be Set To Connect To Socket')
 
       const { userLogoutFlow, googleProfile } = useAuth()
 
-      if (!googleProfile) {
-        throw new Error('No google profile found')
-      }
+      if (!googleProfile) throw new Error('Google Profile Must Be Set To Connect To Socket')
 
       const socketUrl = window.location.hostname === 'localhost' ? 'http://localhost:3001' : '/'
       this.socket = io(socketUrl);

@@ -5,7 +5,10 @@
     width="350"
     class="pa-4"
   >
-    <div class="d-flex">
+    <div
+      class="d-flex"
+      style="height: 48px;"
+    >
       <ActiveAccounts />
       <v-spacer></v-spacer>
       <Announcements />

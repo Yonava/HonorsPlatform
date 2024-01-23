@@ -44,3 +44,5 @@ export function getFacultyEmail(name: string) {
 export function sendEmail(email: string) {
   window.open(`mailto:${email}`)
 }
+
+const email = getStudentEmail('John Doe');

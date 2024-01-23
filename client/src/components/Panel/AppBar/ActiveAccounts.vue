@@ -1,32 +1,25 @@
 <template>
   <div
-    class="d-flex align-center mr-2"
-    :style="{
-      transform: `translateX(${(getUniqueConnectedSockets.length - 1) * 25}px)`,
-    }"
+    :class="`d-flex justify-start ${reversed ? 'flex-row-reverse' : ''}`"
+    style="position: relative; height: 100%;"
   >
     <div
       v-for="(account, i) in getUniqueConnectedSockets"
       @click="profileClicked(account)"
       :key="account.id"
       :style="{
-        width: xs ? '50px' : '40px',
-        height: xs ? '50px' : '40px',
-        borderRadius: '50%',
-        background: 'rgb(0, 0, 0)',
-        transform: `translateX(${i * -25}px)`,
+        width: '100%',
+        height: '100%',
+        transform: `translateX(${i * 80 * (reversed ? 1 : -1)}%)`,
         border: '2px solid rgba(255, 255, 255, 1)',
         cursor: 'pointer',
+        borderRadius: '50%',
+        boxShadow: '0 0 10px rgba(0, 0, 0, 0.5)',
       }"
     >
       <img
+        style="width: 100%; height: 100%; border-radius: 50%;"
         :src="account.picture"
-        :style="{
-          width: '100%',
-          height: '100%',
-          borderRadius: '50%',
-          objectFit: 'cover',
-        }"
       />
       <v-tooltip
         :disabled="smAndDown"
@@ -40,14 +33,21 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue';
 import { storeToRefs } from 'pinia';
+import { useDisplay } from 'vuetify';
 import { panels } from '@panels';
 import { useSheetManager } from '@store/useSheetManager';
 import { useDocumentCache } from '@store/useDocumentCache';
 import { useSocket, type ConnectedSocket } from '@store/useSocket';
-import { useDisplay } from 'vuetify';
 
-const { smAndDown, xs } = useDisplay()
+const props = defineProps<{
+  justify?: 'left' | 'right'
+}>()
+
+const reversed = computed(() => props?.justify === 'right')
+
+const { smAndDown } = useDisplay()
 const { setPanel } = useSheetManager()
 const { getUniqueConnectedSockets, focusData } = storeToRefs(useSocket())
 
