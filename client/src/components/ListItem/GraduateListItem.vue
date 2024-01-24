@@ -50,7 +50,7 @@
 <script setup lang="ts">
 import { Graduate } from '../../SheetTypes'
 import { computed } from 'vue'
-import { emailValidator, phoneValidator } from '../../EmailUtilities'
+import { emailValidator, phoneValidator } from '@utils/emails'
 import { useSheetManager } from '../../store/useSheetManager'
 import {
   LIFrame,

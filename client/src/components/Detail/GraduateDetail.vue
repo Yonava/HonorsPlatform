@@ -61,15 +61,12 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
 import IDInput from "./Helper/IDInput.vue";
 import DetailFrame from "./Helper/DetailFrame.vue";
 import DetailHeader from "./Helper/DetailHeader.vue";
 import DetailInput from "./Helper/DetailInput.vue";
-import { computed } from "vue";
-import {
-  emailValidator,
-  phoneValidator,
-} from "../../EmailUtilities";
+import { emailValidator, phoneValidator } from "@utils/emails";
 import { studentIdRule } from "../../StudentTools";
 import type { Graduate } from "../../SheetTypes";
 import { useSheetManager } from "@store/useSheetManager";
@@ -77,7 +74,7 @@ import { useMoveItem } from "../../MoveItems";
 import { storeToRefs } from "pinia";
 
 const sheetManager = useSheetManager();
-const { getActivePanel, readOnlyMode } = storeToRefs(sheetManager);
+const { readOnlyMode } = storeToRefs(sheetManager);
 
 const props = defineProps<{
   item: Graduate;

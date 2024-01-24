@@ -156,16 +156,16 @@
 </template>
 
 <script setup lang="ts">
-import { SheetItem } from '../../SheetTypes'
-import { emailValidator, sendEmail } from '../../EmailUtilities'
-import { useSheetManager } from '../../store/useSheetManager'
-import { useDocumentCache } from '../../store/useDocumentCache'
-import { useDisplay } from 'vuetify'
 import { ref, computed } from 'vue'
-import { useStudentMatcher } from '../../StudentMatcher'
-import { getPanel, PanelName } from '../../Panels'
+import { useDisplay } from 'vuetify'
 import { storeToRefs } from 'pinia'
-import { useSocket } from '../../store/useSocket'
+import { getPanel, PanelName } from '@panels'
+import { emailValidator, sendEmail } from '@utils/emails'
+import { useSheetManager } from '@store/useSheetManager'
+import { useDocumentCache } from '@store/useDocumentCache'
+import { useSocket } from '@store/useSocket'
+import { SheetItem } from '../../SheetTypes'
+import { useStudentMatcher } from '../../StudentMatcher'
 import { LIBottomCorner } from './ListItemParts/ListItemExports'
 
 type CornerData = {

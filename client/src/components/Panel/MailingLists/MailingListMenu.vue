@@ -63,13 +63,13 @@ import { useStorage } from '@vueuse/core';
 import { useDisplay } from 'vuetify';
 import { useDocumentCache } from '@store/useDocumentCache';
 import { useDialog } from '@store/useDialog';
+import { emailValidator } from '@utils/emails';
 import { panels } from '@panels';
 import { local } from '@locals';
 import MailingListBuilder from './MailingListBuilder.vue';
 import MailingListEditor from './MailingListEditor.vue';
 import type { MailingList } from './MailingListAudiences';
 import MailingListMenu from './MailingListMenu.vue';
-import { emailValidator } from '../../../EmailUtilities';
 
 const { Students, Graduates } = useDocumentCache()
 

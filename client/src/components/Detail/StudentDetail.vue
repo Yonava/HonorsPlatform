@@ -180,7 +180,7 @@ import {
   emailValidator,
   getStudentEmail,
   sendEmail,
-} from "../../EmailUtilities";
+} from "@utils/emails";
 import { getPanel } from "../../Panels";
 import {
   yearOptions,

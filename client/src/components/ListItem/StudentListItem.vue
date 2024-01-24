@@ -54,7 +54,7 @@
 import { computed } from 'vue'
 import { Student } from '../../SheetTypes'
 import { athleticOptions, statusOptions } from '../../StudentTools'
-import { emailValidator } from '../../EmailUtilities'
+import { emailValidator } from '@utils/emails'
 import {
   LIFrame,
   LIIcon,

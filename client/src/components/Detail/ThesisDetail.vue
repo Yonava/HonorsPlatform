@@ -128,10 +128,7 @@ import { useInstructorAutoComplete } from '../../InstructorAutoComplete'
 import type { Thesis } from '../../SheetTypes'
 import { getPanel } from '../../Panels'
 import { getCurrentTerm, termValidator } from '../../TermValidator'
-import {
-  emailValidator,
-  getFacultyEmail,
-} from '../../EmailUtilities'
+import { emailValidator, getFacultyEmail } from '@utils/emails'
 import { useSheetManager } from '../../store/useSheetManager'
 import { useDocumentCache } from '../../store/useDocumentCache'
 import { useDialog } from '../../store/useDialog'
