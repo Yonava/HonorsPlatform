@@ -118,7 +118,18 @@ const showActions = (list: MailingList) => {
   return isDefaultList ? false : hoveredMailingListId.value === list.id
 }
 
+const removeDeletedItemsFromList = (list: MailingList) => ({
+  ...list,
+  recipientSysIds: list.recipientSysIds.filter(sysId => {
+    const student = Students.list.find(s => s.sysId === sysId)
+    const graduate = Graduates.list.find(s => s.sysId === sysId)
+    return !!student || !!graduate
+  })
+})
+
 const storedMailingLists = useStorage<MailingList[]>(local.mailingLists, [])
+
+storedMailingLists.value = storedMailingLists.value.map(removeDeletedItemsFromList)
 
 const mailingLists = computed(() => {
   return [
@@ -194,7 +205,7 @@ const composeEmail = (list: MailingList) => window.open(`mailto:${emailString(li
 const emailAddressesCopied = ref(false)
 
 const actions = ref([
-   {
+  {
     icon: computed(() => emailAddressesCopied.value ? 'mdi-check' : 'mdi-content-copy'),
     tooltip: 'Copy Email Addresses',
     onClick: copyEmailAddresses

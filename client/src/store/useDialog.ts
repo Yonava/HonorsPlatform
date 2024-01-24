@@ -117,11 +117,7 @@ export const useDialog = defineStore("dialog", {
     setPanelCover(action: 'open' | 'close', panelObject?: Panel) {
       const { getActivePanel } = useSheetManager();
       const panel = panelObject ?? getActivePanel;
-      if (action === 'open') {
-        this.panelCover[panel.title.plural] = defaultPanelCover(true);
-      } else if (action === 'close') {
-        this.panelCover[panel.title.plural] =  defaultPanelCover();
-      }
+      this.panelCover[panel.title.plural] = defaultPanelCover(action === 'open');
     },
     async open<T = DialogCloseResolutions>(options: OpenOptions) {
 
@@ -141,8 +137,6 @@ export const useDialog = defineStore("dialog", {
         promise.resolve = resolve;
         promise.reject = reject;
       })
-
-      // i need access to resolve and reject in this scope
 
       const newInstance = {
         persistent,

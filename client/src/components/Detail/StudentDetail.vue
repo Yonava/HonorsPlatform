@@ -10,7 +10,7 @@
         >
           <IDInput
             :item="student"
-            :rules="[(v) => studentIdRule(v, student.sysId) || 'Invalid ID']"
+            :rules="[(v: string) => studentIdRule(v, student.sysId) || 'Invalid ID']"
           />
         </DetailHeader>
 
@@ -167,8 +167,15 @@
   </div>
 </template>
 
-
 <script setup lang="ts">
+import { ref, computed } from 'vue'
+import { storeToRefs } from "pinia";
+import { useDisplay } from "vuetify";
+import { useSheetManager } from "@store/useSheetManager";
+import { useDocumentCache } from "@store/useDocumentCache";
+import { useUpdateManager } from "@store/useUpdateManager";
+import { emailValidator, getStudentEmail } from "@utils/emails";
+import { getPanel } from "@panels";
 import InputCoupler from "./Helper/InputCoupler.vue";
 import IDInput from "./Helper/IDInput.vue";
 import ButtonInput from "./Helper/ButtonInput.vue";
@@ -177,26 +184,14 @@ import DetailHeader from "./Helper/DetailHeader.vue";
 import DetailInput from "./Helper/DetailInput.vue";
 import AddStudentNote from "./Helper/AddStudentNote.vue";
 import {
-  emailValidator,
-  getStudentEmail,
-  sendEmail,
-} from "@utils/emails";
-import { getPanel } from "../../Panels";
-import {
   yearOptions,
   statusOptions,
   athleticOptions,
   studentIdRule,
 } from "../../StudentTools";
-import { useSheetManager } from "../../store/useSheetManager";
-import { useDocumentCache } from "../../store/useDocumentCache";
-import { ref, computed } from 'vue'
 import type { Student } from '../../SheetTypes'
 import { useMoveItem } from '../../MoveItems'
-import { storeToRefs } from "pinia";
-import { useDisplay } from "vuetify/lib/framework.mjs";
 import { useBroadcastThroughSocket } from "../../TrackItemForUpdate";
-import { useUpdateManager } from "../../store/useUpdateManager";
 
 const { smAndDown } = useDisplay();
 

@@ -41,8 +41,8 @@ export const sortOptions = {
       prop: 'year',
       tooltip: 'Sort by class year',
       icon: {
-        asc: 'mdi-calendar-import',
-        desc: 'mdi-calendar-export'
+        asc: 'mdi-calendar-export',
+        desc: 'mdi-calendar-import'
       },
       func: (a: Student, b: Student) => {
         const yearMap: { [key: string]: number } = {
