@@ -1,4 +1,18 @@
-# Current Version: prerelease 0.91
+# Current Version: prerelease 0.92
+
+### prerelease 0.92 (Jan. 24)
+- Feature / Mailing Lists: Build and store custom mailing lists with emails of students or grads
+- Improvement / Moved Build Registrar List to popover button on BottomLeftActions
+- Compose Mass Email and Build Registrar List routes removed
+- Created dirs for composables + utils, and added route aliases for import statements
+- Added tooltips to all BottomLeftActions
+- Changed the style of the item number display in PanelTitle
+- Renamed useAuth APIs "authorize" -> "authorizeBeforeContinuing", "forceAuthorize" -> "endSessionAndPromptOAuth", "getURL" -> "getGoogleOAuthURL" + more
+- New ServerError "END_SESSION_FALLBACK" if endSessionAndPromptOAuth, formerly forceAuthorize, fails
+- Revamped useDialog to be promise based and rewrote warn dialog utility 
+- Added InfoBtn component for inline tooltips
+- Added icons and tooltips to additional tools
+- Broke up AppBar into several smaller components, placing them in new Panel/AppBar dir
 
 ### prerelease 0.91 (Aug. 27)
 - Feature / Better Updates: Updates now go through the useUpdateManager pinia store instead of TrackItemForUpdate. New batch update endpoints mean previous full row mapping methodology has been replaced with precise cell updates for better audit trails on Google Sheets
