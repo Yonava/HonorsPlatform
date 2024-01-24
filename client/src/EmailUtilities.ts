@@ -1,48 +1,36 @@
-/*
-  This file contains utility functions for
-  generating and validating SNHU email addresses.
-*/
+
+type FirstName<T extends string> = T extends `${infer F} ${infer _}` ? F : T;
+type FirstInitial<T extends string> = T extends `${infer F}${infer _}` ? F : T;
+type LastName<T extends string> = T extends `${infer _} ${infer L}` ? LastName<L> : T;
+
 export function emailValidator(email: string) {
-  if (!email.trim()) {
-    return true;
-  }
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+  const pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  return email.trim() ? pattern.test(email) : true
 }
 
 export function phoneValidator(phone: string) {
-  if (!phone.trim()) {
-    return true;
-  }
-  return /^(\+?1\s?)?(\(\d{3}\)|\d{3})[\s.-]?\d{3}[\s.-]?\d{4}$/.test(phone)
+  const pattern = /^(\+?1\s?)?(\(\d{3}\)|\d{3})[\s.-]?\d{3}[\s.-]?\d{4}$/
+  return phone.trim() ? pattern.test(phone) : true
 }
 
-function sanitizeName(name: string) {
-  const fullName = name.split(' ').map(name => name.trim().toLowerCase());
-
-  const firstName = fullName[0];
-  const lastName = fullName[fullName.length - 1];
-
+function sanitizeName<T extends string>(name: T) {
+  const fullName = name.split(' ').map(n => n.toLowerCase());
+  const firstName = fullName.at(0);
+  const lastName = fullName.at(-1);
   return [firstName, lastName];
 }
 
-export function getStudentEmail(name: string) {
-  const [firstName, lastName] = sanitizeName(name);
-  if (!(firstName && lastName)) {
-    return '';
-  }
-  return `${firstName}.${lastName}@snhu.edu`;
+export function getStudentEmail<T extends string, F extends FirstName<T>, L extends LastName<T>>(name: T) {
+  const [first, last] = sanitizeName(name) as [Lowercase<F>, Lowercase<L>];
+  return `${first}.${last}@snhu.edu` as const;
 }
 
-export function getFacultyEmail(name: string) {
-  const [firstName, lastName] = sanitizeName(name);
-  if (!(firstName && lastName)) {
-    return '';
-  }
-  return `${firstName[0]}.${lastName}@snhu.edu`;
+export function getFacultyEmail<T extends string, F extends FirstName<T>, L extends LastName<T>>(name: T) {
+  const [first, last] = sanitizeName(name) as [Lowercase<F>, Lowercase<L>];
+  const firstInitial = first[0] as FirstInitial<typeof first>;
+  return `${firstInitial}.${last}@snhu.edu` as const;
 }
 
 export function sendEmail(email: string) {
   window.open(`mailto:${email}`)
 }
-
-const email = getStudentEmail('John Doe');
