@@ -1,14 +1,13 @@
-import { defineStore } from "pinia";
-import { getRange, clearByRow, postInRange, getRanges } from '../SheetsAPI';
+import { defineStore, storeToRefs } from "pinia";
 import { panels, Panel, PanelName, getPanel } from "@panels";
-import * as types from "../SheetTypes";
-import { useSheetManager } from "./useSheetManager";
+import { useSheetManager } from "@store/useSheetManager";
+import { useSocket } from "@store/useSocket";
+import { useSyncState } from "@store/useSyncState";
+import { useDialog } from "@store/useDialog";
 import warn from "@utils/Warn";
-import { useSyncState } from "./useSyncState";
-import { storeToRefs } from "pinia";
+import { getRange, clearByRow, postInRange, getRanges } from '../SheetsAPI';
+import * as types from "../SheetTypes";
 import { setSelectedItem } from '../components/Panel/SetSelectedItem'
-import { useSocket } from "./useSocket";
-import { useDialog } from "./useDialog";
 
 type GetAllDocuments = {
   showLoading?: boolean;
@@ -78,7 +77,7 @@ type MoveItemBetweenListsCache = {
   newPanelName: PanelName;
 }
 
-type PanelState<T> = {
+type PanelState<T extends types.SheetItem> = {
   list: T[];
   selected: T[];
 }
@@ -115,6 +114,25 @@ export const useDocumentCache = defineStore("documentCache", {
     Announcements: [] as types.Announcement[],
   }),
   getters: {
+    allSheetItems: (state) => {
+      const panelKeys = Object.keys(panels) as (keyof typeof panels)[];
+      const allItems = [];
+      for (const panelKey of panelKeys) {
+        const panel = panels[panelKey];
+        allItems.push(...state[panel.sheetRange].list);
+      }
+      return allItems;
+    },
+    getPanelNameFromItemSysId: (state) => (sysId: string) => {
+      const panelKeys = Object.keys(panels) as (keyof typeof panels)[];
+      for (const panelKey of panelKeys) {
+        const panel = panels[panelKey];
+        const item = state[panel.sheetRange].list.find((item) => item.sysId === sysId);
+        if (item) {
+          return panelKey;
+        }
+      }
+    },
     itemPostedToSheet: (state) => (item: types.SheetItem) => {
       return typeof item.row === "number";
     },
@@ -122,9 +140,9 @@ export const useDocumentCache = defineStore("documentCache", {
       return state.Announcements;
     },
     getItems: (state) => (panelName?: PanelName) => {
-      const { panel: activePanel } = useSheetManager();
-      const actualPanelName = panelName ?? activePanel.panelName;
-      const panel = panels[actualPanelName];
+      // @ts-expect-error
+      if (!panelName) return state.allSheetItems;
+      const panel = panels[panelName];
       return state[panel.sheetRange].list;
     },
     getSelectedItems: (state) => (panelObject?: Panel) => {
@@ -133,12 +151,10 @@ export const useDocumentCache = defineStore("documentCache", {
       return state[panel.sheetRange].selected;
     },
     getItemBySysId: (state) => <T extends PanelName>(sysId: string, panelName?: T) => {
-      const { panel: activePanel } = useSheetManager();
-      if (panelName) {
-        const panel = getPanel(panelName);
-        return state[panel.sheetRange].list.find((item) => item.sysId === sysId);
-      }
-      return state[activePanel.sheetRange].list.find((item) => item.sysId === sysId);
+      // @ts-expect-error
+      if (!panelName) return state.allSheetItems.find((item) => item.sysId === sysId) as types.SheetItem;
+      const { sheetRange } = getPanel(panelName);
+      return state[sheetRange].list.find((item) => item.sysId === sysId);
     },
     getItemByKeyValue: (state) => (options: GetItemByKeyValue = {}) => {
       const {
@@ -451,7 +467,6 @@ export const useDocumentCache = defineStore("documentCache", {
     },
     deleteItemCache(sysId: string, panelName?: PanelName) {
       const {
-        panel: activePanel,
         focusedEmbeddedItem,
         setFocusedEmbeddedItem
       } = useSheetManager();
@@ -460,18 +475,30 @@ export const useDocumentCache = defineStore("documentCache", {
         setFocusedEmbeddedItem(null);
       }
 
-      const actualPanelName = panelName ?? activePanel.panelName;
-      const panel = panels[actualPanelName];
+      panelName ??= this.getPanelNameFromItemSysId(sysId);
 
-      const indexOfItemToDelete = this[panel.sheetRange].list.findIndex(item => item.sysId === sysId);
-
-      if (indexOfItemToDelete === -1) {
+      if (!panelName) {
+        console.error("useDocumentCache.deleteItemCache: Item doesn't appear to belong to any panel");
         return
       }
 
-      this[panel.sheetRange].list.splice(indexOfItemToDelete, 1);
+      const { sheetRange } = panels[panelName]
 
-      const itemToDeleteInSelected = this[panel.sheetRange].selected.find(item => item.sysId === sysId);
+      if (!sheetRange) {
+        console.error("useDocumentCache.deleteItemCache: No sheetRange found for item");
+        return
+      }
+
+      const indexOfItemToDelete = this[sheetRange].list.findIndex(item => item.sysId === sysId);
+
+      if (indexOfItemToDelete === -1) {
+        console.error("useDocumentCache.deleteItemCache: Item not found in cache");
+        return
+      }
+
+      this[sheetRange].list.splice(indexOfItemToDelete, 1);
+
+      const itemToDeleteInSelected = this[sheetRange].selected.find(item => item.sysId === sysId);
 
       if (!itemToDeleteInSelected) {
         return
@@ -479,7 +506,7 @@ export const useDocumentCache = defineStore("documentCache", {
 
       this.removeSelectedItem({
         item: itemToDeleteInSelected,
-        panel
+        panel: panels[panelName]
       });
     },
     async deleteItem(options: DeleteItem) {
@@ -508,8 +535,9 @@ export const useDocumentCache = defineStore("documentCache", {
 
       const panel = panels[panelName];
 
+      // @ts-expect-error
       let title = item[panel.properties.title]
-      title ||= panel.title.singular
+      title ??= panel.title.singular
 
       if (showWarning) {
         try {
@@ -557,8 +585,8 @@ export const useDocumentCache = defineStore("documentCache", {
       if (panelName === getActivePanel.panelName) {
         activateListTransition();
       }
-      const panel = panels[panelName];
-      this[panel.sheetRange].list.unshift(item);
+      const { sheetRange } = panels[panelName];
+      this[sheetRange].list.unshift(item);
     },
     async addItem(options: AddItem = {}): Promise<types.SheetItem> {
       const {
@@ -609,16 +637,16 @@ export const useDocumentCache = defineStore("documentCache", {
 
       return newItem;
     },
-    updateItemCache(item: types.SheetItem, panelName: PanelName) {
-      const panel = panels[panelName];
-      const itemInList = this[panel.sheetRange].list.find((listItem: types.SheetItem) => listItem.sysId === item.sysId);
-      if (itemInList) {
-        Object.assign(itemInList, item);
-      } else {
-        console.error("updateItemCache: Item not in list");
+    updateItemCache<T extends types.SheetItem>(newItem: T, panelName?: PanelName) {
+      const cachedItem = this.getItemBySysId(newItem.sysId, panelName);
+
+      if (!cachedItem) {
+        console.error("updateItemCache: Item not found in cache");
+        return;
       }
 
-      return itemInList;
+      Object.assign(cachedItem, newItem);
+      return newItem;
     },
     moveItemBetweenListsCache({ item, oldPanelName, newPanelName }: MoveItemBetweenListsCache) {
       this.addItemCache(item, newPanelName);

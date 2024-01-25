@@ -5,10 +5,7 @@
         :item="grad"
         placeholder="Name"
       >
-        <IDInput
-          :item="grad"
-          :rules="[(v: string) => studentIdRule(v, grad.sysId) || 'Invalid ID']"
-        />
+        <IDInput :item="grad" />
       </DetailHeader>
 
       <DetailInput
@@ -69,7 +66,6 @@ import IDInput from "./Helper/IDInput.vue";
 import DetailFrame from "./Helper/DetailFrame.vue";
 import DetailHeader from "./Helper/DetailHeader.vue";
 import DetailInput from "./Helper/DetailInput.vue";
-import { studentIdRule } from "../../StudentTools";
 import type { Graduate } from "../../SheetTypes";
 import { useMoveItem } from "../../MoveItems";
 

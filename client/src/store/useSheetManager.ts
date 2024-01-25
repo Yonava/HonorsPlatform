@@ -77,10 +77,10 @@ export const useSheetManager = defineStore('sheetManager', {
     getPinnedItem: (state) => (item: SheetItem) => {
       return state.pinnedSysIds.find((sysId) => item.sysId === sysId)
     },
-    getFocusedItem: (state): SheetItem | null => {
+    getFocusedItem: (state) => {
       const documents = useDocumentCache();
       const { selected: selectedItems } = documents[state.panel.sheetRange];
-      return selectedItems.find((item) => item.sysId === state.focusedItemSysId)
+      return selectedItems.find((item) => item.sysId === state.focusedItemSysId) as SheetItem | undefined;
     },
   },
   actions: {

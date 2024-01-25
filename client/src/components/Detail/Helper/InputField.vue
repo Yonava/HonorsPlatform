@@ -22,7 +22,6 @@
         v-if="activeInput.variant === 'string'"
         v-model="content"
         v-bind="$attrs"
-        @input="input"
         :prepend-inner-icon="activeIcon"
         :readonly="readOnlyMode"
         :variant="inputVariant"
@@ -34,7 +33,6 @@
         v-else-if="activeInput.variant === 'number'"
         v-model.number="content"
         v-bind="$attrs"
-        @input="input"
         :prepend-inner-icon="activeIcon"
         :readonly="readOnlyMode"
         :variant="inputVariant"
@@ -47,7 +45,6 @@
       v-else-if="activeInput.type === 'autocomplete'"
       v-model="content"
       v-bind="$attrs"
-      @update:model-value="input"
       :items="activeInput.items"
       :prepend-inner-icon="activeIcon"
       :readonly="readOnlyMode"
@@ -58,7 +55,6 @@
       v-else-if="activeInput.type === 'select'"
       v-model="content"
       v-bind="$attrs"
-      @update:model-value="input"
       :items="activeInput.items"
       :prepend-inner-icon="activeIcon"
       :readonly="readOnlyMode"
@@ -69,18 +65,16 @@
       v-else-if="activeInput.type === 'textarea'"
       v-model="content"
       v-bind="$attrs"
-      @input="input"
-      prepend-inner-icon="mdi-note"
       :readonly="readOnlyMode"
-      auto-grow
       :variant="inputVariant"
+      prepend-inner-icon="mdi-note"
+      auto-grow
     ></v-textarea>
 
     <input
       v-else-if="activeInput.type === 'title'"
       v-model="content"
       v-bind="$attrs"
-      @input="input"
       :readonly="readOnlyMode"
       type="text"
       class="title"
@@ -90,7 +84,6 @@
       v-else-if="activeInput.type === 'title-variant'"
       v-model="content"
       v-bind="$attrs"
-      @input="input"
       :readonly="readOnlyMode"
       type="text"
       class="title-variant mt-2"
@@ -99,28 +92,29 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import ButtonInput from './ButtonInput.vue'
+<script setup lang="ts" generic="T extends SheetItem">
 import { computed } from 'vue'
-import { useBroadcastThroughSocket } from '../../../TrackItemForUpdate'
-import { useSheetManager } from '../../../store/useSheetManager';
 import { storeToRefs } from 'pinia';
+import { useSheetManager } from '@store/useSheetManager';
+import { useUpdateManager } from '@store/useUpdateManager';
+import { broadcastPropUpdate } from '@utils/socketBroadcastWrappers'
+import ButtonInput from './ButtonInput.vue'
 import type { SheetItem } from '../../../SheetTypes'
-import { useUpdateManager } from '../../../store/useUpdateManager';
 
 const { readOnlyMode } = storeToRefs(useSheetManager())
 
 type VuetifyInputVariant =
-  'outlined' |
-  'underlined' |
-  'solo' |
-  'filled' |
-  'plain' |
-  undefined
+  | 'underlined'
+  | 'outlined'
+  | 'filled'
+  | 'solo'
+  | 'solo-inverted'
+  | 'solo-filled'
+  | 'plain'
 
 const props = defineProps<{
-  prop: string,
-  item: SheetItem
+  prop: keyof T,
+  item: T,
   inputMedium: 'DETAIL' | 'EMBEDDED',
   inputVariant?: VuetifyInputVariant,
   width?: string,
@@ -132,11 +126,11 @@ const props = defineProps<{
     } |
     {
       type: 'autocomplete',
-      items: string[],
+      items: T[keyof T][],
     } |
     {
       type: 'select',
-      items: string[] | readonly string[],
+      items: T[keyof T][],
     } |
     {
       type: 'textarea',
@@ -149,22 +143,18 @@ const props = defineProps<{
     }
   button?: {
     condition: boolean,
-    newPropValue: () => string | number | boolean,
+    newPropValue: () => T[keyof T],
     text: string,
     disableCondition?: boolean,
   },
 }>()
 
-const { broadcast } = useBroadcastThroughSocket(props.inputMedium)
+const broadcast = broadcastPropUpdate(props.item)
 
 const { trackItemForUpdate } = useUpdateManager()
 
-const input = () => {
-  broadcast(props.prop)
-}
-
 const buttonClicked = () => {
-  if (!props.item) {
+  if (!props.item || !props.button) {
     return
   }
 
@@ -173,8 +163,7 @@ const buttonClicked = () => {
     panelName: props.inputMedium === 'DETAIL' ? useSheetManager().getActivePanel.panelName : useSheetManager().getActiveEmbeddedPanel.panelName
   })
 
-  // @ts-ignore
-  props.item[props.prop] = props.button?.newPropValue()
+  props.item[props.prop] = props.button.newPropValue()
   broadcast(props.prop)
 }
 
@@ -187,31 +176,28 @@ const activeInput = computed(() => {
 })
 
 const activeIcon = computed(() => {
-  const iconProp = props.icon ?? undefined
-  return iconProp ? `mdi-${iconProp}` : undefined
+  if (!props.icon) return
+  return `mdi-${props.icon}` as const
 })
 
 const content = computed({
-  get: () => {
-    if (!props.item) {
-      return ""
-    }
-    // @ts-ignore
+  get() {
     return props.item[props.prop]
   },
-  set: (v: string) => {
+  set(v) {
+    const {
+      getActivePanel: panel,
+      getActiveEmbeddedPanel: embeddedPanel
+    } = useSheetManager()
 
-    if (!props.item) {
-      return
-    }
-
-    trackItemForUpdate({
+    const trackOptions = {
       item: props.item,
-      panelName: props.inputMedium === 'DETAIL' ? useSheetManager().getActivePanel.panelName : useSheetManager().getActiveEmbeddedPanel.panelName
-    })
+      panelName: props.inputMedium === 'DETAIL' ? panel.panelName : embeddedPanel.panelName
+    } as const
 
-    // @ts-ignore
+    trackItemForUpdate(trackOptions)
     props.item[props.prop] = v
+    broadcast(props.prop)
   }
 })
 </script>

@@ -18,7 +18,7 @@
         />
 
         <EmbeddedDetail
-          v-if="getActivePanel.embedded"
+          v-if="'embedded' in getActivePanel"
           :item="item"
         />
 

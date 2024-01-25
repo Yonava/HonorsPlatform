@@ -1,12 +1,12 @@
 import { defineStore } from "pinia";
-import { local } from "../Locals";
+import { local } from "@locals";
+import { type PanelName, panels } from "@panels";
 import { io } from "socket.io-client";
-import { useAuth, type GoogleProfile } from "./useAuth";
-import { useSyncState } from "./useSyncState";
-import { useSheetManager } from "./useSheetManager";
-import { useDocumentCache } from "./useDocumentCache";
-import { useDialog } from "./useDialog";
-import { type PanelName, panels } from "../Panels";
+import { useAuth, type GoogleProfile } from "@store/useAuth";
+import { useSyncState } from "@store/useSyncState";
+import { useSheetManager } from "@store/useSheetManager";
+import { useDocumentCache } from "@store/useDocumentCache";
+import { useDialog } from "@store/useDialog";
 import type { SheetItem, Announcement } from "../SheetTypes";
 
 type ActionPayload =
@@ -20,13 +20,13 @@ type ActionPayload =
   action: 'delete',
   payload: {
     sysId: string,
-    panelName: PanelName,
+    panelName?: PanelName,
   }
 } | {
   action: 'update',
   payload: {
     item: SheetItem,
-    panelName: PanelName,
+    panelName?: PanelName,
   }
 } | {
   action: 'prop-update',
@@ -34,7 +34,7 @@ type ActionPayload =
     sysId: string,
     prop: string | number | symbol,
     value: any,
-    panelName: PanelName,
+    panelName?: PanelName,
   }
 } | {
   action: 'refresh',

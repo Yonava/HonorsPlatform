@@ -6,6 +6,7 @@ import { batchUpdate, postInRange, type BatchUpdateData } from "../SheetsAPI";
 import { mappers } from "../DataMappers";
 import { useSyncState } from "./useSyncState";
 import { useSocket } from "./useSocket";
+import { useSheetManager } from "./useSheetManager";
 
 type UpdateItem = {
   // key is the sysId
@@ -16,9 +17,9 @@ type UpdateItem = {
   }
 }
 
-type UpdateProperty = {
-  item: SheetItem,
-  panelName: PanelName
+type TrackItemForUpdateOptions<T extends SheetItem> = {
+  item?: T | undefined,
+  panelName?: PanelName
 }
 
 // TODO: replace with unicode method
@@ -73,7 +74,18 @@ export const useUpdateManager = defineStore('updateManager', {
         this.executeGoogleSheetsUpdate()
       }, this.debounceMs)
     },
-    trackItemForUpdate({ item, panelName }: UpdateProperty) {
+    trackItemForUpdate<T extends SheetItem>(options: TrackItemForUpdateOptions<T> = {}) {
+
+      const { getFocusedItem, getActivePanel } = useSheetManager()
+      const {
+        item = getFocusedItem as T,
+        panelName = getActivePanel.panelName
+      } = options
+
+      if (!item) {
+        console.warn('No item to track for update')
+        return
+      }
 
       const { sysId } = item
 
@@ -138,7 +150,13 @@ export const useUpdateManager = defineStore('updateManager', {
 
       useSyncState().$reset()
     },
-    async postItem({ item, panelName }: UpdateProperty) {
+    async postItem<T extends SheetItem>(options: TrackItemForUpdateOptions<T> = {}) {
+
+      const { getFocusedItem, getActivePanel } = useSheetManager()
+      const {
+        item = getFocusedItem as T,
+        panelName = getActivePanel.panelName
+      } = options
 
       const { sheetRange } = panels[panelName]
       const { unmap } = mappers[panelName]

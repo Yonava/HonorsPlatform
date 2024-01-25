@@ -8,10 +8,7 @@
           :item="student"
           :placeholder="`${getActivePanel.title.singular} Name`"
         >
-          <IDInput
-            :item="student"
-            :rules="[(v: string) => studentIdRule(v, student.sysId) || 'Invalid ID']"
-          />
+          <IDInput :item="student" />
         </DetailHeader>
 
         <DetailInput
@@ -97,7 +94,7 @@
 
       <template #notes-button>
 
-        <ButtonInput @click="showAddNote = true">
+        <ButtonInput @click="addNote">
           Add Meeting Note
         </ButtonInput>
 
@@ -158,11 +155,11 @@
 
     </DetailFrame>
 
-    <AddStudentNote
+    <!-- <AddStudentNote
       @success="addStudentNote($event)"
       @close="showAddNote = false"
       :show="showAddNote"
-    />
+    /> -->
 
   </div>
 </template>
@@ -173,7 +170,7 @@ import { storeToRefs } from "pinia";
 import { useDisplay } from "vuetify";
 import { useSheetManager } from "@store/useSheetManager";
 import { useDocumentCache } from "@store/useDocumentCache";
-import { useUpdateManager } from "@store/useUpdateManager";
+import { useDialog } from "@store/useDialog";
 import { emailInputValidator, getStudentEmail } from "@utils/emails";
 import { getPanel } from "@panels";
 import InputCoupler from "./Helper/InputCoupler.vue";
@@ -187,11 +184,9 @@ import {
   yearOptions,
   statusOptions,
   athleticOptions,
-  studentIdRule,
 } from "../../StudentTools";
 import type { Student } from '../../SheetTypes'
 import { useMoveItem } from '../../MoveItems'
-import { useBroadcastThroughSocket } from "../../TrackItemForUpdate";
 
 const { smAndDown } = useDisplay();
 
@@ -214,8 +209,6 @@ const statusOptionIcon = computed(() => {
 });
 
 const statusOptionLabels = computed(() => statusOptions.map((option) => option.status));
-
-const showAddNote = ref(false);
 
 const thesisPanel = getPanel("THESES");
 const creatingThesis = ref(false);
@@ -255,22 +248,10 @@ const viewThesis = async () => {
   });
 }
 
-const { broadcast } = useBroadcastThroughSocket('DETAIL');
-
-const addStudentNote = (event: { initials: string; note: string, date: string }) => {
-
-  const { trackItemForUpdate } = useUpdateManager();
-  trackItemForUpdate({
-    panelName: getActivePanel.panelName,
-    item: student.value,
-  })
-
-  const { initials, note, date } = event;
-  if (student.value.note) student.value.note += "\n\n";
-  student.value.note += `${initials} (${date}): ${note}`;
-
-  broadcast('note')
-
-  showAddNote.value = false;
-}
+const addNote = () => useDialog().open({
+  component: AddStudentNote,
+  props: {
+    student: student.value,
+  }
+})
 </script>

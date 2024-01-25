@@ -68,7 +68,7 @@
       <v-text-field
         v-model="tempId"
         @keyup.enter="saveId"
-        :rules="props.rules"
+        :rules="rules"
         ref="idInput"
         label="Student ID"
         class="mb-2"
@@ -104,13 +104,18 @@ import { useDisplay } from 'vuetify';
 import { useSheetManager } from '@store/useSheetManager'
 import { useUpdateManager } from '@store/useUpdateManager';
 import { useInputFocus } from '@composables/useInputFocus';
+import { broadcastPropUpdate } from '@utils/socketBroadcastWrappers';
 import ButtonInput from './ButtonInput.vue';
 import type { Student, Graduate } from '../../../SheetTypes'
-import { useBroadcastThroughSocket } from '../../../TrackItemForUpdate';
+import { studentIdRule } from '../../../StudentTools';
 
-const { broadcast } = useBroadcastThroughSocket('DETAIL')
+const props = defineProps<{
+  item: Student | Graduate
+}>()
 
-const idInput = ref<HTMLElement>()
+const broadcast = broadcastPropUpdate(props.item)
+
+const idInput = ref()
 const { focus } = useInputFocus(idInput)
 
 const idDialog = ref(false)
@@ -120,10 +125,8 @@ const { xs } = useDisplay()
 const sheetManager = useSheetManager()
 const { readOnlyMode, getActivePanel } = storeToRefs(sheetManager)
 
-const props = defineProps<{
-  item: Student | Graduate,
-  rules?: any[]
-}>()
+const rules = computed(() => [(v: string) => studentIdRule(v, props.item.sysId)])
+const invalidId = computed(() => rules.value.some(rule => typeof rule(tempId.value) === 'string'))
 
 const saveId = () => {
   if (invalidId.value) return
@@ -146,10 +149,6 @@ const openIdDialog = () => {
   tempId.value = props.item.id
   focus()
 }
-
-const invalidId = computed(() => {
-  return !!props.rules?.some(rule => typeof rule(tempId.value) === 'string')
-})
 </script>
 
 <style scoped>

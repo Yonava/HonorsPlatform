@@ -1,5 +1,6 @@
 import { athleticOptions } from "./StudentTools";
 import type { StatusOption, YearOption } from "./StudentTools";
+import { panels } from "@panels";
 
 export type SheetItem = Module | Graduate | Student | CompletedModule | Thesis | GradEngagement;
 
