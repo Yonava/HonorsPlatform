@@ -70,7 +70,7 @@
             prop="athletics"
             :input="{
               type: smAndDown ? 'select' : 'autocomplete',
-              items: Object.keys(athleticOptions),
+              items: Object.keys(athleticOptions) as (keyof typeof athleticOptions)[],
             }"
             :icon="athleticOptions[student.athletics]"
             label="Athletics"
@@ -149,18 +149,9 @@
           </v-btn>
 
         </InputCoupler>
-
-
       </template>
 
     </DetailFrame>
-
-    <!-- <AddStudentNote
-      @success="addStudentNote($event)"
-      @close="showAddNote = false"
-      :show="showAddNote"
-    /> -->
-
   </div>
 </template>
 

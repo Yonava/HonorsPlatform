@@ -1,8 +1,8 @@
 <template>
   <InputField
     v-bind="$attrs"
-    :prop="prop"
-    :item="item"
+    :prop="props.prop"
+    :item="props.item"
     :icon="icon"
     :input="input"
     :button="button"
@@ -12,7 +12,7 @@
   />
 </template>
 
-<script setup lang="ts">
+<script setup lang="ts" generic="T extends SheetItem, K extends keyof T">
 import InputField from './InputField.vue'
 import type { SheetItem } from '../../../SheetTypes';
 
@@ -22,8 +22,8 @@ const config = {
 } as const
 
 const props = defineProps<{
-  prop: string,
-  item: SheetItem
+  prop: K,
+  item: T,
   icon?: string,
   width?: string,
   input?:
@@ -33,11 +33,11 @@ const props = defineProps<{
     } |
     {
       type: 'autocomplete',
-      items: string[],
+      items: T[K][] | readonly T[K][],
     } |
     {
       type: 'select',
-      items: string[] | readonly string[],
+      items: T[K][] | readonly T[K][],
     } |
     {
       type: 'textarea',
@@ -49,7 +49,7 @@ const props = defineProps<{
     }
   button?: {
     condition: boolean,
-    newPropValue: () => string | number | boolean,
+    newPropValue: () => T[K],
     text: string,
     disableCondition?: boolean,
   }

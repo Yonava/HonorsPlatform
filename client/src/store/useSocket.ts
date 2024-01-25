@@ -330,6 +330,8 @@ export const useSocket = defineStore("socket", {
                   console.error('useAuth: (prop-update) item not found')
                   return
                 }
+
+                // @ts-expect-error
                 item[userAction.payload.prop] = userAction.payload.value
                 break
 

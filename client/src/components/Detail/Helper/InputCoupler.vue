@@ -1,6 +1,6 @@
 <template>
   <div
-    ref="parentDiv"
+    ref="wrapper"
     :class="[
       'd-flex',
       breakup ? 'flex-column' : 'flex-row',
@@ -12,30 +12,26 @@
       alignItems: breakup ? '' : 'end'
     }"
   >
-    <slot
-      v-bind="{
-        brokenUp: breakup
-      }"
-    ></slot>
+    <slot v-bind="{ brokenUp: breakup }"></slot>
   </div>
 </template>
 
 <script setup lang="ts">
-import { useElementSize } from '@vueuse/core'
 import { ref, computed } from 'vue'
-
-const parentDiv = ref<HTMLElement | null>(null)
-const { width } = useElementSize(parentDiv)
+import { useElementSize } from '@vueuse/core'
 
 const props = defineProps<{
   minWidth?: number,
   gap?: string,
 }>()
 
+const wrapper = ref()
+const { width } = useElementSize(wrapper)
+
 const DEFAULTS = {
   minWidth: 400,
   gap: '20px',
-}
+} as const
 
 const minWidth = computed(() => {
   return props.minWidth ?? DEFAULTS.minWidth

@@ -92,7 +92,7 @@
   </div>
 </template>
 
-<script setup lang="ts" generic="T extends SheetItem">
+<script setup lang="ts" generic="T extends SheetItem, K extends keyof T">
 import { computed } from 'vue'
 import { storeToRefs } from 'pinia';
 import { useSheetManager } from '@store/useSheetManager';
@@ -113,7 +113,7 @@ type VuetifyInputVariant =
   | 'plain'
 
 const props = defineProps<{
-  prop: keyof T,
+  prop: K,
   item: T,
   inputMedium: 'DETAIL' | 'EMBEDDED',
   inputVariant?: VuetifyInputVariant,
@@ -126,11 +126,11 @@ const props = defineProps<{
     } |
     {
       type: 'autocomplete',
-      items: T[keyof T][],
+      items: T[K][] | readonly T[K][],
     } |
     {
       type: 'select',
-      items: T[keyof T][],
+      items: T[K][] | readonly T[K][],
     } |
     {
       type: 'textarea',
@@ -143,7 +143,7 @@ const props = defineProps<{
     }
   button?: {
     condition: boolean,
-    newPropValue: () => T[keyof T],
+    newPropValue: () => T[K],
     text: string,
     disableCondition?: boolean,
   },
