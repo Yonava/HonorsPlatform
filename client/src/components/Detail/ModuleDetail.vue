@@ -101,7 +101,7 @@ import { storeToRefs } from 'pinia'
 import { useSheetManager } from '@store/useSheetManager'
 import { getPanel } from '@panels'
 import type { Module } from '../../SheetTypes'
-import { termValidator, getCurrentTerm } from '../../TermValidator'
+import { termValidator, getCurrentTerm } from '../../utils/TermValidator'
 import { useInstructorAutoComplete } from '../../InstructorAutoComplete'
 import { useMoveItem } from '../../MoveItems'
 
@@ -128,4 +128,4 @@ const {
 } = useInstructorAutoComplete(instructor)
 
 const { moveItem, movingItem, panelOnceMoved } = useMoveItem()
-</script>
+</script>../../utils/TermValidator

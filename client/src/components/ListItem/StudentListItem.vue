@@ -21,8 +21,8 @@
 
       <LIIcon
         v-if="item.athletics"
-        :icon="athleticOptions[item.athletics]"
-        :tooltip="`Participates In ${item.athletics}`"
+        :icon="icon"
+        :tooltip="iconTooltip"
       />
 
       <LITitle
@@ -73,6 +73,14 @@ const status = computed(() => {
     tooltip: props.item.activeStatus ? 'Invalid Status' : 'No Status Assigned',
     status: props.item.activeStatus || 'No Status'
   }
+})
+
+const icon = computed(() => {
+  return athleticOptions[props.item.athletics]
+})
+
+const iconTooltip = computed(() => {
+  return `Participates In ${props.item.athletics}`
 })
 
 const emailValid = computed(() => emailValidator(props.item.email))

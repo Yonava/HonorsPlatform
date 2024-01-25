@@ -110,7 +110,6 @@ export const useAuth = defineStore('auth', {
       } catch {
         console.log('Could not connect to socket')
       }
-      console.log('contine')
 
       const timeSinceEpoch = Date.now()
       localStorage.setItem(local.timeOfLastAuth, timeSinceEpoch.toString())

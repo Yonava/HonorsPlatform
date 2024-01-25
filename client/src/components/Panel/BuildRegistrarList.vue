@@ -40,7 +40,7 @@ import { ref, computed, watch } from "vue";
 import { useDocumentCache } from "@store/useDocumentCache";
 import { useAutoFocus } from "@composables/useInputFocus";
 import { replaceRange } from "../../SheetsAPI";
-import { termValidator, getCurrentTerm } from "../../TermValidator";
+import { termValidator, getCurrentTerm } from "../../utils/TermValidator";
 
 const loading = ref(false);
 const success = ref(false);
@@ -113,4 +113,4 @@ watch(success, (val) => {
 watch(userEnteredTerm, () => {
   success.value = false;
 });
-</script>
+</script>../../utils/TermValidator

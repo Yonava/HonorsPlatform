@@ -3,7 +3,7 @@
   the following characters contain the season identifier
 */
 export function termValidator(term: string) {
-  
+
   if (term.length === 0) return true;
 
   const seasonIdentifiers = [
@@ -42,6 +42,10 @@ export function termValidator(term: string) {
   }
 
   return true;
+}
+
+export function termInputValidator() {
+  return [(v: string) => termValidator(v) || 'Potentially Invalid Term']
 }
 
 export function getCurrentTerm() {

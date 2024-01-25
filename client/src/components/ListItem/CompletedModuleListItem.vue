@@ -45,7 +45,7 @@ import { getPanel } from '../../Panels'
 import { useStudentInfo } from './useStudentInfo'
 import { computed } from 'vue'
 import { CompletedModule } from '../../SheetTypes'
-import { termValidator } from '../../TermValidator'
+import { termValidator } from '../../utils/TermValidator'
 import {
   LIFrame,
   LIIcon,
@@ -104,4 +104,4 @@ const student = computed(() => {
   const { studentInfo } = useStudentInfo(props.item.studentSysId)
   return studentInfo.value
 })
-</script>
+</script>../../utils/TermValidator

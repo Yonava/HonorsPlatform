@@ -18,7 +18,7 @@
         v-if="overOneYearInProgress"
         icon="alert"
         color="red"
-        tooltip="Over One Year In Progress"
+        tooltip="DocuSign Created Over A Year Ago"
       />
 
       <LITitle
@@ -54,7 +54,7 @@
 import { useStudentInfo } from './useStudentInfo'
 import { computed } from 'vue'
 import { Module } from '../../SheetTypes'
-import { termValidator } from '../../TermValidator'
+import { termValidator } from '../../utils/TermValidator'
 import {
   LIFrame,
   LIIcon,
@@ -157,4 +157,4 @@ const student = computed(() => {
   const { studentInfo } = useStudentInfo(props.item.studentSysId)
   return studentInfo.value
 })
-</script>
+</script>../../utils/TermValidator

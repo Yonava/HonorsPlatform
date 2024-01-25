@@ -18,7 +18,7 @@
             text: 'Current Term',
             newPropValue: () => getCurrentTerm(),
           }"
-          :rules="[(v) => termValidator(v) || 'Potentially Invalid Term']"
+          :rules="termInputValidator()"
           label="Term"
           icon="calendar"
         />
@@ -126,8 +126,8 @@ import { computed } from 'vue'
 import { useStudentMatcher } from '../../StudentMatcher'
 import { useInstructorAutoComplete } from '../../InstructorAutoComplete'
 import type { Thesis } from '../../SheetTypes'
-import { getPanel } from '../../Panels'
-import { getCurrentTerm, termValidator } from '../../TermValidator'
+import { getPanel } from '@panels'
+import { getCurrentTerm, termValidator, termInputValidator } from '@utils/TermValidator'
 import { emailValidator, getFacultyEmail } from '@utils/emails'
 import { useSheetManager } from '../../store/useSheetManager'
 import { useDocumentCache } from '../../store/useDocumentCache'

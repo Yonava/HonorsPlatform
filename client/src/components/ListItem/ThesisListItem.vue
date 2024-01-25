@@ -46,7 +46,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { Thesis } from '../../SheetTypes'
-import { termValidator } from '../../TermValidator'
+import { termValidator } from '../../utils/TermValidator'
 import { useStudentInfo } from './useStudentInfo'
 import {
   LIFrame,
@@ -108,4 +108,4 @@ const student = computed(() => {
   const { studentInfo } = useStudentInfo(props.item.studentSysId)
   return studentInfo.value
 })
-</script>
+</script>../../utils/TermValidator

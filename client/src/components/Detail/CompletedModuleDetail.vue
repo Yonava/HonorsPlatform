@@ -131,7 +131,7 @@ import { useSheetManager } from '@store/useSheetManager'
 import { useMoveItem } from '../../MoveItems'
 import { computed } from 'vue'
 import { useInstructorAutoComplete } from '../../InstructorAutoComplete'
-import { getCurrentTerm, termValidator } from '../../TermValidator'
+import { getCurrentTerm, termValidator } from '../../utils/TermValidator'
 import { storeToRefs } from 'pinia'
 
 const sheetManager = useSheetManager()
@@ -153,4 +153,4 @@ const {
 } = useInstructorAutoComplete(instructor)
 
 const { moveItem, movingItem, panelOnceMoved } = useMoveItem()
-</script>
+</script>../../utils/TermValidator
