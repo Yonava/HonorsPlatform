@@ -7,14 +7,14 @@
       >
         <IDInput
           :item="grad"
-          :rules="[(v) => studentIdRule(v, grad.sysId) || 'Invalid ID']"
+          :rules="[(v: string) => studentIdRule(v, grad.sysId) || 'Invalid ID']"
         />
       </DetailHeader>
 
       <DetailInput
         :item="grad"
         prop="email"
-        :rules="[(v) => emailValidator(v) || 'Invalid email']"
+        :rules="emailInputValidator()"
         label="Email"
         icon="email"
       />
@@ -22,7 +22,7 @@
       <DetailInput
         :item="grad"
         prop="phone"
-        :rules="[(v) => phoneValidator(v) || 'Invalid phone number']"
+        :rules="phoneInputValidator()"
         label="Phone"
         icon="phone"
       />
@@ -62,16 +62,16 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
+import { storeToRefs } from "pinia";
+import { useSheetManager } from "@store/useSheetManager";
+import { emailInputValidator, phoneInputValidator } from "@utils/emails";
 import IDInput from "./Helper/IDInput.vue";
 import DetailFrame from "./Helper/DetailFrame.vue";
 import DetailHeader from "./Helper/DetailHeader.vue";
 import DetailInput from "./Helper/DetailInput.vue";
-import { emailValidator, phoneValidator } from "@utils/emails";
 import { studentIdRule } from "../../StudentTools";
 import type { Graduate } from "../../SheetTypes";
-import { useSheetManager } from "@store/useSheetManager";
 import { useMoveItem } from "../../MoveItems";
-import { storeToRefs } from "pinia";
 
 const sheetManager = useSheetManager();
 const { readOnlyMode } = storeToRefs(sheetManager);

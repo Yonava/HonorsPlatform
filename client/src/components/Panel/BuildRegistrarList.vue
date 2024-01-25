@@ -4,7 +4,7 @@
     <v-text-field
       v-model="userEnteredTerm"
       @keyup.enter="generateRegistrarList"
-      :rules="[(v) => termValidator(v) || 'Potentially invalid term']"
+      :rules="termInputValidator()"
       ref="termInput"
       variant="outlined"
       label="Term"
@@ -38,16 +38,16 @@
 <script setup lang="ts">
 import { ref, computed, watch } from "vue";
 import { useDocumentCache } from "@store/useDocumentCache";
-import { useAutoFocus } from "@composables/useInputFocus";
+import { useFocusOnMount } from "@composables/useInputFocus";
+import { termInputValidator, getCurrentTerm } from "@utils/TermValidator";
 import { replaceRange } from "../../SheetsAPI";
-import { termValidator, getCurrentTerm } from "../../utils/TermValidator";
 
 const loading = ref(false);
 const success = ref(false);
 const userEnteredTerm = ref(getCurrentTerm());
 
 const termInput = ref(null);
-useAutoFocus(termInput);
+useFocusOnMount(termInput);
 
 const listWasGenerated = ref(false);
 
@@ -113,4 +113,4 @@ watch(success, (val) => {
 watch(userEnteredTerm, () => {
   success.value = false;
 });
-</script>../../utils/TermValidator
+</script>

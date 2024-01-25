@@ -8,9 +8,17 @@ export function emailValidator(email: string) {
   return email.trim() ? pattern.test(email) : true
 }
 
+export function emailInputValidator() {
+  return [(v: string) => emailValidator(v) || 'Invalid Email']
+}
+
 export function phoneValidator(phone: string) {
   const pattern = /^(\+?1\s?)?(\(\d{3}\)|\d{3})[\s.-]?\d{3}[\s.-]?\d{4}$/
   return phone.trim() ? pattern.test(phone) : true
+}
+
+export function phoneInputValidator() {
+  return [(v: string) => phoneValidator(v) || 'Invalid Phone Number']
 }
 
 function sanitizeName<T extends string>(name: T) {

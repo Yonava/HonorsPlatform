@@ -36,6 +36,6 @@ export function useInputFocus<T extends HTMLElement | null | undefined>(
   return { focus }
 }
 
-export function useAutoFocus<T extends HTMLElement | null | undefined>(el: Ref<T>) {
+export function useFocusOnMount<T extends HTMLElement | null | undefined>(el: Ref<T>) {
   return useInputFocus(el, { focusOnMounted: true })
 }

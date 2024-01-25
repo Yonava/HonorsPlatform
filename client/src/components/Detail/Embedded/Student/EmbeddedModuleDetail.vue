@@ -9,7 +9,7 @@
         text: 'Current Term',
         newPropValue: () => getCurrentTerm(),
       }"
-      :rules="[(v) => termValidator(v) || 'Potentially invalid term']"
+      :rules="termInputValidator()"
       label="Term"
       icon="calendar"
     />
@@ -70,12 +70,12 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import InputCoupler from '../../Helper/InputCoupler.vue'
 import EmbeddedInput from '../EmbeddedInput.vue'
 import EmbeddedDetailFrame from '../EmbeddedDetailFrame.vue'
-import { useSheetManager } from '../../../../store/useSheetManager'
-import { computed } from 'vue'
-import { termValidator, getCurrentTerm } from '../../../../utils/TermValidator'
+import { useSheetManager } from '@store/useSheetManager'
+import { getCurrentTerm, termInputValidator } from '@utils/TermValidator'
 import { useInstructorAutoComplete } from '../../../../InstructorAutoComplete'
 import type { Module } from '../../../../SheetTypes'
 import { useMoveItem } from '../../../../MoveItems'
@@ -94,4 +94,4 @@ const {
 } = useInstructorAutoComplete(instructor)
 
 const { moveItem, movingItem } = useMoveItem('MODULES');
-</script>../../../../utils/TermValidator
+</script>

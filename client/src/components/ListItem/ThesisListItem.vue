@@ -45,8 +45,8 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import { termValidator } from '@utils/TermValidator'
 import { Thesis } from '../../SheetTypes'
-import { termValidator } from '../../utils/TermValidator'
 import { useStudentInfo } from './useStudentInfo'
 import {
   LIFrame,
@@ -59,16 +59,10 @@ const props = defineProps<{
   styled?: boolean
 }>()
 
-const termTooltip = computed(() => {
-  if (termValidator(props.item.term)) {
-    return 'Term'
-  } else {
-    return `Term (Potentially Invalid)`
-  }
-})
+const termValid = computed(() => termValidator(props.item.term))
 
-const termValid = computed(() => {
-  return termValidator(props.item.term)
+const termTooltip = computed(() => {
+  return 'Term' + termValid.value ? '' : ' (Potentially Invalid)'
 })
 
 const decisionStatus = computed(() => {
@@ -108,4 +102,4 @@ const student = computed(() => {
   const { studentInfo } = useStudentInfo(props.item.studentSysId)
   return studentInfo.value
 })
-</script>../../utils/TermValidator
+</script>

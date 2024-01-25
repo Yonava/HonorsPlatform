@@ -44,7 +44,7 @@
       <DetailInput
         :item="completedModule"
         prop="term"
-        :rules="[(v) => termValidator(v) || 'Potentially Invalid Term']"
+        :rules="termInputValidator()"
         :button="{
           condition: !completedModule.term,
           text: 'Current Term',
@@ -121,18 +121,18 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
+import { storeToRefs } from 'pinia'
+import { useSheetManager } from '@store/useSheetManager'
+import { getCurrentTerm, termInputValidator } from '@utils/TermValidator'
 import InputCoupler from './Helper/InputCoupler.vue'
 import DetailInput from './Helper/DetailInput.vue'
 import DetailHeader from './Helper/DetailHeader.vue'
 import DetailFrame from './Helper/DetailFrame.vue'
 import LinkStudentButton from './Helper/LinkStudentButton.vue'
 import { type CompletedModule, grades } from '../../SheetTypes'
-import { useSheetManager } from '@store/useSheetManager'
 import { useMoveItem } from '../../MoveItems'
-import { computed } from 'vue'
 import { useInstructorAutoComplete } from '../../InstructorAutoComplete'
-import { getCurrentTerm, termValidator } from '../../utils/TermValidator'
-import { storeToRefs } from 'pinia'
 
 const sheetManager = useSheetManager()
 const { readOnlyMode } = storeToRefs(sheetManager)
@@ -145,7 +145,6 @@ const completedModule = computed(() => props.item)
 const instructor = computed(() => completedModule.value.instructor)
 
 const {
-  suggestedInstructor,
   sameInstructor,
   selectSuggestion,
   suggestionSelected,
@@ -153,4 +152,4 @@ const {
 } = useInstructorAutoComplete(instructor)
 
 const { moveItem, movingItem, panelOnceMoved } = useMoveItem()
-</script>../../utils/TermValidator
+</script>

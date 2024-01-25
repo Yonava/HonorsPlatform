@@ -84,7 +84,7 @@
       <DetailInput
         :item="thesis"
         prop="mentorEmail"
-        :rules="[(v) => emailValidator(v) || 'Invalid email address']"
+        :rules="emailInputValidator()"
         icon="email"
         label="Faculty Mentor Email"
         :button="{
@@ -123,20 +123,18 @@ import LinkStudentButton from './Helper/LinkStudentButton.vue'
 import LinkStudent from './Helper/LinkStudent.vue'
 
 import { computed } from 'vue'
+import { storeToRefs } from 'pinia'
+import { useSheetManager } from '@store/useSheetManager'
+import { useDialog } from '@store/useDialog'
+import { getCurrentTerm, termInputValidator } from '@utils/TermValidator'
+import { emailInputValidator, getFacultyEmail } from '@utils/emails'
+import { getPanel } from '@panels'
 import { useStudentMatcher } from '../../StudentMatcher'
 import { useInstructorAutoComplete } from '../../InstructorAutoComplete'
 import type { Thesis } from '../../SheetTypes'
-import { getPanel } from '@panels'
-import { getCurrentTerm, termValidator, termInputValidator } from '@utils/TermValidator'
-import { emailValidator, getFacultyEmail } from '@utils/emails'
-import { useSheetManager } from '../../store/useSheetManager'
-import { useDocumentCache } from '../../store/useDocumentCache'
-import { useDialog } from '../../store/useDialog'
-import { storeToRefs } from 'pinia'
 
 const { readOnlyMode } = storeToRefs(useSheetManager())
 const { setPanel, getActivePanel } = useSheetManager()
-const { deleteItem } = useDocumentCache()
 
 const props = defineProps<{
   item: Thesis
@@ -152,7 +150,6 @@ const thesis = computed(() => props.item)
 const instructor = computed(() => thesis.value.mentor)
 
 const {
-  suggestedInstructor,
   sameInstructor,
   selectSuggestion,
   suggestionSelected,

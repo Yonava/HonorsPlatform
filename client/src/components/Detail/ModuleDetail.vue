@@ -16,7 +16,7 @@
           text: 'Current Term',
           newPropValue: () => getCurrentTerm(),
         }"
-        :rules="[(v) => termValidator(v) || 'Potentially invalid term']"
+        :rules="termInputValidator()"
         label="Term"
         icon="calendar"
       />
@@ -37,7 +37,6 @@
       <h1 class="mb-2">
         Documentation
       </h1>
-
 
       <InputCoupler>
 
@@ -91,17 +90,17 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
+import { storeToRefs } from 'pinia'
+import { useSheetManager } from '@store/useSheetManager'
+import { getCurrentTerm, termInputValidator } from '@utils/TermValidator'
+import { getPanel } from '@panels'
 import InputCoupler from './Helper/InputCoupler.vue'
 import DetailInput from './Helper/DetailInput.vue'
 import DetailHeader from './Helper/DetailHeader.vue'
 import DetailFrame from './Helper/DetailFrame.vue'
 import LinkStudentButton from './Helper/LinkStudentButton.vue'
-import { computed } from 'vue'
-import { storeToRefs } from 'pinia'
-import { useSheetManager } from '@store/useSheetManager'
-import { getPanel } from '@panels'
 import type { Module } from '../../SheetTypes'
-import { termValidator, getCurrentTerm } from '../../utils/TermValidator'
 import { useInstructorAutoComplete } from '../../InstructorAutoComplete'
 import { useMoveItem } from '../../MoveItems'
 
@@ -128,4 +127,4 @@ const {
 } = useInstructorAutoComplete(instructor)
 
 const { moveItem, movingItem, panelOnceMoved } = useMoveItem()
-</script>../../utils/TermValidator
+</script>

@@ -17,7 +17,7 @@
         <DetailInput
           :item="student"
           prop="email"
-          :rules="[(v) => emailValidator(v) || 'Invalid Email']"
+          :rules="emailInputValidator()"
           label="Email"
           icon="email"
           :button="{
@@ -174,7 +174,7 @@ import { useDisplay } from "vuetify";
 import { useSheetManager } from "@store/useSheetManager";
 import { useDocumentCache } from "@store/useDocumentCache";
 import { useUpdateManager } from "@store/useUpdateManager";
-import { emailValidator, getStudentEmail } from "@utils/emails";
+import { emailInputValidator, getStudentEmail } from "@utils/emails";
 import { getPanel } from "@panels";
 import InputCoupler from "./Helper/InputCoupler.vue";
 import IDInput from "./Helper/IDInput.vue";

@@ -48,10 +48,10 @@
 </template>
 
 <script setup lang="ts">
-import { Graduate } from '../../SheetTypes'
 import { computed } from 'vue'
 import { emailValidator, phoneValidator } from '@utils/emails'
-import { useSheetManager } from '../../store/useSheetManager'
+import { useSheetManager } from '@store/useSheetManager'
+import { Graduate } from '../../SheetTypes'
 import {
   LIFrame,
   LITitle,
@@ -67,11 +67,11 @@ const props = defineProps<{
 
 const graduationYear = computed(() => {
   if (!props.item.graduationDate) {
-    return null
+    return
   }
   const date = new Date(props.item.graduationDate)
   if (isNaN(date.getFullYear())) {
-    return null
+    return
   }
   return date.getFullYear()
 })
@@ -80,11 +80,11 @@ const graduationYearTooltip = computed(() => {
 
   const thisYear = new Date().getFullYear()
   if (!props.item.graduationDate) {
-    return null
+    return
   }
 
   if (!graduationYear.value) {
-    return null
+    return
   }
 
   const yearDifference = graduationYear.value - thisYear
@@ -98,6 +98,6 @@ const graduationYearTooltip = computed(() => {
           ? 'Graduated Last Year'
           : yearDifference < -1
             ? `Graduated ${Math.abs(yearDifference)} Years Ago`
-            : null
+            : undefined
 })
 </script>

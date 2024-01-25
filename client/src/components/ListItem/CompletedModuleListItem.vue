@@ -41,14 +41,13 @@
 </template>
 
 <script setup lang="ts">
-import { getPanel } from '../../Panels'
-import { useStudentInfo } from './useStudentInfo'
 import { computed } from 'vue'
+import { getPanel } from '@panels'
+import { termValidator } from '@utils/TermValidator'
+import { useStudentInfo } from './useStudentInfo'
 import { CompletedModule } from '../../SheetTypes'
-import { termValidator } from '../../utils/TermValidator'
 import {
   LIFrame,
-  LIIcon,
   LITitle,
   LIEmblem,
 } from './ListItemParts/ListItemExports'
@@ -96,12 +95,10 @@ const emblem = computed(() => {
   }
 })
 
-const termValid = computed(() => {
-  return termValidator(props.item.term)
-})
+const termValid = computed(() => termValidator(props.item.term))
 
 const student = computed(() => {
   const { studentInfo } = useStudentInfo(props.item.studentSysId)
   return studentInfo.value
 })
-</script>../../utils/TermValidator
+</script>

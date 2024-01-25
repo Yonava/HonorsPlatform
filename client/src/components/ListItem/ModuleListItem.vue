@@ -51,10 +51,10 @@
 </template>
 
 <script setup lang="ts">
-import { useStudentInfo } from './useStudentInfo'
 import { computed } from 'vue'
+import { termValidator } from '@utils/TermValidator'
+import { useStudentInfo } from './useStudentInfo'
 import { Module } from '../../SheetTypes'
-import { termValidator } from '../../utils/TermValidator'
 import {
   LIFrame,
   LIIcon,
@@ -149,12 +149,10 @@ const docuSignStatus = computed(() => {
   }
 })
 
-const termValid = computed(() => {
-  return termValidator(props.item.term)
-})
+const termValid = computed(() => termValidator(props.item.term))
 
 const student = computed(() => {
   const { studentInfo } = useStudentInfo(props.item.studentSysId)
   return studentInfo.value
 })
-</script>../../utils/TermValidator
+</script>
