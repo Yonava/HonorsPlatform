@@ -168,4 +168,4 @@ const openIdDialog = () => {
   border-radius: 5px;
   transform: translateX(-6px)
 }
-</style>
+</style>../../../utils/StudentTools

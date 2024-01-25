@@ -8,7 +8,7 @@ import { useSheetManager } from '@store/useSheetManager'
 import { useDocumentCache } from '@store/useDocumentCache'
 import warn from '@utils/Warn'
 import MoveModule from './components/Detail/Helper/MoveModule.vue'
-import { moveToGraduates, moveToStudents } from './StudentTools'
+import { moveToGraduates, moveToStudents } from './utils/students'
 
 const savedToSheet = (item: SheetItem, panel?: Panel) => {
   const { open, close } = useDialog()

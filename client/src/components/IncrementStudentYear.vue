@@ -238,3 +238,4 @@ const select = (sysId: string, panelName: PanelName) => {
   border: 2px solid black;
 }
 </style>
+../utils/StudentTools

@@ -1,8 +1,8 @@
-import { Student, Graduate } from './SheetTypes'
-import { unmapGraduates } from './DataMappers'
-import { replaceRange, getHeaderRowCache, postInRange } from './SheetsAPI'
-import { panels } from './Panels'
-import { useDocumentCache } from './store/useDocumentCache'
+import { Student, Graduate } from '../SheetTypes'
+import { unmapGraduates } from '../DataMappers'
+import { replaceRange, getHeaderRowCache, postInRange } from '../SheetsAPI'
+import { panels } from '../Panels'
+import { useDocumentCache } from '../store/useDocumentCache'
 
 export const statusOptions = [
   {

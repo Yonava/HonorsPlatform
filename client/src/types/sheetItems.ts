@@ -1,22 +1,18 @@
-import { athleticOptions } from "./utils/students";
-import type { StatusOption, YearOption } from "./utils/students";
+import { athleticOptions } from "@utils/students";
+import type { StatusOption, YearOption } from "@utils/students";
+import type { Grade, Primitive, ThesisDecision } from "./misc";
 
 export type SheetItem = Module | Graduate | Student | CompletedModule | Thesis | GradEngagement;
-
-export const grades = ["High Pass", "Pass", "Low Pass", "Fail", null] as const;
-export type Grade = typeof grades[number];
-
-type Primitive = string | number | boolean | null | undefined;
 
 type CustomField = {
   [Property in number]: Primitive;
 };
 
-export type SheetEntry = {
+export interface SheetEntry extends CustomField {
   row: number | null | undefined;
   sysId: string;
   note: string;
-} & CustomField;
+}
 
 export interface Student extends SheetEntry {
   id: string;
@@ -56,8 +52,6 @@ export interface GradEngagement extends SheetEntry {
   dateTime: string;
 }
 
-export type ThesisDecision = "Approved" | "Rejected" | "Pending";
-
 export interface Thesis extends SheetEntry {
   studentSysId: string;
   title: string;
@@ -68,14 +62,4 @@ export interface Thesis extends SheetEntry {
   mentor: string;
   mentorEmail: string;
   draftReceived: string;
-}
-
-export interface Announcement {
-  sysId: string,
-  posterName: string,
-  posterPhoto: string,
-  content: string,
-  datePosted: string,
-  expiryDate: string,
-  panelType: string,
 }

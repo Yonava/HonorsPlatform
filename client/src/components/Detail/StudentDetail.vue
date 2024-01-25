@@ -245,4 +245,4 @@ const addNote = () => useDialog().open({
     student: student.value,
   }
 })
-</script>
+</script>../../utils/StudentTools
