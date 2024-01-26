@@ -81,10 +81,10 @@ import { storeToRefs } from 'pinia'
 import { useSheetManager } from '@store/useSheetManager'
 import { useDocumentCache } from '@store/useDocumentCache'
 import { useSyncState } from '@store/useSyncState'
+import type { SheetItem } from '@apptypes/sheetItems'
 import EmbeddedDetail from '../Embedded/EmbeddedDetail.vue'
 import DetailInput from './DetailInput.vue'
 import CustomFields from './CustomFields.vue'
-import type { SheetItem } from '../../../SheetTypes'
 
 onUnmounted(() => {
   const { processing } = useSyncState()

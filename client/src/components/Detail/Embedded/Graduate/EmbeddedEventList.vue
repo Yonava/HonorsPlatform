@@ -45,7 +45,7 @@
 </template>
 
 <script setup lang="ts">
-import { GradEngagement } from "../../../../SheetTypes"
+import type { GradEngagement } from "@apptypes/sheetItems"
 import { useSheetManager } from '@store/useSheetManager'
 import { storeToRefs } from "pinia";
 

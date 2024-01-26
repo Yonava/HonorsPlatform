@@ -13,8 +13,8 @@
 </template>
 
 <script setup lang="ts" generic="T extends SheetItem, K extends keyof T">
+import type { SheetItem } from '@apptypes/sheetItems';
 import InputField from './InputField.vue'
-import type { SheetItem } from '../../../SheetTypes';
 
 const config = {
   inputVariant: 'filled',

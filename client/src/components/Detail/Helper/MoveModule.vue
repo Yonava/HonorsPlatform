@@ -25,7 +25,12 @@
           >{{ grade || "Leave Ungraded" }}</v-btn
         >
       </div>
-      <v-btn @click="moveModule" :loading="loading" :color="color" size="large">
+      <v-btn
+        @click="moveModule"
+        :loading="loading"
+        :color="color"
+        size="large"
+      >
         <v-icon class="mr-2">
           {{ completedModulePanel.icon }}
         </v-icon>
@@ -36,13 +41,14 @@
 </template>
 
 <script setup lang="ts">
-import { Grade, grades, Module } from "../../../SheetTypes";
 import { ref, onUnmounted } from "vue";
-import { getPanel, panels } from "../../../Panels";
-import { useDocumentCache } from "../../../store/useDocumentCache";
-import { useDialog } from "../../../store/useDialog";
-import { useSheetManager } from "../../../store/useSheetManager";
-import { useSyncState } from "../../../store/useSyncState";
+import type { Module } from "@apptypes/sheetItems";
+import { Grade, grades } from "@apptypes/misc"
+import { getPanel, panels } from "@panels";
+import { useDocumentCache } from "@store/useDocumentCache";
+import { useDialog } from "@store/useDialog";
+import { useSheetManager } from "@store/useSheetManager";
+import { useSyncState } from "@store/useSyncState";
 
 const props = defineProps<{
   module: Module;

@@ -53,7 +53,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { Student } from '../../SheetTypes'
-import { athleticOptions, statusOptions } from '../../StudentTools'
+import { athleticOptions, statusOptions } from '@utils/students'
 import { emailValidator } from '@utils/emails'
 import {
   LIFrame,
@@ -84,4 +84,4 @@ const iconTooltip = computed(() => {
 })
 
 const emailValid = computed(() => emailValidator(props.item.email))
-</script>../../utils/StudentTools
+</script>

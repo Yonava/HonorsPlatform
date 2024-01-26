@@ -1,4 +1,4 @@
-import {
+import type {
   Student,
   Graduate,
   Module,
@@ -7,12 +7,12 @@ import {
   Thesis,
   SheetEntry,
   SheetItem,
-} from "./SheetTypes";
+} from "@apptypes/sheetItems";
 
 import { useDialog } from "@store/useDialog";
+import { type PanelName } from "@panels";
 import DuplicateSysIdRemediation from "./components/DuplicateSysIdRemediation.vue";
 
-import { type PanelName } from "./Panels";
 
 // the index where all SheetItems stored on Google Sheets store their unique sysId
 const SYS_ID_INDEX = 0;

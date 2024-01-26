@@ -71,15 +71,15 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import { storeToRefs } from 'pinia'
+import { getCurrentTerm, termInputValidator } from '@utils/TermValidator'
+import { useSheetManager } from '@store/useSheetManager'
+import type { Module } from '@apptypes/sheetItems'
 import InputCoupler from '../../Helper/InputCoupler.vue'
 import EmbeddedInput from '../EmbeddedInput.vue'
 import EmbeddedDetailFrame from '../EmbeddedDetailFrame.vue'
-import { useSheetManager } from '@store/useSheetManager'
-import { getCurrentTerm, termInputValidator } from '@utils/TermValidator'
 import { useInstructorAutoComplete } from '../../../../InstructorAutoComplete'
-import type { Module } from '../../../../SheetTypes'
 import { useMoveItem } from '../../../../MoveItems'
-import { storeToRefs } from 'pinia'
 
 const { readOnlyMode, getActiveEmbeddedPanel, focusedEmbeddedItem } = storeToRefs(useSheetManager())
 const module = computed(() => focusedEmbeddedItem.value as Module)

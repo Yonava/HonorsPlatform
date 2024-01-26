@@ -176,7 +176,7 @@ import { panels, type PanelName } from '@panels';
 import { useDocumentCache } from '@store/useDocumentCache';
 import { useSheetManager } from '@store/useSheetManager';
 import { useDialog } from '@store/useDialog';
-import type { SheetItem } from '../SheetTypes';
+import type { SheetItem } from '@apptypes/sheetItems';
 import { headerRowMemo } from '../SheetsAPI';
 import { mappers } from '../DataMappers';
 import { clearByRowData } from '../SheetsAPI';

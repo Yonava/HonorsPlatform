@@ -17,9 +17,9 @@
     <v-btn
       @click="addNote"
       :disabled="!note"
+      :color="`${getPanel('STUDENTS').color}-darken-2`"
       block
       class="my-2"
-      :color="`${getPanel('STUDENTS').color}-darken-2`"
     >
       <v-icon class="mr-2">
         mdi-plus
@@ -38,16 +38,18 @@ import { getPanel } from '@panels';
 import { useUpdateManager } from '@store/useUpdateManager';
 import { useInputFocus } from '@composables/useInputFocus';
 import { broadcastPropUpdate } from '@utils/socketBroadcastWrappers';
-import type { Student } from '../../../SheetTypes';
+import type { Student } from '@apptypes/sheetItems';
 
 const props = defineProps<{
   student: Student
 }>()
 
 const userInitials = useStorage(local.initials, '')
+const { trackItemForUpdate } = useUpdateManager()
+const broadcast = broadcastPropUpdate(props.student)
 
-const noteInputRef = ref(null)
-const initialsInputRef = ref(null)
+const noteInputRef = ref<HTMLElement | null>(null)
+const initialsInputRef = ref<HTMLElement | null>(null)
 
 const { focus: focusInitials } = useInputFocus(initialsInputRef)
 const { focus: focusNotes } = useInputFocus(noteInputRef)
@@ -57,7 +59,7 @@ onMounted(() => userInitials.value ? focusNotes() : focusInitials())
 const note = ref('')
 
 const addNote = () => {
-  const { trackItemForUpdate } = useUpdateManager()
+
   trackItemForUpdate()
 
   const date = new Date().toLocaleDateString('en-US', {
@@ -66,11 +68,10 @@ const addNote = () => {
     year: '2-digit'
   })
 
-  const noteString = `${userInitials.value} (${date}): ${note.value}`
+  const newNote = `${userInitials.value} (${date}): ${note.value}`
+  const previousNotes = props.student.note
+  props.student.note = previousNotes ? newNote + '\n\n' + previousNotes : newNote
 
-  props.student.note = noteString + '\n\n' + props.student.note
-
-  const broadcast = broadcastPropUpdate(props.student)
   broadcast('note')
 }
 </script>

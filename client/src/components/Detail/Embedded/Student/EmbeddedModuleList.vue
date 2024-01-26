@@ -40,8 +40,8 @@
 </template>
 
 <script setup lang="ts">
-import { Module } from "../../../../SheetTypes"
-import { useSheetManager } from '../../../../store/useSheetManager'
+import type { Module } from "@apptypes/sheetItems"
+import { useSheetManager } from '@store/useSheetManager'
 import { storeToRefs } from "pinia";
 
 const sheetManager = useSheetManager()

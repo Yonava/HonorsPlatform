@@ -17,12 +17,12 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
+import { storeToRefs } from 'pinia';
+import type { GradEngagement } from '@apptypes/sheetItems';
+import { useSheetManager } from '@store/useSheetManager'
 import EmbeddedInput from '../EmbeddedInput.vue';
 import EmbeddedDetailFrame from '../EmbeddedDetailFrame.vue'
-import { useSheetManager } from '@store/useSheetManager'
-import { computed } from 'vue'
-import type { GradEngagement } from '../../../../SheetTypes';
-import { storeToRefs } from 'pinia';
 
 const sheetManager = useSheetManager()
 const { focusedEmbeddedItem } = storeToRefs(sheetManager)

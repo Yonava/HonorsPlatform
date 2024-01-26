@@ -165,7 +165,7 @@ export async function incrementStudentYear(students: Student[] = useDocumentCach
     }
 
     if (!year) {
-      console.error('StudentTools: newStudentYear warning! Triggered with no year.')
+      console.error('newStudentYear warning! Triggered with no year.')
       return ''
     }
 

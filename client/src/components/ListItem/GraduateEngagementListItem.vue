@@ -33,8 +33,8 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useStudentInfo } from './useStudentInfo'
-import { useSheetManager } from '../../store/useSheetManager';
-import type { GradEngagement } from '../../SheetTypes';
+import { useSheetManager } from '@store/useSheetManager';
+import type { GradEngagement } from '@apptypes/sheetItems';
 import {
   LIFrame,
   LITitle,

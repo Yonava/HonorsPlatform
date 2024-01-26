@@ -1,4 +1,11 @@
-import { Student, Graduate, Module, CompletedModule, Thesis, GradEngagement } from './SheetTypes';
+import type {
+  Student,
+  Graduate,
+  Module,
+  CompletedModule,
+  Thesis,
+  GradEngagement
+} from '@apptypes/sheetItems';
 
 export const sortOptions = {
   STUDENTS: [

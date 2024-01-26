@@ -1,6 +1,6 @@
 import { computed, type ComputedRef } from 'vue'
+import type { Student, Graduate } from '@apptypes/sheetItems'
 import { useDocumentCache } from '@store/useDocumentCache'
-import { Student, Graduate } from './SheetTypes'
 
 type StudentMatchError = 'NOT_FOUND' | 'NOT_LINKED' | 'STUDENT_SYSID_UNDEFINED'
 

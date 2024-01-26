@@ -98,8 +98,8 @@ import { storeToRefs } from 'pinia';
 import { useSheetManager } from '@store/useSheetManager';
 import { useUpdateManager } from '@store/useUpdateManager';
 import { broadcastPropUpdate } from '@utils/socketBroadcastWrappers'
+import type { SheetItem } from '@apptypes/sheetItems'
 import ButtonInput from './ButtonInput.vue'
-import type { SheetItem } from '../../../SheetTypes'
 
 const { readOnlyMode } = storeToRefs(useSheetManager())
 

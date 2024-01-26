@@ -28,13 +28,13 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue';
+import { storeToRefs } from 'pinia';
+import { useSheetManager } from '@store/useSheetManager';
+import type { SheetItem } from '@apptypes/sheetItems';
 import EmbeddedInput from '../Embedded/EmbeddedInput.vue';
 import DetailInput from './DetailInput.vue';
-import { computed } from 'vue';
 import { headerRowMemo } from '../../../SheetsAPI';
-import { useSheetManager } from '../../../store/useSheetManager';
-import { storeToRefs } from 'pinia';
-import type { SheetItem } from '../../../SheetTypes';
 import { getNonCustomProps } from '../../../DataMappers';
 
 const sheetManager = useSheetManager()

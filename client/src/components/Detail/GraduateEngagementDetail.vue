@@ -30,13 +30,12 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
+import type { GradEngagement } from '@apptypes/sheetItems'
 import DetailInput from './Helper/DetailInput.vue'
 import DetailHeader from './Helper/DetailHeader.vue'
 import DetailFrame from './Helper/DetailFrame.vue'
 import LinkStudentButton from './Helper/LinkStudentButton.vue'
-
-import type { GradEngagement } from '../../SheetTypes'
-import { computed } from 'vue'
 
 const props = defineProps<{
   item: GradEngagement

@@ -129,9 +129,9 @@ import { useDialog } from '@store/useDialog'
 import { getCurrentTerm, termInputValidator } from '@utils/TermValidator'
 import { emailInputValidator, getFacultyEmail } from '@utils/emails'
 import { getPanel } from '@panels'
+import type { Thesis } from '@apptypes/sheetItems'
 import { useStudentMatcher } from '../../StudentMatcher'
 import { useInstructorAutoComplete } from '../../InstructorAutoComplete'
-import type { Thesis } from '../../SheetTypes'
 
 const { readOnlyMode } = storeToRefs(useSheetManager())
 const { setPanel, getActivePanel } = useSheetManager()

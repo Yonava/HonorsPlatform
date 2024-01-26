@@ -105,9 +105,9 @@ import { useSheetManager } from '@store/useSheetManager'
 import { useUpdateManager } from '@store/useUpdateManager';
 import { useInputFocus } from '@composables/useInputFocus';
 import { broadcastPropUpdate } from '@utils/socketBroadcastWrappers';
+import { studentIdRule } from '@utils/students';
+import type { Student, Graduate } from '@apptypes/sheetItems'
 import ButtonInput from './ButtonInput.vue';
-import type { Student, Graduate } from '../../../SheetTypes'
-import { studentIdRule } from '../../../StudentTools';
 
 const props = defineProps<{
   item: Student | Graduate
@@ -168,4 +168,4 @@ const openIdDialog = () => {
   border-radius: 5px;
   transform: translateX(-6px)
 }
-</style>../../../utils/StudentTools
+</style>

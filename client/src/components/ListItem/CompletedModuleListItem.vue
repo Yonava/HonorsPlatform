@@ -45,7 +45,7 @@ import { computed } from 'vue'
 import { getPanel } from '@panels'
 import { termValidator } from '@utils/TermValidator'
 import { useStudentInfo } from './useStudentInfo'
-import { CompletedModule } from '../../SheetTypes'
+import type { CompletedModule } from '@apptypes/sheetItems'
 import {
   LIFrame,
   LITitle,

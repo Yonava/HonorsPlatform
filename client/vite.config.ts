@@ -11,6 +11,7 @@ export default defineConfig({
       '@locals': '/src/Locals.ts',
       '@composables': '/src/composables',
       '@utils': '/src/utils',
+      '@apptypes': '/src/types',
     }
   },
   plugins: [vue()],

@@ -11,7 +11,7 @@ import {
   Thesis,
   GradEngagement,
   Graduate
-} from "./SheetTypes";
+} from "@apptypes/sheetItems";
 
 type Deletion<T extends SheetItem> = {
   flaggedBecause: string[]

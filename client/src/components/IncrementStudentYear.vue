@@ -137,8 +137,8 @@ import { useDialog } from "@store/useDialog";
 import { useDocumentCache } from '@store/useDocumentCache'
 import { useSheetManager } from "@store/useSheetManager";
 import { getPanel, PanelName } from '@panels'
-import { incrementStudentYear } from "../StudentTools";
-import type { Student } from "../SheetTypes";
+import { incrementStudentYear } from "@utils/students";
+import type { Student } from "@apptypes/sheetItems";
 
 const { setPanel } = useSheetManager();
 const { close } = useDialog();
@@ -238,4 +238,3 @@ const select = (sysId: string, panelName: PanelName) => {
   border: 2px solid black;
 }
 </style>
-../utils/StudentTools

@@ -44,14 +44,14 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
+import { storeToRefs } from "pinia";
+import { useDialog } from '@store/useDialog';
+import { useDocumentCache } from '@store/useDocumentCache';
+import { useSheetManager } from "@store/useSheetManager";
+import type { SheetItem } from '@apptypes/sheetItems';
 import SyncStatus from "./SyncStatus.vue";
 import DetailInput from "./DetailInput.vue";
-import { computed } from "vue";
-import { useDialog } from '../../../store/useDialog';
-import { useDocumentCache } from '../../../store/useDocumentCache';
-import { useSheetManager } from "../../../store/useSheetManager";
-import { storeToRefs } from "pinia";
-import { SheetItem } from '../../../SheetTypes';
 
 const { getPanelCover } = storeToRefs(useDialog());
 const { focusedItemSysId, getActivePanel } = storeToRefs(useSheetManager());

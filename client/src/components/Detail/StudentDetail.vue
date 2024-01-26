@@ -175,8 +175,8 @@ import {
   yearOptions,
   statusOptions,
   athleticOptions,
-} from "../../StudentTools";
-import type { Student } from '../../SheetTypes'
+} from "@utils/students";
+import type { Student } from '@apptypes/sheetItems'
 import { useMoveItem } from '../../MoveItems'
 
 const { smAndDown } = useDisplay();
@@ -245,4 +245,4 @@ const addNote = () => useDialog().open({
     student: student.value,
   }
 })
-</script>../../utils/StudentTools
+</script>

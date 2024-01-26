@@ -62,11 +62,11 @@ import { computed } from "vue";
 import { storeToRefs } from "pinia";
 import { useSheetManager } from "@store/useSheetManager";
 import { emailInputValidator, phoneInputValidator } from "@utils/emails";
+import type { Graduate } from "@apptypes/sheetItems";
 import IDInput from "./Helper/IDInput.vue";
 import DetailFrame from "./Helper/DetailFrame.vue";
 import DetailHeader from "./Helper/DetailHeader.vue";
 import DetailInput from "./Helper/DetailInput.vue";
-import type { Graduate } from "../../SheetTypes";
 import { useMoveItem } from "../../MoveItems";
 
 const sheetManager = useSheetManager();
