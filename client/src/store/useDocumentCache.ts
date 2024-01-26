@@ -7,6 +7,7 @@ import { useDialog } from "@store/useDialog";
 import warn from "@utils/Warn";
 import { getRange, clearByRow, postInRange, getRanges } from '../SheetsAPI';
 import * as types from "@apptypes/sheetItems";
+import { Announcement } from "@apptypes/misc";
 import { setSelectedItem } from '../components/Panel/SetSelectedItem'
 
 type GetAllDocuments = {
@@ -111,7 +112,7 @@ export const useDocumentCache = defineStore("documentCache", {
       list: [],
       selected: [],
     } as PanelState<types.Thesis>,
-    Announcements: [] as types.Announcement[],
+    Announcements: [] as Announcement[],
   }),
   getters: {
     allSheetItems: (state) => {
@@ -206,11 +207,11 @@ export const useDocumentCache = defineStore("documentCache", {
     }
   },
   actions: {
-    addAnnouncementCache(announcement: types.Announcement) {
+    addAnnouncementCache(announcement: Announcement) {
       const { Announcements } = this;
       Announcements.push(announcement);
     },
-    async postAnnouncement(announcement: types.Announcement) {
+    async postAnnouncement(announcement: Announcement) {
 
       await postInRange('Announcements', [[
         announcement.sysId,

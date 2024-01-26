@@ -24,12 +24,7 @@
       <DetailInput
         :item="module"
         prop="instructor"
-        :button="{
-          condition: !sameInstructor && !suggestionSelected,
-          text: suggestionToString,
-          newPropValue: () => selectSuggestion(),
-          disableCondition: !suggestedInstructor
-        }"
+        :button="button"
         icon="human-male-board"
         label="Instructor"
       />
@@ -101,15 +96,8 @@ import DetailInput from './Helper/DetailInput.vue'
 import DetailHeader from './Helper/DetailHeader.vue'
 import DetailFrame from './Helper/DetailFrame.vue'
 import LinkStudentButton from './Helper/LinkStudentButton.vue'
-import { useInstructorAutoComplete } from '../../InstructorAutoComplete'
+import { useInstructorAutoComplete_v2 } from '../../InstructorAutoComplete'
 import { useMoveItem } from '../../MoveItems'
-
-const sheetManager = useSheetManager()
-const { readOnlyMode } = storeToRefs(sheetManager)
-
-const modulesPanel = getPanel('MODULES')
-
-const color = modulesPanel.color + '-darken-2'
 
 const props = defineProps<{
   item: Module
@@ -117,14 +105,13 @@ const props = defineProps<{
 
 const module = computed(() => props.item)
 const instructor = computed(() => module.value?.instructor)
+const { button } = useInstructorAutoComplete_v2(instructor)
 
-const {
-  sameInstructor,
-  selectSuggestion,
-  suggestionSelected,
-  suggestionToString,
-  suggestedInstructor
-} = useInstructorAutoComplete(instructor)
+const sheetManager = useSheetManager()
+const { readOnlyMode } = storeToRefs(sheetManager)
+
+const modulesPanel = getPanel('MODULES')
+const color = modulesPanel.color + '-darken-2'
 
 const { moveItem, movingItem, panelOnceMoved } = useMoveItem()
 </script>
