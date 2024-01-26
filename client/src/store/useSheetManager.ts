@@ -1,11 +1,11 @@
 import { defineStore } from 'pinia'
 import { SheetItem } from '../SheetTypes';
-import { getPanel, PanelName, panels } from '../Panels';
+import { getPanel, PanelName, panels } from '@panels';
+import { useDocumentCache } from '@store/useDocumentCache';
+import { useSocket } from '@store/useSocket';
+import { local } from '@locals';
 import router from '../router';
 import { filterItems } from '../FilterObjects';
-import { useDocumentCache } from './useDocumentCache';
-import { local } from '../Locals';
-import { useSocket } from './useSocket';
 import type { SortOption } from '../SortOptions';
 import { readonlySnackbar } from '../ReadonlyModeSnackbars';
 

@@ -1,9 +1,10 @@
-import { markRaw, type Component } from "vue";
+import { markRaw } from "vue";
+import type { Component } from "vue";
 import { defineStore } from "pinia";
 import { Panel } from "@panels";
-import { useSheetManager } from "./useSheetManager";
+import { useSheetManager } from "@store/useSheetManager";
+import type { SheetItem } from "@apptypes/sheetItems";
 import type { DeletionOutput } from "../DeleteSuggestions";
-import type { SheetItem } from "../SheetTypes";
 
 const defaultPanelCover = (show: boolean = false): PanelCoverData => {
   return {

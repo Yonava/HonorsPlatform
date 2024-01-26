@@ -46,7 +46,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { termValidator } from '@utils/TermValidator'
-import { Thesis } from '../../SheetTypes'
+import type { Thesis } from '@apptypes/sheetItems'
 import { useStudentInfo } from './useStudentInfo'
 import {
   LIFrame,

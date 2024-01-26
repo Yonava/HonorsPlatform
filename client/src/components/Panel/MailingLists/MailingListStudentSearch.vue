@@ -43,7 +43,7 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import type { Student, Graduate } from '../../../SheetTypes';
+import type { Student, Graduate } from '@apptypes/sheetItems';
 import { filterItems } from '../../../FilterObjects';
 
 const search = ref('')

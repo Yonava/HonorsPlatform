@@ -51,7 +51,7 @@
 import { computed } from 'vue'
 import { emailValidator, phoneValidator } from '@utils/emails'
 import { useSheetManager } from '@store/useSheetManager'
-import { Graduate } from '../../SheetTypes'
+import { Graduate } from '@apptypes/sheetItems'
 import {
   LIFrame,
   LITitle,

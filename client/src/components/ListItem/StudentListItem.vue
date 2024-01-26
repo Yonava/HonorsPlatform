@@ -52,7 +52,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { Student } from '../../SheetTypes'
+import type { Student } from '@apptypes/sheetItems'
 import { athleticOptions, statusOptions } from '@utils/students'
 import { emailValidator } from '@utils/emails'
 import {

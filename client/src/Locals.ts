@@ -1,4 +1,4 @@
-import { PanelName } from './Panels'
+import { PanelName } from '@panels'
 
 export const local = {
   // stores initials set by user for signing student notes
@@ -18,3 +18,5 @@ export const local = {
   // stores user generated mailing lists
   mailingLists: 'mailing-lists',
 } as const
+
+type LocalKey = keyof typeof local

@@ -32,9 +32,9 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useStudentInfo } from './useStudentInfo'
 import { useSheetManager } from '@store/useSheetManager';
 import type { GradEngagement } from '@apptypes/sheetItems';
+import { useStudentInfo } from './useStudentInfo'
 import {
   LIFrame,
   LITitle,

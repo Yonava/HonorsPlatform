@@ -7,7 +7,8 @@ import { useSyncState } from "@store/useSyncState";
 import { useSheetManager } from "@store/useSheetManager";
 import { useDocumentCache } from "@store/useDocumentCache";
 import { useDialog } from "@store/useDialog";
-import type { SheetItem, Announcement } from "../SheetTypes";
+import type { SheetItem } from "@apptypes/sheetItems";
+import type { Announcement } from "@apptypes/misc";
 
 type ActionPayload =
 {

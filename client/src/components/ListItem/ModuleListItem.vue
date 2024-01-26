@@ -53,8 +53,8 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { termValidator } from '@utils/TermValidator'
+import { Module } from '@apptypes/sheetItems'
 import { useStudentInfo } from './useStudentInfo'
-import { Module } from '../../SheetTypes'
 import {
   LIFrame,
   LIIcon,

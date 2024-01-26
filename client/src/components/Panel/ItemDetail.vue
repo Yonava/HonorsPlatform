@@ -139,7 +139,7 @@ import { ref, computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useSheetManager } from '@store/useSheetManager';
 import { useDocumentCache } from '@store/useDocumentCache';
-import { SheetItem } from '../../SheetTypes';
+import { SheetItem } from '@apptypes/sheetItems';
 import { useMoveItem } from '../../MoveItems'
 
 const dragState = ref(false)

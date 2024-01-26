@@ -1,5 +1,5 @@
 import { useSocket } from "@store/useSocket";
-import type { SheetItem } from "../SheetTypes";
+import type { SheetItem } from "@apptypes/sheetItems";
 
 export function broadcastPropUpdate<T extends SheetItem>(item: T) {
   const { emitUserAction } = useSocket()

@@ -1,6 +1,6 @@
-import type { SheetItem } from '../../SheetTypes'
-import { useSheetManager } from '../../store/useSheetManager'
-import { useDocumentCache } from '../../store/useDocumentCache'
+import type { SheetItem } from '@apptypes/sheetItems'
+import { useSheetManager } from '@store/useSheetManager'
+import { useDocumentCache } from '@store/useDocumentCache'
 
 export const setSelectedItem = (item: SheetItem) => {
   const { setFocusedItem, focusedItemSysId } = useSheetManager()

@@ -164,7 +164,7 @@ import { emailValidator, sendEmail } from '@utils/emails'
 import { useSheetManager } from '@store/useSheetManager'
 import { useDocumentCache } from '@store/useDocumentCache'
 import { useSocket } from '@store/useSocket'
-import { SheetItem } from '../../SheetTypes'
+import { SheetItem } from '@apptypes/sheetItems'
 import { useStudentMatcher } from '../../StudentMatcher'
 import { LIBottomCorner } from './ListItemParts/ListItemExports'
 

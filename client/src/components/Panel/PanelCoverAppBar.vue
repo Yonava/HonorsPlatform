@@ -80,7 +80,7 @@ import { useSheetManager } from "@store/useSheetManager";
 import { useDocumentCache } from '@store/useDocumentCache';
 import { useSyncState } from '@store/useSyncState'
 import warn from '@utils/Warn';
-import type { SheetItem } from '../../SheetTypes'
+import type { SheetItem } from '@apptypes/sheetItems'
 import { headerRowMemo, replaceRange } from '../../SheetsAPI';
 
 const { setPanelCover, open, close } = useDialog();
