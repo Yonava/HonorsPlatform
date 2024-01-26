@@ -27,9 +27,9 @@
 </template>
 
 <script setup lang="ts">
-import { useDisplay } from 'vuetify'
 import { computed, ref, watchEffect, watch } from 'vue'
-import { useDialog } from '../store/useDialog';
+import { useDisplay } from 'vuetify'
+import { useDialog } from '@store/useDialog';
 
 const { close } = useDialog()
 const { xs } = useDisplay()
