@@ -1,12 +1,26 @@
 import { athleticOptions } from "@utils/students";
 import type { StatusOption, YearOption } from "@utils/students";
-import type { Grade, Primitive, ThesisDecision } from "@apptypes/misc";
 import type { StudentEmail, FacultyEmail } from "@utils/emails";
+import type { Grade, Primitive, ThesisDecision } from "@apptypes/misc";
 
 export type SheetItem = Module | Graduate | Student | CompletedModule | Thesis | GradEngagement;
+export type JointSheetItem = Module & Graduate & Student & CompletedModule & Thesis & GradEngagement;
+export type SheetItemKeys = keyof JointSheetItem;
+
+type InObj<T, O extends Record<any, any>> = T extends keyof O ? true : never
+
+export type ExcludeByProp<
+  T extends SheetItemKeys,
+  O extends SheetItem = SheetItem
+> = O extends SheetItem ? InObj<T, O> extends never ? O : never : never
+
+export type IncludeByProp<
+  T extends SheetItemKeys,
+  O extends SheetItem = SheetItem
+> = O extends SheetItem ? InObj<T, O> extends never ? never : O : never
 
 type CustomField = {
-  [Property in number]: Primitive;
+  [K in number]: Primitive;
 };
 
 export interface SheetEntry extends CustomField {

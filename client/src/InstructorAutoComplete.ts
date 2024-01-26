@@ -1,6 +1,30 @@
 import { ref, watch, computed } from "vue"
 import type { Ref } from "vue"
 import { useDocumentCache } from "@store/useDocumentCache"
+import type { IncludeByProp, SheetItemKeys } from "@apptypes/sheetItems"
+
+const getAllItemsWithProperty = <T extends SheetItemKeys>(prop: T) => {
+  const { allSheetItems: items } = useDocumentCache()
+  return items.filter((item) => {
+    return prop in item
+  }) as IncludeByProp<T>[]
+}
+
+export function useAutoComplete<T extends SheetItemKeys>(props: T | T[]) {
+  const propArr = Array.isArray(props) ? props : [props]
+  const sysIds = new Set<string>()
+  for (const prop of propArr) {
+    const res = getAllItemsWithProperty(prop)
+    const itemSysIds = res.map((item) => item.sysId)
+    for (const sysId of itemSysIds) sysIds.add(sysId)
+  }
+
+  const { getItemBySysId } = useDocumentCache()
+  return [...sysIds].map((sysId) => getItemBySysId(sysId)) as IncludeByProp<T[][number]>[]
+}
+
+const complete = useAutoComplete(['mentor', 'instructor'])
+
 
 export function useInstructorAutoComplete(instructor: Ref<string>) {
 
