@@ -24,7 +24,7 @@
       <DetailInput
         :item="module"
         prop="instructor"
-        :button="button"
+        :button="instructorSuggestions"
         icon="human-male-board"
         label="Instructor"
       />
@@ -87,16 +87,16 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
+import { getPanel } from '@panels'
 import { useSheetManager } from '@store/useSheetManager'
 import { getCurrentTerm, termInputValidator } from '@utils/TermValidator'
-import { getPanel } from '@panels'
+import { useInstructorAutoComplete } from '@composables/useAutoComplete'
 import type { Module } from '@apptypes/sheetItems'
 import InputCoupler from './Helper/InputCoupler.vue'
 import DetailInput from './Helper/DetailInput.vue'
 import DetailHeader from './Helper/DetailHeader.vue'
 import DetailFrame from './Helper/DetailFrame.vue'
 import LinkStudentButton from './Helper/LinkStudentButton.vue'
-import { useInstructorAutoComplete_v2 } from '../../InstructorAutoComplete'
 import { useMoveItem } from '../../MoveItems'
 
 const props = defineProps<{
@@ -104,8 +104,8 @@ const props = defineProps<{
 }>()
 
 const module = computed(() => props.item)
-const instructor = computed(() => module.value?.instructor)
-const { button } = useInstructorAutoComplete_v2(instructor)
+const instructor = computed(() => module.value.instructor)
+const { button: instructorSuggestions } = useInstructorAutoComplete(instructor)
 
 const sheetManager = useSheetManager()
 const { readOnlyMode } = storeToRefs(sheetManager)

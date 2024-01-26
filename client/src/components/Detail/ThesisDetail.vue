@@ -72,11 +72,7 @@
       <DetailInput
         :item="thesis"
         prop="mentor"
-        :button="{
-          condition: !sameInstructor && !suggestionSelected,
-          text: suggestionToString,
-          newPropValue: () => selectSuggestion(),
-        }"
+        :button="instructorSuggestions"
         icon="human-male-board"
         label="Faculty Mentor"
       />
@@ -115,23 +111,23 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
+import { storeToRefs } from 'pinia'
+import { getPanel } from '@panels'
+import { useSheetManager } from '@store/useSheetManager'
+import { useDialog } from '@store/useDialog'
+import { getCurrentTerm, termInputValidator } from '@utils/TermValidator'
+import { emailInputValidator, getFacultyEmail } from '@utils/emails'
+import { useInstructorAutoComplete } from '@composables/useAutoComplete'
+import type { Thesis } from '@apptypes/sheetItems'
+import { useStudentMatcher } from '../../StudentMatcher'
+
 import InputCoupler from './Helper/InputCoupler.vue'
 import DetailInput from './Helper/DetailInput.vue'
 import DetailHeader from './Helper/DetailHeader.vue'
 import DetailFrame from './Helper/DetailFrame.vue'
 import LinkStudentButton from './Helper/LinkStudentButton.vue'
 import LinkStudent from './Helper/LinkStudent.vue'
-
-import { computed } from 'vue'
-import { storeToRefs } from 'pinia'
-import { useSheetManager } from '@store/useSheetManager'
-import { useDialog } from '@store/useDialog'
-import { getCurrentTerm, termInputValidator } from '@utils/TermValidator'
-import { emailInputValidator, getFacultyEmail } from '@utils/emails'
-import { getPanel } from '@panels'
-import type { Thesis } from '@apptypes/sheetItems'
-import { useStudentMatcher } from '../../StudentMatcher'
-import { useInstructorAutoComplete } from '../../InstructorAutoComplete'
 
 const { readOnlyMode } = storeToRefs(useSheetManager())
 const { setPanel, getActivePanel } = useSheetManager()
@@ -140,21 +136,16 @@ const props = defineProps<{
   item: Thesis
 }>()
 
+const thesis = computed(() => props.item)
+const instructor = computed(() => thesis.value.mentor)
+const { button: instructorSuggestions } = useInstructorAutoComplete(instructor)
+
 const approvalStates = {
   'Pending': 'alert-circle',
   'Approved': 'check-circle',
   'Rejected': 'close-circle'
-}
+} as const
 
-const thesis = computed(() => props.item)
-const instructor = computed(() => thesis.value.mentor)
-
-const {
-  sameInstructor,
-  selectSuggestion,
-  suggestionSelected,
-  suggestionToString
-} = useInstructorAutoComplete(instructor)
 
 const student = computed(() => {
   const { studentMatch } = useStudentMatcher(thesis.value.studentSysId)

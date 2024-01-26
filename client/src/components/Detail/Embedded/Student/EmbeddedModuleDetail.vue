@@ -17,12 +17,7 @@
     <EmbeddedInput
       :item="module"
       prop="instructor"
-      :button="{
-        condition: !sameInstructor && !suggestionSelected,
-        text: suggestionToString,
-        newPropValue: () => selectSuggestion(),
-        disableCondition: !suggestedInstructor
-      }"
+      :button="instructorSuggestions"
       icon="human-male-board"
       label="Instructor"
     />
@@ -74,24 +69,18 @@ import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import { getCurrentTerm, termInputValidator } from '@utils/TermValidator'
 import { useSheetManager } from '@store/useSheetManager'
+import { useInstructorAutoComplete } from '@composables/useAutoComplete'
 import type { Module } from '@apptypes/sheetItems'
 import InputCoupler from '../../Helper/InputCoupler.vue'
 import EmbeddedInput from '../EmbeddedInput.vue'
 import EmbeddedDetailFrame from '../EmbeddedDetailFrame.vue'
-import { useInstructorAutoComplete } from '../../../../InstructorAutoComplete'
 import { useMoveItem } from '../../../../MoveItems'
 
 const { readOnlyMode, getActiveEmbeddedPanel, focusedEmbeddedItem } = storeToRefs(useSheetManager())
-const module = computed(() => focusedEmbeddedItem.value as Module)
-const instructor = computed(() => module.value?.instructor || '')
 
-const {
-  sameInstructor,
-  selectSuggestion,
-  suggestionSelected,
-  suggestionToString,
-  suggestedInstructor
-} = useInstructorAutoComplete(instructor)
+const module = computed(() => focusedEmbeddedItem.value as Module)
+const instructor = computed(() => module.value.instructor)
+const { button: instructorSuggestions } = useInstructorAutoComplete(instructor)
 
 const { moveItem, movingItem } = useMoveItem('MODULES');
 </script>

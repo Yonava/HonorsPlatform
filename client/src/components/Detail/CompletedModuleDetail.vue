@@ -57,11 +57,7 @@
       <DetailInput
         :item="completedModule"
         prop="instructor"
-        :button="{
-          condition: !sameInstructor && !suggestionSelected,
-          text: suggestionToString,
-          newPropValue: () => selectSuggestion(),
-        }"
+        :button="instructorSuggestions"
         icon="human-male-board"
         label="Instructor"
       />
@@ -125,15 +121,16 @@ import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useSheetManager } from '@store/useSheetManager'
 import { getCurrentTerm, termInputValidator } from '@utils/TermValidator'
+import { useInstructorAutoComplete } from '@composables/useAutoComplete'
+import type { CompletedModule } from '@apptypes/sheetItems'
+import { grades } from '@apptypes/misc'
+import { useMoveItem } from '../../MoveItems'
+
 import InputCoupler from './Helper/InputCoupler.vue'
 import DetailInput from './Helper/DetailInput.vue'
 import DetailHeader from './Helper/DetailHeader.vue'
 import DetailFrame from './Helper/DetailFrame.vue'
 import LinkStudentButton from './Helper/LinkStudentButton.vue'
-import type { CompletedModule } from '@apptypes/sheetItems'
-import { grades } from '@apptypes/misc'
-import { useMoveItem } from '../../MoveItems'
-import { useInstructorAutoComplete } from '../../InstructorAutoComplete'
 
 const sheetManager = useSheetManager()
 const { readOnlyMode } = storeToRefs(sheetManager)
@@ -144,13 +141,7 @@ const props = defineProps<{
 
 const completedModule = computed(() => props.item)
 const instructor = computed(() => completedModule.value.instructor)
-
-const {
-  sameInstructor,
-  selectSuggestion,
-  suggestionSelected,
-  suggestionToString,
-} = useInstructorAutoComplete(instructor)
+const { button: instructorSuggestions } = useInstructorAutoComplete(instructor)
 
 const { moveItem, movingItem, panelOnceMoved } = useMoveItem()
 </script>

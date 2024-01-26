@@ -538,7 +538,7 @@ export const useDocumentCache = defineStore("documentCache", {
 
       // @ts-expect-error
       let title = item[panel.properties.title]
-      title ??= panel.title.singular
+      title ||= panel.title.singular
 
       if (showWarning) {
         try {
