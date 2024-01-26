@@ -1,6 +1,7 @@
 import { athleticOptions } from "@utils/students";
 import type { StatusOption, YearOption } from "@utils/students";
-import type { Grade, Primitive, ThesisDecision } from "./misc";
+import type { Grade, Primitive, ThesisDecision } from "@apptypes/misc";
+import type { StudentEmail, FacultyEmail } from "@utils/emails";
 
 export type SheetItem = Module | Graduate | Student | CompletedModule | Thesis | GradEngagement;
 
@@ -14,10 +15,10 @@ export interface SheetEntry extends CustomField {
   note: string;
 }
 
-export interface Student extends SheetEntry {
+export interface Student<T extends string = string> extends SheetEntry {
   id: string;
-  name: string;
-  email: string;
+  name: T;
+  email: StudentEmail<T>;
   points: number;
   activeStatus: StatusOption;
   year: YearOption;
@@ -52,14 +53,14 @@ export interface GradEngagement extends SheetEntry {
   dateTime: string;
 }
 
-export interface Thesis extends SheetEntry {
+export interface Thesis<T extends string = string> extends SheetEntry {
   studentSysId: string;
   title: string;
   proposalReceived: string;
   breakoutRoom: string;
   decision: ThesisDecision;
   term: string;
-  mentor: string;
-  mentorEmail: string;
+  mentor: T;
+  mentorEmail: FacultyEmail<T>;
   draftReceived: string;
 }
