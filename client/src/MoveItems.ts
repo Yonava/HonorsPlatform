@@ -1,142 +1,155 @@
-import { getPanel, PanelName, type Panel } from '@panels'
-import type { SheetItem, Student, Graduate, Module, CompletedModule } from '@apptypes/sheetItems'
 import { ref, computed } from 'vue'
 import { storeToRefs } from 'pinia'
-
+import { getPanel, PanelName } from '@panels'
+import type { SheetItem, Student, Graduate, Module, CompletedModule } from '@apptypes/sheetItems'
 import { useDialog } from '@store/useDialog'
+import type { DialogContentOptions } from '@store/useDialog'
 import { useSheetManager } from '@store/useSheetManager'
 import { useDocumentCache } from '@store/useDocumentCache'
 import warn from '@utils/Warn'
 import { moveToGraduates, moveToStudents } from '@utils/students'
 import MoveModule from './components/Detail/Helper/MoveModule.vue'
 
-const savedToSheet = (item: SheetItem, panel?: Panel) => {
+const notSavedToSheetDialog = (item: SheetItem) => {
   const { open, close } = useDialog()
-  const { getActivePanel } = useSheetManager()
-  panel ??= getActivePanel
-  const isSaved = typeof item.row === "number"
-  if (!isSaved) {
-    const SECONDS_TO_WASTE = 5
-    open({
-      persistent: true,
-      title: `Nothing to Move!`,
-      description: `It isn't very practical to move nothing, is it? Try adding something to this ${panel.title.singular.toLowerCase()} before bothering me about moving it. In fact, just for that, I'm going to waste ${SECONDS_TO_WASTE} seconds of your time.`,
-      buttons: [
-        {
-          text: `Dismiss (Wait ${SECONDS_TO_WASTE} Seconds Once Clicked)`,
-          color: 'red',
-          onClick: () => {
-            setTimeout(close, SECONDS_TO_WASTE * 1000)
-          }
-        }
-      ]
-    })
+  const { getPanelNameFromItemSysId } = useDocumentCache()
+  const panelName = getPanelNameFromItemSysId(item.sysId)
+  if (!panelName) return
+  const panel = getPanel(panelName)
+  return open({
+    title: `Nothing to Move!`,
+    description: `Try adding something to this ${panel.title.singular.toLowerCase()} first.`,
+    buttons: [
+      {
+        text: 'Ok',
+        color: 'red',
+        onClick: close
+      }
+    ]
+  })
+}
+
+type MovementHandlerOptions<T extends SheetItem> = {
+  item: T,
+  moveItem: (item: T) => Promise<void>,
+  beforeMove?: (item: T) => Promise<any>,
+  successDialog?: (close: () => {}) => DialogContentOptions,
+  onSuccess?: (item: T) => Promise<any>,
+}
+
+const moveHandler = async <T extends SheetItem>(options: MovementHandlerOptions<T>) => {
+  const { itemPostedToSheet } = useDocumentCache()
+  const { open, close } = useDialog()
+
+  const {
+    item,
+    moveItem,
+    beforeMove,
+    onSuccess,
+    successDialog,
+  } = options
+
+  if (!itemPostedToSheet(item)) {
+    notSavedToSheetDialog(item)
+    return
   }
-  return isSaved
+
+  try {
+    await beforeMove?.(item)
+  } catch (e) {
+    throw e
+  }
+
+  try {
+    await moveItem(item)
+  } catch (e) {
+    throw e
+  }
+
+  try {
+    await onSuccess?.(item)
+  } catch (e) {
+    throw e
+  }
+
+  if (successDialog) open(successDialog(close))
+}
+
+const studentHandler = async (student: Student) => {
+  const { setPanel } = useSheetManager()
+
+  const graduatePanel = getPanel('GRADUATES')
+  const { title } = getPanel('STUDENTS')
+  const name = student.name || `this ${title.singular.toLowerCase()}`;
+  const athletics = student.athletics.toLowerCase() || 'no athletics';
+  const year = student.year.toLowerCase() || 'no class year';
+  const points = student.points || 0;
+
+  const warnDialog = {
+    title: `Graduate ${name}?`,
+    description: `Are you sure you want to graduate ${name}? Information such as point count (${points}), athletics (${athletics}), and class year (${year}) will be permanently lost.`,
+  } as const
+
+  const successDialog = (close: () => {}) => ({
+    title: `${name} Graduated`,
+    description: `${name} has been successfully moved to ${graduatePanel.title.plural}.`,
+    buttons: [{
+      text: `View new ${graduatePanel.title.singular} profile`,
+      color: graduatePanel.color,
+      onClick: () => {
+        close()
+        setPanel(graduatePanel.panelName, {
+          value: student.sysId
+        })
+      }
+    }]
+  })
+
+  return moveHandler({
+    item: student,
+    beforeMove: async () => warn(warnDialog),
+    moveItem: moveToGraduates,
+    successDialog,
+  })
+}
+
+const graduateHandler = async (graduate: Graduate) => {
+  const { setPanel } = useSheetManager()
+
+  const studentPanel = getPanel('STUDENTS')
+  const { title } = getPanel('GRADUATES')
+  const name = graduate.name || `this ${title.singular.toLowerCase()}`;
+  const warnDialog = {
+    title: `Move ${name} Back to ${studentPanel.title.plural}?`,
+    description: `Are you sure you want to move ${name} back to ${studentPanel.title.plural}? Information like phone number and graduation date will be permanently lost.`,
+  } as const
+
+  const successDialog = (close: () => {}) => ({
+    title: `${name} Moved Back Successfully`,
+    description: `${name} has been moved back to ${studentPanel.title.plural}.`,
+    buttons: [{
+      text: `View new ${studentPanel.title.singular} profile`,
+      color: studentPanel.color,
+      onClick: () => {
+        close()
+        setPanel(studentPanel.panelName, {
+          value: graduate.sysId
+        })
+      }
+    }]
+  })
+
+  return moveHandler({
+    item: graduate,
+    beforeMove: async () => warn(warnDialog),
+    moveItem: moveToStudents,
+    successDialog,
+  })
 }
 
 export const movementHandlers = {
-  STUDENTS: async (item: SheetItem) => {
-
-    const graduatePanel = getPanel('GRADUATES')
-    const studentPanel = getPanel('STUDENTS')
-    const { open, close } = useDialog()
-    const { setPanel } = useSheetManager()
-
-    if (!savedToSheet(item)) {
-      return;
-    }
-
-    const student = JSON.parse(JSON.stringify(item)) as Student;
-
-    const name = student.name || `this ${studentPanel.title.singular.toLowerCase()}`;
-
-    try {
-      await warn({
-        title: `Graduate ${name}?`,
-        description: `Are you sure you want to graduate ${name}? Graduating ${name} will remove them from the ${studentPanel.title.singular.toLowerCase()} list and add them to the ${graduatePanel.title.plural.toLowerCase()} list. This action will permanently erase data such as point count (${student.points || 0}), athletic affiliation (${student.athletics.toLowerCase() || 'no athletics'}), class year (${student.year.toLowerCase() || 'no class year'}) and more.`
-      })
-    } catch {
-      throw new Error('Graduation cancelled.')
-    }
-
-    try {
-      await moveToGraduates(student);
-    } catch (e) {
-      throw new Error(`Failed to graduate ${name}.`);
-    }
-
-    open({
-      title: `${student.name || studentPanel.title.singular} Graduated`,
-      description: `${student.name || studentPanel.title.singular} has been successfully moved to ${graduatePanel.title.plural}.`,
-      buttons: [
-        {
-          text: "Dismiss",
-          color: studentPanel.color,
-          onClick: close,
-        },
-        {
-          text: `View new ${graduatePanel.title.singular} profile`,
-          color: graduatePanel.color,
-          onClick: () => {
-            setPanel(graduatePanel.panelName, {
-              value: student.sysId
-            });
-            close();
-          },
-        },
-      ],
-    });
-  },
-  GRADUATES: async (item: SheetItem) => {
-
-    const graduatePanel = getPanel('GRADUATES')
-    const studentPanel = getPanel('STUDENTS')
-    const { open, close } = useDialog()
-    const { setPanel } = useSheetManager()
-
-    if (!savedToSheet(item)) {
-      return;
-    }
-
-    try {
-      await warn({
-        description: `Are you sure you want to move this ${graduatePanel.title.singular.toLowerCase()} back to ${graduatePanel.title.plural.toLowerCase()}? Information like phone number and graduation date will be permanently lost.`
-      });
-    } catch (e) {
-      throw new Error('Student move cancelled.')
-    }
-
-    const grad = JSON.parse(JSON.stringify(item)) as Graduate;
-
-    try {
-      await moveToStudents(grad)
-    } catch (e) {
-      throw new Error(`Failed to move ${grad.name || graduatePanel.title.singular.toLowerCase()}.`)
-    }
-
-    open({
-      title: "Success!",
-      description: `${grad.name || graduatePanel.title.singular} has been moved over to ${studentPanel.title.plural}.`,
-      buttons: [
-        {
-          text: "Dismiss",
-          color: graduatePanel.color,
-          onClick: close,
-        },
-        {
-          text: `View ${studentPanel.title.singular} Profile`,
-          color: studentPanel.color,
-          onClick: () => {
-            setPanel(studentPanel.panelName, {
-              value: grad.sysId,
-            });
-            close();
-          },
-        }
-      ],
-    });
-  },
+  STUDENTS: studentHandler,
+  GRADUATES: graduateHandler,
   MODULES: async (item: SheetItem) => {
     await new Promise((resolve, reject) => {
       useDialog().open({
@@ -230,7 +243,7 @@ export const useMoveItem = (originatingPanelName?: PanelName) => {
     },
     'GRADUATE_ENGAGEMENTS': null,
     'THESES': null,
-  }
+  } as const
 
   const movementObject = computed(() => {
     return movements[panelName.value]

@@ -25,9 +25,7 @@ export function useAutoComplete<T>(
   userInput?: MaybeRefOrGetter<string>,
 ) {
   const possibleValues = [
-    ...new Set(
-      source.filter((value) => !!value?.toString().trim())
-    )
+    ...new Set(source.filter((value) => !!value?.toString().trim()))
   ]
   const input = toRef(userInput)
 

@@ -53,6 +53,8 @@ export type DialogComponent = {
   props?: Record<string, any>;
 };
 
+export type DialogContentOptions = DialogBody | DialogComponent;
+
 type DialogCloseResolutions = 'BACKGROUND_CLOSE' | 'ACTION_CLOSE'
 
 type DialogInstanceBase<T> = {
@@ -63,12 +65,12 @@ type DialogInstanceBase<T> = {
   id: string;
 }
 
-type DialogInstance<T = DialogCloseResolutions> = DialogInstanceBase<T> & (DialogBody | DialogComponent);
+type DialogInstance<T = DialogCloseResolutions> = DialogInstanceBase<T> & DialogContentOptions;
 
 type OpenOptions = {
   persistent?: boolean;
   onClose?: (...args: any[]) => void;
-} & (DialogBody | DialogComponent);
+} & DialogContentOptions;
 
 export const CONTENT_TIMEOUT_DURATION_MS = 300;
 
