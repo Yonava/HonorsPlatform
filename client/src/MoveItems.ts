@@ -15,18 +15,22 @@ const notSavedToSheetDialog = (item: SheetItem) => {
   const { getPanelNameFromItemSysId } = useDocumentCache()
   const panelName = getPanelNameFromItemSysId(item.sysId)
   if (!panelName) return
-  const panel = getPanel(panelName)
-  return open({
-    title: `Nothing to Move!`,
-    description: `Try adding something to this ${panel.title.singular.toLowerCase()} first.`,
-    buttons: [
-      {
-        text: 'Ok',
-        color: 'red',
-        onClick: close
-      }
-    ]
-  })
+  const { title } = getPanel(panelName)
+  const panelTitle = title.singular.toLowerCase()
+
+  const closeButton = {
+    text: 'Ok',
+    color: 'red',
+    onClick: close
+  }
+
+  const dialog = {
+    title: 'Nothing to Move!',
+    description: `Try adding something to this ${panelTitle} first.`,
+    buttons: [closeButton]
+  }
+
+  return open(dialog)
 }
 
 type MovementHandlerOptions<T extends SheetItem> = {
