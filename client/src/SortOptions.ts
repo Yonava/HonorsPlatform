@@ -167,7 +167,7 @@ export const sortOptions = {
   COMPLETED_MODULES: [
     {
       label: 'Date Completed',
-      prop: 'completedDate',
+      prop: 'dateCompleted',
       tooltip: 'Sort by date completed',
       icon: {
         asc: 'mdi-calendar-import',
@@ -175,14 +175,14 @@ export const sortOptions = {
       },
       func: (a: CompletedModule, b: CompletedModule) => {
         // put empty strings last
-        if (a.completedDate === '') {
+        if (a.dateCompleted === '') {
           return 1;
         }
-        if (b.completedDate === '') {
+        if (b.dateCompleted === '') {
           return -1;
         }
-        const aDate = new Date(a.completedDate);
-        const bDate = new Date(b.completedDate);
+        const aDate = new Date(a.dateCompleted);
+        const bDate = new Date(b.dateCompleted);
         return aDate.getTime() - bDate.getTime();
       }
     },

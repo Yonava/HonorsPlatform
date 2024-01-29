@@ -45,7 +45,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { termValidator } from '@utils/TermValidator'
+import { termValidator } from '@utils/terms'
 import type { Thesis } from '@apptypes/sheetItems'
 import { useStudentInfo } from './useStudentInfo'
 import {

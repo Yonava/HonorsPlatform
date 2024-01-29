@@ -116,7 +116,7 @@ import { storeToRefs } from 'pinia'
 import { getPanel } from '@panels'
 import { useSheetManager } from '@store/useSheetManager'
 import { useDialog } from '@store/useDialog'
-import { getCurrentTerm, termInputValidator } from '@utils/TermValidator'
+import { getCurrentTerm, termInputValidator } from '@utils/terms'
 import { emailInputValidator, getFacultyEmail } from '@utils/emails'
 import { useInstructorAutoComplete } from '@composables/useAutoComplete'
 import type { Thesis } from '@apptypes/sheetItems'
@@ -137,8 +137,7 @@ const props = defineProps<{
 }>()
 
 const thesis = computed(() => props.item)
-const instructor = computed(() => thesis.value.mentor)
-const { button: instructorSuggestions } = useInstructorAutoComplete(instructor)
+const { button: instructorSuggestions } = useInstructorAutoComplete(thesis.value)
 
 const approvalStates = {
   'Pending': 'alert-circle',

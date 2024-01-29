@@ -4,7 +4,7 @@ import { useSheetManager } from "@store/useSheetManager";
 import { useSocket } from "@store/useSocket";
 import { useSyncState } from "@store/useSyncState";
 import { useDialog } from "@store/useDialog";
-import warn from "@utils/Warn";
+import warn from "@utils/warn";
 import { getRange, clearByRow, postInRange, getRanges } from '../SheetsAPI';
 import * as types from "@apptypes/sheetItems";
 import { Announcement } from "@apptypes/misc";

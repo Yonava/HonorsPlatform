@@ -10,7 +10,7 @@
         Up!
       </h1>
       <v-text-field
-        v-model="completedDate"
+        v-model="dateCompleted"
         label="Date Completed"
         variant="outlined"
         prepend-inner-icon="mdi-calendar"
@@ -67,7 +67,7 @@ const newDateString = () => {
   return new Date().toLocaleDateString();
 };
 
-const completedDate = ref(newDateString());
+const dateCompleted = ref(newDateString());
 const finalGrade = ref<Grade>(null);
 
 async function moveModule() {
@@ -122,7 +122,7 @@ async function moveModule() {
 
   const newCompletedModule = {
     ...module,
-    completedDate: completedDate.value,
+    dateCompleted: dateCompleted.value,
     grade: finalGrade.value,
   };
 

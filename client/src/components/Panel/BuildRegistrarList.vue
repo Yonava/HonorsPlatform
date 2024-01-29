@@ -39,7 +39,7 @@
 import { ref, computed, watch } from "vue";
 import { useDocumentCache } from "@store/useDocumentCache";
 import { useFocusOnMount } from "@composables/useInputFocus";
-import { termInputValidator, getCurrentTerm } from "@utils/TermValidator";
+import { termInputValidator, getCurrentTerm } from "@utils/terms";
 import { replaceRange } from "../../SheetsAPI";
 
 const loading = ref(false);

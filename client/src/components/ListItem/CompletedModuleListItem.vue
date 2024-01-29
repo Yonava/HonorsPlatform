@@ -4,8 +4,8 @@
     :styled="styled"
     :bottom-corners="[
       {
-        prop: 'completedDate',
-        text: item.completedDate ? `Completed ${item.completedDate}` : 'No Completion Date',
+        prop: 'dateCompleted',
+        text: item.dateCompleted ? `Completed ${item.dateCompleted}` : 'No Completion Date',
         icon: 'calendar-check',
         tooltip: 'Completion Date',
       },
@@ -43,7 +43,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { getPanel } from '@panels'
-import { termValidator } from '@utils/TermValidator'
+import { termValidator } from '@utils/terms'
 import { useStudentInfo } from './useStudentInfo'
 import type { CompletedModule } from '@apptypes/sheetItems'
 import {

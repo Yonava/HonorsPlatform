@@ -1,7 +1,7 @@
 import { onMounted } from 'vue'
 import type { Ref } from 'vue'
 
-type InputFocusOptions = {
+export type InputFocusOptions = {
   focusOnMounted?: boolean,
   delayMs?: number
 }

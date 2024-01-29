@@ -67,7 +67,7 @@ import IDInput from "./Helper/IDInput.vue";
 import DetailFrame from "./Helper/DetailFrame.vue";
 import DetailHeader from "./Helper/DetailHeader.vue";
 import DetailInput from "./Helper/DetailInput.vue";
-import { useMoveItem } from "../../MoveItems";
+import { useMoveItem } from "@composables/useMoveItem";
 
 const sheetManager = useSheetManager();
 const { readOnlyMode } = storeToRefs(sheetManager);

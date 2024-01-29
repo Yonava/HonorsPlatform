@@ -217,7 +217,7 @@ const displayedProps: { [key in PanelName]: string[] } = {
     'grade',
     'term',
     'courseCode',
-    'completedDate',
+    'dateCompleted',
     'studentSysId'
   ],
   THESES: [

@@ -13,11 +13,11 @@
 
         <DetailInput
           :item="completedModule"
-          prop="completedDate"
+          prop="dateCompleted"
           label="Date of Completion"
           icon="check"
           :button="{
-            condition: !completedModule.completedDate,
+            condition: !completedModule.dateCompleted,
             text: 'Completed Today',
             newPropValue: () => new Date().toLocaleDateString('en-US'),
           }"
@@ -45,11 +45,7 @@
         :item="completedModule"
         prop="term"
         :rules="termInputValidator()"
-        :button="{
-          condition: !completedModule.term,
-          text: 'Current Term',
-          newPropValue: () => getCurrentTerm(),
-        }"
+        :button="termSuggestions"
         label="Term"
         icon="calendar"
       />
@@ -120,11 +116,11 @@
 import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useSheetManager } from '@store/useSheetManager'
-import { getCurrentTerm, termInputValidator } from '@utils/TermValidator'
-import { useInstructorAutoComplete } from '@composables/useAutoComplete'
+import { termInputValidator } from '@utils/terms'
+import { useInstructorAutoComplete, useTermCodeAutoComplete } from '@composables/useAutoComplete'
 import type { CompletedModule } from '@apptypes/sheetItems'
 import { grades } from '@apptypes/misc'
-import { useMoveItem } from '../../MoveItems'
+import { useMoveItem } from '@composables/useMoveItem'
 
 import InputCoupler from './Helper/InputCoupler.vue'
 import DetailInput from './Helper/DetailInput.vue'
@@ -140,8 +136,8 @@ const props = defineProps<{
 }>()
 
 const completedModule = computed(() => props.item)
-const instructor = computed(() => completedModule.value.instructor)
-const { button: instructorSuggestions } = useInstructorAutoComplete(instructor)
+const { button: instructorSuggestions } = useInstructorAutoComplete(completedModule.value)
+const { button: termSuggestions } = useTermCodeAutoComplete(completedModule.value)
 
 const { moveItem, movingItem, panelOnceMoved } = useMoveItem()
 </script>

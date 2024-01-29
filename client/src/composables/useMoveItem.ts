@@ -8,81 +8,65 @@ import { useSheetManager } from '@store/useSheetManager'
 import { useDocumentCache } from '@store/useDocumentCache'
 import warn from '@utils/Warn'
 import { moveToGraduates, moveToStudents } from '@utils/students'
-import MoveModule from './components/Detail/Helper/MoveModule.vue'
+import MoveModule from '../components/Detail/Helper/MoveModule.vue'
 
-const notSavedToSheetDialog = (item: SheetItem) => {
-  const { open, close } = useDialog()
-  const { getPanelNameFromItemSysId } = useDocumentCache()
-  const panelName = getPanelNameFromItemSysId(item.sysId)
-  if (!panelName) return
-  const { title } = getPanel(panelName)
-  const panelTitle = title.singular.toLowerCase()
-
-  const closeButton = {
-    text: 'Ok',
-    color: 'red',
-    onClick: close
-  }
-
-  const dialog = {
-    title: 'Nothing to Move!',
-    description: `Try adding something to this ${panelTitle} first.`,
-    buttons: [closeButton]
-  }
-
-  return open(dialog)
+const completedModuleToModule = (completedModule: CompletedModule): Module => {
+  const { grade, dateCompleted, ...module } = completedModule
+  return module
 }
 
 type MovementHandlerOptions<T extends SheetItem> = {
-  item: T,
-  moveItem: (item: T) => Promise<void>,
-  beforeMove?: (item: T) => Promise<any>,
+  itemBeforeMove: T,
+  moveItem: (item: T) => Promise<any>,
+  beforeMove?: () => Promise<any>,
   successDialog?: (close: () => {}) => DialogContentOptions,
-  onSuccess?: (item: T) => Promise<any>,
+  onSuccess?: () => Promise<any>,
 }
 
 const moveHandler = async <T extends SheetItem>(options: MovementHandlerOptions<T>) => {
   const { itemPostedToSheet } = useDocumentCache()
-  const { open, close } = useDialog()
+  const { open, close, openSnackbar } = useDialog()
 
   const {
-    item,
+    itemBeforeMove,
     moveItem,
     beforeMove,
     onSuccess,
     successDialog,
   } = options
 
-  if (!itemPostedToSheet(item)) {
-    notSavedToSheetDialog(item)
+  if (!itemPostedToSheet(itemBeforeMove)) {
+    openSnackbar({
+      text: 'Nothing To Move!'
+    })
     return
   }
 
   try {
-    await beforeMove?.(item)
+    await beforeMove?.()
   } catch (e) {
     throw e
   }
 
   try {
-    await moveItem(item)
+    await moveItem(itemBeforeMove)
   } catch (e) {
     throw e
   }
 
   try {
-    await onSuccess?.(item)
+    await onSuccess?.()
   } catch (e) {
     throw e
   }
 
   if (successDialog) open(successDialog(close))
+  else openSnackbar({
+    text: 'Success!'
+  })
 }
 
 const studentHandler = async (student: Student) => {
-  const { setPanel } = useSheetManager()
-
-  const graduatePanel = getPanel('GRADUATES')
   const { title } = getPanel('STUDENTS')
   const name = student.name || `this ${title.singular.toLowerCase()}`;
   const athletics = student.athletics.toLowerCase() || 'no athletics';
@@ -94,60 +78,58 @@ const studentHandler = async (student: Student) => {
     description: `Are you sure you want to graduate ${name}? Information such as point count (${points}), athletics (${athletics}), and class year (${year}) will be permanently lost.`,
   } as const
 
-  const successDialog = (close: () => {}) => ({
-    title: `${name} Graduated`,
-    description: `${name} has been successfully moved to ${graduatePanel.title.plural}.`,
-    buttons: [{
-      text: `View new ${graduatePanel.title.singular} profile`,
-      color: graduatePanel.color,
-      onClick: () => {
-        close()
-        setPanel(graduatePanel.panelName, {
-          value: student.sysId
-        })
-      }
-    }]
-  })
-
   return moveHandler({
-    item: student,
-    beforeMove: async () => warn(warnDialog),
+    itemBeforeMove: student,
+    beforeMove: () => warn(warnDialog),
     moveItem: moveToGraduates,
-    successDialog,
   })
 }
 
 const graduateHandler = async (graduate: Graduate) => {
-  const { setPanel } = useSheetManager()
-
   const studentPanel = getPanel('STUDENTS')
   const { title } = getPanel('GRADUATES')
   const name = graduate.name || `this ${title.singular.toLowerCase()}`;
+
   const warnDialog = {
     title: `Move ${name} Back to ${studentPanel.title.plural}?`,
     description: `Are you sure you want to move ${name} back to ${studentPanel.title.plural}? Information like phone number and graduation date will be permanently lost.`,
   } as const
 
-  const successDialog = (close: () => {}) => ({
-    title: `${name} Moved Back Successfully`,
-    description: `${name} has been moved back to ${studentPanel.title.plural}.`,
-    buttons: [{
-      text: `View new ${studentPanel.title.singular} profile`,
-      color: studentPanel.color,
-      onClick: () => {
-        close()
-        setPanel(studentPanel.panelName, {
-          value: graduate.sysId
-        })
-      }
-    }]
+  return moveHandler({
+    itemBeforeMove: graduate,
+    beforeMove: () => warn(warnDialog),
+    moveItem: moveToStudents,
   })
+}
+
+const completedModuleHandler = async (completedModule: CompletedModule) => {
+  const {
+    title: moduleTitle,
+    panelName: modulePanelName
+  } = getPanel('MODULES')
+  const {
+    title: cModuleTitle, properties,
+    panelName: completedModulePanelName
+  } = getPanel('COMPLETED_MODULES')
+  const { moveItemBetweenLists } = useDocumentCache()
+
+  const courseCode = completedModule[properties.title] || `This ${cModuleTitle.singular}`
+  const grade = completedModule.grade || 'ungraded'
+  const dateOfCompletion = completedModule.dateCompleted || 'no date'
+
+  const warnDialog = {
+    title: `Move ${courseCode} Back to ${moduleTitle.plural}`,
+    description: `Are you sure you want to move ${courseCode} back to ${moduleTitle.plural}? Information such as final grade (${grade}) and date of completion (${dateOfCompletion}) will be permanently lost.`
+  }
 
   return moveHandler({
-    item: graduate,
-    beforeMove: async () => warn(warnDialog),
-    moveItem: moveToStudents,
-    successDialog,
+    itemBeforeMove: completedModule,
+    beforeMove: () => warn(warnDialog),
+    moveItem: () => moveItemBetweenLists({
+      item: completedModuleToModule(completedModule),
+      oldPanelName: completedModulePanelName,
+      newPanelName: modulePanelName,
+    })
   })
 }
 
@@ -166,57 +148,7 @@ export const movementHandlers = {
       })
     })
   },
-  COMPLETED_MODULES: async (item: SheetItem) => {
-
-    const modulePanel = getPanel('MODULES')
-    const completedModulePanel = getPanel('COMPLETED_MODULES')
-    const { open, close } = useDialog()
-    const { setPanel } = useSheetManager()
-    const { moveItemBetweenLists } = useDocumentCache()
-    const completedModule = item as CompletedModule
-
-    const { grade, completedDate, ...rest } = completedModule
-    const newItem: Module = rest;
-
-    const title = completedModule[completedModulePanel.properties.title] || `This ${completedModulePanel.title.singular}`
-
-    try {
-      await warn({
-        title: `Move ${title} Back to ${modulePanel.title.plural}?`,
-        description: `Are you sure you want to move ${title.toLowerCase()} back to ${modulePanel.title.plural}? This action will remove the grade (${completedModule.grade || 'ungraded'}) and completed date (${completedModule.completedDate || 'no completion date'}) and cannot be undone.`,
-      })
-    } catch (e) {
-      throw e
-    }
-
-    await moveItemBetweenLists({
-      item: newItem,
-      oldPanelName: completedModulePanel.panelName,
-      newPanelName: modulePanel.panelName,
-    })
-
-    open({
-      title: `${title} Moved Back Successfully`,
-      description: `${title} has been moved back to ${modulePanel.title.plural}.`,
-      buttons: [
-        {
-          text: 'Dismiss',
-          color: 'red',
-          onClick: () => close(),
-        },
-        {
-          text: `View ${modulePanel.title.singular}`,
-          color: `${modulePanel.color}-darken-2`,
-          onClick: () => {
-            setPanel(modulePanel.panelName, {
-              value: newItem.sysId
-            })
-            close()
-          },
-        }
-      ]
-    })
-  },
+  COMPLETED_MODULES: completedModuleHandler,
 }
 
 export const useMoveItem = (originatingPanelName?: PanelName) => {

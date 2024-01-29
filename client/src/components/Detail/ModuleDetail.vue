@@ -11,11 +11,7 @@
       <DetailInput
         :item="module"
         prop="term"
-        :button="{
-          condition: !module.term,
-          text: 'Current Term',
-          newPropValue: () => getCurrentTerm(),
-        }"
+        :button="termSuggestions"
         :rules="termInputValidator()"
         label="Term"
         icon="calendar"
@@ -89,23 +85,23 @@ import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import { getPanel } from '@panels'
 import { useSheetManager } from '@store/useSheetManager'
-import { getCurrentTerm, termInputValidator } from '@utils/TermValidator'
-import { useInstructorAutoComplete } from '@composables/useAutoComplete'
+import { termInputValidator } from '@utils/terms'
+import { useInstructorAutoComplete, useTermCodeAutoComplete } from '@composables/useAutoComplete'
+import { useMoveItem } from '@composables/useMoveItem'
 import type { Module } from '@apptypes/sheetItems'
 import InputCoupler from './Helper/InputCoupler.vue'
 import DetailInput from './Helper/DetailInput.vue'
 import DetailHeader from './Helper/DetailHeader.vue'
 import DetailFrame from './Helper/DetailFrame.vue'
 import LinkStudentButton from './Helper/LinkStudentButton.vue'
-import { useMoveItem } from '../../MoveItems'
 
 const props = defineProps<{
   item: Module
 }>()
 
 const module = computed(() => props.item)
-const instructor = computed(() => module.value.instructor)
-const { button: instructorSuggestions } = useInstructorAutoComplete(instructor)
+const { button: instructorSuggestions } = useInstructorAutoComplete(module.value)
+const { button: termSuggestions } = useTermCodeAutoComplete(module.value)
 
 const sheetManager = useSheetManager()
 const { readOnlyMode } = storeToRefs(sheetManager)

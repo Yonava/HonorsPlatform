@@ -177,7 +177,7 @@ import {
   athleticOptions,
 } from "@utils/students";
 import type { Student } from '@apptypes/sheetItems'
-import { useMoveItem } from '../../MoveItems'
+import { useMoveItem } from '@composables/useMoveItem'
 
 const { smAndDown } = useDisplay();
 

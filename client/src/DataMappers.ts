@@ -47,7 +47,7 @@ export const sheetProps = {
     'instructor',
     'docuSignCreated',
     'docuSignCompleted',
-    'completedDate',
+    'dateCompleted',
     'grade',
   ],
   GRADUATES: [

@@ -140,7 +140,7 @@ import { storeToRefs } from 'pinia'
 import { useSheetManager } from '@store/useSheetManager';
 import { useDocumentCache } from '@store/useDocumentCache';
 import { SheetItem } from '@apptypes/sheetItems';
-import { useMoveItem } from '../../MoveItems'
+import { useMoveItem } from '@composables/useMoveItem'
 
 const dragState = ref(false)
 const dragStateMove = ref(false)

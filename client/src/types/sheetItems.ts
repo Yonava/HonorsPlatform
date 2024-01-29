@@ -49,7 +49,7 @@ export interface Module extends SheetEntry {
 }
 
 export interface CompletedModule extends Module {
-  completedDate: string;
+  dateCompleted: string;
   grade: Grade;
 }
 

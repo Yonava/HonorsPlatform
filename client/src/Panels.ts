@@ -137,7 +137,7 @@ export const panels = {
       'instructor': 'account',
       'docuSignCreated': 'calendar',
       'docuSignCompleted': 'calendar',
-      'completedDate': 'calendar',
+      'dateCompleted': 'calendar',
       'grade': 'numeric',
     },
     mappers: {

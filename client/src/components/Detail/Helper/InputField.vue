@@ -158,12 +158,19 @@ const buttonClicked = () => {
     return
   }
 
+  const oldVal = props.item[props.prop]
+  const newVal = props.button.newPropValue()
+
+  if (oldVal === newVal) {
+    return
+  }
+
   trackItemForUpdate({
     item: props.item,
     panelName: props.inputMedium === 'DETAIL' ? useSheetManager().getActivePanel.panelName : useSheetManager().getActiveEmbeddedPanel.panelName
   })
 
-  props.item[props.prop] = props.button.newPropValue()
+  props.item[props.prop] = newVal
   broadcast(props.prop)
 }
 

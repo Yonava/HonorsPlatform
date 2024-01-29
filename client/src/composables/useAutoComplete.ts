@@ -2,6 +2,7 @@ import { toRef, computed } from "vue"
 import type { MaybeRefOrGetter, Ref } from "vue"
 import { useDocumentCache } from "@store/useDocumentCache"
 import type { IncludeByProp, SheetItemKeys } from "@apptypes/sheetItems"
+import { getCurrentTerm } from "@utils/terms"
 
 const getAllItemsWithProperty = <T extends SheetItemKeys>(prop: T) => {
   const { allSheetItems: items } = useDocumentCache()
@@ -20,9 +21,16 @@ const autoCompleteButton = <T>(input: string | undefined, suggestedValues: T[]) 
   } as const
 }
 
+export type AutoCompleteButton<T> = {
+  condition: boolean,
+  newPropValue: () => T,
+  text: T
+}
+
 export function useAutoComplete<T>(
   source: T[],
   userInput?: MaybeRefOrGetter<string>,
+  btnOverrideFn?: (input: string | undefined, suggestedValues: T[]) => Readonly<Partial<AutoCompleteButton<T>>>
 ) {
   const possibleValues = [
     ...new Set(source.filter((value) => !!value?.toString().trim()))
@@ -47,7 +55,10 @@ export function useAutoComplete<T>(
       .sort(prioritizeStartsWith)
   })
 
-  const button = computed(() => autoCompleteButton(input.value, suggestedValues.value))
+  const button = computed(() => {
+    const args = [input.value, suggestedValues.value] as const
+    return Object.assign(autoCompleteButton(...args), btnOverrideFn?.(...args))
+  })
 
   return {
     button,
@@ -57,8 +68,21 @@ export function useAutoComplete<T>(
   } as const
 }
 
-export const useInstructorAutoComplete = <T extends string>(inputSrc: Ref<T>) => {
+export const useInstructorAutoComplete = (item: IncludeByProp<'instructor' | 'mentor'>) => {
   const instructors = getAllItemsWithProperty("instructor").map(item => item.instructor)
   const mentors = getAllItemsWithProperty("mentor").map(item => item.mentor)
+  const inputSrc = computed(() => 'instructor' in item ? item.instructor : item.mentor)
+
   return useAutoComplete([...instructors, ...mentors], inputSrc)
+}
+
+export const useTermCodeAutoComplete = (item: IncludeByProp<'term'>) => {
+  const userEnteredTerms = getAllItemsWithProperty('term').map(item => item.term)
+  const inputSrc = computed(() => item.term)
+
+  const currentTerm = getCurrentTerm()
+  return useAutoComplete(userEnteredTerms, inputSrc, (input, [suggested]) => ({
+    newPropValue: () => input?.trim() ? suggested : currentTerm,
+    text: input?.trim() ? suggested : currentTerm,
+  }))
 }

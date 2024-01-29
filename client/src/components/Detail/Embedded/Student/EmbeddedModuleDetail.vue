@@ -67,14 +67,14 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
-import { getCurrentTerm, termInputValidator } from '@utils/TermValidator'
+import { getCurrentTerm, termInputValidator } from '@utils/terms'
 import { useSheetManager } from '@store/useSheetManager'
 import { useInstructorAutoComplete } from '@composables/useAutoComplete'
 import type { Module } from '@apptypes/sheetItems'
 import InputCoupler from '../../Helper/InputCoupler.vue'
 import EmbeddedInput from '../EmbeddedInput.vue'
 import EmbeddedDetailFrame from '../EmbeddedDetailFrame.vue'
-import { useMoveItem } from '../../../../MoveItems'
+import { useMoveItem } from '@composables/useMoveItem'
 
 const { readOnlyMode, getActiveEmbeddedPanel, focusedEmbeddedItem } = storeToRefs(useSheetManager())
 
