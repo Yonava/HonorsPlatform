@@ -3,7 +3,8 @@ export type Grade = typeof grades[number];
 
 export type Primitive = string | number | boolean | null | undefined;
 
-export type ThesisDecision = "Approved" | "Rejected" | "Pending";
+export const thesisDecisions = ["Pending", "Approved", "Rejected"] as const;
+export type ThesisDecision = typeof thesisDecisions[number];
 
 export interface Announcement {
   sysId: string,

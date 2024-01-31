@@ -37,6 +37,7 @@ type SnackbarOptions = {
   action?: {
     onClick: () => void,
     text: string,
+    color?: string,
   } | null;
   timeout?: number;
   closable?: boolean;
@@ -104,14 +105,23 @@ export const useDialog = defineStore("dialog", {
   },
   actions: {
     openSnackbar(options: SnackbarOptions = {}) {
+      const {
+        action = null,
+        img = '',
+        text = '',
+        color = '',
+        timeout = 5000,
+        closable = !options.action,
+      } = options;
+
       this.snackbar = {
         show: true,
-        img: options.img ?? '',
-        text: options.text ?? '',
-        color: options.color ?? '',
-        action: options.action ?? null,
-        timeout: options.timeout ?? 5000,
-        closable: options.closable ?? true
+        action,
+        img,
+        text,
+        color,
+        timeout,
+        closable
       }
     },
     closeSnackbar() {

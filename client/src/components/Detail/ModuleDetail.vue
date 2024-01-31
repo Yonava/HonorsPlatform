@@ -33,26 +33,18 @@
 
         <DetailInput
           :item="module"
+          :button="dateAutoComplete(module.docuSignCreated)"
           prop="docuSignCreated"
           icon="calendar-alert"
           label="DocuSign Created"
-          :button="{
-            condition: !module.docuSignCreated,
-            text: 'Created Today',
-            newPropValue: () => new Date().toLocaleDateString('en-US'),
-          }"
         />
 
         <DetailInput
           :item="module"
+          :button="dateAutoComplete(module.docuSignCompleted)"
           prop="docuSignCompleted"
           icon="calendar-check"
           label="DocuSign Completed"
-          :button="{
-            condition: !module.docuSignCompleted,
-            text: 'Completed Today',
-            newPropValue: () => new Date().toLocaleDateString('en-US'),
-          }"
         />
 
       </InputCoupler>
@@ -86,7 +78,11 @@ import { storeToRefs } from 'pinia'
 import { getPanel } from '@panels'
 import { useSheetManager } from '@store/useSheetManager'
 import { termInputValidator } from '@utils/terms'
-import { useInstructorAutoComplete, useTermCodeAutoComplete } from '@composables/useAutoComplete'
+import {
+  useInstructorAutoComplete,
+  useTermCodeAutoComplete,
+  dateAutoComplete
+} from '@composables/useAutoComplete'
 import { useMoveItem } from '@composables/useMoveItem'
 import type { Module } from '@apptypes/sheetItems'
 import InputCoupler from './Helper/InputCoupler.vue'

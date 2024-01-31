@@ -22,14 +22,15 @@
         <v-btn
           v-if="snackbar.action"
           @click.stop="snackbar.action.onClick(); snackbar.show = false"
-          variant="text"
+          :color="snackbar.action.color"
+          :variant="snackbar.action.color ? 'elevated' : 'text'"
         >
           {{ snackbar.action.text }}
         </v-btn>
 
         <v-btn
           v-if="snackbar.closable"
-          @click="snackbar.show = false"
+          @click.stop="snackbar.show = false"
           variant="text"
         >
           <v-icon size="x-large">

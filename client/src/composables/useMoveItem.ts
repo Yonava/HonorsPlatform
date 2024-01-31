@@ -24,8 +24,9 @@ type MovementHandlerOptions<T extends SheetItem> = {
 }
 
 const moveHandler = async <T extends SheetItem>(options: MovementHandlerOptions<T>) => {
-  const { itemPostedToSheet } = useDocumentCache()
+  const { itemPostedToSheet, getPanelNameFromItemSysId } = useDocumentCache()
   const { open, close, openSnackbar } = useDialog()
+  const { setPanel } = useSheetManager()
 
   const {
     itemBeforeMove,
@@ -54,6 +55,10 @@ const moveHandler = async <T extends SheetItem>(options: MovementHandlerOptions<
     throw e
   }
 
+  const newPanelName = getPanelNameFromItemSysId(itemBeforeMove.sysId)
+  if (!newPanelName) throw new Error('Item lost in move action.')
+  const newPanel = getPanel(newPanelName)
+
   try {
     await onSuccess?.()
   } catch (e) {
@@ -62,7 +67,14 @@ const moveHandler = async <T extends SheetItem>(options: MovementHandlerOptions<
 
   if (successDialog) open(successDialog(close))
   else openSnackbar({
-    text: 'Success!'
+    text: 'Success!',
+    action: {
+      text: `View ${newPanel.title.singular}`,
+      color: newPanel.color,
+      onClick: () => setPanel(newPanelName, {
+        value: itemBeforeMove.sysId
+      })
+    }
   })
 }
 

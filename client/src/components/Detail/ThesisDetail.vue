@@ -27,15 +27,15 @@
           :item="thesis"
           prop="decision"
           :icon="approvalStates[thesis.decision] ?? 'alert-circle'"
-          label="Decision"
+          label="Committee Approval Status"
           :button="{
             condition: !thesis.decision,
-            text: `Mark as ${Object.keys(approvalStates)[0]}`,
-            newPropValue: () => Object.keys(approvalStates)[0],
+            text: thesisDecisions[0],
+            newPropValue: () => thesisDecisions[0],
           }"
           :input="{
             type: 'select',
-            items: Object.keys(approvalStates),
+            items: thesisDecisions,
           }"
         />
 
@@ -45,26 +45,18 @@
 
         <DetailInput
           :item="thesis"
+          :button="dateAutoComplete(thesis.draftReceived)"
           prop="draftReceived"
           icon="calendar-check"
           label="Draft Received"
-          :button="{
-            condition: !thesis.draftReceived,
-            text: 'Received Today',
-            newPropValue: () => new Date().toLocaleDateString('en-US'),
-          }"
         />
 
         <DetailInput
           :item="thesis"
+          :button="dateAutoComplete(thesis.proposalReceived)"
           prop="proposalReceived"
           icon="calendar-check"
           label="Proposal Received"
-          :button="{
-            condition: !thesis.proposalReceived,
-            text: 'Received Today',
-            newPropValue: () => new Date().toLocaleDateString('en-US'),
-          }"
         />
 
       </InputCoupler>
@@ -118,8 +110,12 @@ import { useSheetManager } from '@store/useSheetManager'
 import { useDialog } from '@store/useDialog'
 import { getCurrentTerm, termInputValidator } from '@utils/terms'
 import { emailInputValidator, getFacultyEmail } from '@utils/emails'
-import { useInstructorAutoComplete } from '@composables/useAutoComplete'
+import {
+  useInstructorAutoComplete,
+  dateAutoComplete
+} from '@composables/useAutoComplete'
 import type { Thesis } from '@apptypes/sheetItems'
+import { thesisDecisions, type ThesisDecision } from '@apptypes/misc'
 import { useStudentMatcher } from '../../StudentMatcher'
 
 import InputCoupler from './Helper/InputCoupler.vue'
@@ -139,12 +135,11 @@ const props = defineProps<{
 const thesis = computed(() => props.item)
 const { button: instructorSuggestions } = useInstructorAutoComplete(thesis.value)
 
-const approvalStates = {
+const approvalStates: Record<ThesisDecision, string> = {
   'Pending': 'alert-circle',
   'Approved': 'check-circle',
   'Rejected': 'close-circle'
-} as const
-
+}
 
 const student = computed(() => {
   const { studentMatch } = useStudentMatcher(thesis.value.studentSysId)

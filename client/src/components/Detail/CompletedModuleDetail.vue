@@ -8,19 +8,14 @@
         <LinkStudentButton :item="completedModule" />
       </DetailHeader>
 
-
       <InputCoupler>
 
         <DetailInput
           :item="completedModule"
+          :button="dateAutoComplete(completedModule.dateCompleted)"
           prop="dateCompleted"
           label="Date of Completion"
           icon="check"
-          :button="{
-            condition: !completedModule.dateCompleted,
-            text: 'Completed Today',
-            newPropValue: () => new Date().toLocaleDateString('en-US'),
-          }"
         />
 
         <DetailInput
@@ -32,7 +27,7 @@
           }"
           :button="{
             condition: !completedModule.grade,
-            text: 'Mark As ' + grades[0],
+            text: grades[0],
             newPropValue: () => grades[0],
           }"
           label="Grade"
@@ -66,26 +61,18 @@
 
         <DetailInput
           :item="completedModule"
+          :button="dateAutoComplete(completedModule.docuSignCreated)"
           prop="docuSignCreated"
           icon="calendar-alert"
           label="DocuSign Created"
-          :button="{
-            condition: !completedModule.docuSignCreated,
-            text: 'Created Today',
-            newPropValue: () => new Date().toLocaleDateString('en-US'),
-          }"
         />
 
         <DetailInput
           :item="completedModule"
+          :button="dateAutoComplete(completedModule.docuSignCompleted)"
           prop="docuSignCompleted"
           icon="calendar-check"
           label="DocuSign Completed"
-          :button="{
-            condition: !completedModule.docuSignCompleted,
-            text: 'Completed Today',
-            newPropValue: () => new Date().toLocaleDateString('en-US'),
-          }"
         />
 
       </InputCoupler>
@@ -117,7 +104,11 @@ import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useSheetManager } from '@store/useSheetManager'
 import { termInputValidator } from '@utils/terms'
-import { useInstructorAutoComplete, useTermCodeAutoComplete } from '@composables/useAutoComplete'
+import {
+  useInstructorAutoComplete,
+  useTermCodeAutoComplete,
+  dateAutoComplete
+} from '@composables/useAutoComplete'
 import type { CompletedModule } from '@apptypes/sheetItems'
 import { grades } from '@apptypes/misc'
 import { useMoveItem } from '@composables/useMoveItem'

@@ -1,5 +1,5 @@
 import { toRef, computed } from "vue"
-import type { MaybeRefOrGetter, Ref } from "vue"
+import type { MaybeRefOrGetter } from "vue"
 import { useDocumentCache } from "@store/useDocumentCache"
 import type { IncludeByProp, SheetItemKeys } from "@apptypes/sheetItems"
 import { getCurrentTerm } from "@utils/terms"
@@ -27,11 +27,16 @@ export type AutoCompleteButton<T> = {
   text: T
 }
 
-export function useAutoComplete<T>(
+type UseAutoCompleteOptions<T> = {
   source: T[],
   userInput?: MaybeRefOrGetter<string>,
   btnOverrideFn?: (input: string | undefined, suggestedValues: T[]) => Readonly<Partial<AutoCompleteButton<T>>>
-) {
+}
+
+export function useAutoComplete<T>(options: UseAutoCompleteOptions<T>) {
+
+  const { source, userInput, btnOverrideFn } = options
+
   const possibleValues = [
     ...new Set(source.filter((value) => !!value?.toString().trim()))
   ]
@@ -73,7 +78,10 @@ export const useInstructorAutoComplete = (item: IncludeByProp<'instructor' | 'me
   const mentors = getAllItemsWithProperty("mentor").map(item => item.mentor)
   const inputSrc = computed(() => 'instructor' in item ? item.instructor : item.mentor)
 
-  return useAutoComplete([...instructors, ...mentors], inputSrc)
+  return useAutoComplete({
+    source: [...instructors, ...mentors],
+    userInput: inputSrc,
+  })
 }
 
 export const useTermCodeAutoComplete = (item: IncludeByProp<'term'>) => {
@@ -81,8 +89,20 @@ export const useTermCodeAutoComplete = (item: IncludeByProp<'term'>) => {
   const inputSrc = computed(() => item.term)
 
   const currentTerm = getCurrentTerm()
-  return useAutoComplete(userEnteredTerms, inputSrc, (input, [suggested]) => ({
-    newPropValue: () => input?.trim() ? suggested : currentTerm,
-    text: input?.trim() ? suggested : currentTerm,
-  }))
+  return useAutoComplete({
+    source: userEnteredTerms,
+    userInput: inputSrc,
+    btnOverrideFn: (input, [suggested]) => ({
+      newPropValue: () => input?.trim() ? suggested : currentTerm,
+      text: input?.trim() ? suggested : currentTerm,
+    })
+  })
+}
+
+export const dateAutoComplete = (inputSrc: any, prompt = 'Today') => {
+  return {
+    condition: !inputSrc.toString().trim(),
+    newPropValue: () => new Date().toLocaleDateString('en-US'),
+    text: prompt,
+  } as const
 }
