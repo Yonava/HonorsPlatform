@@ -8,10 +8,10 @@
       <slot name="left">
 
         <div
-          v-if="corners.left"
+          v-if="left"
           class="truncate"
           :style="{
-            ...div('left').style,
+            ...errorStyles(left).style,
             maxWidth: `calc(100% - ${rightDivWidth}px)`,
           }"
         >
@@ -20,17 +20,17 @@
             class="mr-1"
             style="opacity: 0.75"
           >
-            {{ iconify(corners.left.icon) }}
+            {{ iconify(left.icon) }}
           </v-icon>
 
-          {{ textify(corners.left.text) }}
+          {{ textify(left.text) }}
 
           <v-tooltip
-            :disabled="smAndDown || !corners.left.tooltip"
+            :disabled="smAndDown || !left.tooltip"
             activator="parent"
             location="bottom"
           >
-            {{ corners.left.tooltip }}
+            {{ left.tooltip }}
           </v-tooltip>
 
         </div>
@@ -42,26 +42,26 @@
       <slot name="right">
 
         <div
+          v-if="right"
           ref="rightDiv"
-          v-if="corners.right"
-          :style="div('right').style"
+          :style="errorStyles(right).style"
         >
 
-          {{ textify(corners.right.text) }}
+          {{ textify(right.text) }}
 
           <v-icon
             class="ml-1"
             style="opacity: 0.75"
           >
-            {{ iconify(corners.right.icon) }}
+            {{ iconify(right.icon) }}
           </v-icon>
 
           <v-tooltip
-            :disabled="smAndDown || !corners.right.tooltip"
+            :disabled="smAndDown || !right.tooltip"
             activator="parent"
             location="bottom"
           >
-            {{ corners.right.tooltip }}
+            {{ right.tooltip }}
           </v-tooltip>
 
         </div>
@@ -73,7 +73,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
+import type { StyleValue } from 'vue';
 import { useDisplay } from 'vuetify'
 
 const { smAndDown } = useDisplay()
@@ -85,12 +86,13 @@ type CornerData = {
   tooltip?: string,
 }
 
-const props = defineProps<{
-  data?: [CornerData] | [CornerData, CornerData],
+const { left, right } = defineProps<{
+  left?: CornerData,
+  right?: CornerData,
 }>()
 
 const rightDiv = ref<HTMLElement | null>(null)
-const rightDivWidth = ref<number>(0)
+const rightDivWidth = ref(0)
 
 onMounted(() => {
   const minimumLeftRightSeparationPx = 15
@@ -100,16 +102,7 @@ onMounted(() => {
   rightDivWidth.value = rightDiv.value.clientWidth + minimumLeftRightSeparationPx
 })
 
-const corners = computed(() => {
-  const [left, right] = props.data ?? []
-  return {
-    left,
-    right,
-  }
-})
-
 const iconify = (icon: string) => {
-
   if (!icon) {
     return ''
   }
@@ -126,14 +119,13 @@ const textify = (text: string) => {
   return canParseAsNumber ? Number(text).toLocaleString() : text
 }
 
-const div = (side: 'left' | 'right') => {
-  const corner = corners.value[side]
+const errorStyles = ({ error }: CornerData) => {
   return {
     style: {
-      color: corner?.error ? 'red' : 'black',
-      fontWeight: corner?.error ? 'bold' : 'normal',
+      color: error ? 'red' : 'black',
+      fontWeight: error ? 'bold' : 'normal',
       whiteSpace: 'nowrap',
-    },
+    } satisfies StyleValue,
   }
 }
 </script>

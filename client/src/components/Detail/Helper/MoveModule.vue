@@ -1,6 +1,8 @@
 <template>
   <v-sheet>
-    <div class="ma-6 d-flex justify-center flex-column">
+    <div
+      class="ma-6 d-flex justify-center flex-column"
+    >
       <h1 class="mb-6">
         Let's Finish
         {{
@@ -9,22 +11,28 @@
         }}
         Up!
       </h1>
-      <v-text-field
-        v-model="dateCompleted"
-        label="Date Completed"
-        variant="outlined"
-        prepend-inner-icon="mdi-calendar"
-      ></v-text-field>
-      <div class="d-flex flex-column mb-12 mt-3 mx-12">
+
+      <div>
+        <v-text-field
+          v-model="dateCompleted"
+          label="Date Completed"
+          variant="outlined"
+          prepend-inner-icon="mdi-calendar"
+        ></v-text-field>
+      </div>
+
+      <div class="d-flex flex-column mb-12 mt-3">
         <v-btn
           v-for="grade in grades"
           :key="grade || 'ungraded'"
           @click="finalGrade = grade"
           :color="grade === finalGrade ? color : 'grey'"
           class="mt-2"
-          >{{ grade || "Leave Ungraded" }}</v-btn
         >
+          {{ grade || "Leave Ungraded" }}
+        </v-btn>
       </div>
+
       <v-btn
         @click="moveModule"
         :loading="loading"

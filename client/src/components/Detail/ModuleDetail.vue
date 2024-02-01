@@ -34,6 +34,8 @@
         <DetailInput
           :item="module"
           :button="dateAutoComplete(module.docuSignCreated)"
+          :hint="fullDate(module.docuSignCreated)"
+          persistent-hint
           prop="docuSignCreated"
           icon="calendar-alert"
           label="DocuSign Created"
@@ -42,6 +44,8 @@
         <DetailInput
           :item="module"
           :button="dateAutoComplete(module.docuSignCompleted)"
+          :hint="fullDate(module.docuSignCompleted)"
+          persistent-hint
           prop="docuSignCompleted"
           icon="calendar-check"
           label="DocuSign Completed"
@@ -78,6 +82,7 @@ import { storeToRefs } from 'pinia'
 import { getPanel } from '@panels'
 import { useSheetManager } from '@store/useSheetManager'
 import { termInputValidator } from '@utils/terms'
+import { fullDate } from '@utils/dates'
 import {
   useInstructorAutoComplete,
   useTermCodeAutoComplete,

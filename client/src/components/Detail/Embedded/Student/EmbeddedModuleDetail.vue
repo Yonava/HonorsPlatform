@@ -4,11 +4,7 @@
     <EmbeddedInput
       :item="module"
       prop="term"
-      :button="{
-        condition: !module.term,
-        text: 'Current Term',
-        newPropValue: () => getCurrentTerm(),
-      }"
+      :button="termSuggestions"
       :rules="termInputValidator()"
       label="Term"
       icon="calendar"
@@ -26,26 +22,22 @@
 
       <EmbeddedInput
         :item="module"
+        :button="dateAutoComplete(module.docuSignCreated)"
+        :hint="fullDate(module.docuSignCreated)"
+        persistent-hint
         prop="docuSignCreated"
         icon="calendar-alert"
         label="DocuSign Created"
-        :button="{
-          condition: !module.docuSignCreated,
-          text: 'Created Today',
-          newPropValue: () => new Date().toLocaleDateString('en-US'),
-        }"
       />
 
       <EmbeddedInput
         :item="module"
+        :button="dateAutoComplete(module.docuSignCompleted)"
+        :hint="fullDate(module.docuSignCompleted)"
+        persistent-hint
         prop="docuSignCompleted"
         icon="calendar-check"
         label="DocuSign Completed"
-        :button="{
-          condition: !module.docuSignCompleted,
-          text: 'Completed Today',
-          newPropValue: () => new Date().toLocaleDateString('en-US')
-        }"
       />
 
     </InputCoupler>
@@ -67,9 +59,14 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
-import { getCurrentTerm, termInputValidator } from '@utils/terms'
+import { termInputValidator } from '@utils/terms'
+import { fullDate } from '@utils/dates'
 import { useSheetManager } from '@store/useSheetManager'
-import { useInstructorAutoComplete } from '@composables/useAutoComplete'
+import {
+  dateAutoComplete,
+  useInstructorAutoComplete,
+  useTermCodeAutoComplete
+} from '@composables/useAutoComplete'
 import type { Module } from '@apptypes/sheetItems'
 import InputCoupler from '../../Helper/InputCoupler.vue'
 import EmbeddedInput from '../EmbeddedInput.vue'
@@ -79,8 +76,8 @@ import { useMoveItem } from '@composables/useMoveItem'
 const { readOnlyMode, getActiveEmbeddedPanel, focusedEmbeddedItem } = storeToRefs(useSheetManager())
 
 const module = computed(() => focusedEmbeddedItem.value as Module)
-const instructor = computed(() => module.value.instructor)
-const { button: instructorSuggestions } = useInstructorAutoComplete(instructor)
+const { button: instructorSuggestions } = useInstructorAutoComplete(module.value)
+const { button: termSuggestions } = useTermCodeAutoComplete(module.value)
 
 const { moveItem, movingItem } = useMoveItem('MODULES');
 </script>

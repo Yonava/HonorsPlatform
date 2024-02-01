@@ -12,13 +12,9 @@
 
         <DetailInput
           :item="thesis"
-          prop="term"
-          :button="{
-            condition: !thesis.term,
-            text: 'Current Term',
-            newPropValue: () => getCurrentTerm(),
-          }"
+          :button="termSuggestions"
           :rules="termInputValidator()"
+          prop="term"
           label="Term"
           icon="calendar"
         />
@@ -46,6 +42,8 @@
         <DetailInput
           :item="thesis"
           :button="dateAutoComplete(thesis.draftReceived)"
+          :hint="fullDate(thesis.draftReceived)"
+          persistent-hint
           prop="draftReceived"
           icon="calendar-check"
           label="Draft Received"
@@ -54,6 +52,8 @@
         <DetailInput
           :item="thesis"
           :button="dateAutoComplete(thesis.proposalReceived)"
+          :hint="fullDate(thesis.proposalReceived)"
+          persistent-hint
           prop="proposalReceived"
           icon="calendar-check"
           label="Proposal Received"
@@ -63,8 +63,8 @@
 
       <DetailInput
         :item="thesis"
-        prop="mentor"
         :button="instructorSuggestions"
+        prop="mentor"
         icon="human-male-board"
         label="Faculty Mentor"
       />
@@ -108,10 +108,12 @@ import { storeToRefs } from 'pinia'
 import { getPanel } from '@panels'
 import { useSheetManager } from '@store/useSheetManager'
 import { useDialog } from '@store/useDialog'
-import { getCurrentTerm, termInputValidator } from '@utils/terms'
+import { termInputValidator } from '@utils/terms'
 import { emailInputValidator, getFacultyEmail } from '@utils/emails'
+import { fullDate } from '@utils/dates'
 import {
   useInstructorAutoComplete,
+  useTermCodeAutoComplete,
   dateAutoComplete
 } from '@composables/useAutoComplete'
 import type { Thesis } from '@apptypes/sheetItems'
@@ -134,6 +136,7 @@ const props = defineProps<{
 
 const thesis = computed(() => props.item)
 const { button: instructorSuggestions } = useInstructorAutoComplete(thesis.value)
+const { button: termSuggestions } = useTermCodeAutoComplete(thesis.value)
 
 const approvalStates: Record<ThesisDecision, string> = {
   'Pending': 'alert-circle',

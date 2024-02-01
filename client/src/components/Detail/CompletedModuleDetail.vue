@@ -13,6 +13,8 @@
         <DetailInput
           :item="completedModule"
           :button="dateAutoComplete(completedModule.dateCompleted)"
+          :hint="fullDate(completedModule.dateCompleted)"
+          persistent-hint
           prop="dateCompleted"
           label="Date of Completion"
           icon="check"
@@ -38,17 +40,17 @@
 
       <DetailInput
         :item="completedModule"
-        prop="term"
-        :rules="termInputValidator()"
         :button="termSuggestions"
+        :rules="termInputValidator()"
+        prop="term"
         label="Term"
         icon="calendar"
       />
 
       <DetailInput
         :item="completedModule"
-        prop="instructor"
         :button="instructorSuggestions"
+        prop="instructor"
         icon="human-male-board"
         label="Instructor"
       />
@@ -62,6 +64,8 @@
         <DetailInput
           :item="completedModule"
           :button="dateAutoComplete(completedModule.docuSignCreated)"
+          :hint="fullDate(completedModule.docuSignCreated)"
+          persistent-hint
           prop="docuSignCreated"
           icon="calendar-alert"
           label="DocuSign Created"
@@ -70,6 +74,8 @@
         <DetailInput
           :item="completedModule"
           :button="dateAutoComplete(completedModule.docuSignCompleted)"
+          :hint="fullDate(completedModule.docuSignCompleted)"
+          persistent-hint
           prop="docuSignCompleted"
           icon="calendar-check"
           label="DocuSign Completed"
@@ -104,6 +110,7 @@ import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useSheetManager } from '@store/useSheetManager'
 import { termInputValidator } from '@utils/terms'
+import { fullDate } from '@utils/dates'
 import {
   useInstructorAutoComplete,
   useTermCodeAutoComplete,

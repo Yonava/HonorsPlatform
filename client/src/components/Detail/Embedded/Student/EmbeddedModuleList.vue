@@ -7,7 +7,7 @@
       :color="getActiveEmbeddedPanel.color + '-darken-2'"
       class="module-card pa-2 mt-2 d-flex flex-row align-center"
     >
-      <div style="d-flex flex-column align-center">
+      <div>
         <div
           class="mb-2"
           style="color: white; opacity: 0.75; font-size: 0.75em;"

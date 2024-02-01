@@ -55,7 +55,7 @@
           <div
             v-for="{ icon, onClick, tooltip, condition = () => true } in sidebarActionButtons"
             :key="icon"
-            @click.stop="onClick"
+            @click.stop="onClick(item)"
             @mouseover="hoverData[icon] = true"
             @mouseleave="hoverData[icon] = false"
           >
@@ -129,7 +129,7 @@
             <v-spacer></v-spacer>
             <slot name="right"></slot>
           </div>
-          <LIBottomCorner :data="bottomCornersUsingSort" />
+          <slot name="corners"></slot>
         </div>
 
       </div>
@@ -148,7 +148,7 @@
           <v-spacer></v-spacer>
           <slot name="right"></slot>
         </div>
-        <LIBottomCorner :data="bottomCornersUsingSort" />
+        <slot name="corners"></slot>
       </div>
     </div>
 
@@ -167,95 +167,16 @@ import { useSocket } from '@store/useSocket'
 import { SheetItem } from '@apptypes/sheetItems'
 import { useStudentMatcher } from '../../StudentMatcher'
 import { LIBottomCorner } from './ListItemParts/ListItemExports'
-
-type CornerData = {
-  text: string,
-  icon: string,
-  // property in item being displayed
-  prop?: string,
-  // if true, text will appear in an error state (red)
-  error?: boolean,
-  // text on tooltip
-  tooltip?: string,
-}
+import type { Graduate, Module, Student } from '@apptypes/sheetItems'
 
 const sheetManager = useSheetManager()
 const { activateListTransition, setPanel } = useSheetManager()
-const { getActivePanel, activeSort } = storeToRefs(sheetManager)
+const { getActivePanel } = storeToRefs(sheetManager)
 
 const props = defineProps<{
   item: SheetItem,
-  bottomCorners: [CornerData] | [CornerData, CornerData]
   styled?: boolean
 }>()
-
-const displayedProps: { [key in PanelName]: string[] } = {
-  STUDENTS: [
-    'name',
-    'id',
-    'athletics',
-    'email',
-    'activeStatus',
-    'year'
-  ],
-  GRADUATES: [
-    'name',
-    'id',
-    'phone',
-    'email',
-  ],
-  GRADUATE_ENGAGEMENTS: [],
-  MODULES: [
-    'courseCode',
-    'term',
-    'instructor',
-    'studentSysId',
-    'docuSignCreated',
-    'docuSignCompleted'
-  ],
-  COMPLETED_MODULES: [
-    'grade',
-    'term',
-    'courseCode',
-    'dateCompleted',
-    'studentSysId'
-  ],
-  THESES: [
-    'mentor',
-    'title',
-    'term',
-    'studentSysId',
-    'decision'
-  ],
-}
-
-const bottomCornersUsingSort = computed(() => {
-
-  const { prop: sortProp, label: sortLabel } = activeSort.value
-  const { panelName, propIcons } = getActivePanel.value
-
-  const sortPropItem = {
-    text: props.item[sortProp] || '(None)',
-    icon: propIcons[sortProp] || 'mdi-sort',
-    tooltip: sortLabel
-  }
-
-  if (!activeSort.value.prop || displayedProps[panelName].includes(sortProp)) {
-    return props.bottomCorners
-  } else if (props.bottomCorners.length === 2) {
-    return [
-      sortPropItem,
-      props.bottomCorners[1],
-    ]
-  } else if (props.bottomCorners.length === 1) {
-    return [
-      sortPropItem,
-      props.bottomCorners[0],
-    ]
-  } else {
-    return [sortPropItem]
-  }
-})
 
 const { mdAndUp } = useDisplay()
 
@@ -319,7 +240,7 @@ const hoverData = ref<{ [key in string]: boolean }>({})
 type SidebarActionButton = {
   icon: string,
   tooltip: string,
-  onClick: () => void,
+  onClick: (...args: any) => void,
   condition?: () => boolean
 }
 
@@ -329,23 +250,19 @@ const panelSpecificActions: { [key in PanelName]: SidebarActionButton } = {
     condition: () => !!canEmail.value,
     icon: 'mdi-email-fast',
     tooltip: 'Email',
-    onClick: () => {
-      sendEmail(props.item?.email)
-    }
+    onClick: (item: Student) => sendEmail(item.email)
   },
   'GRADUATES': {
     condition: () => !!canEmail.value,
     icon: 'mdi-email-fast',
     tooltip: 'Email',
-    onClick: () => {
-      sendEmail(props.item?.email)
-    }
+    onClick: (item: Graduate) => sendEmail(item.email)
   },
   'MODULES': {
     condition: () => !studentMatch.value.error,
     icon: getPanel(studentMatch.value.foundIn || 'STUDENTS').icon,
     tooltip: `View ${studentMatch.value.name || getPanel(studentMatch.value.foundIn || 'STUDENTS').title.singular}`,
-    onClick: () => {
+    onClick: (item: Module) => {
       const { sysId, foundIn } = studentMatch.value
       if (!sysId || !foundIn) {
         return

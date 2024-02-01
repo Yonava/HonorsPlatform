@@ -1,10 +1,10 @@
 <template>
   <div>
-    <div v-if="!xs">
+    <div v-if="!xs" >
       <v-dialog
         v-model="showDialog"
         :persistent="persistent"
-        width="600"
+        :width="600"
       >
         <slot></slot>
       </v-dialog>

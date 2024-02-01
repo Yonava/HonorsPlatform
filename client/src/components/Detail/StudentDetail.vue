@@ -16,10 +16,10 @@
           prop="email"
           :rules="emailInputValidator()"
           label="Email"
-          icon="email"
+          :icon="studentPanel.propIcons.email"
           :button="{
             condition: !!student.name && !student.email,
-            text: `New ${getActivePanel.title.singular} Email`,
+            text: getStudentEmail(student.name),
             newPropValue: () => getStudentEmail(student.name),
           }"
         />
@@ -36,7 +36,7 @@
             }"
             :button="{
               condition: !student.activeStatus,
-              text: 'Mark As ' + statusOptionLabels[0],
+              text: statusOptionLabels[0],
               newPropValue: () => statusOptionLabels[0],
             }"
             :icon="statusOptionIcon"
@@ -53,10 +53,10 @@
             }"
             :button="{
               condition: !student.year,
-              text: 'Mark As ' + yearOptions[0],
+              text: yearOptions[0],
               newPropValue: () => yearOptions[0],
             }"
-            icon="briefcase"
+            :icon="studentPanel.propIcons.year"
             label="Year"
           />
 
@@ -85,7 +85,7 @@
               variant: 'number'
             }"
             label="Points"
-            icon="ticket"
+            :icon="studentPanel.propIcons.points"
           />
 
         </InputCoupler>
@@ -179,15 +179,16 @@ import {
 import type { Student } from '@apptypes/sheetItems'
 import { useMoveItem } from '@composables/useMoveItem'
 
+const props = defineProps<{
+  item: Student;
+}>();
+
 const { smAndDown } = useDisplay();
 
 const { setPanel, getActivePanel } = useSheetManager();
 const { readOnlyMode } = storeToRefs(useSheetManager());
 const { Theses, addItem } = useDocumentCache();
-
-const props = defineProps<{
-  item: Student;
-}>();
+const studentPanel = getPanel("STUDENTS");
 
 const student = computed(() => props.item);
 

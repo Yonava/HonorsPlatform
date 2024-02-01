@@ -58,9 +58,7 @@ export const panels = {
       'name': 'account',
       'email': 'email',
       'points': 'ticket',
-      'activeStatus': 'check-circle',
       'year': 'calendar',
-      'athletics': 'soccer',
     },
     mappers: {
       map: mapStudents,
@@ -220,7 +218,7 @@ export const panels = {
     embedded: {
       panel: "GRADUATE_ENGAGEMENTS",
       text: {
-        title: 'Engagement Tracking',
+        title: 'Engagements',
         add: 'Add Event',
         noItemsToDisplay: 'No engagements currently recorded.'
       },

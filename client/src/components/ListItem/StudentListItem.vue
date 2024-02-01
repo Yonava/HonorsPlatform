@@ -2,19 +2,6 @@
   <LIFrame
     :item="item"
     :styled="styled"
-    :bottomCorners="[
-      {
-        prop: 'email',
-        icon: 'email',
-        text: item.email || '(No Email)',
-        error: !emailValid
-      },
-      {
-        prop: 'year',
-        icon: 'briefcase',
-        text: item.year || '(No Class Year)',
-      }
-    ]"
   >
 
     <template #left>
@@ -47,6 +34,20 @@
 
     </template>
 
+    <template #corners>
+      <LIBottomCorner
+        :left="{
+          icon: studentPanel.propIcons.email,
+          text: item.email || '(No Email)',
+          error: !emailValid
+        }"
+        :right="{
+          icon: studentPanel.propIcons.year,
+          text: item.year || '(No Class Year)',
+        }"
+      />
+    </template>
+
   </LIFrame>
 </template>
 
@@ -55,17 +56,21 @@ import { computed } from 'vue'
 import type { Student } from '@apptypes/sheetItems'
 import { athleticOptions, statusOptions } from '@utils/students'
 import { emailValidator } from '@utils/emails'
+import { getPanel } from '@panels'
 import {
   LIFrame,
   LIIcon,
   LITitle,
   LIEmblem,
+  LIBottomCorner
 } from './ListItemParts/ListItemExports'
 
 const props = defineProps<{
   item: Student,
   styled?: boolean
 }>()
+
+const studentPanel = getPanel('STUDENTS')
 
 const status = computed(() => {
   return statusOptions.find((option) => option.status === props.item.activeStatus) ?? {
