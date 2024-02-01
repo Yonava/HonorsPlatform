@@ -2,14 +2,6 @@
   <LIFrame
     :item="item"
     :styled="styled"
-    :bottom-corners="[
-      {
-        icon: 'human-male-board',
-        text: item.instructor || '(No Instructor)',
-        tooltip: 'Instructor',
-      },
-      student
-    ]"
   >
 
     <template #left>
@@ -46,6 +38,17 @@
 
     </template>
 
+    <template #corners>
+      <LIBottomCorner
+        :left="{
+          icon: 'human-male-board',
+          text: item.instructor || '(No Instructor)',
+          tooltip: 'Instructor',
+        }"
+        :right="student"
+      />
+    </template>
+
   </LIFrame>
 
 </template>
@@ -53,13 +56,15 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { termValidator } from '@utils/terms'
-import { Module } from '@apptypes/sheetItems'
+import { daysSinceDate } from '@utils/dates'
+import type { Module } from '@apptypes/sheetItems'
 import { useStudentInfo } from './useStudentInfo'
 import {
   LIFrame,
   LIIcon,
   LITitle,
   LIEmblem,
+  LIBottomCorner
 } from './ListItemParts/ListItemExports'
 
 const props = defineProps<{
@@ -85,32 +90,6 @@ const overOneYearInProgress = computed(() => {
   }
 })
 
-const daysSinceDate = (date: string) => {
-  const now = new Date()
-  try {
-    const created = new Date(date)
-    const diff = now.getTime() - created.getTime()
-    const diffDays = Math.ceil(diff / (1000 * 60 * 60 * 24))
-
-    if (isNaN(diffDays)) {
-      return 'On A Date That Is Not Valid 🫣'
-    } else if (diffDays === 1) {
-      return 'Today'
-    } else if (diffDays === 2) {
-      return 'Yesterday'
-    } else if (diffDays === 0) {
-      return 'Tomorrow 😱'
-    } else if (diffDays < 0) {
-      return `${Math.abs(diffDays) + 1} Days In The Future... 🤯`
-    } else {
-      return `${diffDays - 1} Days Ago`
-    }
-  } catch (e) {
-    console.warn(e)
-    return 0
-  }
-}
-
 const docuSignStatus = computed(() => {
   const created = new Date(props.item.docuSignCreated)
   const completed = new Date(props.item.docuSignCompleted)
@@ -124,28 +103,28 @@ const docuSignStatus = computed(() => {
       text: 'Invalid Date',
       color: 'red',
       tooltip: 'Either the created or completed date for the DocuSign is invalid.'
-    }
+    } as const
   } else if (props.item.docuSignCompleted) {
     return {
       icon: 'file-document-check-outline',
       text: 'Completed',
       color: 'green',
       tooltip: `DocuSign Completed ${daysSinceDate(props.item.docuSignCompleted)} (${props.item.docuSignCompleted})`
-    }
+    } as const
   } else if (props.item.docuSignCreated) {
     return {
       icon: 'file-document-outline',
       text: 'In Progress',
       color: 'blue',
       tooltip: `DocuSign Created ${daysSinceDate(props.item.docuSignCreated)} (${props.item.docuSignCreated})`
-    }
+    } as const
   } else {
     return {
       icon: 'file-document-alert-outline',
       text: 'Not Started',
       color: 'red',
       tooltip: 'DocuSign Not Started'
-    }
+    } as const
   }
 })
 

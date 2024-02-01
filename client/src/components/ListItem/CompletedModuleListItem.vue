@@ -2,31 +2,23 @@
   <LIFrame
     :item="item"
     :styled="styled"
-    :bottom-corners="[
-      {
-        prop: 'dateCompleted',
-        text: item.dateCompleted ? `Completed ${item.dateCompleted}` : 'No Completion Date',
-        icon: 'calendar-check',
-        tooltip: 'Completion Date',
-      },
-      student
-    ]"
   >
     <template #left>
 
       <LITitle
         :primary="{
-          text: item.courseCode || '(No Course Code)',
-          tooltip: 'Course Code',
-        }"
+        text: item.courseCode || '(No Course Code)',
+        tooltip: 'Course Code',
+      }"
         :secondary="{
-          text: item.term || '(No Term)',
-          tooltip: termValid ? 'Term' : 'Term (Potentially Invalid)',
-          error: !termValid
-        }"
+        text: item.term || '(No Term)',
+        tooltip: termValid ? 'Term' : 'Term (Potentially Invalid)',
+        error: !termValid
+      }"
       />
 
     </template>
+
     <template #right>
 
       <LIEmblem
@@ -37,6 +29,17 @@
       />
 
     </template>
+
+    <template #corners>
+      <LIBottomCorner
+        :left="{
+          text: item.dateCompleted ? `Completed ${item.dateCompleted}` : 'No Completion Date',
+          icon: item.dateCompleted ? 'calendar-check' : 'calendar-remove',
+          tooltip: item.dateCompleted && `Date of Completion (${timeAgoDayPrecision(item.dateCompleted)})`,
+        }"
+        :right="student"
+      />
+    </template>
   </LIFrame>
 </template>
 
@@ -44,12 +47,14 @@
 import { computed } from 'vue'
 import { getPanel } from '@panels'
 import { termValidator } from '@utils/terms'
+import { timeAgoDayPrecision } from '@utils/dates'
 import { useStudentInfo } from './useStudentInfo'
 import type { CompletedModule } from '@apptypes/sheetItems'
 import {
   LIFrame,
   LITitle,
   LIEmblem,
+  LIBottomCorner
 } from './ListItemParts/ListItemExports'
 
 const modulePanel = getPanel('MODULES')
