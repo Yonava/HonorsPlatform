@@ -2,20 +2,6 @@
   <LIFrame
     :item="item"
     :styled="styled"
-    :bottom-corners="[
-      {
-        prop: 'email',
-        text: item.email || '(No Email)',
-        icon: 'email',
-        error: !emailValidator(item.email)
-      },
-      {
-        prop: 'phone',
-        text: item.phone || '(No Phone)',
-        icon: 'phone',
-        error: !phoneValidator(item.phone)
-      }
-    ]"
   >
 
     <template #left>
@@ -43,8 +29,23 @@
 
     </template>
 
-  </LIFrame>
+    <template #corners>
+      <LIBottomCorner
+        :left="{
+          text: item.email || '(No Email)',
+          icon: 'email',
+          error: !emailValidator(item.email)
+        }"
+        :right="{
+          text: item.phone || '(No Phone)',
+          icon: 'phone',
+          error: !phoneValidator(item.phone)
+        }"
+      />
+    </template>
 
+
+  </LIFrame>
 </template>
 
 <script setup lang="ts">
@@ -56,6 +57,7 @@ import {
   LIFrame,
   LITitle,
   LIEmblem,
+  LIBottomCorner
 } from './ListItemParts/ListItemExports'
 
 const { getActivePanel } = useSheetManager()

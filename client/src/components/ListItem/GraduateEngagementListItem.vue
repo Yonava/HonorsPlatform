@@ -2,7 +2,6 @@
   <LIFrame
     :item="item"
     :styled="styled"
-    :bottomCorners="[grad]"
   >
 
     <template #left>
@@ -27,6 +26,10 @@
 
     </template>
 
+    <template #corners>
+      <LIBottomCorner :left="grad" />
+    </template>
+
   </LIFrame>
 </template>
 
@@ -39,6 +42,7 @@ import {
   LIFrame,
   LITitle,
   LIEmblem,
+  LIBottomCorner,
 } from './ListItemParts/ListItemExports'
 
 const { getActivePanel } = useSheetManager()

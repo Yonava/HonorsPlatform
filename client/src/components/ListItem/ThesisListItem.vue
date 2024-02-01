@@ -1,17 +1,7 @@
-
 <template>
   <LIFrame
     :item="item"
     :styled="styled"
-    :bottomCorners="[
-      student,
-      {
-        prop: 'mentor',
-        text: item.mentor || '(No Mentor)',
-        icon: 'human-male-board',
-        tooltip: 'Faculty Mentor',
-      }
-    ]"
   >
 
     <template #left>
@@ -40,6 +30,17 @@
 
     </template>
 
+    <template #corners>
+      <LIBottomCorner
+        :left="{
+          text: item.mentor || '(No Mentor)',
+          icon: 'human-male-board',
+          tooltip: 'Faculty Mentor',
+        }"
+        :right="student"
+      />
+    </template>
+
   </LIFrame>
 </template>
 
@@ -52,6 +53,7 @@ import {
   LIFrame,
   LITitle,
   LIEmblem,
+  LIBottomCorner
 } from './ListItemParts/ListItemExports'
 
 const props = defineProps<{
@@ -93,7 +95,7 @@ const decisionStatus = computed(() => {
       color: 'grey',
       icon: 'minus',
       text: 'No Decision',
-      tooltip: 'Honors Committee Approval Decision Not In System'
+      tooltip: 'Honors Committee Approval Decision Not Recorded'
     }
   }
 })
