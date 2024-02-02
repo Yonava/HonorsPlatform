@@ -89,7 +89,7 @@ import {
 import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useDisplay } from 'vuetify'
-import { local } from '@locals'
+import { local, localKeys } from '@locals'
 import { panels, version } from '@panels'
 import { useSheetManager } from '@store/useSheetManager'
 import { useDocumentCache } from '@store/useDocumentCache'
@@ -153,7 +153,7 @@ if (route.query.type) {
   if (panelIndex !== -1) setPanel(panelKeys[panelIndex])
 } else {
   document.title = getActivePanel.value.title.plural + ' - Honors Program'
-  pinnedSysIds.value = localStorage.getItem(local.pinned(getActivePanel.value.panelName))?.split(',') || []
+  pinnedSysIds.value = local.get(localKeys.pinned(getActivePanel.value.panelName))?.split(',') || []
 }
 
 const { mdAndUp } = useDisplay()
@@ -188,7 +188,7 @@ useKeyBindings({
 
 const getPanelListWidth = () => {
   const DEFAULT_PANEL_LIST_WIDTH = 480
-  const localPanelListWidth = localStorage.getItem(local.panelListWidth)
+  const localPanelListWidth = local.get(localKeys.panelListWidth)
   return localPanelListWidth ? parseInt(localPanelListWidth) : DEFAULT_PANEL_LIST_WIDTH
 }
 
@@ -221,7 +221,7 @@ const resizeEnd = () => {
   if (!panelParent.value) throw new Error('panelParent is not defined')
   panelParent.value.style.userSelect = 'auto'
   panelListWidth.value = proposedWidth.value
-  localStorage.setItem(local.panelListWidth, panelListWidth.value.toString())
+  local.set(localKeys.panelListWidth, panelListWidth.value.toString())
   document.removeEventListener('mousemove', resizeMove)
   document.removeEventListener('mouseup', resizeEnd)
 }
@@ -235,7 +235,7 @@ const itemListWidth = computed(() => {
 
 watch(pinnedSysIds, (newIds) => {
   const storableIds = newIds.join(',')
-  localStorage.setItem(local.pinned(getActivePanel.value.panelName), storableIds)
+  local.set(localKeys.pinned(getActivePanel.value.panelName), storableIds)
 }, { deep: true })
 </script>
 

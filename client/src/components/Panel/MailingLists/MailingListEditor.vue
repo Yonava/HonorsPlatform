@@ -43,7 +43,7 @@ import { computed, ref } from 'vue'
 import { useStorage } from '@vueuse/core';
 import { useDocumentCache } from '@store/useDocumentCache';
 import { useDialog } from '@store/useDialog';
-import { local } from '@locals';
+import { localKeys } from '@locals';
 import NameBox from './MailingListNameBox.vue';
 import type { MailingList } from './MailingListAudiences';
 import StudentSearch from './MailingListStudentSearch.vue';
@@ -55,7 +55,7 @@ const props = defineProps<{
 
 const { close } = useDialog()
 
-const allMailingLists = useStorage<MailingList[]>(local.mailingLists, [])
+const allMailingLists = useStorage<MailingList[]>(localKeys.mailingLists, [])
 
 const mailingList = allMailingLists.value.find(l => l.id === props.mailingListId)
 

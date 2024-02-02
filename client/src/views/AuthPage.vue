@@ -47,10 +47,10 @@
 </template>
 
 <script setup lang="ts">
-import { useRoute, useRouter } from 'vue-router'
-import { useAuth, type ServerError } from '../store/useAuth'
 import { onMounted, ref, computed } from 'vue'
-import { local } from '../Locals'
+import { useRoute, useRouter } from 'vue-router'
+import { useAuth, type ServerError } from '@store/useAuth'
+import { local, localKeys } from '@locals'
 
 const route = useRoute()
 const router = useRouter()
@@ -96,9 +96,9 @@ onMounted(async () => {
     return
   }
 
-  const close = localStorage.getItem(local.closeAfterAuth)
+  const close = local.get(localKeys.closeAfterAuth)
   if (close) {
-    localStorage.setItem(local.googleOAuthCode, code)
+    local.set(localKeys.googleOAuthCode, code)
     window.close()
     if (window.closed) {
       return

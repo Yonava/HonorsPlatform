@@ -53,7 +53,7 @@ import { computed, ref } from 'vue'
 import { useDocumentCache } from '@store/useDocumentCache';
 import { useDialog } from '@store/useDialog';
 import { useStorage } from '@vueuse/core';
-import { local } from '@locals';
+import { localKeys } from '@locals';
 import InfoBtn from '../InfoBtn.vue';
 import NameBox from './MailingListNameBox.vue';
 import StudentSearch from './MailingListStudentSearch.vue';
@@ -97,7 +97,7 @@ const createListBtnText = computed(() => {
 })
 
 const createList = () => {
-  const mailingLists = useStorage<MailingList[]>(local.mailingLists, [])
+  const mailingLists = useStorage<MailingList[]>(localKeys.mailingLists, [])
   mailingLists.value.push({
     name: name.value,
     id: Date.now().toString(),

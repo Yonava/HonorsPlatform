@@ -3,7 +3,7 @@ import type { SheetItem } from '@apptypes/sheetItems';
 import { getPanel, type PanelName } from '@panels';
 import { useDocumentCache } from '@store/useDocumentCache';
 import { useSocket } from '@store/useSocket';
-import { local } from '@locals';
+import { local, localKeys } from '@locals';
 import router from '../router';
 import { filterItems } from '../FilterObjects';
 import type { SortOption } from '../SortOptions';
@@ -131,7 +131,7 @@ export const useSheetManager = defineStore('sheetManager', {
       });
 
       this.panel = getPanel(panelName);
-      this.pinnedSysIds = localStorage.getItem(local.pinned(this.panel.panelName))?.split(',') || []
+      this.pinnedSysIds = local.get(localKeys.pinned(panelName))?.split(',') || []
       this.setSearchFilter('');
 
       this.clearSort();

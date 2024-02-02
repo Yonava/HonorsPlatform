@@ -1,11 +1,11 @@
 import { defineStore } from "pinia";
 import axios from "axios";
 import router from "../router";
-import { useDialog } from "./useDialog";
-import { local } from "../Locals";
+import { useDialog } from "@store/useDialog";
+import { local, localKeys } from "@locals";
 import { getUserProfileData, getUserSheetPermissions } from "../SheetsAPI";
 import { useSheetManager } from "./useSheetManager";
-import { useSocket } from "./useSocket";
+import { useSocket } from "@store/useSocket";
 
 export type GoogleProfile = {
   id: string,
@@ -52,7 +52,7 @@ export const useAuth = defineStore('auth', {
       }
     },
     async authorizeSession() {
-      const accessToken = localStorage.getItem(local.googleOAuthAccessToken)
+      const accessToken = local.get('access-token')
 
       if (!accessToken) {
         location.replace(getAuthErrorURL('NO_ACCESS_TOKEN'))
@@ -83,8 +83,8 @@ export const useAuth = defineStore('auth', {
     },
     async userLoginFlow(googleOAuthCode: string) {
 
-      localStorage.removeItem(local.closeAfterAuth)
-      localStorage.removeItem(local.googleOAuthCode)
+      local.remove(localKeys.closeAfterAuth)
+      local.remove(localKeys.googleOAuthCode)
 
       const code = encodeURIComponent(googleOAuthCode)
       const oauthCodeValidationURI = getServerAuthEndpoint(code)
@@ -101,7 +101,7 @@ export const useAuth = defineStore('auth', {
       }
 
       this.setGoogleProfile(data.profile)
-      localStorage.setItem(local.googleOAuthAccessToken, data.accessToken)
+      local.set(localKeys.googleOAuthAccessToken, data.accessToken)
 
       const { connect } = useSocket()
 
@@ -112,7 +112,7 @@ export const useAuth = defineStore('auth', {
       }
 
       const timeSinceEpoch = Date.now()
-      localStorage.setItem(local.timeOfLastAuth, timeSinceEpoch.toString())
+      local.set(localKeys.timeOfLastAuth, timeSinceEpoch.toString())
 
       return {
         status: 'Authorized',
@@ -125,7 +125,7 @@ export const useAuth = defineStore('auth', {
       error: ServerError,
       broadcastLogoutEvent: boolean,
     }) {
-      localStorage.removeItem(local.googleOAuthAccessToken)
+      local.remove(localKeys.timeOfLastAuth)
 
       if (broadcastLogoutEvent) {
         const { emitUserLogout } = useSocket()
@@ -144,7 +144,7 @@ export const useAuth = defineStore('auth', {
     },
     async endSessionAndPromptOAuth(googleAuthUrl?: string) {
       try {
-        localStorage.removeItem(local.closeAfterAuth)
+        local.remove(localKeys.closeAfterAuth)
         const uri = googleAuthUrl ?? await this.getGoogleOAuthURL()
         location.replace(uri)
       } catch {
@@ -165,12 +165,12 @@ export const useAuth = defineStore('auth', {
         throw new Error('Could not open authorization window')
       }
 
-      localStorage.removeItem(local.googleOAuthAccessToken)
-      localStorage.removeItem(local.googleOAuthCode)
-      localStorage.setItem(local.closeAfterAuth, 'true')
+      local.remove(localKeys.googleOAuthAccessToken)
+      local.remove(localKeys.googleOAuthCode)
+      local.set(localKeys.closeAfterAuth, 'true')
 
       const pollOAuthCode = setInterval(async () => {
-        const code = localStorage.getItem(local.googleOAuthCode)
+        const code = local.get(localKeys.googleOAuthCode)
         if (code) {
           await this.userLoginFlow(code)
           clearInterval(pollOAuthCode)

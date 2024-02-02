@@ -103,13 +103,13 @@
 </template>
 
 <script setup lang="ts">
-import { useAuth } from "../../store/useAuth";
-import { useSheetManager } from "../../store/useSheetManager";
-import { useDocumentCache } from "../../store/useDocumentCache";
-import { useDialog } from "../../store/useDialog";
-import { storeToRefs } from "pinia";
 import { computed, StyleValue } from "vue";
-import { local } from "../../Locals";
+import { storeToRefs } from "pinia";
+import { useAuth } from "@store/useAuth";
+import { useSheetManager } from "@store/useSheetManager";
+import { useDocumentCache } from "@store/useDocumentCache";
+import { useDialog } from "@store/useDialog";
+import { local } from "@locals";
 import PostAnnouncement from "./PostAnnouncement.vue";
 import InfoBtn from "./InfoBtn.vue";
 
@@ -123,7 +123,7 @@ const { getActivePanel, focusedItemSysId, readOnlyMode } =
 
 const { getItemBySysId } = useDocumentCache();
 
-const lastLoginStore = localStorage.getItem(local.timeOfLastAuth);
+const lastLoginStore = local.get('last-auth');
 
 const lastLogin = computed(() => {
   if (lastLoginStore) {

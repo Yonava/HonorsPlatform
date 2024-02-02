@@ -10,7 +10,7 @@ export const headerRowMemo: HeaderRows = {}
 function requestHeaders() {
   return {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem(local.googleOAuthAccessToken) }`,
+      Authorization: `Bearer ${local.get('access-token')}`,
     } as const
   }
 }

@@ -65,7 +65,7 @@ import { useDocumentCache } from '@store/useDocumentCache';
 import { useDialog } from '@store/useDialog';
 import { emailValidator } from '@utils/emails';
 import { panels } from '@panels';
-import { local } from '@locals';
+import { localKeys } from '@locals';
 import MailingListBuilder from './MailingListBuilder.vue';
 import MailingListEditor from './MailingListEditor.vue';
 import type { MailingList } from './MailingListAudiences';
@@ -127,7 +127,7 @@ const removeDeletedItemsFromList = (list: MailingList) => ({
   })
 })
 
-const storedMailingLists = useStorage<MailingList[]>(local.mailingLists, [])
+const storedMailingLists = useStorage<MailingList[]>(localKeys.mailingLists, [])
 
 storedMailingLists.value = storedMailingLists.value.map(removeDeletedItemsFromList)
 

@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { local } from "@locals";
+import { local, localKeys } from "@locals";
 import { type PanelName, panels } from "@panels";
 import { io } from "socket.io-client";
 import { useAuth, type GoogleProfile } from "@store/useAuth";
@@ -106,7 +106,7 @@ export const useSocket = defineStore("socket", {
 
       this.disconnect()
 
-      const accessToken = localStorage.getItem(local.googleOAuthAccessToken);
+      const accessToken = local.get(localKeys.googleOAuthAccessToken);
       if (!accessToken) throw new Error('Access Token Must Be Set To Connect To Socket')
 
       const { userLogoutFlow, googleProfile } = useAuth()
@@ -118,7 +118,7 @@ export const useSocket = defineStore("socket", {
 
       await new Promise((resolve, reject) => {
         this.socket.on('connect', () => {
-          const accessToken = localStorage.getItem(local.googleOAuthAccessToken)
+          const accessToken = local.get(localKeys.googleOAuthAccessToken)
           if (this.accessTokenOnSocketDisconnect && this.accessTokenOnSocketDisconnect !== accessToken) {
 
             userLogoutFlow({
@@ -238,7 +238,7 @@ export const useSocket = defineStore("socket", {
             this.timeOfSocketDisconnect = new Date()
             this.connectedSockets = []
             this.focusData = {}
-            this.accessTokenOnSocketDisconnect = localStorage.getItem(local.googleOAuthAccessToken)
+            this.accessTokenOnSocketDisconnect = local.get(localKeys.googleOAuthAccessToken)
             console.log('Socket connection disconnected', this.timeOfSocketDisconnect.toLocaleTimeString())
           }
         },
