@@ -1,10 +1,21 @@
 <template>
   <v-sheet class="pa-5">
 
-    <input
-      v-model="userInitials"
-      ref="initialsInputRef"
-    />
+    <div class="d-flex">
+      <h1>
+        Add Meeting Note
+      </h1>
+      <v-spacer></v-spacer>
+      <div style="width: 100px">
+        <v-text-field
+          v-model="userInitials"
+          @keydown.enter="focusNotes"
+          variant="outlined"
+          label="Initials"
+          ref="initialsInputRef"
+        />
+      </div>
+    </div>
 
     <v-textarea
       v-model="note"
@@ -36,6 +47,7 @@ import { useStorage } from '@vueuse/core';
 import { local } from '@locals'
 import { getPanel } from '@panels';
 import { useUpdateManager } from '@store/useUpdateManager';
+import { useDialog } from '@store/useDialog';
 import { useInputFocus } from '@composables/useInputFocus';
 import { broadcastPropUpdate } from '@utils/socketBroadcastWrappers';
 import type { Student } from '@apptypes/sheetItems';
@@ -73,5 +85,6 @@ const addNote = () => {
   props.student.note = previousNotes ? newNote + '\n\n' + previousNotes : newNote
 
   broadcast('note')
+  useDialog().close()
 }
 </script>

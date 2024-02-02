@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
-import { SheetItem } from '../SheetTypes';
-import { getPanel, PanelName, panels } from '@panels';
+import type { SheetItem } from '@apptypes/sheetItems';
+import { getPanel, type PanelName } from '@panels';
 import { useDocumentCache } from '@store/useDocumentCache';
 import { useSocket } from '@store/useSocket';
 import { local } from '@locals';
@@ -15,26 +15,41 @@ export type JumpObject = {
   fallbackFn?: () => void // If the item you are jumping to is not found, this function will be called
 };
 
+type SheetManagerState = {
+  panelSwitchDebounce: number
+  panelSwitchCooldown: boolean
+  panel: ReturnType<typeof getPanel>
+  searchFilter: string
+  pinnedSysIds: string[]
+  loadingItems: boolean
+  sort: SortOption
+  listItemBeingDragged: SheetItem | null
+  focusedItemSysId: string
+  focusedEmbeddedItem: SheetItem | null
+  listTransitionActive: boolean
+  readOnlyMode: boolean
+}
+
 export const useSheetManager = defineStore('sheetManager', {
   state: () => ({
     panelSwitchDebounce: 250,
     panelSwitchCooldown: true,
-    panel: getPanel(Object.keys(panels)[0] as PanelName),
+    panel: getPanel('STUDENTS'),
     searchFilter: '',
-    pinnedSysIds: [] as string[],
+    pinnedSysIds: [],
     loadingItems: false,
     sort: {
       func: null,
       ascending: true,
       prop: '',
       label: ''
-    } as SortOption,
-    listItemBeingDragged: null as SheetItem | null,
+    },
+    listItemBeingDragged: null,
     focusedItemSysId: '',
-    focusedEmbeddedItem: null as SheetItem | null,
+    focusedEmbeddedItem: null,
     listTransitionActive: false,
     readOnlyMode: false
-  }),
+  } as SheetManagerState),
   getters: {
     filteredItems(state) {
       if (state.loadingItems) {

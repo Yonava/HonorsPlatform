@@ -36,11 +36,7 @@
 
     <template #corners>
       <LIBottomCorner
-        :left="{
-          icon: studentPanel.propIcons.email,
-          text: item.email || '(No Email)',
-          error: !emailValid
-        }"
+        :left="leftCorner"
         :right="{
           icon: studentPanel.propIcons.year,
           text: item.year || '(No Class Year)',
@@ -56,6 +52,8 @@ import { computed } from 'vue'
 import type { Student } from '@apptypes/sheetItems'
 import { athleticOptions, statusOptions } from '@utils/students'
 import { emailValidator } from '@utils/emails'
+import { useSheetManager } from '@store/useSheetManager'
+import { storeToRefs } from 'pinia'
 import { getPanel } from '@panels'
 import {
   LIFrame,
@@ -69,6 +67,20 @@ const props = defineProps<{
   item: Student,
   styled?: boolean
 }>()
+
+const { activeSort } = storeToRefs(useSheetManager())
+
+const leftCorner = computed(() => {
+  return activeSort.value.prop === 'points' ? {
+    icon: studentPanel.propIcons.points,
+    text: props.item.points || '0',
+    tooltip: 'Points Earned',
+  } : {
+    icon: studentPanel.propIcons.email,
+    text: props.item.email || '(No Email)',
+    error: !emailValid
+  }
+})
 
 const studentPanel = getPanel('STUDENTS')
 

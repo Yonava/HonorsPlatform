@@ -80,7 +80,7 @@ import { useDisplay } from 'vuetify'
 const { smAndDown } = useDisplay()
 
 type CornerData = {
-  text: string,
+  text: string | number,
   icon: string,
   error?: boolean,
   tooltip?: string,
@@ -114,7 +114,7 @@ const iconify = (icon: string) => {
   return `mdi-${icon}`
 }
 
-const textify = (text: string) => {
+const textify = (text: string | number) => {
   const canParseAsNumber = !isNaN(Number(text))
   return canParseAsNumber ? Number(text).toLocaleString() : text
 }
