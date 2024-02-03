@@ -12,7 +12,7 @@
     <h3>
       Add Students By Group
       <InfoBtn>
-        Automatically include all students that meet the criteria of a group.
+        Include all students that meet the criteria of a group.
       </InfoBtn>
     </h3>
 
@@ -63,7 +63,7 @@ import { listColors } from './MailingListAudiences';
 import ColorPalette from './MailingListColorPalette.vue';
 
 const recipientSysIds = ref(new Set<string>())
-const name = ref('New Mailing List')
+const name = ref('')
 const color = ref(listColors[0])
 
 const { Students, Graduates } = useDocumentCache()

@@ -21,7 +21,7 @@
 
         <v-btn
           v-if="snackbar.action"
-          @click.stop="snackbar.action.onClick(); snackbar.show = false"
+          @click.stop="actionClicked"
           :color="snackbar.action.color"
           :variant="snackbar.action.color ? 'elevated' : 'text'"
         >
@@ -50,4 +50,9 @@ import { storeToRefs } from 'pinia';
 
 const dialogState = useDialog();
 const { snackbar } = storeToRefs(dialogState);
+
+const actionClicked = () => {
+  snackbar.value.action?.onClick();
+  snackbar.value.show = false
+}
 </script>

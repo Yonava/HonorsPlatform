@@ -27,7 +27,7 @@ type LocalTypes = {
 
 type LocalObj = typeof localKeys
 
-type Returnify<T> = T extends (arg: any) => infer U ? U : T
+type Returnify<T> = T extends (...args: any[]) => infer U ? U : T
 type LocalKeys = Returnify<LocalObj[keyof LocalObj]>
 
 type LocalType<T extends LocalKeys> = T extends keyof LocalTypes ? LocalTypes[T] : string

@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useAuth } from "@store/useAuth";
-import { local } from "@locals";
+import { local, localKeys } from "@locals";
 
 export type Range = "Students" | "Modules" | "Graduates" | "Completed Modules" | "Announcements" | "Grad Engagements" | "Registrar List" | "Theses" | "Temporary Data";
 
@@ -10,7 +10,7 @@ export const headerRowMemo: HeaderRows = {}
 function requestHeaders() {
   return {
     headers: {
-      Authorization: `Bearer ${local.get('access-token')}`,
+      Authorization: `Bearer ${local.get(localKeys.googleOAuthAccessToken)}`,
     } as const
   }
 }
@@ -36,8 +36,6 @@ export async function getRanges(ranges: Range[] = [
   "Announcements"
 ]): Promise<{ [key in string]: string[][] }[]> {
 
-  // await new Promise(resolve => setTimeout(resolve, 1000));
-
   try {
     type ExpectedReturn = {
       range: Range,
@@ -55,7 +53,6 @@ export async function getRanges(ranges: Range[] = [
     });
   } catch {
     await useAuth().authorizeBeforeContinuing();
-    await useAuth().pendingAuthorization
     return await getRanges();
   }
 }

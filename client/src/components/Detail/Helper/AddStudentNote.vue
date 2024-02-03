@@ -49,7 +49,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 import { useStorage } from '@vueuse/core';
 import { localKeys, local } from '@locals'
 import { getPanel } from '@panels';
@@ -75,6 +75,11 @@ const { focus: focusInitials } = useInputFocus(initialsInputRef)
 const { focus: focusNotes } = useInputFocus(noteInputRef)
 
 onMounted(() => userInitials.value ? focusNotes() : focusInitials())
+
+onUnmounted(() => {
+  if (note.value.trim()) return
+  local.remove(localKeys.unsavedNote(props.student.sysId))
+})
 
 const addNote = () => {
 

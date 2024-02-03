@@ -22,7 +22,7 @@
         style="border-radius: 5px; cursor: pointer;"
       >
         <h3>
-          {{ list.name || '(Untitled)' }}
+          {{ list.name || '(Untitled List)' }}
         </h3>
         <div class="d-flex align-center">
           <h5>
@@ -45,9 +45,9 @@
         </div>
       </v-sheet>
       <v-sheet
+        @click="createList"
         class="add-list-box d-flex align-center justify-center pa-2"
         style="border-radius: 5px; cursor: pointer; border: 1px dashed #7b7b7b;"
-        @click="createList"
       >
         <v-icon color="grey-darken-2">
           mdi-plus
@@ -160,7 +160,6 @@ const deleteList = (list: MailingList) => {
   storedMailingLists.value.splice(index, 1)
   useDialog().openSnackbar({
     text: `Deleted ${list.name}`,
-    closable: false,
     action: {
       text: 'Undo',
       onClick: () => {
@@ -177,7 +176,6 @@ const copyEmailAddresses = (list: MailingList) => {
     setTimeout(() => emailAddressesCopied.value = false, 3000)
     useDialog().openSnackbar({
       text: `Copied ${list.recipientSysIds.length} email addresses to clipboard`,
-      closable: false
     })
   } catch (e) {
     console.error(e)
