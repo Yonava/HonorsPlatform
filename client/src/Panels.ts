@@ -287,6 +287,17 @@ export const rangeToPanelName = {
   'Grad Engagements': 'GRADUATE_ENGAGEMENTS',
 } as const;
 
+export const rangeToMapper = {
+  'Students': { panel: 'STUDENTS', map: mapStudents },
+  'Modules': { panel: 'MODULES', map: mapModules },
+  'Completed Modules': { panel: 'COMPLETED_MODULES', map: mapCompletedModules },
+  'Theses': { panel: 'THESES', map: mapTheses },
+  'Graduates': { panel: 'GRADUATES', map: mapGraduates },
+  'Grad Engagements': { panel: 'GRADUATE_ENGAGEMENTS', map: mapGradEngagements }
+} as const;
+
+export const getRangeByPanel = <T extends PanelRange>(range: T) => rangeToPanelName[range];
+
 export type PanelRange = Panels[PanelName]['sheetRange'];
 
 export type Panel = Panels[PanelName];

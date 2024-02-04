@@ -27,7 +27,7 @@ export async function getRange(range: Range): Promise<string[][]> {
   }
 }
 
-type SheetsAPIRange<T extends string = Range> = {
+export type SheetsAPIRange<T extends string = Range> = {
   range: `${T}!${string}:${string}`,
   values: string[][]
   majorDimension: "ROWS"
