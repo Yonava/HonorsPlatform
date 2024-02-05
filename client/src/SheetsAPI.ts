@@ -16,22 +16,13 @@ function requestHeaders() {
   }
 }
 
-export async function getRange(range: Range): Promise<string[][]> {
-  try {
-    const { data } = (await axios.get(`/api/range/${range}`, requestHeaders()));
-    headerRowMemo[range] = data.shift();
-    return data;
-  } catch {
-    await useAuth().authorizeBeforeContinuing();
-    return getRange(range);
-  }
-}
-
 export type SheetsAPIRange<T extends string = Range> = {
   range: `${T}!${string}:${string}`,
   values: string[][]
   majorDimension: "ROWS"
 }
+
+import { requestWithRePrompt } from "@store/useRequestQueue";
 
 export async function getRanges(ranges: Range[] = [
   "Students",
@@ -43,7 +34,8 @@ export async function getRanges(ranges: Range[] = [
   "Announcements"
 ]): Promise<{ [key in string]: string[][] }[]> {
 
-  try {
+  console.log('getting ranges')
+  return requestWithRePrompt(async () => {
     const { data } = (await axios.post(`/api/ranges/`, { ranges }, requestHeaders())) as { data: SheetsAPIRange[] };
     return data.map(({ values }, i) => {
       const range = ranges[i];
@@ -52,10 +44,7 @@ export async function getRanges(ranges: Range[] = [
         [range]: values
       }
     });
-  } catch {
-    await useAuth().authorizeBeforeContinuing();
-    return await getRanges();
-  }
+  });
 }
 
 export async function getAllSheetItemRanges() {

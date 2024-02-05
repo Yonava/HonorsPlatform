@@ -32,8 +32,6 @@ const errors = {
   INVALID_OAUTH_CODE: 'INVALID_OAUTH_CODE',
 }
 
-// app.use("/api/open", openAccessAPI);
-
 function getAuthUrl() {
   const auth = new OAuth2(
     GOOGLE_OAUTH_CLIENT_ID,
@@ -86,8 +84,6 @@ app.get('/api/user/permissions', async (req, res) => {
   const { authorization } = req.headers;
   const accessToken = authorization.split(' ')[1];
 
-  console.log('hitting get user permissions', accessToken)
-
   try {
     const sheet = new GoogleSheet(accessToken);
     const { read, write } = await sheet.getSheetPermissions();
@@ -131,31 +127,12 @@ app.get('/api/auth/:authCode', async (req, res) => {
       error: errors.INVALID_OAUTH_CODE
     });
   }
-})
-
-app.get("/api/range/:range", async (req, res) => {
-  const { range } = req.params;
-  const { authorization } = req.headers;
-  const accessToken = authorization.split(' ')[1];
-
-  console.log('hitting 1', accessToken)
-
-  try {
-    const sheet = new GoogleSheet(accessToken);
-    const data = await sheet.getRange(range);
-    res.json(data);
-  } catch (e) {
-    res.status(401).json({ error: 'Forbidden' });
-    return;
-  }
 });
 
 app.post("/api/ranges", async (req, res) => {
   const { ranges } = req.body;
   const { authorization } = req.headers;
   const accessToken = authorization.split(' ')[1];
-
-  console.log('hitting 2', accessToken)
 
   if (!accessToken) {
     console.log('no access token')
@@ -179,8 +156,6 @@ app.put("/api/range/:range/:row", async (req, res) => {
   const { authorization } = req.headers;
   const accessToken = authorization.split(' ')[1];
 
-  console.log('hitting 3', accessToken)
-
   try {
     const sheet = new GoogleSheet(accessToken);
     await sheet.updateByRow(range, row, data);
@@ -197,8 +172,6 @@ app.put("/api/range/:range", async (req, res) => {
   const { authorization } = req.headers;
   const accessToken = authorization.split(' ')[1];
 
-  console.log('hitting 4', accessToken)
-
   try {
     const sheet = new GoogleSheet(accessToken);
     await sheet.replaceRange(range, data);
@@ -213,8 +186,6 @@ app.delete("/api/range/:range/:row", async (req, res) => {
   const { range, row } = req.params;
   const { authorization } = req.headers;
   const accessToken = authorization.split(' ')[1];
-
-  console.log('hitting 5', accessToken)
 
   try {
     const sheet = new GoogleSheet(accessToken);
@@ -231,8 +202,6 @@ app.delete("/api/range/:range", async (req, res) => {
   const { range } = req.params;
   const { authorization } = req.headers;
   const accessToken = authorization.split(' ')[1];
-
-  console.log('hitting 5.5', accessToken)
 
   const { body: data } = req;
 

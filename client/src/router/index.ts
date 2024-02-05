@@ -6,6 +6,7 @@ import Auth from '../views/AuthPage.vue'
 import { useDocumentCache } from '../store/useDocumentCache'
 import { useSocket } from '../store/useSocket'
 import { useAuth } from '../store/useAuth'
+import { populateCache } from '@utils/sheetItemCaching'
 
 const routes = [
   {
@@ -43,12 +44,12 @@ router.beforeEach(async (to, from) => {
   const comingFrom = from.name as typeof routes[number]['name']
 
   if (goingTo === 'panel' && comingFrom !== 'panel') {
-    const { getAllDocuments } = useDocumentCache()
     const { connect } = useSocket()
     const { authorizeSession } = useAuth()
     await authorizeSession()
-    await getAllDocuments()
     await connect()
+
+    await populateCache()
   }
 
   if (name === defaultTitle || to.name === 'panel') return

@@ -59,6 +59,11 @@ const loading = ref(true)
 const error = route.query.error as ServerError | undefined
 const title = computed(() => {
   switch (error) {
+    case 'access_denied':
+      return {
+        large: 'Incomplete Login',
+        small: 'Google Has Indicated That It Was Unable To Complete The Login Process, Please Try Again'
+      }
     case 'NO_SHEET_ACCESS':
       return {
         large: 'Access Not Granted',
@@ -89,6 +94,9 @@ const auth = useAuth()
 const { endSessionAndPromptOAuth: authorize, userLoginFlow } = auth
 
 onMounted(async () => {
+
+  console.log('auth page mounted', route.query.error)
+
   // check if google servers have redirected with a code
   const code = (route.query.code ?? '') as string
   if (!code) {
