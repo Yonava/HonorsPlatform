@@ -21,6 +21,8 @@ export const localKeys = {
   unsavedNote: (sysId: string) => `unsaved-note-${sysId}` as const,
 } as const
 
+
+
 type LocalTypes = {
   'close-window': 'true' | 'false',
 }
@@ -28,6 +30,7 @@ type LocalTypes = {
 type LocalObj = typeof localKeys
 
 type Returnify<T> = T extends (...args: any[]) => infer U ? U : T
+
 type LocalKeys = Returnify<LocalObj[keyof LocalObj]>
 
 type LocalType<T extends LocalKeys> = T extends keyof LocalTypes ? LocalTypes[T] : string
