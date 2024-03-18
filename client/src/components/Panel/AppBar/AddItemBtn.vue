@@ -35,7 +35,6 @@ const action = async () => {
     console.error(e);
     throw new Error('Failed to add item');
   }
-  console.log('Item added');
   success.value = true;
   setTimeout(() => success.value = false, 2000);
 }
