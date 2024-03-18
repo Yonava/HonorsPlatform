@@ -26,7 +26,6 @@ type SheetManagerState = {
   listItemBeingDragged: SheetItem | null
   focusedItemSysId: string
   focusedEmbeddedItem: SheetItem | null
-  listTransitionActive: boolean
   readOnlyMode: boolean
 }
 
@@ -47,7 +46,6 @@ export const useSheetManager = defineStore('sheetManager', {
     listItemBeingDragged: null,
     focusedItemSysId: '',
     focusedEmbeddedItem: null,
-    listTransitionActive: false,
     readOnlyMode: false
   } as SheetManagerState),
   getters: {
@@ -99,13 +97,6 @@ export const useSheetManager = defineStore('sheetManager', {
     },
   },
   actions: {
-    activateListTransition(activeDurationInMs = 0) {
-      this.listTransitionActive = true
-      // deactivates after one event loop cycle
-      setTimeout(() => {
-        this.listTransitionActive = false
-      }, activeDurationInMs)
-    },
     setReadOnlyMode(readOnly: boolean) {
       this.readOnlyMode = readOnly
       readOnly ? readonlySnackbar().activated() : readonlySnackbar().deactivated()

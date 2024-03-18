@@ -6,7 +6,6 @@
       style="height: 100%;"
     >
       <div v-bind="wrapperProps">
-        <!-- <TransitionGroup :name="listTransitionActive ? 'list' : ''"> -->
           <div
             v-for="{ data: item } in list"
             :key="item.sysId"
@@ -19,7 +18,6 @@
               :styled="true"
             />
           </div>
-        <!-- </TransitionGroup> -->
       </div>
       <v-sheet
         v-if="filteredItems.length === 0"
@@ -66,7 +64,7 @@ import { useSheetManager } from '@store/useSheetManager'
 import { setSelectedItem } from './SetSelectedItem'
 
 const sheetManager = useSheetManager()
-const { filteredItems, loadingItems, getActivePanel, searchFilter, listTransitionActive } = storeToRefs(sheetManager)
+const { filteredItems, loadingItems, getActivePanel, searchFilter } = storeToRefs(sheetManager)
 
 watch(searchFilter, () => {
   scrollTo(0)
@@ -83,17 +81,3 @@ const { list, containerProps, wrapperProps, scrollTo } = useVirtualList(
   }
 )
 </script>
-
-<style scoped>
-.list-move, /* apply transition to moving elements */
-.list-enter-active,
-.list-leave-active {
-  transition: all 0.5s ease;
-}
-
-/* ensure leaving items are taken out of layout flow so that moving
-   animations can be calculated correctly. */
-.list-leave-active {
-  position: absolute;
-}
-</style>
