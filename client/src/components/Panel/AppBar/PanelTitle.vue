@@ -32,7 +32,7 @@
       </template>
 
       <v-list
-        @mouseleave="hoveredPanel = ''"
+        @mouseleave="hoveredPanel = null"
         style="width: 350px"
       >
         <v-sheet
@@ -59,6 +59,9 @@
               {{ panel.icon }}
             </v-icon>
             {{ panel.title.plural }}
+            <span :style="{ fontSize: '14px' }">
+              ({{ documents[panel.sheetRange].value.list.length }})
+            </span>
           </span>
           <v-spacer></v-spacer>
           <div
@@ -107,15 +110,18 @@
 import { computed, ref } from "vue";
 import { storeToRefs } from "pinia";
 import { useDisplay } from "vuetify";
-import { panels, Panel } from "@panels";
+import { panels, type Panel, type PanelName } from "@panels";
 import { useSheetManager } from "@store/useSheetManager";
 import { useSocket } from "@store/useSocket";
+import { useDocumentCache } from "@store/useDocumentCache";
 
 const { getUniqueConnectedSockets, focusData } = storeToRefs(useSocket());
 const { lgAndUp } = useDisplay();
 
 const { getActivePanel, loadingItems, filteredItems } = storeToRefs(useSheetManager());
 const { setPanel } = useSheetManager();
+
+const documents = storeToRefs(useDocumentCache());
 
 const displayAccounts = (panel: Panel) => {
   return getUniqueConnectedSockets.value.filter(({ socketId }) => {
@@ -124,7 +130,7 @@ const displayAccounts = (panel: Panel) => {
   });
 };
 
-const hoveredPanel = ref("");
+const hoveredPanel = ref<PanelName | null>(null);
 
 const panelTitle = computed(() => {
   const title = getActivePanel.value.title.plural;
