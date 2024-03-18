@@ -582,10 +582,6 @@ export const useDocumentCache = defineStore("documentCache", {
       useSyncState().$reset();
     },
     addItemCache(item: types.SheetItem, panelName: PanelName) {
-      const { activateListTransition, getActivePanel } = useSheetManager();
-      if (panelName === getActivePanel.panelName) {
-        activateListTransition();
-      }
       const { sheetRange } = panels[panelName];
       this[sheetRange].list.unshift(item);
     },
