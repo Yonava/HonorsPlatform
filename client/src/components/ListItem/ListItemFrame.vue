@@ -166,11 +166,10 @@ import { useDocumentCache } from '@store/useDocumentCache'
 import { useSocket } from '@store/useSocket'
 import { SheetItem } from '@apptypes/sheetItems'
 import { useStudentMatcher } from '../../StudentMatcher'
-import { LIBottomCorner } from './ListItemParts/ListItemExports'
 import type { Graduate, Module, Student } from '@apptypes/sheetItems'
 
 const sheetManager = useSheetManager()
-const { activateListTransition, setPanel } = useSheetManager()
+const { setPanel } = useSheetManager()
 const { getActivePanel } = storeToRefs(sheetManager)
 
 const props = defineProps<{
@@ -206,14 +205,8 @@ const isPinned = computed(() => {
 })
 
 const togglePin = () => {
-  const { removePinnedItem, addPinnedItem } = useSheetManager()
-  if (isPinned.value) {
-    activateListTransition()
-    removePinnedItem(props.item)
-  } else {
-    activateListTransition()
-    addPinnedItem(props.item)
-  }
+  const { removePinnedItem: remove, addPinnedItem: add } = useSheetManager()
+  isPinned.value ? remove(props.item) : add(props.item)
 }
 
 const dragStart = () => {

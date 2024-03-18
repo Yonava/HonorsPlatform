@@ -6,18 +6,18 @@
       style="height: 100%;"
     >
       <div v-bind="wrapperProps">
-          <div
-            v-for="{ data: item } in list"
-            :key="item.sysId"
-            @click="setSelectedItem(item)"
-            style="height: 105px; overflow: hidden;"
-          >
-            <component
-              :is="getActivePanel.components.list"
-              :item="item"
-              :styled="true"
-            />
-          </div>
+        <div
+          v-for="{ data: item } in list"
+          :key="item.sysId"
+          @click="setSelectedItem(item)"
+          style="height: 105px; overflow: hidden;"
+        >
+          <component
+            :is="getActivePanel.components.list"
+            :item="item"
+            :styled="true"
+          />
+        </div>
       </div>
       <v-sheet
         v-if="filteredItems.length === 0"
