@@ -1,28 +1,28 @@
-import StudentListItem from './components/ListItem/StudentListItem.vue';
-import StudentDetail from './components/Detail/StudentDetail.vue';
-import EmbeddedModuleList from './components/Detail/Embedded/Student/EmbeddedModuleList.vue';
-import EmbeddedModuleDetail from './components/Detail/Embedded/Student/EmbeddedModuleDetail.vue';
+import StudentListItem from '../components/ListItem/StudentListItem.vue';
+import StudentDetail from '../components/Detail/StudentDetail.vue';
+import EmbeddedModuleList from '../components/Detail/Embedded/Student/EmbeddedModuleList.vue';
+import EmbeddedModuleDetail from '../components/Detail/Embedded/Student/EmbeddedModuleDetail.vue';
 
-import ModuleListItem from './components/ListItem/ModuleListItem.vue';
-import ModuleDetail from './components/Detail/ModuleDetail.vue';
+import ModuleListItem from '../components/ListItem/ModuleListItem.vue';
+import ModuleDetail from '../components/Detail/ModuleDetail.vue';
 
-import CompletedModuleDetail from '../src/components/Detail/CompletedModuleDetail.vue';
-import CompletedModuleListItem from './components/ListItem/CompletedModuleListItem.vue';
+import CompletedModuleDetail from '../../src/components/Detail/CompletedModuleDetail.vue';
+import CompletedModuleListItem from '../components/ListItem/CompletedModuleListItem.vue';
 
-import GraduateListItem from './components/ListItem/GraduateListItem.vue';
-import GraduateDetail from './components/Detail/GraduateDetail.vue';
-import EmbeddedEventDetail from './components/Detail/Embedded/Graduate/EmbeddedEventDetail.vue';
-import EmbeddedEventList from './components/Detail/Embedded/Graduate/EmbeddedEventList.vue';
+import GraduateListItem from '../components/ListItem/GraduateListItem.vue';
+import GraduateDetail from '../components/Detail/GraduateDetail.vue';
+import EmbeddedEventDetail from '../components/Detail/Embedded/Graduate/EmbeddedEventDetail.vue';
+import EmbeddedEventList from '../components/Detail/Embedded/Graduate/EmbeddedEventList.vue';
 
-import ThesisDetail from './components/Detail/ThesisDetail.vue';
-import ThesisListItem from './components/ListItem/ThesisListItem.vue';
+import ThesisDetail from '../components/Detail/ThesisDetail.vue';
+import ThesisListItem from '../components/ListItem/ThesisListItem.vue';
 
-import GraduateEngagementDetail from './components/Detail/GraduateEngagementDetail.vue';
-import GraduateEngagementListItem from './components/ListItem/GraduateEngagementListItem.vue';
+import GraduateEngagementDetail from '../components/Detail/GraduateEngagementDetail.vue';
+import GraduateEngagementListItem from '../components/ListItem/GraduateEngagementListItem.vue';
 
 import { markRaw } from 'vue';
 
-import { sortOptions } from './SortOptions'
+import { sortOptions } from '../SortOptions'
 
 import {
   mapStudents,

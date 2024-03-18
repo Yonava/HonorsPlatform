@@ -1,11 +1,11 @@
 import { defineStore } from "pinia";
-import { type PanelName, panels } from "../Panels";
+import { type PanelName, panels } from "@panels";
 import type { SheetItem } from "@apptypes/sheetItems";
 import { batchUpdate, postInRange, type BatchUpdateData } from "../SheetsAPI";
-import { mappers } from "../DataMappers";
-import { useSyncState } from "./useSyncState";
-import { useSocket } from "./useSocket";
-import { useSheetManager } from "./useSheetManager";
+import { mappers } from "@data/DataMappers";
+import { useSyncState } from "@store/useSyncState";
+import { useSocket } from "@store/useSocket";
+import { useSheetManager } from "@store/useSheetManager";
 
 type UpdateItem = {
   // key is the sysId

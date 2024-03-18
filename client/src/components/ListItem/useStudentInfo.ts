@@ -1,6 +1,6 @@
 import { useStudentMatcher } from '../../StudentMatcher'
 import { computed } from 'vue'
-import { getPanel } from '../../Panels'
+import { getPanel } from '@panels'
 
 export function useStudentInfo(studentSysId: string) {
 

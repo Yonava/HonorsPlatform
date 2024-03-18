@@ -35,7 +35,7 @@ import type { SheetItem } from '@apptypes/sheetItems';
 import EmbeddedInput from '../Embedded/EmbeddedInput.vue';
 import DetailInput from './DetailInput.vue';
 import { headerRowMemo } from '../../../SheetsAPI';
-import { getNonCustomProps } from '../../../DataMappers';
+import { getNonCustomProps } from '@data/DataMappers';
 
 const sheetManager = useSheetManager()
 const { getActivePanel, getActiveEmbeddedPanel } = storeToRefs(sheetManager)

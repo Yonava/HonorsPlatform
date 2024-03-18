@@ -178,7 +178,7 @@ import { useSheetManager } from '@store/useSheetManager';
 import { useDialog } from '@store/useDialog';
 import type { SheetItem } from '@apptypes/sheetItems';
 import { headerRowMemo } from '../SheetsAPI';
-import { mappers } from '../DataMappers';
+import { mappers } from '@data/DataMappers';
 import { clearByRowData } from '../SheetsAPI';
 
 const sheetManager = useSheetManager();

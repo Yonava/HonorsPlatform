@@ -8,73 +8,9 @@ import type {
   SheetEntry,
   SheetItem,
 } from "@apptypes/sheetItems";
-
-import { useDialog } from "@store/useDialog";
-import { type PanelName } from "@panels";
-import DuplicateSysIdRemediation from "./components/DuplicateSysIdRemediation.vue";
-
-
-// the index where all SheetItems stored on Google Sheets store their unique sysId
-const SYS_ID_INDEX = 0;
-
-const sharedSheetItemProps: (keyof SheetEntry)[] = [
-  'sysId',
-  'note',
-];
-
-export const sheetProps = {
-  STUDENTS: [
-    'id',
-    'name',
-    'email',
-    'points',
-    'activeStatus',
-    'year',
-    'athletics'
-  ],
-  MODULES: [
-    'studentSysId',
-    'courseCode',
-    'term',
-    'instructor',
-    'docuSignCreated',
-    'docuSignCompleted',
-  ],
-  COMPLETED_MODULES: [
-    'studentSysId',
-    'courseCode',
-    'term',
-    'instructor',
-    'docuSignCreated',
-    'docuSignCompleted',
-    'dateCompleted',
-    'grade',
-  ],
-  GRADUATES: [
-    'id',
-    'name',
-    'phone',
-    'email',
-    'graduationDate',
-  ],
-  GRADUATE_ENGAGEMENTS: [
-    'studentSysId',
-    'event',
-    'dateTime',
-  ],
-  THESES: [
-    'studentSysId',
-    'title',
-    'proposalReceived',
-    'breakoutRoom',
-    'decision',
-    'term',
-    'mentor',
-    'mentorEmail',
-    'draftReceived',
-  ],
-  SHARED: sharedSheetItemProps,
-} as const;
+import { serveDupSysIdDialog } from "@data/DupSysIdDialog";
+import type { PanelName } from "@panels";
+import { SYS_ID_INDEX, sheetProps } from "@data/SheetItemProps";
 
 export const getNonCustomProps = (panelName: PanelName) => {
   return [
@@ -102,29 +38,7 @@ export const map = <T extends SheetItem>(spreadsheetMatrix: string[][], headerRo
     });
 
   if (duplicateSysIds.size > 0) {
-    useDialog().open({
-      title: 'Important Message!',
-      description: `This program uses a unique identifier for every item in the system called a sysId. This sysId is used for essential tasks including managing the addition and deletion of data associated with the item. If you are reading this message, it means that there are two or more items with the same sysId which can lead to serious consequences such as data loss for the items using duplicate identifiers. We strongly encourage remediating this issue before continuing.`,
-      buttons: [
-        {
-          text: 'Ignore & Continue',
-          onClick: () => {
-            useDialog().close();
-          },
-          color: 'red'
-        },
-        {
-          text: 'Remediate',
-          onClick: () => {
-            useDialog().open({
-              persistent: true,
-              component: DuplicateSysIdRemediation
-            });
-          },
-          color: 'green'
-        }
-      ]
-    })
+    serveDupSysIdDialog();
   }
 
   return spreadsheetMatrix

@@ -14,12 +14,13 @@
     "noEmit": true,
     "paths": {
       "@store/*": ["./src/store/*"],
-      "@panels": ["./src/Panels"],
+      "@panels": ["./src/data/Panels"],
       "@locals": ["./src/Locals"],
       "@components/*": ["./src/components"],
       "@utils/*": ["./src/utils/*"],
       "@composables/*": ["./src/composables/*"],
       "@apptypes/*": ["./src/types/*"],
+      "@data/*": ["./src/data/*"],
     }
   },
   "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],

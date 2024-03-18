@@ -80,14 +80,14 @@
 </template>
 
 <script setup lang="ts">
-import { useDialog } from '../../../store/useDialog'
-import { useDocumentCache } from '../../../store/useDocumentCache'
-import { useSheetManager } from '../../../store/useSheetManager'
-import { filterItems } from '../../../FilterObjects'
 import { ref, computed } from 'vue'
-import { getPanel, type PanelName } from '../../../Panels'
-import { useUpdateManager } from '../../../store/useUpdateManager'
-import { useSocket } from '../../../store/useSocket'
+import { useDialog } from '@store/useDialog'
+import { useDocumentCache } from '@store/useDocumentCache'
+import { useSheetManager } from '@store/useSheetManager'
+import { useUpdateManager } from '@store/useUpdateManager'
+import { useSocket } from '@store/useSocket'
+import { getPanel, type PanelName } from '@panels'
+import { filterItems } from '../../../FilterObjects'
 
 const studentPanel = getPanel('STUDENTS')
 const graduatePanel = getPanel('GRADUATES')

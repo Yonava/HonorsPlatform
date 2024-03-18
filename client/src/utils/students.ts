@@ -1,5 +1,5 @@
 import { Student, Graduate } from '@apptypes/sheetItems'
-import { unmapGraduates } from '../DataMappers'
+import { unmapGraduates } from '@data/DataMappers'
 import { replaceRange, getHeaderRowCache, postInRange } from '../SheetsAPI'
 import { panels } from '@panels'
 import { useDocumentCache } from '@store/useDocumentCache'

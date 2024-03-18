@@ -92,7 +92,6 @@ import { useDisplay } from 'vuetify'
 import { local, localKeys } from '@locals'
 import { panels, version } from '@panels'
 import { useSheetManager } from '@store/useSheetManager'
-import { useDocumentCache } from '@store/useDocumentCache'
 import { useDialog } from '@store/useDialog'
 import { useKeyBindings } from '@composables/useKeyBindings'
 import BottomLeftActions from '../components/Panel/BottomLeftActions.vue'
@@ -142,7 +141,6 @@ const panelListResizeTabStyles = computed(() => {
 useStalePageDetector()
 const { setPanel } = useSheetManager()
 const { getActivePanel, pinnedSysIds, focusedItemSysId, listItemBeingDragged } = storeToRefs(useSheetManager())
-const { getAllDocuments } = useDocumentCache()
 const { getPanelCover } = storeToRefs(useDialog())
 
 const route = useRoute()
