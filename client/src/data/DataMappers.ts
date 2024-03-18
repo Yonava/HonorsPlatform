@@ -12,7 +12,7 @@ import { serveDupSysIdDialog } from "@data/DupSysIdDialog";
 import type { PanelName } from "@panels";
 import { SYS_ID_INDEX, sheetProps } from "@data/SheetItemProps";
 
-export const getNonCustomProps = (panelName: PanelName) => {
+export const getNonCustomProps = <T extends PanelName>(panelName: T) => {
   return [
     ...sheetProps[panelName],
     ...sheetProps.SHARED,

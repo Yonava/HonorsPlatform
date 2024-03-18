@@ -39,6 +39,8 @@ import {
   unmapTheses
 } from './DataMappers';
 
+import * as Items from '@apptypes/sheetItems'
+
 export const panels = {
   STUDENTS: {
     panelName: 'STUDENTS',
@@ -59,7 +61,7 @@ export const panels = {
       'email': 'email',
       'points': 'ticket',
       'year': 'calendar',
-    },
+    } as Record<keyof Items.Student, string>,
     mappers: {
       map: mapStudents,
       unmap: unmapStudents
@@ -82,7 +84,7 @@ export const panels = {
     sortOptions: sortOptions.STUDENTS,
     properties: {
       title: 'name',
-    }
+    } as Record<string, keyof Items.Student>
   },
   MODULES: {
     panelName: 'MODULES',
@@ -104,7 +106,7 @@ export const panels = {
       'instructor': 'account',
       'docuSignCreated': 'calendar',
       'docuSignCompleted': 'calendar',
-    },
+    } as Record<keyof Items.Module, string>,
     mappers: {
       map: mapModules,
       unmap: unmapModules
@@ -113,7 +115,7 @@ export const panels = {
     sortOptions: sortOptions.MODULES,
     properties: {
       title: 'courseCode'
-    }
+    } as Record<string, keyof Items.Module>
   },
   COMPLETED_MODULES: {
     panelName: 'COMPLETED_MODULES',
@@ -137,7 +139,7 @@ export const panels = {
       'docuSignCompleted': 'calendar',
       'dateCompleted': 'calendar',
       'grade': 'numeric',
-    },
+    } as Record<keyof Items.CompletedModule, string>,
     mappers: {
       map: mapCompletedModules,
       unmap: unmapCompletedModules
@@ -146,7 +148,7 @@ export const panels = {
     sortOptions: sortOptions.COMPLETED_MODULES,
     properties: {
       title: 'courseCode'
-    }
+    } as Record<string, keyof Items.CompletedModule>
   },
   THESES: {
     panelName: 'THESES',
@@ -171,7 +173,7 @@ export const panels = {
       'mentor': 'account',
       'mentorEmail': 'email',
       'draftReceived': 'calendar',
-    },
+    } as Record<keyof Items.Thesis, string>,
     mappers: {
       map: mapTheses,
       unmap: unmapTheses
@@ -180,7 +182,7 @@ export const panels = {
     sortOptions: sortOptions.THESES,
     properties: {
       title: 'title'
-    }
+    } as Record<string, keyof Items.Thesis>
   },
   GRADUATES: {
     panelName: 'GRADUATES',
@@ -201,7 +203,7 @@ export const panels = {
       'phone': 'phone',
       'email': 'email',
       'graduationDate': 'calendar',
-    },
+    } as Record<keyof Items.Graduate, string>,
     listItem: {
       title: {
         primary: 'name',
@@ -232,7 +234,7 @@ export const panels = {
     sortOptions: sortOptions.GRADUATES,
     properties: {
       title: 'name'
-    }
+    } as Record<string, keyof Items.Graduate>
   },
   GRADUATE_ENGAGEMENTS: {
     panelName: 'GRADUATE_ENGAGEMENTS',
@@ -251,7 +253,7 @@ export const panels = {
       'studentSysId': 'account',
       'event': 'account-tie',
       'dateTime': 'calendar',
-    },
+    } as Record<keyof Items.GradEngagement, string>,
     mappers: {
       map: mapGradEngagements,
       unmap: unmapGradEngagements
@@ -260,7 +262,7 @@ export const panels = {
     sortOptions: sortOptions.GRADUATE_ENGAGEMENTS,
     properties: {
       title: 'event'
-    }
+    } as Record<string, keyof Items.GradEngagement>
   },
 } as const;
 
