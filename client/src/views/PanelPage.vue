@@ -142,7 +142,6 @@ const panelListResizeTabStyles = computed(() => {
 useStalePageDetector()
 const { setPanel } = useSheetManager()
 const { getActivePanel, pinnedSysIds, focusedItemSysId, listItemBeingDragged } = storeToRefs(useSheetManager())
-const { getAllDocuments } = useDocumentCache()
 const { getPanelCover } = storeToRefs(useDialog())
 
 const route = useRoute()
@@ -175,7 +174,6 @@ const panelHopBindings = () => {
 
 useKeyBindings({
   '/': () => document.getElementById("search-bar")!.focus(),
-  'r': () => getAllDocuments({ forceCacheRefresh: true }),
   'p': () => {
     panelListCollapsed.value = !panelListCollapsed.value
     itemListTransition.value = true

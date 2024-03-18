@@ -1,7 +1,7 @@
 import { watch, ref, computed } from 'vue'
 import type { Ref } from 'vue'
 
-export function useIncrementalRender(items: Ref<any[]>, renderInterval = 10) {
+export function useIncrementalRender<T>(items: Ref<T[]>, renderInterval = 10) {
   const itemsToDisplay = ref(items.value.length)
 
   let updateInterval = setInterval(() => {}, 0);

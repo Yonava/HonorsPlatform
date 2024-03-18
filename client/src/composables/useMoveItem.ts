@@ -6,7 +6,7 @@ import { useDialog } from '@store/useDialog'
 import type { DialogContentOptions } from '@store/useDialog'
 import { useSheetManager } from '@store/useSheetManager'
 import { useDocumentCache } from '@store/useDocumentCache'
-import warn from '@utils/Warn'
+import warn from '@utils/warn'
 import { moveToGraduates, moveToStudents } from '@utils/students'
 import MoveModule from '../components/Detail/Helper/MoveModule.vue'
 

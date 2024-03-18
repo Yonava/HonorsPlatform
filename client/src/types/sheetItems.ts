@@ -4,7 +4,12 @@ import type { StudentEmail, FacultyEmail } from "@utils/emails";
 import type { Grade, Primitive, ThesisDecision } from "@apptypes/misc";
 
 export type SheetItem = Module | Graduate | Student | CompletedModule | Thesis | GradEngagement;
-export type JointSheetItem = Module & Graduate & Student & CompletedModule & Thesis & GradEngagement;
+
+export type JointSheetItem = UnionToIntersection<SheetItem>
+
+type Parameterize<T> = T extends any ? (x: T) => void : never
+type UnionToIntersection<U> = Parameterize<U> extends ((x: infer I) => void) ? I : never
+
 export type SheetItemKeys = keyof JointSheetItem;
 
 type InObj<T, O extends Record<any, any>> = T extends keyof O ? true : never

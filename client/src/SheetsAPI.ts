@@ -1,8 +1,9 @@
 import axios from "axios";
 import { useAuth } from "@store/useAuth";
 import { local, localKeys } from "@locals";
+import { panels, type PanelRange } from "@panels";
 
-export type Range = "Students" | "Modules" | "Graduates" | "Completed Modules" | "Announcements" | "Grad Engagements" | "Registrar List" | "Theses" | "Temporary Data";
+export type Range = PanelRange | "Announcements" | "Registrar List" | "Temporary Data";
 
 export type HeaderRows = { [key in Range]?: string[] }
 export const headerRowMemo: HeaderRows = {}
@@ -15,16 +16,13 @@ function requestHeaders() {
   }
 }
 
-export async function getRange(range: Range): Promise<string[][]> {
-  try {
-    const { data } = (await axios.get(`/api/range/${range}`, requestHeaders()));
-    headerRowMemo[range] = data.shift();
-    return data;
-  } catch {
-    await useAuth().authorizeBeforeContinuing();
-    return getRange(range);
-  }
+export type SheetsAPIRange<T extends string = Range> = {
+  range: `${T}!${string}:${string}`,
+  values: string[][]
+  majorDimension: "ROWS"
 }
+
+import { requestWithRePrompt } from "@store/useRequestQueue";
 
 export async function getRanges(ranges: Range[] = [
   "Students",
@@ -36,14 +34,9 @@ export async function getRanges(ranges: Range[] = [
   "Announcements"
 ]): Promise<{ [key in string]: string[][] }[]> {
 
-  try {
-    type ExpectedReturn = {
-      range: Range,
-      values: string[][]
-      majorDimension: "ROWS"
-    }
-
-    const { data } = (await axios.post(`/api/ranges/`, { ranges }, requestHeaders())) as { data: ExpectedReturn[] };
+  console.log('getting ranges')
+  return requestWithRePrompt(async () => {
+    const { data } = (await axios.post(`/api/ranges/`, { ranges }, requestHeaders())) as { data: SheetsAPIRange[] };
     return data.map(({ values }, i) => {
       const range = ranges[i];
       headerRowMemo[range as Range] = values.shift();
@@ -51,10 +44,13 @@ export async function getRanges(ranges: Range[] = [
         [range]: values
       }
     });
-  } catch {
-    await useAuth().authorizeBeforeContinuing();
-    return await getRanges();
-  }
+  });
+}
+
+export async function getAllSheetItemRanges() {
+  const ranges = Object.values(panels).map(p => p.sheetRange);
+  const { data } = await axios.post(`/api/ranges/`, { ranges }, requestHeaders());
+  return data as SheetsAPIRange<PanelRange>[];
 }
 
 export async function clearByRow(range: Range, row: number) {

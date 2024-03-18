@@ -193,7 +193,7 @@ export const useSocket = defineStore("socket", {
     },
     async checkForActionsDuringDisconnect(lastAction: LastActionData) {
       const { time: timeOfLastBroadcastedAction, serverIsUp } = lastAction
-      const { getAllDocuments } = useDocumentCache()
+      // const { getAllDocuments } = useDocumentCache()
       const { waitUntilSynced } = useSyncState()
 
       // wait for all pending writes to resolve prior to checking for missed actions
@@ -206,10 +206,10 @@ export const useSocket = defineStore("socket", {
 
       if (!serverIsUp) {
         // If the server is not up and we have disconnected, we may have missed some actions, so we need to refresh
-        getAllDocuments({
-          showLoading: false,
-          forceCacheRefresh: true
-        })
+        // getAllDocuments({
+        //   showLoading: false,
+        //   forceCacheRefresh: true
+        // })
         return
       }
 
@@ -226,9 +226,9 @@ export const useSocket = defineStore("socket", {
       }
 
       // Uh oh, it looks like we may have missed some actions, so we need to refresh the cache
-      getAllDocuments({
-        forceCacheRefresh: true
-      })
+      // getAllDocuments({
+      //   forceCacheRefresh: true
+      // })
     },
     initiateSocketListeners() {
       const listeners = [
@@ -337,12 +337,10 @@ export const useSocket = defineStore("socket", {
                 break
 
               case 'refresh':
-                const { getAllDocuments } = useDocumentCache()
-                console.log('Refreshing cache')
-                getAllDocuments({
-                  showLoading: false,
-                  forceCacheRefresh: true
-                })
+                // getAllDocuments({
+                //   showLoading: false,
+                //   forceCacheRefresh: true
+                // })
                 break
 
               case 'move':

@@ -124,7 +124,7 @@ export const useSheetManager = defineStore('sheetManager', {
 
       this.panelSwitchCooldown = false;
 
-      const { setSelectedItems, getAllDocuments } = useDocumentCache();
+      const { setSelectedItems } = useDocumentCache();
 
       setSelectedItems({
         items: []
@@ -135,10 +135,6 @@ export const useSheetManager = defineStore('sheetManager', {
       this.setSearchFilter('');
 
       this.clearSort();
-
-      getAllDocuments({
-        showLoading: false
-      })
 
       document.title = this.panel.title.plural + ' - Honors Program';
       router.push({

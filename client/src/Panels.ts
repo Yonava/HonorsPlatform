@@ -23,6 +23,7 @@ import GraduateEngagementListItem from './components/ListItem/GraduateEngagement
 import { markRaw } from 'vue';
 
 import { sortOptions } from './SortOptions'
+import type * as sheetTypes from '@apptypes/sheetItems'
 
 import {
   mapStudents,
@@ -264,11 +265,33 @@ export const panels = {
   },
 } as const;
 
-export type PanelName = keyof typeof panels;
+export type Panels = typeof panels;
 
-export type PanelRange = typeof panels[PanelName]['sheetRange'];
+export type PanelName = keyof Panels;
 
-export type Panel = typeof panels[PanelName];
+export type SheetRangeToType = {
+  STUDENTS: sheetTypes.Student,
+  MODULES: sheetTypes.Module,
+  COMPLETED_MODULES: sheetTypes.CompletedModule,
+  THESES: sheetTypes.Thesis,
+  GRADUATES: sheetTypes.Graduate,
+  GRADUATE_ENGAGEMENTS: sheetTypes.GradEngagement
+};
+
+export const rangeToPanelName = {
+  'Students': 'STUDENTS',
+  'Modules': 'MODULES',
+  'Completed Modules': 'COMPLETED_MODULES',
+  'Theses': 'THESES',
+  'Graduates': 'GRADUATES',
+  'Grad Engagements': 'GRADUATE_ENGAGEMENTS',
+} as const;
+
+export const getRangeByPanel = <T extends PanelRange>(range: T) => rangeToPanelName[range];
+
+export type PanelRange = Panels[PanelName]['sheetRange'];
+
+export type Panel = Panels[PanelName];
 export const getPanel = <T extends PanelName>(panelName: T) => panels[panelName];
 
 export const version = 'prerelease v0.92.1 (beta)';

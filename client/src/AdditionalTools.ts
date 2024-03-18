@@ -36,9 +36,9 @@ export const tools: Tools = {
       name: 'Refresh Data',
       icon: 'mdi-refresh',
       handler: () => {
-        useDocumentCache().getAllDocuments({
-          forceCacheRefresh: true,
-        });
+        // useDocumentCache().getAllDocuments({
+        //   forceCacheRefresh: true,
+        // });
       },
       tooltip: 'Force a refresh to get the latest data'
     }

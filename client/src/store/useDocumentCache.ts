@@ -5,31 +5,14 @@ import { useSocket } from "@store/useSocket";
 import { useSyncState } from "@store/useSyncState";
 import { useDialog } from "@store/useDialog";
 import warn from "@utils/warn";
-import { getRange, clearByRow, postInRange, getRanges } from '../SheetsAPI';
+import { clearByRow, postInRange, getRanges } from '../SheetsAPI';
 import * as types from "@apptypes/sheetItems";
 import { Announcement } from "@apptypes/misc";
 import { setSelectedItem } from '../components/Panel/SetSelectedItem'
 
-type GetAllDocuments = {
-  showLoading?: boolean;
-  forceCacheRefresh?: boolean;
-  panelName?: PanelName;
-}
-
-type GetItemByKeyValue = {
-  key?: string;
-  value?: string | undefined;
-  panelName?: PanelName;
-}
-
 type RefreshCache = {
   panelName?: PanelName;
   data?: string[][];
-}
-
-type DueForRefresh = {
-  panel?: Panel;
-  checkDependentPanels?: boolean;
 }
 
 type AddSelectedItem = {
@@ -157,54 +140,6 @@ export const useDocumentCache = defineStore("documentCache", {
       const { sheetRange } = getPanel(panelName);
       return state[sheetRange].list.find((item) => item.sysId === sysId);
     },
-    getItemByKeyValue: (state) => (options: GetItemByKeyValue = {}) => {
-      const {
-        key = "sysId",
-        value = "",
-        panelName,
-      } = options;
-
-      const { panel: activePanel } = useSheetManager();
-      if (panelName) {
-        const panel = panels[panelName];
-        return state[panel.sheetRange].list.find((item) => item[key] === value);
-      }
-      return state[activePanel.sheetRange].list.find((item) => item[key] === value);
-    },
-    dueForRefresh: (state) => (options: DueForRefresh = {}) => {
-      const {
-        panel = useSheetManager().panel,
-        checkDependentPanels = true,
-      } = options;
-      const lastRefresh = state.refreshLog[panel.sheetRange];
-
-      const timesSinceLastRefresh = []
-
-      if (!lastRefresh) {
-        return true;
-      } else {
-        timesSinceLastRefresh.push(lastRefresh);
-      }
-
-      if (checkDependentPanels) {
-        const dependentPanelNames = panel.dependencies;
-        for (const dependentPanelName of dependentPanelNames) {
-          const dependentPanel = panels[dependentPanelName];
-          const dependentLastRefresh = state.refreshLog[dependentPanel.sheetRange];
-          if (!dependentLastRefresh) {
-            return true;
-          } else {
-            timesSinceLastRefresh.push(dependentLastRefresh);
-          }
-        }
-      }
-
-      const now = new Date();
-      return timesSinceLastRefresh.some((time) => {
-        const timeSinceLastRefresh = now.getTime() - time.getTime();
-        return timeSinceLastRefresh > state.refreshAfter;
-      });
-    }
   },
   actions: {
     addAnnouncementCache(announcement: Announcement) {
@@ -229,39 +164,6 @@ export const useDocumentCache = defineStore("documentCache", {
       emitUserAction({
         action: 'announce',
         payload: announcement
-      })
-    },
-    getAllDocuments(options: GetAllDocuments = {}) {
-      const { setLoadingItems, setSort, getActivePanel } = useSheetManager();
-      const {
-        showLoading = true,
-        forceCacheRefresh = false,
-        panelName = getActivePanel.panelName,
-      } = options;
-
-      const panel = panels[panelName];
-
-      if (this.cacheRefreshInProgress) {
-        return
-      }
-
-      if (showLoading) {
-        setLoadingItems(true);
-      }
-
-      const shouldRefresh = this.dueForRefresh({ panel });
-
-      if (!forceCacheRefresh && !shouldRefresh) {
-        setLoadingItems(false);
-        setSort();
-        return;
-      }
-
-      this.cacheRefreshInProgress = this.refreshEntireCache();
-      this.cacheRefreshInProgress.then(() => {
-        this.cacheRefreshInProgress = null;
-        setLoadingItems(false);
-        setSort();
       })
     },
     async refreshEntireCache() {
@@ -697,10 +599,10 @@ export const useDocumentCache = defineStore("documentCache", {
         action: 'refresh'
       })
 
-      await this.getAllDocuments({
-        showLoading: false,
-        forceCacheRefresh: true
-      })
+      // await this.getAllDocuments({
+      //   showLoading: false,
+      //   forceCacheRefresh: true
+      // })
     }
   }
 })

@@ -6,10 +6,12 @@
 
         <DetailHeader
           :item="student"
-          :placeholder="`${getActivePanel.title.singular} Name`"
+          :placeholder="`${studentPanel.title.singular} Name`"
         >
           <IDInput :item="student" />
         </DetailHeader>
+
+        <v-btn @click="debug">Debug</v-btn>
 
         <DetailInput
           :item="student"
@@ -179,13 +181,17 @@ import {
 import type { Student } from '@apptypes/sheetItems'
 import { useMoveItem } from '@composables/useMoveItem'
 
+import { useSheetItemCache } from '@store/useSheetItemCache';
+
+const { debug } = useSheetItemCache();
+
 const props = defineProps<{
   item: Student;
 }>();
 
 const { smAndDown } = useDisplay();
 
-const { setPanel, getActivePanel } = useSheetManager();
+const { setPanel } = useSheetManager();
 const { readOnlyMode } = storeToRefs(useSheetManager());
 const { Theses, addItem } = useDocumentCache();
 const studentPanel = getPanel("STUDENTS");
