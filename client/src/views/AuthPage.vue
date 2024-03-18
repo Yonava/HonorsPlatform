@@ -59,6 +59,11 @@ const loading = ref(true)
 const error = route.query.error as ServerError | undefined
 const title = computed(() => {
   switch (error) {
+    case 'access_denied':
+      return {
+        large: 'Incomplete Login',
+        small: 'Google Has Indicated That It Was Unable To Complete The Login Process, Please Try Again'
+      }
     case 'NO_SHEET_ACCESS':
       return {
         large: 'Access Not Granted',
