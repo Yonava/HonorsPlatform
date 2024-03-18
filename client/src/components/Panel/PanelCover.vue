@@ -110,9 +110,9 @@ import { storeToRefs } from "pinia";
 import { useDialog } from "@store/useDialog";
 import { useSheetManager } from "@store/useSheetManager";
 import { useDocumentCache } from "@store/useDocumentCache";
+import { useIncrementalRender } from "@composables/useIncrementalRender";
+import { filterItems } from '@utils/FilterObjects'
 import { getSuggestedDeletions } from "../../DeleteSuggestions";
-import { useIncrementalRender } from "../../useIncrementalRender";
-import { filterItems } from '../../FilterObjects'
 import { setSelectedItem } from "./SetSelectedItem";
 
 const { getPanelCover } = storeToRefs(useDialog());

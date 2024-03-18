@@ -4,8 +4,8 @@ import { getPanel, type PanelName } from '@panels';
 import { useDocumentCache } from '@store/useDocumentCache';
 import { useSocket } from '@store/useSocket';
 import { local, localKeys } from '@locals';
+import { filterItems } from '@utils/FilterObjects';
 import router from '../router';
-import { filterItems } from '../FilterObjects';
 import type { SortOption } from '../SortOptions';
 import { readonlySnackbar } from '../ReadonlyModeSnackbars';
 

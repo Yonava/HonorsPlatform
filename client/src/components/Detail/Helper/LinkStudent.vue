@@ -87,7 +87,7 @@ import { useSheetManager } from '@store/useSheetManager'
 import { useUpdateManager } from '@store/useUpdateManager'
 import { useSocket } from '@store/useSocket'
 import { getPanel, type PanelName } from '@panels'
-import { filterItems } from '../../../FilterObjects'
+import { filterItems } from '@utils/FilterObjects'
 
 const studentPanel = getPanel('STUDENTS')
 const graduatePanel = getPanel('GRADUATES')

@@ -44,7 +44,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import type { Student, Graduate } from '@apptypes/sheetItems';
-import { filterItems } from '../../../FilterObjects';
+import { filterItems } from '@utils/FilterObjects';
 
 const search = ref('')
 const hoveredStudentSysId = ref('')
