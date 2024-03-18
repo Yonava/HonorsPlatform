@@ -17,9 +17,8 @@ export const useSheetItemCache = defineStore('sheetItemCache', () => {
     cache: T,
     newItem: K
   ) => {
-    if (cache === 'COMPLETED_MODULES') {
-      items.value.COMPLETED_MODULES.push(newItem)
-    }
+
+    items.value[cache].unshift(newItem)
   }
 
   const allItems = computed(() => Object.values(items.value).flat())

@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { type PanelName, panels } from "../Panels";
-import { SheetItem } from "../SheetTypes";
+import type { SheetItem } from "@apptypes/sheetItems";
 import { useDocumentCache } from "./useDocumentCache";
 import { batchUpdate, postInRange, type BatchUpdateData } from "../SheetsAPI";
 import { mappers } from "../DataMappers";
@@ -22,35 +22,12 @@ type TrackItemForUpdateOptions<T extends SheetItem> = {
   panelName?: PanelName
 }
 
-// TODO: replace with unicode method
-const cells: Record<number, string> = {
-  0: 'A',
-  1: 'B',
-  2: 'C',
-  3: 'D',
-  4: 'E',
-  5: 'F',
-  6: 'G',
-  7: 'H',
-  8: 'I',
-  9: 'J',
-  10: 'K',
-  11: 'L',
-  12: 'M',
-  13: 'N',
-  14: 'O',
-  15: 'P',
-  16: 'Q',
-  17: 'R',
-  18: 'S',
-  19: 'T',
-  20: 'U',
-  21: 'V',
-  22: 'W',
-  23: 'X',
-  24: 'Y',
-  25: 'Z',
-} as const
+const getLetterFromColIndex = (colIndex: number) => {
+  if (colIndex < 0 || colIndex > 25) {
+    throw new Error('Code is not a valid capital letter')
+  }
+  return String.fromCharCode(colIndex + 65)
+}
 
 export const useUpdateManager = defineStore('updateManager', {
   state: () => ({
@@ -134,8 +111,10 @@ export const useUpdateManager = defineStore('updateManager', {
               throw new Error('Column index is greater than 25')
             }
 
+            const column = getLetterFromColIndex(i)
+
             data.push({
-              range: `${panel.sheetRange}!${cells[i]}${item.row}`,
+              range: `${panel.sheetRange}!${column}${item.row}`,
               values: [[rowItem[i]]]
             })
           }
