@@ -28,7 +28,8 @@ export type ServerError =
   'LOGOUT' |
   'SOCKET_EXCEPTION' |
   'PERMISSION_REQUEST_FAILED' |
-  'END_SESSION_FALLBACK'
+  'END_SESSION_FALLBACK' |
+  'access_denied' // Google OAuth Error defined by Google
 
 const getAuthErrorURL = <T extends ServerError>(error: T) => `/auth?error=${error}` as const
 const getServerAuthEndpoint = <T extends string>(route: T) => `/api/auth/${route}` as const
@@ -92,10 +93,9 @@ export const useAuth = defineStore('auth', {
       const { data } = await axios.get<{
         accessToken: string,
         profile: GoogleProfile,
-        error?: ServerError
-      }>(oauthCodeValidationURI)
+      } | { error: ServerError }>(oauthCodeValidationURI)
 
-      if (data?.error) {
+      if ('error' in data) {
         location.replace(getAuthErrorURL(data.error))
         throw new Error('Authorization Failed')
       }

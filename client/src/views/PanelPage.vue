@@ -175,7 +175,6 @@ const panelHopBindings = () => {
 
 useKeyBindings({
   '/': () => document.getElementById("search-bar")!.focus(),
-  'r': () => getAllDocuments({ forceCacheRefresh: true }),
   'p': () => {
     panelListCollapsed.value = !panelListCollapsed.value
     itemListTransition.value = true
