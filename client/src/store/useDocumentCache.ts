@@ -1,5 +1,5 @@
 import { defineStore, storeToRefs } from "pinia";
-import { panels, Panel, PanelName, getPanel } from "@panels";
+import { panels, type Panel, type PanelName, getPanel, type PanelToSheetType } from "@panels";
 import { useSheetManager } from "@store/useSheetManager";
 import { useSocket } from "@store/useSocket";
 import { useSyncState } from "@store/useSyncState";
@@ -116,7 +116,7 @@ export const useDocumentCache = defineStore("documentCache", {
   }),
   getters: {
     allSheetItems: (state) => {
-      const panelKeys = Object.keys(panels) as (keyof typeof panels)[];
+      const panelKeys = Object.keys(panels) as PanelName[];
       const allItems = [];
       for (const panelKey of panelKeys) {
         const panel = panels[panelKey];
@@ -125,7 +125,7 @@ export const useDocumentCache = defineStore("documentCache", {
       return allItems;
     },
     getPanelNameFromItemSysId: (state) => (sysId: string) => {
-      const panelKeys = Object.keys(panels) as (keyof typeof panels)[];
+      const panelKeys = Object.keys(panels) as PanelName[];
       for (const panelKey of panelKeys) {
         const panel = panels[panelKey];
         const item = state[panel.sheetRange].list.find((item) => item.sysId === sysId);
@@ -153,9 +153,9 @@ export const useDocumentCache = defineStore("documentCache", {
     },
     getItemBySysId: (state) => <T extends PanelName>(sysId: string, panelName?: T) => {
       // @ts-expect-error
-      if (!panelName) return state.allSheetItems.find((item) => item.sysId === sysId) as types.SheetItem;
+      if (!panelName) return state.allSheetItems.find((item) => item.sysId === sysId) as PanelToSheetType[T] | undefined;
       const { sheetRange } = getPanel(panelName);
-      return state[sheetRange].list.find((item) => item.sysId === sysId);
+      return state[sheetRange].list.find((item) => item.sysId === sysId) as PanelToSheetType[T] | undefined;
     },
     getItemByKeyValue: (state) => (options: GetItemByKeyValue = {}) => {
       const {
@@ -421,7 +421,7 @@ export const useDocumentCache = defineStore("documentCache", {
       if (itemBeingRemovedIsFocused && thereIsAnotherItemSelected) {
         const itemToTheLeft = selectedItems[indexOfFocusedItemInSelected - 1];
         const itemToTheRight = selectedItems[indexOfFocusedItemInSelected + 1];
-        const nextFocusedItem = itemToTheRight || itemToTheLeft;
+        const nextFocusedItem = itemToTheRight ?? itemToTheLeft;
         setFocusedItem(nextFocusedItem.sysId);
       } else if (itemBeingRemovedIsFocused) {
         setFocusedItem("")

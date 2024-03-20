@@ -266,6 +266,15 @@ export const panels = {
   },
 } as const;
 
+export type PanelToSheetType = {
+  STUDENTS: Items.Student,
+  MODULES: Items.Module,
+  COMPLETED_MODULES: Items.CompletedModule,
+  THESES: Items.Thesis,
+  GRADUATES: Items.Graduate,
+  GRADUATE_ENGAGEMENTS: Items.GradEngagement
+}
+
 export type PanelName = keyof typeof panels;
 
 export type PanelRange = typeof panels[PanelName]['sheetRange'];
