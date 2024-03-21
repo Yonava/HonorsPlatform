@@ -1,13 +1,13 @@
 <template>
   <div
     :style="{
-      transition: show || isPinned ? '300ms ease-in-out' : '100ms',
-      transitionDelay: show || isPinned ? '100ms' : '0',
-      pointerEvents: show || isPinned ? 'all' : 'none',
+      transition: show ? '300ms ease-in-out' : '100ms',
+      transitionDelay: show ? '100ms' : '0',
+      pointerEvents: show ? 'all' : 'none',
       width: '30px',
       height: '65px',
       position: 'absolute',
-      opacity: show || isPinned ? '1' : '0'
+      opacity: show ? '1' : '0'
     }"
   >
 
@@ -40,13 +40,13 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { storeToRefs } from 'pinia'
-import { useSheetManager} from '@store/useSheetManager'
-import type { SheetItem, IncludeByProp } from '@apptypes/sheetItems'
-import type { PanelName, PanelToSheetType } from '@panels'
 import { getPanel } from '@panels'
+import type { PanelName, PanelToSheetType } from '@panels'
+import { useSheetManager} from '@store/useSheetManager'
+import { useDocumentCache } from '@store/useDocumentCache'
+import type { SheetItem, IncludeByProp } from '@apptypes/sheetItems'
 import { emailValidator, sendEmail } from '@utils/emails'
 import { matchStudent } from '../../StudentMatcher'
-import { useDocumentCache } from '@store/useDocumentCache'
 
 const { setPanel } = useSheetManager()
 const { readOnlyMode, getActivePanel } = storeToRefs(useSheetManager())
