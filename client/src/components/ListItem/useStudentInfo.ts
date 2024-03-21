@@ -4,7 +4,7 @@ import { useStudentMatcher, type StudentMatchError } from '../../StudentMatcher'
 
 export function useStudentInfo(studentSysId: string) {
 
-  const { studentMatch } = useStudentMatcher(studentSysId)
+  const studentMatch = useStudentMatcher(studentSysId)
 
   const studentPanel = getPanel('STUDENTS')
   const graduatePanel = getPanel('GRADUATES')

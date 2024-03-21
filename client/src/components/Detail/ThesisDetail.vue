@@ -144,10 +144,7 @@ const approvalStates: Record<ThesisDecision, string> = {
   'Rejected': 'close-circle'
 }
 
-const student = computed(() => {
-  const { studentMatch } = useStudentMatcher(thesis.value.studentSysId)
-  return studentMatch.value
-})
+const student = useStudentMatcher(thesis.value.studentSysId)
 
 const studentPanel = getPanel('STUDENTS')
 const graduatePanel = getPanel('GRADUATES')
@@ -159,23 +156,61 @@ const jumpTo = (panelName: 'STUDENTS' | 'GRADUATES') => {
 }
 
 const viewProfileButton = computed(() => {
-  if (student.value.error === 'NOT_LINKED') {
-    return {
-      keepEnabledInReadOnly: false,
-      text: `No ${studentPanel.title.singular} Linked`,
-      color: 'red-darken-4',
-      icon: 'mdi-account-off',
-      onClick: () => {
-        const { open } = useDialog()
-        open({
-          component: LinkStudent,
-          props: {
-            panelName: studentPanel.panelName,
-          }
-        })
-      },
+  if ('error' in student.value) {
+    const { error } = student.value
+    if (error === 'NOT_LINKED') {
+      return {
+        keepEnabledInReadOnly: false,
+        text: `No ${studentPanel.title.singular} Linked`,
+        color: 'red-darken-4',
+        icon: 'mdi-account-off',
+        onClick: () => {
+          const { open } = useDialog()
+          open({
+            component: LinkStudent,
+            props: {
+              panelName: studentPanel.panelName,
+            }
+          })
+        },
+      }
+    } else {
+      return {
+        keepEnabledInReadOnly: false,
+        text: `Error Linking ${studentPanel.title.singular}`,
+        color: 'red-darken-4',
+        icon: 'mdi-alert-circle',
+        onClick: () => {
+          const { open, close } = useDialog()
+          open({
+            title: `Error Linking ${studentPanel.title.singular}`,
+            description: `There was an error linking this ${getActivePanel.title.singular} to a ${studentPanel.title.singular}. Please try again.`,
+            buttons: [
+              {
+                text: 'Relink',
+                color: studentPanel.color,
+                onClick: () => {
+                  open({
+                    component: LinkStudent,
+                    props: {
+                      panelName: studentPanel.panelName,
+                    }
+                  })
+                },
+              },
+              {
+                text: 'Dismiss',
+                color: 'red',
+                onClick: close
+              },
+            ],
+          })
+        },
+      }
     }
-  } else if (student.value.foundIn === studentPanel.panelName) {
+  }
+
+  if (student.value.foundIn === studentPanel.panelName) {
     return {
       keepEnabledInReadOnly: true,
       text: `${studentPanel.title.singular} Profile`,
@@ -183,48 +218,13 @@ const viewProfileButton = computed(() => {
       icon: studentPanel.icon,
       onClick: () => jumpTo(studentPanel.panelName),
     }
-  } else if (student.value.foundIn === graduatePanel.panelName) {
+  } else {
     return {
       keepEnabledInReadOnly: true,
       text: `${graduatePanel.title.singular} Profile`,
       color: graduatePanel.color,
       icon: graduatePanel.icon,
       onClick: () => jumpTo(graduatePanel.panelName),
-    }
-  } else {
-    return {
-      keepEnabledInReadOnly: false,
-      text: `Problem Linking ${studentPanel.title.singular}`,
-      color: 'red-darken-4',
-      icon: 'mdi-alert-circle',
-      onClick: () => {
-        const { open, close } = useDialog()
-        open({
-          title: `Problem Linking ${studentPanel.title.singular}`,
-          description: `The ${studentPanel.title.singular} that this ${getActivePanel.title.singular} was linked to no longer exists. Please relink or delete.`,
-          buttons: [
-            {
-              text: 'Relink',
-              color: studentPanel.color,
-              onClick: () => {
-                open({
-                  component: {
-                    render: LinkStudent,
-                    props: {
-                      panelName: studentPanel.panelName,
-                    }
-                  }
-                })
-              },
-            },
-            {
-              text: 'Dismiss',
-              color: 'red',
-              onClick: close
-            },
-          ],
-        })
-      }
     }
   }
 })

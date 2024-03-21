@@ -53,16 +53,14 @@
           </div>
 
           <div
-            v-for="{ icon, onClick, tooltip, condition = () => true } in sidebarActionButtons"
+            v-for="{ icon, onClick, tooltip } in sidebarActionButtons"
             :key="icon"
             @click.stop="onClick(item)"
             @mouseover="hoverData[icon] = true"
             @mouseleave="hoverData[icon] = false"
           >
 
-            <v-icon
-              v-if="condition()"
-            >
+            <v-icon>
               {{ icon }}{{ hoverData[icon] ? '' : '-outline' }}
             </v-icon>
 
@@ -159,14 +157,14 @@
 import { ref, computed } from 'vue'
 import { useDisplay } from 'vuetify'
 import { storeToRefs } from 'pinia'
-import { getPanel, PanelName } from '@panels'
+import { getPanel, PanelName, PanelToSheetType } from '@panels'
 import { emailValidator, sendEmail } from '@utils/emails'
 import { useSheetManager } from '@store/useSheetManager'
 import { useDocumentCache } from '@store/useDocumentCache'
 import { useSocket } from '@store/useSocket'
 import { SheetItem } from '@apptypes/sheetItems'
-import { useStudentMatcher } from '../../StudentMatcher'
-import type { Graduate, Module, Student } from '@apptypes/sheetItems'
+import { matchStudent } from '../../StudentMatcher'
+import type { IncludeByProp } from '@apptypes/sheetItems'
 
 const sheetManager = useSheetManager()
 const { setPanel } = useSheetManager()
@@ -192,7 +190,29 @@ const accounts = computed(() => {
 
 const hovered = ref(false)
 
-const { studentMatch } = useStudentMatcher(props.item?.studentSysId)
+function jumpToProfileAction<T extends IncludeByProp<'studentSysId'>>(item: T) {
+  const match = matchStudent(item.studentSysId)
+  if ('error' in match) return
+
+  const { foundIn, name, sysId } = match
+  const { icon, title } = getPanel(foundIn)
+
+  return {
+    icon,
+    tooltip: `View ${name || title.singular}`,
+    onClick: () => setPanel(foundIn, { value: sysId }),
+  }
+}
+
+function emailAction<T extends IncludeByProp<'email'>>(item: T) {
+  const { email } = item
+  if (!(email && emailValidator(email))) return
+  return {
+    icon: 'mdi-email-fast',
+    tooltip: 'Email',
+    onClick: () => sendEmail(email)
+  }
+}
 
 const isSelected = computed(() => {
   const selectedItems = getSelectedItems()
@@ -213,14 +233,6 @@ const dragStart = () => {
   useSheetManager().listItemBeingDragged = props.item
 }
 
-const canEmail = computed(() => {
-  if (!('email' in props.item)) {
-    return false
-  }
-  const email = props.item?.email
-  return email && emailValidator(email)
-})
-
 const setHovered = (v: boolean) => {
   if (!mdAndUp.value) {
     return
@@ -228,105 +240,52 @@ const setHovered = (v: boolean) => {
   hovered.value = v
 }
 
-const hoverData = ref<{ [key in string]: boolean }>({})
+const hoverData = ref<Record<string, boolean>>({})
 
-type SidebarActionButton = {
+type SidebarActionButton<T extends SheetItem = SheetItem> = (item: T) => {
   icon: string,
   tooltip: string,
   onClick: (...args: any) => void,
-  condition?: () => boolean
+  disableInReadOnlyMode?: boolean
+} | undefined
+
+type PanelSpecificActions = {
+  [K in PanelName]: SidebarActionButton<PanelToSheetType[K]>
 }
 
 // quick actions for each panel
-const panelSpecificActions: { [key in PanelName]: SidebarActionButton } = {
-  'STUDENTS': {
-    condition: () => !!canEmail.value,
-    icon: 'mdi-email-fast',
-    tooltip: 'Email',
-    onClick: (item: Student) => sendEmail(item.email)
-  },
-  'GRADUATES': {
-    condition: () => !!canEmail.value,
-    icon: 'mdi-email-fast',
-    tooltip: 'Email',
-    onClick: (item: Graduate) => sendEmail(item.email)
-  },
-  'MODULES': {
-    condition: () => !studentMatch.value.error,
-    icon: getPanel(studentMatch.value.foundIn || 'STUDENTS').icon,
-    tooltip: `View ${studentMatch.value.name || getPanel(studentMatch.value.foundIn || 'STUDENTS').title.singular}`,
-    onClick: (item: Module) => {
-      const { sysId, foundIn } = studentMatch.value
-      if (!sysId || !foundIn) {
-        return
-      }
-      setPanel(foundIn, {
-        value: sysId,
-      })
-    }
-  },
-  'COMPLETED_MODULES': {
-    condition: () => !studentMatch.value.error,
-    icon: getPanel(studentMatch.value.foundIn || 'STUDENTS').icon,
-    tooltip: `View ${studentMatch.value.name || getPanel(studentMatch.value.foundIn || 'STUDENTS').title.singular}`,
-    onClick: () => {
-      const { sysId, foundIn } = studentMatch.value
-      if (!sysId || !foundIn) {
-        return
-      }
-      setPanel(foundIn, {
-        value: sysId,
-      })
-    }
-  },
-  'THESES': {
-    condition: () => !studentMatch.value.error,
-    icon: getPanel(studentMatch.value.foundIn || 'STUDENTS').icon,
-    tooltip: `View ${studentMatch.value.name || getPanel(studentMatch.value.foundIn || 'STUDENTS').title.singular}`,
-    onClick: () => {
-      const { sysId, foundIn } = studentMatch.value
-      if (!sysId || !foundIn) {
-        return
-      }
-      setPanel(foundIn, {
-        value: sysId,
-      })
-    }
-  },
-  'GRADUATE_ENGAGEMENTS': {
-    condition: () => !studentMatch.value.error,
-    icon: getPanel(studentMatch.value.foundIn || 'STUDENTS').icon,
-    tooltip: `View ${studentMatch.value.name || getPanel(studentMatch.value.foundIn || 'STUDENTS').title.singular}`,
-    onClick: () => {
-      const { sysId, foundIn } = studentMatch.value
-      if (!sysId || !foundIn) {
-        return
-      }
-      setPanel(foundIn, {
-        value: sysId,
-      })
-    }
-  }
+const panelSpecificActions: PanelSpecificActions = {
+  'STUDENTS': emailAction,
+  'GRADUATES': emailAction,
+  'MODULES': jumpToProfileAction,
+  'COMPLETED_MODULES': jumpToProfileAction,
+  'THESES': jumpToProfileAction,
+  'GRADUATE_ENGAGEMENTS': jumpToProfileAction,
 }
+
+const deleteAction: SidebarActionButton = () => ({
+  icon: 'mdi-delete',
+  tooltip: 'Delete',
+  onClick: () => {
+    deleteItem({
+      item: props.item
+    })
+  },
+  disableInReadOnlyMode: true
+})
 
 const sidebarActionButtons = computed(() => {
   const panelSpecificAction = panelSpecificActions[getActivePanel.value.panelName]
+  const actionFns = [panelSpecificAction, deleteAction]
 
-  const deleteAction: SidebarActionButton = {
-    icon: 'mdi-delete',
-    tooltip: 'Delete',
-    onClick: () => {
-      deleteItem({
-        item: props.item
-      })
-    }
-  }
+  const actions = actionFns.map((actionFn) => actionFn(props.item))
+  const filteredActions = actions.filter((actionObj) => {
+    if (!actionObj) return false
+    if (actionObj.disableInReadOnlyMode && readOnlyMode.value) return false
+    return true
+  }) as Exclude<ReturnType<SidebarActionButton>, undefined>[]
 
-  if (readOnlyMode.value) {
-    return panelSpecificAction ? [panelSpecificAction] : []
-  }
-
-  return panelSpecificAction ? [panelSpecificAction, deleteAction] : [deleteAction]
+  return filteredActions
 })
 </script>
 

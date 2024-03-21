@@ -1,5 +1,5 @@
 import { Panel, getPanel } from "@panels";
-import { useStudentMatcher } from "./StudentMatcher";
+import { matchStudent } from "./StudentMatcher";
 import { useSheetManager } from '@store/useSheetManager'
 import { useDocumentCache } from "@store/useDocumentCache";
 import { useDialog } from "@store/useDialog";
@@ -89,18 +89,18 @@ const gradEngagementDeletions = async () => {
       deletionData.flaggedBecause.push("no event name")
     }
 
-    const { studentMatch } = useStudentMatcher(gradEngagement.studentSysId)
-    if (studentMatch.value?.error) {
+    const match = matchStudent(gradEngagement.studentSysId)
+    if ('error' in match) {
       deletionData.status = "danger"
-      const { error } = studentMatch.value
+      const { error } = match
       if (error === 'NOT_FOUND') {
         deletionData.flaggedBecause.push(`no ${graduatePanel.title.singular} found`)
       } else if (error === 'STUDENT_SYSID_UNDEFINED' || error === 'NOT_LINKED') {
         deletionData.flaggedBecause.push(`no ${graduatePanel.title.singular} linked`)
       }
-    } else if (studentMatch.value.foundIn === 'STUDENTS') {
+    } else if (match.foundIn === 'STUDENTS') {
       deletionData.status = "danger"
-      deletionData.flaggedBecause.push(`${studentMatch.value.name || '(No Name)'} is still a ${studentPanel.title.singular}`)
+      deletionData.flaggedBecause.push(`${match.name || '(No Name)'} is still a ${studentPanel.title.singular}`)
     }
 
     return deletionData
@@ -131,10 +131,10 @@ const thesisDeletions = async () => {
       deletionData.flaggedBecause.push("rejected by the honors committee")
     }
 
-    const { studentMatch } = useStudentMatcher(thesis.studentSysId)
-    if (studentMatch.value?.error) {
+    const match = matchStudent(thesis.studentSysId)
+    if ('error' in match) {
       deletionData.status = "danger"
-      const { error } = studentMatch.value
+      const { error } = match
       if (error === 'NOT_FOUND') {
         deletionData.flaggedBecause.push(`no ${studentPanel.title.singular} found`)
       } else if (error === 'STUDENT_SYSID_UNDEFINED' || error === 'NOT_LINKED') {
@@ -142,9 +142,9 @@ const thesisDeletions = async () => {
       } else {
         deletionData.flaggedBecause.push("error with student link")
       }
-    } else if (studentMatch.value.foundIn === 'GRADUATES') {
+    } else if (match.foundIn === 'GRADUATES') {
       deletionData.status = "danger"
-      deletionData.flaggedBecause.push(`${studentMatch.value.name || '(No Name)'} has graduated`)
+      deletionData.flaggedBecause.push(`${match.name || '(No Name)'} has graduated`)
     }
 
     if (!thesis.mentor) {
@@ -156,7 +156,7 @@ const thesisDeletions = async () => {
   })
 }
 
-const graduateDeletions = async () => {
+const graduateDeletions = () => {
 
   const { Graduates } = useDocumentCache()
   const graduates = Graduates.list
@@ -207,10 +207,10 @@ const completedModuleDeletions = async () => {
       deletionData.flaggedBecause.push("invalid course code")
     }
 
-    const { studentMatch } = useStudentMatcher(module.studentSysId)
-    if (studentMatch.value?.error) {
+    const match = matchStudent(module.studentSysId)
+    if ('error' in match) {
       deletionData.status = "danger"
-      const { error } = studentMatch.value
+      const { error } = match
       if (error === 'NOT_FOUND') {
         deletionData.flaggedBecause.push(`no ${studentPanel.title.singular} found`)
       } else if (error === 'STUDENT_SYSID_UNDEFINED' || error === 'NOT_LINKED') {
@@ -218,9 +218,9 @@ const completedModuleDeletions = async () => {
       } else {
         deletionData.flaggedBecause.push(`error with ${studentPanel.title.singular} link`)
       }
-    } else if (studentMatch.value.foundIn === 'GRADUATES') {
+    } else if (match.foundIn === 'GRADUATES') {
       deletionData.status = "danger"
-      deletionData.flaggedBecause.push(`${studentMatch.value.name || '(No Name)'} has graduated`)
+      deletionData.flaggedBecause.push(`${match.name || '(No Name)'} has graduated`)
     }
 
     return deletionData
@@ -285,10 +285,10 @@ const moduleDeletions = async () => {
       deletionData.flaggedBecause.push("invalid completion date")
     }
 
-    const { studentMatch } = useStudentMatcher(module.studentSysId)
-    if (studentMatch.value?.error) {
+    const match = matchStudent(module.studentSysId)
+    if ('error' in match) {
       deletionData.status = "danger"
-      const { error } = studentMatch.value
+      const { error } = match
       if (error === 'NOT_FOUND') {
         deletionData.flaggedBecause.push(`no ${studentPanel.title.singular} found`)
       } else if (error === 'STUDENT_SYSID_UNDEFINED' || error === 'NOT_LINKED') {
@@ -296,9 +296,9 @@ const moduleDeletions = async () => {
       } else {
         deletionData.flaggedBecause.push(`error with ${studentPanel.title.singular} link`)
       }
-    } else if (studentMatch.value.foundIn === 'GRADUATES') {
+    } else if (match.foundIn === 'GRADUATES') {
       deletionData.status = "danger"
-      deletionData.flaggedBecause.push(`${studentMatch.value.name || '(No Name)'} has graduated`)
+      deletionData.flaggedBecause.push(`${match.name || '(No Name)'} has graduated`)
     }
 
     return deletionData

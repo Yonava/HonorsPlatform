@@ -14,52 +14,41 @@ export type StudentMatch = {
   error: StudentMatchError
 }
 
-export function useStudentMatcher(sysId: string) {
+export const matchStudent = (sysId: string): StudentMatch => {
   const { getItemBySysId } = useDocumentCache()
+  const student = getItemBySysId(sysId, 'STUDENTS')
 
-  const student = computed(() => {
-    return getItemBySysId(sysId, 'STUDENTS');
-  })
+  if (student) {
+    return {
+      sysId: student.sysId,
+      id: student.id,
+      name: student.name,
+      fullData: student,
+      foundIn: 'STUDENTS',
+    } as const
+  }
 
-  const graduate = computed(() => {
-    return getItemBySysId(sysId, 'GRADUATES');
-  })
+  const graduate = getItemBySysId(sysId, 'GRADUATES')
 
-  const studentMatch: ComputedRef<StudentMatch> = computed(() => {
-    if (sysId === undefined) {
-      return {
-        error: 'STUDENT_SYSID_UNDEFINED'
-      } as const
-    }
+  if (graduate) {
+    return {
+      sysId: graduate.sysId,
+      id: graduate.id,
+      name: graduate.name,
+      fullData: graduate,
+      foundIn: 'GRADUATES',
+    } as const
+  }
 
-    if (student.value) {
-      return {
-        sysId: student.value.sysId,
-        id: student.value.id,
-        name: student.value.name,
-        fullData: student.value,
-        foundIn: 'STUDENTS',
-      } as const
-    } else if (graduate.value) {
-      return {
-        sysId: graduate.value.sysId,
-        id: graduate.value.id,
-        name: graduate.value.name,
-        fullData: graduate.value,
-        foundIn: 'GRADUATES',
-      } as const
-    } else if (studentSysId) {
-      return {
-        error: 'NOT_FOUND'
-      } as const
-    } else {
-      return {
-        error: 'NOT_LINKED'
-      } as const
-    }
-  })
+  if (sysId) {
+    return {
+      error: 'NOT_FOUND'
+    } as const
+  }
 
   return {
-    studentMatch
-  }
+    error: 'NOT_LINKED'
+  } as const
 }
+
+export const useStudentMatcher = (sysId: string) => computed(() => matchStudent(sysId))
