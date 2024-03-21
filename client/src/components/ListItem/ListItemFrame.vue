@@ -36,32 +36,16 @@
           class="d-flex flex-column"
           style="position: relative; height: 100%; gap: 2px; transform: translateY(-5px)"
         >
-
           <div
-            @click.stop="togglePin"
-            @mouseover="hoverData['pin'] = true"
-            @mouseleave="hoverData['pin'] = false"
-          >
-
-            <v-icon>
-              mdi-pin{{ hoverData['pin'] || isPinned ? '' : '-outline' }}
-            </v-icon>
-
-            <v-tooltip activator="parent">
-              {{ isPinned ? 'Unpin' : 'Pin' }}
-            </v-tooltip>
-          </div>
-
-          <div
-            v-for="{ icon, onClick, tooltip } in sidebarActionButtons"
+            v-for="{ icon, onClick, tooltip, actionId } in sidebarActionButtons"
             :key="icon"
             @click.stop="onClick(item)"
-            @mouseover="hoverData[icon] = true"
-            @mouseleave="hoverData[icon] = false"
+            @mouseover="hoverData[actionId] = true"
+            @mouseleave="hoverData[actionId] = false"
           >
 
             <v-icon>
-              {{ icon }}{{ hoverData[icon] ? '' : '-outline' }}
+              {{ icon(hoverData[actionId]) }}
             </v-icon>
 
             <v-tooltip
@@ -190,30 +174,6 @@ const accounts = computed(() => {
 
 const hovered = ref(false)
 
-function jumpToProfileAction<T extends IncludeByProp<'studentSysId'>>(item: T) {
-  const match = matchStudent(item.studentSysId)
-  if ('error' in match) return
-
-  const { foundIn, name, sysId } = match
-  const { icon, title } = getPanel(foundIn)
-
-  return {
-    icon,
-    tooltip: `View ${name || title.singular}`,
-    onClick: () => setPanel(foundIn, { value: sysId }),
-  }
-}
-
-function emailAction<T extends IncludeByProp<'email'>>(item: T) {
-  const { email } = item
-  if (!(email && emailValidator(email))) return
-  return {
-    icon: 'mdi-email-fast',
-    tooltip: 'Email',
-    onClick: () => sendEmail(email)
-  }
-}
-
 const isSelected = computed(() => {
   const selectedItems = getSelectedItems()
   if (!selectedItems) return false
@@ -242,18 +202,21 @@ const setHovered = (v: boolean) => {
 
 const hoverData = ref<Record<string, boolean>>({})
 
-type SidebarActionButton<T extends SheetItem = SheetItem> = (item: T) => {
-  icon: string,
+type SidebarActionFunction<T extends SheetItem = SheetItem> = (item: T) => {
+  icon: (isHovered: boolean) => string,
   tooltip: string,
   onClick: (...args: any) => void,
-  disableInReadOnlyMode?: boolean
+  disableInReadOnlyMode?: boolean,
+  actionId: string
 } | undefined
 
+type SidebarAction = ReturnType<SidebarActionFunction>
+type DefinedSidebarAction = Exclude<SidebarAction, undefined>
+
 type PanelSpecificActions = {
-  [K in PanelName]: SidebarActionButton<PanelToSheetType[K]>
+  [K in PanelName]: SidebarActionFunction<PanelToSheetType[K]>
 }
 
-// quick actions for each panel
 const panelSpecificActions: PanelSpecificActions = {
   'STUDENTS': emailAction,
   'GRADUATES': emailAction,
@@ -263,27 +226,65 @@ const panelSpecificActions: PanelSpecificActions = {
   'GRADUATE_ENGAGEMENTS': jumpToProfileAction,
 }
 
-const deleteAction: SidebarActionButton = () => ({
-  icon: 'mdi-delete',
-  tooltip: 'Delete',
-  onClick: () => {
-    deleteItem({
-      item: props.item
-    })
-  },
-  disableInReadOnlyMode: true
-})
+function jumpToProfileAction<T extends IncludeByProp<'studentSysId'>>(item: T): SidebarAction {
+  const match = matchStudent(item.studentSysId)
+  if ('error' in match) return
+
+  const { foundIn, name, sysId } = match
+  const { icon, title } = getPanel(foundIn)
+
+  return {
+    icon: (isHovered: boolean) => isHovered ? icon : `${icon}-outline`,
+    tooltip: `View ${name || title.singular}`,
+    onClick: () => setPanel(foundIn, { value: sysId }),
+    actionId: 'jump-to-profile'
+  } as const
+}
+
+function emailAction<T extends IncludeByProp<'email'>>(item: T): SidebarAction {
+  const { email } = item
+  if (!(email && emailValidator(email))) return
+  return {
+    icon: (isHovered) => isHovered ? 'mdi-email-fast' : 'mdi-email-fast-outline',
+    tooltip: 'Email',
+    onClick: () => sendEmail(email),
+    actionId: 'email'
+  } as const
+}
+
+function pinAction(): SidebarAction {
+  return {
+    icon: (isHovered) => isHovered || isPinned.value ? 'mdi-pin' : 'mdi-pin-outline',
+    tooltip: isPinned.value ? 'Unpin' : 'Pin',
+    onClick: togglePin,
+    actionId: 'pin'
+  } as const
+}
+
+function deleteAction(): SidebarAction {
+  return {
+    icon: (isHovered) => isHovered ? 'mdi-delete' : 'mdi-delete-outline',
+    tooltip: 'Delete',
+    onClick: () => {
+      deleteItem({
+        item: props.item
+      })
+    },
+    disableInReadOnlyMode: true,
+    actionId: 'delete'
+  } as const
+}
 
 const sidebarActionButtons = computed(() => {
   const panelSpecificAction = panelSpecificActions[getActivePanel.value.panelName]
-  const actionFns = [panelSpecificAction, deleteAction]
+  const actionFns = [pinAction, panelSpecificAction, deleteAction]
 
-  const actions = actionFns.map((actionFn) => actionFn(props.item))
+  const actions = actionFns.map((actionFn) => actionFn(props.item as any))
   const filteredActions = actions.filter((actionObj) => {
     if (!actionObj) return false
     if (actionObj.disableInReadOnlyMode && readOnlyMode.value) return false
     return true
-  }) as Exclude<ReturnType<SidebarActionButton>, undefined>[]
+  }) as DefinedSidebarAction[]
 
   return filteredActions
 })
