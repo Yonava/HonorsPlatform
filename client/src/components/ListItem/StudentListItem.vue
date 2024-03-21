@@ -1,8 +1,5 @@
 <template>
-  <LIFrame
-    :item="item"
-    :styled="styled"
-  >
+  <LIFrame :item="item">
 
     <template #left>
 
@@ -65,7 +62,6 @@ import {
 
 const props = defineProps<{
   item: Student,
-  styled?: boolean
 }>()
 
 const { activeSort } = storeToRefs(useSheetManager())

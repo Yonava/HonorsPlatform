@@ -4,10 +4,9 @@
       transition: show ? '300ms ease-in-out' : '100ms',
       transitionDelay: show ? '100ms' : '0',
       pointerEvents: show ? 'all' : 'none',
+      opacity: show ? '1' : '0',
       width: '30px',
-      height: '65px',
-      position: 'absolute',
-      opacity: show ? '1' : '0'
+      position: 'absolute'
     }"
   >
 
@@ -18,8 +17,8 @@
     >
       <div
         v-for="{ icon, onClick, tooltip, actionId } in sidebarActions"
-        :key="icon"
-        @click.stop="onClick(item)"
+        :key="actionId"
+        @click="onClick(item)"
         @mouseover="hoveredAction = actionId"
         @mouseleave="hoveredAction = null"
       >
@@ -64,7 +63,6 @@ const isPinned = computed(() => {
 const togglePin = () => {
   const { removePinnedItem: remove, addPinnedItem: add } = useSheetManager()
   isPinned.value ? remove(props.item) : add(props.item)
-  hoveredAction.value = null
 }
 
 type ActionId = string

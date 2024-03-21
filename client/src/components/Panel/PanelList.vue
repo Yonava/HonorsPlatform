@@ -12,11 +12,12 @@
           @click="setSelectedItem(item)"
           style="height: 105px; overflow: hidden;"
         >
-          <component
-            :is="getActivePanel.components.list"
-            :item="item"
-            :styled="true"
-          />
+          <ListItemActionProvider :item="item">
+            <component
+              :is="getActivePanel.components.list"
+              :item="item"
+            />
+          </ListItemActionProvider>
         </div>
       </div>
       <v-sheet
@@ -62,6 +63,7 @@ import { useVirtualList } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { useSheetManager } from '@store/useSheetManager'
 import { setSelectedItem } from './SetSelectedItem'
+import ListItemActionProvider from '../ListItem/ListItemActionProvider.vue'
 
 const sheetManager = useSheetManager()
 const { filteredItems, loadingItems, getActivePanel, searchFilter } = storeToRefs(sheetManager)
