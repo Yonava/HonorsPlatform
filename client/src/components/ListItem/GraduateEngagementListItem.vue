@@ -1,8 +1,5 @@
 <template>
-  <LIFrame
-    :item="item"
-    :styled="styled"
-  >
+  <LIFrame :item="item">
 
     <template #left>
 
@@ -49,7 +46,6 @@ const { getActivePanel } = useSheetManager()
 
 const props = defineProps<{
   item: GradEngagement,
-  styled?: boolean
 }>()
 
 const dateTimeDisplay = computed(() => {

@@ -1,8 +1,5 @@
 <template>
-  <LIFrame
-    :item="item"
-    :styled="styled"
-  >
+  <LIFrame :item="item">
     <template #left>
 
       <LITitle
@@ -61,7 +58,6 @@ const modulePanel = getPanel('MODULES')
 
 const props = defineProps<{
   item: CompletedModule,
-  styled: boolean
 }>()
 
 const emblem = computed(() => {

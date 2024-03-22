@@ -1,8 +1,5 @@
 <template>
-  <LIFrame
-    :item="item"
-    :styled="styled"
-  >
+  <LIFrame :item="item">
 
     <template #left>
 
@@ -69,7 +66,6 @@ import {
 
 const props = defineProps<{
   item: Module,
-  styled: boolean
 }>()
 
 const overOneYearInProgress = computed(() => {

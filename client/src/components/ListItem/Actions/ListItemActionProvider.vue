@@ -12,7 +12,7 @@
       'd-flex',
       'flex-row'
     ]"
-    style="height: 100%;"
+    style="height: 100%; position: relative"
   >
 
     <SidebarActions

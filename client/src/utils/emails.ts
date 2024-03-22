@@ -7,6 +7,7 @@ export type StudentEmail<T extends string = string> = ReturnType<typeof getStude
 export type FacultyEmail<T extends string = string> = ReturnType<typeof getFacultyEmail<T>>;
 
 export function emailValidator(email: string) {
+  if (!email) return true
   const pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   return email.trim() ? pattern.test(email) : true
 }
@@ -16,6 +17,7 @@ export function emailInputValidator() {
 }
 
 export function phoneValidator(phone: string) {
+  if (!phone) return true
   const pattern = /^(\+?1\s?)?(\(\d{3}\)|\d{3})[\s.-]?\d{3}[\s.-]?\d{4}$/
   return phone.trim() ? pattern.test(phone) : true
 }

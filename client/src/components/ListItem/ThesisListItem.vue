@@ -1,8 +1,5 @@
 <template>
-  <LIFrame
-    :item="item"
-    :styled="styled"
-  >
+  <LIFrame :item="item">
 
     <template #left>
 
@@ -58,7 +55,6 @@ import {
 
 const props = defineProps<{
   item: Thesis,
-  styled?: boolean
 }>()
 
 const termValid = computed(() => termValidator(props.item.term))
