@@ -58,7 +58,7 @@ import { computed } from 'vue'
 import { termValidator } from '@utils/terms'
 import { daysSinceDate } from '@utils/dates'
 import type { Module } from '@apptypes/sheetItems'
-import { useStudentInfo } from './useStudentInfo'
+import { useStudentInfo } from '@composables/useStudentInfo'
 import {
   LIFrame,
   LIIcon,

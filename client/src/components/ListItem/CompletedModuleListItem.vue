@@ -48,7 +48,7 @@ import { computed } from 'vue'
 import { getPanel } from '@panels'
 import { termValidator } from '@utils/terms'
 import { timeAgoDayPrecision } from '@utils/dates'
-import { useStudentInfo } from './useStudentInfo'
+import { useStudentInfo } from '@composables/useStudentInfo'
 import type { CompletedModule } from '@apptypes/sheetItems'
 import {
   LIFrame,

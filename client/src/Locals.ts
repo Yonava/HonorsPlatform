@@ -1,4 +1,4 @@
-import { PanelName } from '@panels'
+import type { PanelName } from '@panels'
 
 export const localKeys = {
   // stores initials set by user for signing student notes
@@ -33,8 +33,8 @@ type LocalKeys = Returnify<LocalObj[keyof LocalObj]>
 type LocalType<T extends LocalKeys> = T extends keyof LocalTypes ? LocalTypes[T] : string
 
 export const local = {
-  get: (key: LocalKeys) => localStorage.getItem(key),
+  get: <T extends LocalKeys>(key: T) => localStorage.getItem(key),
   set: <T extends LocalKeys, K extends LocalType<T>>(key: T, value: K) => localStorage.setItem(key, value),
-  remove: (key: LocalKeys) => localStorage.removeItem(key),
+  remove: <T extends LocalKeys>(key: T) => localStorage.removeItem(key),
   clear: () => localStorage.clear(),
 }

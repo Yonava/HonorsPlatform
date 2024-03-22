@@ -46,13 +46,13 @@
 </template>
 
 <script setup lang="ts">
-import LinkStudent from './LinkStudent.vue'
-import { useStudentInfo } from '../../ListItem/useStudentInfo'
-import { useSheetManager } from '../../../store/useSheetManager'
-import { useDialog } from '../../../store/useDialog'
 import { computed } from 'vue'
 import { useDisplay } from 'vuetify'
 import { storeToRefs } from 'pinia'
+import { useDialog } from '@store/useDialog'
+import { useSheetManager } from '@store/useSheetManager'
+import { useStudentInfo } from '@composables/useStudentInfo'
+import LinkStudent from './LinkStudent.vue'
 
 const { xs } = useDisplay()
 

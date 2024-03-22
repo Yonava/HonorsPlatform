@@ -1,7 +1,7 @@
-import type { IncludeByProp } from '@apptypes/sheetItems'
-import { matchStudent } from '../../StudentMatcher'
-import { emailValidator, sendEmail } from '@utils/emails'
 import { getPanel } from '@panels'
+import type { IncludeByProp } from '@apptypes/sheetItems'
+import { matchStudent } from '@composables/useStudentMatcher'
+import { emailValidator, sendEmail } from '@utils/emails'
 import { useSheetManager } from '@store/useSheetManager'
 
 export function jumpToProfileAction<T extends IncludeByProp<'studentSysId'>>(item: T) {

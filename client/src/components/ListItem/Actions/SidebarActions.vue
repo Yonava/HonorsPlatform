@@ -17,7 +17,7 @@
       <div
         v-for="{ icon, onClick, tooltip, actionId } in sidebarActions"
         :key="actionId"
-        @click="onClick(item)"
+        @click="onClick"
         @mouseover="hoveredAction = actionId"
         @mouseleave="hoveredAction = null"
       >
@@ -37,7 +37,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useSidebarActions } from './useSidebarActions'
+import { useSidebarActions, type SidebarAction } from '@composables/useSidebarActions'
 import type { SheetItem } from '@apptypes/sheetItems'
 import { emailAction, jumpToProfileAction } from './HonorsSidebarActions'
 
@@ -46,7 +46,7 @@ const props = defineProps<{
   item: SheetItem
 }>()
 
-type ActionId = string
+type ActionId = SidebarAction['actionId']
 const hoveredAction = ref<ActionId | null>(null)
 
 const sidebarActions = useSidebarActions(props.item, {

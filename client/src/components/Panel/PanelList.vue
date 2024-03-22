@@ -63,7 +63,7 @@ import { useVirtualList } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { useSheetManager } from '@store/useSheetManager'
 import { setSelectedItem } from './SetSelectedItem'
-import ListItemActionProvider from '../ListItem/ListItemActionProvider.vue'
+import ListItemActionProvider from '../ListItem/Actions/ListItemActionProvider.vue'
 
 const sheetManager = useSheetManager()
 const { filteredItems, loadingItems, getActivePanel, searchFilter } = storeToRefs(sheetManager)

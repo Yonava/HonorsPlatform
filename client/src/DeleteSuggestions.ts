@@ -1,5 +1,5 @@
 import { Panel, getPanel } from "@panels";
-import { matchStudent } from "./StudentMatcher";
+import { matchStudent } from "@composables/useStudentMatcher";
 import { useSheetManager } from '@store/useSheetManager'
 import { useDocumentCache } from "@store/useDocumentCache";
 import { useDialog } from "@store/useDialog";

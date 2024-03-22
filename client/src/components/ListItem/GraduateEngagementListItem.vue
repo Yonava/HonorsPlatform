@@ -37,7 +37,7 @@
 import { computed } from 'vue'
 import { useSheetManager } from '@store/useSheetManager';
 import type { GradEngagement } from '@apptypes/sheetItems';
-import { useStudentInfo } from './useStudentInfo'
+import { useStudentInfo } from '@composables/useStudentInfo'
 import {
   LIFrame,
   LITitle,

@@ -118,7 +118,7 @@ import {
 } from '@composables/useAutoComplete'
 import type { Thesis } from '@apptypes/sheetItems'
 import { thesisDecisions, type ThesisDecision } from '@apptypes/misc'
-import { useStudentMatcher } from '../../StudentMatcher'
+import { useStudentMatcher } from '@composables/useStudentMatcher'
 
 import InputCoupler from './Helper/InputCoupler.vue'
 import DetailInput from './Helper/DetailInput.vue'

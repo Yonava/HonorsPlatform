@@ -1,10 +1,10 @@
 import { computed } from 'vue'
 import { getPanel } from '@panels'
-import { useStudentMatcher, type StudentMatchError } from '../../StudentMatcher'
+import { matchStudent, type StudentMatchError } from '@composables/useStudentMatcher'
 
 export function useStudentInfo(studentSysId: string) {
 
-  const studentMatch = useStudentMatcher(studentSysId)
+  const studentMatch = matchStudent(studentSysId)
 
   const studentPanel = getPanel('STUDENTS')
   const graduatePanel = getPanel('GRADUATES')
@@ -40,23 +40,23 @@ export function useStudentInfo(studentSysId: string) {
 
   const studentInfo = computed(() => {
 
-    if ('error' in studentMatch.value) {
-      return studentMatchError(studentMatch.value.error)
+    if ('error' in studentMatch) {
+      return studentMatchError(studentMatch.error)
     }
 
-    if (studentMatch.value.foundIn === 'STUDENTS') {
+    if (studentMatch.foundIn === 'STUDENTS') {
       return {
-        text: studentMatch.value.name || 'No Name',
+        text: studentMatch.name || 'No Name',
         error: false,
-        tooltip: idText(studentMatch.value.id),
+        tooltip: idText(studentMatch.id),
         icon: studentPanel.icon
       }
     }
 
     return {
-      text: studentMatch.value.name || 'No Name',
+      text: studentMatch.name || 'No Name',
       error: false,
-      tooltip: 'This Student Has Graduated - ' + idText(studentMatch.value.id),
+      tooltip: 'This Student Has Graduated - ' + idText(studentMatch.id),
       icon: graduatePanel.icon
     }
 
