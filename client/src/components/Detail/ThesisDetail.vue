@@ -77,7 +77,7 @@
         label="Faculty Mentor Email"
         :button="{
           condition: !thesis.mentorEmail && !!thesis.mentor,
-          text: 'New Faculty Email',
+          text: getFacultyEmail(thesis.mentor),
           newPropValue: () => getFacultyEmail(thesis.mentor),
         }"
       />
@@ -116,9 +116,9 @@ import {
   useTermCodeAutoComplete,
   dateAutoComplete
 } from '@composables/useAutoComplete'
-import type { Thesis } from '@apptypes/sheetItems'
+import type { Student, Thesis } from '@apptypes/sheetItems'
 import { thesisDecisions, type ThesisDecision } from '@apptypes/misc'
-import { useStudentMatcher } from '@composables/useStudentMatcher'
+import { useReactiveProp, useStudentMatcher } from '@composables/useStudentMatcher'
 
 import InputCoupler from './Helper/InputCoupler.vue'
 import DetailInput from './Helper/DetailInput.vue'
@@ -144,7 +144,7 @@ const approvalStates: Record<ThesisDecision, string> = {
   'Rejected': 'close-circle'
 }
 
-const student = useStudentMatcher(thesis.value.studentSysId)
+const student = useStudentMatcher(thesis)
 
 const studentPanel = getPanel('STUDENTS')
 const graduatePanel = getPanel('GRADUATES')

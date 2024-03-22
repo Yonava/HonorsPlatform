@@ -60,7 +60,8 @@ const props = defineProps<{
 const termValid = computed(() => termValidator(props.item.term))
 
 const termTooltip = computed(() => {
-  return 'Term' + termValid.value ? '' : ' (Potentially Invalid)'
+  const text = 'Term'
+  return termValid.value ? text : `${text} (Potentially Invalid)`
 })
 
 const decisionStatus = computed(() => {

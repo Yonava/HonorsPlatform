@@ -24,6 +24,8 @@ export type IncludeByProp<
   O extends SheetItem = SheetItem
 > = O extends SheetItem ? InObj<T, O> extends never ? never : O : never
 
+type t = IncludeByProp<'studentSysId'>
+
 type CustomField = {
   [K in number]: Primitive;
 };

@@ -8,7 +8,7 @@
     <!-- optional button -->
     <ButtonInput
       v-if="button && button.condition"
-      @click="buttonClicked"
+      @click.stop="buttonClicked"
       :inputMedium="inputMedium"
       :disableCondition="button.disableCondition"
     >
@@ -22,6 +22,7 @@
         v-if="activeInput.variant === 'string'"
         v-model="content"
         v-bind="$attrs"
+        @keydown="checkForTabAutocomplete"
         :prepend-inner-icon="activeIcon"
         :readonly="readOnlyMode"
         :variant="inputVariant"
@@ -33,6 +34,7 @@
         v-else-if="activeInput.variant === 'number'"
         v-model.number="content"
         v-bind="$attrs"
+        @keydown="checkForTabAutocomplete"
         :prepend-inner-icon="activeIcon"
         :readonly="readOnlyMode"
         :variant="inputVariant"
@@ -45,6 +47,7 @@
       v-else-if="activeInput.type === 'autocomplete'"
       v-model="content"
       v-bind="$attrs"
+      @keydown="checkForTabAutocomplete"
       :items="activeInput.items"
       :prepend-inner-icon="activeIcon"
       :readonly="readOnlyMode"
@@ -55,6 +58,7 @@
       v-else-if="activeInput.type === 'select'"
       v-model="content"
       v-bind="$attrs"
+      @keydown="checkForTabAutocomplete"
       :items="activeInput.items"
       :prepend-inner-icon="activeIcon"
       :readonly="readOnlyMode"
@@ -148,6 +152,14 @@ const props = defineProps<{
     disableCondition?: boolean,
   },
 }>()
+
+const checkForTabAutocomplete = (e: KeyboardEvent) => {
+  if (e.key === 'Tab' && props.button && props.button.condition && !props.button.disableCondition) {
+    e.preventDefault()
+    e.stopPropagation()
+    content.value = props.button.newPropValue()
+  }
+}
 
 const broadcast = broadcastPropUpdate(props.item)
 

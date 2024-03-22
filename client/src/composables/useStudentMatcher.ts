@@ -1,5 +1,5 @@
-import { computed, type ComputedRef } from 'vue'
-import type { Student, Graduate } from '@apptypes/sheetItems'
+import { computed, type Ref } from 'vue'
+import type { Student, Graduate, IncludeByProp, SheetItem } from '@apptypes/sheetItems'
 import { useDocumentCache } from '@store/useDocumentCache'
 
 export type StudentMatchError = 'NOT_FOUND' | 'NOT_LINKED' | 'STUDENT_SYSID_UNDEFINED'
@@ -51,4 +51,11 @@ export const matchStudent = (sysId: string): StudentMatch => {
   } as const
 }
 
-export const useStudentMatcher = (sysId: string) => computed(() => matchStudent(sysId))
+export function useStudentMatcher<T extends IncludeByProp<'studentSysId'>>(item: Ref<T>) {
+  const sysId = useReactiveProp(item, 'studentSysId')
+  return computed(() => matchStudent(sysId.value))
+}
+
+export function useReactiveProp<T, K extends keyof T>(item: Ref<T>, prop: K) {
+  return computed(() => item.value[prop])
+}
