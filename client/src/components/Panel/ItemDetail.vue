@@ -162,7 +162,7 @@ const moveWidgetActive = computed(() => {
 
 const { moveItem, movingItem, movementObject } = useMoveItem()
 
-const drop = (e: DragEvent) => {
+const drop = () => {
   dragState.value = false
   const item = listItemBeingDragged.value
   if (item) {
@@ -170,7 +170,7 @@ const drop = (e: DragEvent) => {
   }
 }
 
-const dropMove = (e: DragEvent) => {
+const dropMove = () => {
   dragStateMove.value = false
   const item = listItemBeingDragged.value
   if (item) {

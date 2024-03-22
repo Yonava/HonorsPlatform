@@ -17,7 +17,7 @@
       <div
         v-for="{ icon, onClick, tooltip, actionId } in sidebarActions"
         :key="actionId"
-        @click="onClick"
+        @click.stop="onClick"
         @mouseover="hoveredAction = actionId"
         @mouseleave="hoveredAction = null"
       >
