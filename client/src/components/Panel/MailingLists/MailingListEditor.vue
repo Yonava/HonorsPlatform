@@ -12,17 +12,17 @@
       class="mb-3"
     />
 
-    <StudentSearch
-      @selected="toggleRecipient($event)"
-      :students="students"
+    <RecipientSearch
+      @selected="toggleRecipient($event.sysId)"
+      :potentialRecipients="potentialRecipients"
       :recipientSysIds="recipientSysIds"
       :color="mailingList.color"
     />
 
     <RecipientBox
-      @remove="toggleRecipient($event)"
-      :items="studentsInList"
-      :display="student => student.name"
+      @remove="toggleRecipient($event.sysId)"
+      :items="recipients"
+      :display="recipient => recipient.name"
       :color="mailingList.color"
     />
 
@@ -39,15 +39,14 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
 import { useStorage } from '@vueuse/core';
-import { useDocumentCache } from '@store/useDocumentCache';
 import { useDialog } from '@store/useDialog';
 import { localKeys } from '@locals';
 import type { MailingList } from './MailingListAudiences';
 import RecipientBox from './MailingListRecipientBox.vue';
-import StudentSearch from './MailingListStudentSearch.vue';
+import RecipientSearch from './MailingListRecipientSearch.vue';
 import ColorPalette from './MailingListColorPalette.vue';
+import { useMailingListState } from './useMailingListState';
 
 const props = defineProps<{
   mailingListId: string
@@ -63,27 +62,15 @@ if (!mailingList) {
   throw new Error(`Mailing list with id ${props.mailingListId} not found`)
 }
 
-const recipientSysIds = ref(new Set<string>(mailingList.recipientSysIds))
-
-const { Students, Graduates } = useDocumentCache()
-
-const students = computed(() => [
-  ...Students.list,
-  ...Graduates.list
-])
-
-const studentsInList = computed(() => {
-  return students.value.filter(s => recipientSysIds.value.has(s.sysId))
+const {
+  potentialRecipients,
+  recipientSysIds,
+  recipients,
+  toggleRecipient,
+} = useMailingListState({
+  initialRecipientSysIds: mailingList.recipientSysIds,
+  onToggleRecipient: () => mailingList.recipientSysIds = Array.from(recipientSysIds.value)
 })
-
-const toggleRecipient = (student: Record<'sysId', string>) => {
-  if (recipientSysIds.value.has(student.sysId)) {
-    recipientSysIds.value.delete(student.sysId)
-  } else {
-    recipientSysIds.value.add(student.sysId)
-  }
-  mailingList.recipientSysIds = [...recipientSysIds.value]
-}
 </script>
 
 <style scoped>

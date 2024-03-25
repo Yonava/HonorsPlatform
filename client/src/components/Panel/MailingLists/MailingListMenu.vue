@@ -159,7 +159,7 @@ const deleteList = (list: MailingList) => {
   const index = storedMailingLists.value.findIndex(l => l.id === list.id)
   storedMailingLists.value.splice(index, 1)
   useDialog().openSnackbar({
-    text: `Deleted ${list.name}`,
+    text: `Deleted ${list.name || 'Mailing List'}`,
     action: {
       text: 'Undo',
       onClick: () => {

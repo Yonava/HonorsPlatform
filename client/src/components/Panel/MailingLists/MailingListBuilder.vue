@@ -9,29 +9,31 @@
 
     <ColorPalette v-model="color" />
 
-    <h3>
-      Add Students By Group
-      <InfoBtn>
-        Include all students that meet the criteria of a group.
-      </InfoBtn>
-    </h3>
+    <div class="my-4">
+      <h3>
+        Add Recipients By Group
+        <InfoBtn>
+          Include all students that meet the criteria of a group.
+        </InfoBtn>
+      </h3>
 
-    <Audiences
-      @selected="audienceSelected($event)"
-      class="mb-4"
-    />
+      <Audiences
+        @selected="audienceSelected($event)"
+        class="mb-4"
+      />
+    </div>
 
-    <StudentSearch
-      @selected="toggleRecipient($event)"
-      :students="students"
+    <RecipientSearch
+      @selected="toggleRecipient($event.sysId)"
+      :potentialRecipients="potentialRecipients"
       :recipientSysIds="recipientSysIds"
       :color="color"
     />
 
-    <NameBox
-      @remove="toggleRecipient($event)"
-      :items="studentsInList"
-      :display="student => student.name"
+    <RecipientBox
+      @remove="toggleRecipient($event.sysId)"
+      :items="recipients"
+      :display="recipient => recipient.name"
       :color="color"
     />
 
@@ -50,43 +52,30 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { useDocumentCache } from '@store/useDocumentCache';
 import { useDialog } from '@store/useDialog';
 import { useStorage } from '@vueuse/core';
 import { localKeys } from '@locals';
 import InfoBtn from '../InfoBtn.vue';
-import NameBox from './MailingListNameBox.vue';
-import StudentSearch from './MailingListStudentSearch.vue';
+import RecipientBox from './MailingListRecipientBox.vue';
+import RecipientSearch from './MailingListRecipientSearch.vue';
 import type { MailingList, Audience } from './MailingListAudiences';
 import Audiences from './MailingListAudiences.vue';
-import { listColors } from './MailingListAudiences';
+import { listColors, type ListColor } from './MailingListAudiences';
 import ColorPalette from './MailingListColorPalette.vue';
+import { useMailingListState } from './useMailingListState';
 
-const recipientSysIds = ref(new Set<string>())
+const {
+  potentialRecipients,
+  recipientSysIds,
+  recipients,
+  toggleRecipient,
+} = useMailingListState()
+
 const name = ref('')
-const color = ref(listColors[0])
-
-const { Students, Graduates } = useDocumentCache()
-
-const students = computed(() => [
-  ...Students.list,
-  ...Graduates.list
-])
-
-const studentsInList = computed(() => {
-  return students.value.filter(s => recipientSysIds.value.has(s.sysId))
-})
+const color = ref<ListColor>(listColors[0])
 
 const audienceSelected = (audience: Audience) => {
   audience.recipientSysIds.forEach(sysId => recipientSysIds.value.add(sysId))
-}
-
-const toggleRecipient = (student: { sysId: string }) => {
-  if (recipientSysIds.value.has(student.sysId)) {
-    recipientSysIds.value.delete(student.sysId)
-  } else {
-    recipientSysIds.value.add(student.sysId)
-  }
 }
 
 const createListBtnText = computed(() => {

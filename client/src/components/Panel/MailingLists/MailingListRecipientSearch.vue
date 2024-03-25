@@ -13,27 +13,27 @@
     style="height: 200px; overflow: auto; gap: 5px; user-select: none"
   >
     <v-sheet
-      v-for="student in filteredStudents"
-      @click="emits('selected', student)"
-      @mouseenter="hoveredStudentSysId = student.sysId"
+      v-for="recipient in filteredPotentialRecipients"
+      @click="emits('selected', recipient)"
+      @mouseenter="hoveredStudentSysId = recipient.sysId"
       @mouseleave="hoveredStudentSysId = ''"
-      :key="student.sysId"
-      :color="color(student)"
+      :key="recipient.sysId"
+      :color="color(recipient)"
       class="d-flex align-center justify-space-between py-2 px-3 student-list-item"
       style="border-radius: 5px; cursor: pointer"
     >
       <h3>
-        {{ student.name || "(No Name)" }}
+        {{ recipient.name || "(No Name)" }}
         <span style="font-size: 0.75rem">
-          ({{ student.id || "No ID" }})
+          ({{ recipient.id || "No ID" }})
         </span>
       </h3>
       <h5>
-        {{ student.email || "No Email" }}
+        {{ recipient.email || "No Email" }}
       </h5>
     </v-sheet>
     <h3
-      v-if="!filteredStudents.length"
+      v-if="!filteredPotentialRecipients.length"
       class="text-red"
     >
       Cannot Find A Match For Your Search "{{ search }}"
@@ -41,32 +41,32 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup lang="ts" generic="T extends { email: string, id: string, name: string, sysId: string }">
 import { computed, ref } from 'vue'
-import type { Student, Graduate } from '@apptypes/sheetItems';
 import { filterItems } from '@utils/FilterObjects';
+import type { ListColor } from './MailingListAudiences';
 
 const search = ref('')
 const hoveredStudentSysId = ref('')
 
 const props = defineProps<{
-  students: (Student | Graduate)[],
+  potentialRecipients: T[],
   recipientSysIds: Set<string>,
-  color: string
+  color: ListColor
 }>()
 
-const emits = defineEmits([
-  'selected'
-])
+const emits = defineEmits<{
+  (e: 'selected', recipient: T): void
+}>();
 
-const filteredStudents = computed(() => filterItems(props.students, search.value))
+const filteredPotentialRecipients = computed(() => filterItems(props.potentialRecipients, search.value))
 
-const color = <T extends { sysId: string }>(student: T) => {
-  if (props.recipientSysIds.has(student.sysId) && hoveredStudentSysId.value == student.sysId) {
+const color = (recipient: T) => {
+  if (props.recipientSysIds.has(recipient.sysId) && hoveredStudentSysId.value == recipient.sysId) {
     return `${props.color}-darken-2`
-  } else if (props.recipientSysIds.has(student.sysId)) {
+  } else if (props.recipientSysIds.has(recipient.sysId)) {
     return `${props.color}-darken-1`
-  } else if (hoveredStudentSysId.value == student.sysId) {
+  } else if (hoveredStudentSysId.value == recipient.sysId) {
     return 'grey-lighten-1'
   } else {
     return 'grey-lighten-2'
