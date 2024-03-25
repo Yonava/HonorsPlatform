@@ -14,7 +14,7 @@
       <v-sheet
         v-for="list in mailingLists"
         :key="list.id"
-        @click="composeEmail(list)"
+        @click.stop="composeEmail(list)"
         @mouseenter="mouseEnteredList(list)"
         @mouseleave="mouseLeftList"
         :color="color(list)"
@@ -45,7 +45,7 @@
         </div>
       </v-sheet>
       <v-sheet
-        @click="createList"
+        @click.stop="createList"
         class="add-list-box d-flex align-center justify-center pa-2"
         style="border-radius: 5px; cursor: pointer; border: 1px dashed #7b7b7b;"
       >

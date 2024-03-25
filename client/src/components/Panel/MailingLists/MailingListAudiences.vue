@@ -39,4 +39,4 @@ const addAudience = (audience: Audience) => {
 }
 
 const audiences = computed(() => getMailingListAudiences().filter(a => !selectedAudiences.value.has(a.name)))
-</script>./MailingLists/MailingListAudiences./MailingLists/MailingListAudiences
+</script>

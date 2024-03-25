@@ -37,9 +37,9 @@
 
     <div class="d-flex justify-end my-2">
       <v-btn
+        @click="createList"
         :disabled="!recipientSysIds.size"
         :color="`${color}-darken-1`"
-        @click="createList"
       >
         {{ createListBtnText }}
         <v-icon class="ml-2">mdi-arrow-right</v-icon>
@@ -117,4 +117,4 @@ const createList = () => {
   outline: none;
   background: transparent;
 }
-</style>./MailingLists/MailingListAudiences./MailingLists/MailingListAudiences
+</style>

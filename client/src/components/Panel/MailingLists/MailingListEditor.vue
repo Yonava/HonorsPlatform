@@ -19,7 +19,7 @@
       :color="mailingList.color"
     />
 
-    <NameBox
+    <RecipientBox
       @remove="toggleRecipient($event)"
       :items="studentsInList"
       :display="student => student.name"
@@ -27,9 +27,9 @@
     />
 
     <v-btn
+      @click.stop="close"
       :disabled="!recipientSysIds.size"
       :color="`${mailingList.color}-darken-1`"
-      @click="close"
       class="my-2"
     >
       Done
@@ -44,8 +44,8 @@ import { useStorage } from '@vueuse/core';
 import { useDocumentCache } from '@store/useDocumentCache';
 import { useDialog } from '@store/useDialog';
 import { localKeys } from '@locals';
-import NameBox from './MailingListNameBox.vue';
 import type { MailingList } from './MailingListAudiences';
+import RecipientBox from './MailingListRecipientBox.vue';
 import StudentSearch from './MailingListStudentSearch.vue';
 import ColorPalette from './MailingListColorPalette.vue';
 
@@ -57,7 +57,7 @@ const { close } = useDialog()
 
 const allMailingLists = useStorage<MailingList[]>(localKeys.mailingLists, [])
 
-const mailingList = allMailingLists.value.find(l => l.id === props.mailingListId)
+const mailingList = allMailingLists.value.find((list) => list.id === props.mailingListId)
 
 if (!mailingList) {
   throw new Error(`Mailing list with id ${props.mailingListId} not found`)
@@ -76,7 +76,7 @@ const studentsInList = computed(() => {
   return students.value.filter(s => recipientSysIds.value.has(s.sysId))
 })
 
-const toggleRecipient = (student: { sysId: string }) => {
+const toggleRecipient = (student: Record<'sysId', string>) => {
   if (recipientSysIds.value.has(student.sysId)) {
     recipientSysIds.value.delete(student.sysId)
   } else {
@@ -95,4 +95,4 @@ const toggleRecipient = (student: { sysId: string }) => {
   outline: none;
   background: transparent;
 }
-</style>./MailingLists/MailingListAudiences
+</style>

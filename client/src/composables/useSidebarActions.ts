@@ -44,7 +44,7 @@ export type PanelSpecificSidebarAction = {
 }
 
 /**
- * Hook for managing sidebar actions.
+ * Hook for managing sidebar actions on panel list items.
  * @template T The type of the sheet item.
  * @template K The type of panel-specific sidebar actions.
  * @param itemInput The sheet item to which the sidebar actions apply.
