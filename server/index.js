@@ -4,14 +4,9 @@ const cors = require("cors");
 const app = express();
 const http = require('http');
 const { google } = require('googleapis');
-const { redirectUri, googleOAuthScope, AUTH_ERRORS } = require('./constants');
-const {
-  handleIncomingClientToken,
-  generateGoogleOAuthRefreshToken,
-  generateGoogleOAuthURL
-} = require('./auth');
+const { redirectUri } = require('./constants');
 
-const authAPI = require('./authEndpoints');
+const authAPI = require('./api/auth.js');
 app.use('/api/auth', authAPI);
 
 const { OAuth2 } = google.auth;
@@ -70,40 +65,6 @@ app.get('/api/user/permissions', async (req, res) => {
     res.status(401).json({ error: 'Forbidden' });
   }
 });
-
-app.get('/api/auth/url', (req, res) => {
-  res.json({ url: getAuthUrl() });
-});
-
-app.get('/api/auth/:authCode', async (req, res) => {
-  const { authCode } = req.params;
-  try {
-    const auth = new OAuth2(
-      GOOGLE_OAUTH_CLIENT_ID,
-      GOOGLE_OAUTH_CLIENT_SECRET,
-      redirectUri
-    );
-    const { tokens } = await auth.getToken(authCode);
-    const { access_token: accessToken } = tokens;
-    const profile = await getGoogleProfileData(accessToken);
-
-    console.assert(accessToken && profile, 'Auth entry point failed');
-
-    if (!accessToken || !profile) {
-      throw "Invalid: Improper Google Profile Data";
-    }
-
-    res.json({
-      accessToken,
-      profile,
-    });
-  } catch (e) {
-    console.log(e)
-    res.json({
-      error: AUTH_ERRORS.INVALID_GOOGLE_OAUTH_CODE
-    });
-  }
-})
 
 app.get("/api/range/:range", async (req, res) => {
   const { range } = req.params;

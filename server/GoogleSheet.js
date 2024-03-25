@@ -2,11 +2,7 @@ const { google } = require("googleapis")
 const { OAuth2 } = google.auth;
 const { GOOGLE_OAUTH_CLIENT_ID, GOOGLE_OAUTH_CLIENT_SECRET } = process.env;
 const { redirectUri } = require("./index.js");
-
-const spreadsheetIds = {
-  dev: '1Wh1rIfVQd8ekvrNloaU9vbxMkgdsDlAz2sqwH5YDLe0',
-  production: '1bW-aQRn-GAbTsNkV2VB9xtBFT3n-LPrSJXua_NA2G6Y',
-}
+const { spreadsheetIds } = require("./constants.js");
 
 module.exports = class GoogleSheet {
   spreadsheetId;
@@ -163,13 +159,7 @@ module.exports = class GoogleSheet {
       range,
     });
 
-    await this.sheets.spreadsheets.values.update({
-      spreadsheetId: this.spreadsheetId,
-      range,
-      valueInputOption: 'RAW',
-      resource: {
-        values: data
-      }
-    });
+    const payload = this.writable(range, data);
+    await this.sheets.spreadsheets.values.update(payload);
   }
 }

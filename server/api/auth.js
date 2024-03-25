@@ -8,7 +8,7 @@ const express = require('express');
 const {
   generateGoogleOAuthURL,
   generateClientTokenWithOAuthCode,
-} = require('./auth');
+} = require('../auth');
 
 const router = express.Router();
 
@@ -32,7 +32,7 @@ router.get('/token/:googleOAuthCode', async (req, res) => {
   const { googleOAuthCode } = req.params;
   try {
     const clientToken = await generateClientTokenWithOAuthCode(googleOAuthCode);
-    res.json({ refreshToken });
+    res.json({ token: clientToken });
   } catch (e) {
     res.status(401).json({ error: e.message });
   }

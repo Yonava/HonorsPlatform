@@ -20,8 +20,14 @@ const googleOAuthScope = [
   'https://www.googleapis.com/auth/spreadsheets'
 ]
 
+const spreadsheetIds = {
+  dev: '1Wh1rIfVQd8ekvrNloaU9vbxMkgdsDlAz2sqwH5YDLe0',
+  production: '1bW-aQRn-GAbTsNkV2VB9xtBFT3n-LPrSJXua_NA2G6Y',
+}
+
 module.exports = {
   AUTH_ERRORS,
   redirectUri,
-  googleOAuthScope
+  googleOAuthScope,
+  spreadsheetIds,
 }

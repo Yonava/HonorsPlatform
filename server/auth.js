@@ -10,6 +10,7 @@ const {
 
 /**
  * @typedef {Object} ClientToken
+ * @description a token that is sent and stored on the client to authenticate access to protected resources
  * @property {string} googleOAuthAccessToken
  * @property {string} googleOAuthRefreshToken
 */
