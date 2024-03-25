@@ -1,7 +1,9 @@
 <template>
   <v-sheet>
     <v-card class="px-5 py-4">
-      <h1 class="mb-2">Post An Announcement</h1>
+      <h1 class="mb-2">
+        Post An Announcement
+      </h1>
 
       <v-textarea
         v-model="announcement"
@@ -78,18 +80,13 @@ const thingsThatWillNeverHappen = [
   "When Pigs Fly 🐷🛩️",
   "MySNHU Becomes User Friendly",
   "Dine SNHU Wins A Michelin Star",
-  "The Penmen Press Goes Mainstream",
   "Frogs Start Reciting Shakespeare",
   "Doing Taxes Becomes Fun",
   "SNHU Wins A Football Game",
   "The Heat Death Of The Universe",
-  "SNHU Ranks #1 On US News & World Report",
-  "A Third Party Candidate Wins The Presidency",
   "Jeff Bezos Runs Out Of Money",
-  "Big Banks Discover Morality",
-  "The US Government Stops Printing Money",
   "Unicorns Are Discovered 🦄✨",
-];
+] as const;
 
 const expiryDateOptions = [
   thingsThatWillNeverHappen[

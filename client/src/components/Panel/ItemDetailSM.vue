@@ -27,6 +27,7 @@ const { getActivePanel, focusedItemSysId } = storeToRefs(useSheetManager())
 const { getSelectedItems, setSelectedItems } = useDocumentCache()
 
 const { smAndDown } = useDisplay()
+const canShowItem = ref(true)
 
 watch(getActivePanel, () => {
   canShowItem.value = false
@@ -35,7 +36,6 @@ watch(getActivePanel, () => {
   }, 300)
 })
 
-const canShowItem = ref(true)
 
 const showItem = computed({
   get: () => {

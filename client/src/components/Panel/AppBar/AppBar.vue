@@ -12,12 +12,12 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
+import { storeToRefs } from "pinia";
+import { useDisplay } from "vuetify";
+import { useSheetManager } from "@store/useSheetManager";
 import AppBarLg from "../AppBar/AppBarLg.vue";
 import AppBarSm from "../AppBar/AppBarSm.vue";
-import { computed } from "vue";
-import { useDisplay } from "vuetify";
-import { useSheetManager } from "../../../store/useSheetManager";
-import { storeToRefs } from "pinia";
 
 const { getActivePanel } = storeToRefs(useSheetManager());
 
