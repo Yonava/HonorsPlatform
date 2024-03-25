@@ -1,16 +1,21 @@
-const express = require("express")
+require('dotenv').config();
+const express = require("express");
 const cors = require("cors");
 const app = express();
-const http = require('http')
+const http = require('http');
 const { google } = require('googleapis');
+const { redirectUri, googleOAuthScope, AUTH_ERRORS } = require('./constants');
+const {
+  handleIncomingClientToken,
+  generateGoogleOAuthRefreshToken,
+  generateGoogleOAuthURL
+} = require('./auth');
 
-require('dotenv').config();
+const authAPI = require('./authEndpoints');
+app.use('/api/auth', authAPI);
 
 const { OAuth2 } = google.auth;
 const { GOOGLE_OAUTH_CLIENT_ID, GOOGLE_OAUTH_CLIENT_SECRET } = process.env;
-
-const redirectUri = process.env.NODE_ENV ? 'https://www.snhuhonors.com/auth' : 'http://localhost:5177/auth';
-module.exports.redirectUri = redirectUri;
 
 app.use(cors());
 app.use(express.json());
@@ -20,31 +25,6 @@ exports.server = server;
 require('./sockets')
 
 const GoogleSheet = require("./GoogleSheet.js");
-
-const scope = [
-  'https://www.googleapis.com/auth/userinfo.profile',
-  'https://www.googleapis.com/auth/spreadsheets'
-]
-
-const errors = {
-  NO_SHEET_ACCESS: 'NO_SHEET_ACCESS',
-  INVALID_ACCESS_TOKEN: 'INVALID_ACCESS_TOKEN',
-  INVALID_OAUTH_CODE: 'INVALID_OAUTH_CODE',
-}
-
-function getAuthUrl() {
-  const auth = new OAuth2(
-    GOOGLE_OAUTH_CLIENT_ID,
-    GOOGLE_OAUTH_CLIENT_SECRET,
-    redirectUri
-  );
-
-  return auth.generateAuthUrl({
-    access_type: 'offline',
-    login_hint: 'select_account',
-    scope,
-  });
-}
 
 const getGoogleProfileData = async (accessToken) => {
   try {
@@ -120,7 +100,7 @@ app.get('/api/auth/:authCode', async (req, res) => {
   } catch (e) {
     console.log(e)
     res.json({
-      error: errors.INVALID_OAUTH_CODE
+      error: AUTH_ERRORS.INVALID_GOOGLE_OAUTH_CODE
     });
   }
 })
