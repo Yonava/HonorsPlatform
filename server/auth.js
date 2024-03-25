@@ -18,7 +18,7 @@ const {
  * @param {string} googleOAuthAccessToken
  * @param {string} googleOAuthRefreshToken
  * @description takes in a google oauth access token and refresh token and returns a client token
- * @returns {ClientToken}
+ * @returns {ClientToken} a client token
  */
 function generateClientToken(googleOAuthAccessToken, googleOAuthRefreshToken) {
   return jwt.sign({
@@ -30,7 +30,7 @@ function generateClientToken(googleOAuthAccessToken, googleOAuthRefreshToken) {
 /**
   * @param {string} googleOAuthRefreshToken
   * @description takes in a google oauth refresh token and returns a google oauth access token
-  * @returns {string} googleOAuthAccessToken
+  * @returns {Promise<string>} a promise that resolves with a google oauth access token
   * @throws {Error} if the google oauth refresh token is invalid
 */
 async function generateGoogleOAuthAccessToken(googleOAuthRefreshToken) {
@@ -52,9 +52,9 @@ async function generateGoogleOAuthAccessToken(googleOAuthRefreshToken) {
 /**
  * @param {string} googleOAuthCode
  * @description takes in a google oauth code and returns a google oauth refresh token
- * @returns {string}
+ * @returns {Promise<string>} a promise that resolves with a google oauth refresh token
  * @throws {Error} if the google oauth code is invalid
- */
+*/
 async function generateGoogleOAuthRefreshToken(googleOAuthCode) {
   const auth = new OAuth2(
     GOOGLE_OAUTH_CLIENT_ID,
@@ -76,9 +76,9 @@ async function generateGoogleOAuthRefreshToken(googleOAuthCode) {
  * 1. the same client token if it is valid and has not expired
  * 2. a new client token if the client token is valid but has expired
  * 3. throws an error if the client token is invalid
- * @returns {ClientToken}
+ * @returns {Promise<clientToken>} a promise that resolves with a client token
 */
-function handleIncomingClientToken(clientToken) {
+async function handleIncomingClientToken(clientToken) {
   try {
     const payload = jwt.verify(clientToken, JWT_SECRET, {
       ignoreExpiration: true
@@ -97,8 +97,24 @@ function handleIncomingClientToken(clientToken) {
 }
 
 /**
+ * @param {string} googleOAuthCode
+ * @description takes in a google oauth code and returns a client token
+ * @returns {Promise<clientToken>} a promise that resolves with a client token
+ * @throws {Error} if the google oauth code is invalid
+*/
+async function generateClientTokenWithOAuthCode(googleOAuthCode) {
+  try {
+    const refreshToken = await generateGoogleOAuthRefreshToken(googleOAuthCode);
+    const accessToken = await generateGoogleOAuthAccessToken(refreshToken);
+    return generateClientToken(accessToken, refreshToken);
+  } catch (e) {
+    throw e;
+  }
+}
+
+/**
  * @description generates a google oauth url for the client to visit
- * @returns {string} googleOAuthURL
+ * @returns {string} a google oauth url
 */
 function generateGoogleOAuthURL() {
   const auth = new OAuth2(
@@ -115,8 +131,11 @@ function generateGoogleOAuthURL() {
 
 module.exports = {
   generateClientToken,
+  generateClientTokenWithOAuthCode,
+
   generateGoogleOAuthAccessToken,
   generateGoogleOAuthRefreshToken,
+
   handleIncomingClientToken,
-  generateGoogleOAuthURL
+  generateGoogleOAuthURL,
 };
