@@ -7,6 +7,12 @@ export type Range = "Students" | "Modules" | "Graduates" | "Completed Modules" |
 export type HeaderRows = { [key in Range]?: string[] }
 export const headerRowMemo: HeaderRows = {}
 
+const URIs = {
+  sheets: '/api/sheets',
+  user: '/api/user',
+  auth: '/api/auth',
+} as const;
+
 function requestHeaders() {
   return {
     headers: {
@@ -17,7 +23,7 @@ function requestHeaders() {
 
 export async function getRange(range: Range): Promise<string[][]> {
   try {
-    const { data } = (await axios.get(`/api/range/${range}`, requestHeaders()));
+    const { data } = (await axios.get(`${URIs.sheets}/range/${range}`, requestHeaders()));
     headerRowMemo[range] = data.shift();
     return data;
   } catch {
@@ -43,7 +49,7 @@ export async function getRanges(ranges: Range[] = [
       majorDimension: "ROWS"
     }
 
-    const { data } = (await axios.post(`/api/ranges/`, { ranges }, requestHeaders())) as { data: ExpectedReturn[] };
+    const { data } = (await axios.post(`${URIs.sheets}/ranges`, { ranges }, requestHeaders())) as { data: ExpectedReturn[] };
     return data.map(({ values }, i) => {
       const range = ranges[i];
       headerRowMemo[range as Range] = values.shift();
@@ -59,7 +65,7 @@ export async function getRanges(ranges: Range[] = [
 
 export async function clearByRow(range: Range, row: number) {
   try {
-    await axios.delete(`/api/range/${range}/${row}`, requestHeaders());
+    await axios.delete(`${URIs.sheets}/range/${range}/${row}`, requestHeaders());
   } catch {
     await useAuth().authorizeBeforeContinuing();
     await clearByRow(range, row);
@@ -68,7 +74,7 @@ export async function clearByRow(range: Range, row: number) {
 
 export async function clearByRowData(range: Range, data: string[]) {
   try {
-    await axios.delete(`/api/range/${range}`, { data, ...requestHeaders() });
+    await axios.delete(`${URIs.sheets}/range/${range}`, { data, ...requestHeaders() });
   } catch (e: any) {
     if (e.response.status === 400) {
       await useAuth().authorizeBeforeContinuing();
@@ -81,7 +87,7 @@ export async function clearByRowData(range: Range, data: string[]) {
 
 export async function updateByRow(range: Range, row: number, data: string[][]) {
   try {
-    await axios.put(`/api/range/${range}/${row}`, data, requestHeaders());
+    await axios.put(`${URIs.sheets}/range/${range}/${row}`, data, requestHeaders());
   } catch {
     await useAuth().authorizeBeforeContinuing();
     await updateByRow(range, row, data);
@@ -90,7 +96,7 @@ export async function updateByRow(range: Range, row: number, data: string[][]) {
 
 export async function postInRange(range: Range, data: string[][]): Promise<number> {
   try {
-    const { data: res } = await axios.post(`/api/range/${range}`, data, requestHeaders());
+    const { data: res } = await axios.post(`${URIs.sheets}/range/${range}`, data, requestHeaders());
     return res.row;
   } catch {
     await useAuth().authorizeBeforeContinuing();
@@ -107,7 +113,7 @@ export function getHeaderRowCache(range: Range) {
 
 export async function replaceRange(range: Range, data: string[][]) {
   try {
-    await axios.put(`/api/range/${range}`, data, requestHeaders());
+    await axios.put(`${URIs.sheets}/range/${range}`, data, requestHeaders());
   } catch {
     await useAuth().authorizeBeforeContinuing();
     await replaceRange(range, data);
@@ -116,7 +122,7 @@ export async function replaceRange(range: Range, data: string[][]) {
 
 export async function getUserProfileData(): Promise<any> {
   try {
-    const { data } = await axios.get("/api/user", requestHeaders());
+    const { data } = await axios.get(URIs.user, requestHeaders());
     if (!data) {
       throw new Error("No user profile data received");
     }
@@ -128,7 +134,7 @@ export async function getUserProfileData(): Promise<any> {
 
 export async function getUserSheetPermissions(): Promise<{ read: boolean, write: boolean }> {
   try {
-    const { data } = await axios.get("/api/user/permissions", requestHeaders());
+    const { data } = await axios.get(`${URIs.user}/permissions`, requestHeaders());
     if (!data) {
       throw new Error("No user permissions data received");
     }
@@ -145,7 +151,7 @@ export type BatchUpdateData = {
 
 export async function batchUpdate(data: BatchUpdateData) {
   try {
-    await axios.put("/api/batch", data, requestHeaders());
+    await axios.put(`${URIs.sheets}/batch`, data, requestHeaders());
   } catch {
     await useAuth().authorizeBeforeContinuing();
     await batchUpdate(data);

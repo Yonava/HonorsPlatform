@@ -88,7 +88,7 @@ export const useAuth = defineStore('auth', {
       local.remove(localKeys.googleOAuthCode)
 
       const code = encodeURIComponent(googleOAuthCode)
-      const oauthCodeValidationURI = getServerAuthEndpoint(code)
+      const oauthCodeValidationURI = `/api/auth/token/${code}`
 
       const { data } = await axios.get<{
         accessToken: string,

@@ -52,11 +52,11 @@ async function generateGoogleOAuthAccessToken(googleOAuthRefreshToken) {
 
 /**
  * @param {string} googleOAuthCode
- * @description takes in a google oauth code and returns a google oauth refresh token
- * @returns {Promise<string>} a promise that resolves with a google oauth refresh token
+ * @description takes in a google oauth code and returns a google oauth refresh token and access token
+ * @returns {Promise<string>} a promise that resolves with a google oauth refresh token and access token
  * @throws {Error} if the google oauth code is invalid
 */
-async function generateGoogleOAuthRefreshToken(googleOAuthCode) {
+async function generateGoogleOAuthTokens(googleOAuthCode) {
   const auth = new OAuth2(
     GOOGLE_OAUTH_CLIENT_ID,
     GOOGLE_OAUTH_CLIENT_SECRET,
@@ -65,8 +65,12 @@ async function generateGoogleOAuthRefreshToken(googleOAuthCode) {
 
   try {
     const { tokens } = await auth.getToken(googleOAuthCode);
-    return tokens.refresh_token;
+    return {
+      accessToken: tokens.access_token,
+      refreshToken: tokens.refresh_token
+    }
   } catch (e) {
+    console.log('error', e)
     throw new Error(AUTH_ERRORS.INVALID_GOOGLE_OAUTH_CODE);
   }
 }
@@ -98,6 +102,21 @@ async function handleIncomingClientToken(clientToken) {
 }
 
 /**
+ * @param {string} clientToken
+ * @description takes in a client token and returns a google oauth access token
+ * @returns {Promise<string>} a promise that resolves with a google oauth access token
+ * @throws {Error} if the client token is invalid or has expired
+*/
+async function getAccessTokenFromClientToken(clientToken) {
+  try {
+    const { googleOAuthAccessToken } = jwt.verify(clientToken, JWT_SECRET);
+    return googleOAuthAccessToken;
+  } catch (e) {
+    throw e;
+  }
+}
+
+/**
  * @param {string} googleOAuthCode
  * @description takes in a google oauth code and returns a client token
  * @returns {Promise<clientToken>} a promise that resolves with a client token
@@ -105,8 +124,7 @@ async function handleIncomingClientToken(clientToken) {
 */
 async function generateClientTokenWithOAuthCode(googleOAuthCode) {
   try {
-    const refreshToken = await generateGoogleOAuthRefreshToken(googleOAuthCode);
-    const accessToken = await generateGoogleOAuthAccessToken(refreshToken);
+    const { refreshToken, accessToken } = await generateGoogleOAuthTokens(googleOAuthCode);
     return generateClientToken(accessToken, refreshToken);
   } catch (e) {
     throw e;
@@ -130,13 +148,37 @@ function generateGoogleOAuthURL() {
   });
 }
 
+async function provideAccessToken(req, res, next) {
+  // get the bearer token from the headers
+  const { authorization } = req.headers;
+  const clientToken = authorization.split(' ')[1];
+
+  console.log('incoming client token', clientToken)
+
+  try {
+    const validToken = await handleIncomingClientToken(clientToken);
+    const accessToken = await getAccessTokenFromClientToken(validToken);
+    req.accessToken = accessToken;
+    console.log('added access token to req', accessToken)
+  } catch (e) {
+    console.log('failed to add access token to req')
+    res.status(401).json({ error: 'Forbidden' });
+    return;
+  }
+
+  next();
+}
+
 module.exports = {
   generateClientToken,
   generateClientTokenWithOAuthCode,
 
   generateGoogleOAuthAccessToken,
-  generateGoogleOAuthRefreshToken,
+  generateGoogleOAuthTokens,
 
   handleIncomingClientToken,
   generateGoogleOAuthURL,
+  getAccessTokenFromClientToken,
+
+  provideAccessToken
 };

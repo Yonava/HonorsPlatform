@@ -1,4 +1,4 @@
-const { server } = require('./index.js')
+const { server } = require('./server')
 const socketIO = require('socket.io')
 
 const SOCKET_SERVER = process.env.NODE_ENV === 'production' ? server : 3001

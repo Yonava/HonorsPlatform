@@ -1,13 +1,15 @@
 /**
- * @module server/authEndpoints
+ * @module api/auth
  * @category Server
  * @description hosts all the endpoints that facilitate authentication
 */
 
 const express = require('express');
+const { getGoogleProfileData } = require('../user');
 const {
   generateGoogleOAuthURL,
   generateClientTokenWithOAuthCode,
+  getAccessTokenFromClientToken
 } = require('../auth');
 
 const router = express.Router();
@@ -30,10 +32,17 @@ router.get('/url', (req, res) => {
 */
 router.get('/token/:googleOAuthCode', async (req, res) => {
   const { googleOAuthCode } = req.params;
+  console.log('googleOAuthCode', googleOAuthCode)
   try {
     const clientToken = await generateClientTokenWithOAuthCode(googleOAuthCode);
-    res.json({ token: clientToken });
+    console.log('clientToken generated')
+    const accessToken = await getAccessTokenFromClientToken(clientToken);
+    console.log('access token generated')
+    const profile = await getGoogleProfileData(accessToken);
+    console.log('profile generated')
+    res.json({ accessToken: clientToken, profile });
   } catch (e) {
+    console.log('erroring out')
     res.status(401).json({ error: e.message });
   }
 })

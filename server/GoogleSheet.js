@@ -1,8 +1,7 @@
 const { google } = require("googleapis")
 const { OAuth2 } = google.auth;
 const { GOOGLE_OAUTH_CLIENT_ID, GOOGLE_OAUTH_CLIENT_SECRET } = process.env;
-const { redirectUri } = require("./index.js");
-const { spreadsheetIds } = require("./constants.js");
+const { spreadsheetIds, redirectUri } = require("./constants.js");
 
 module.exports = class GoogleSheet {
   spreadsheetId;
