@@ -13,7 +13,6 @@
           :style="{
             borderRadius: '50%',
             width: '100%',
-            aspectRatio: '1 / 1',
             objectFit: 'cover',
             boxShadow: '0 0 5px rgba(0, 0, 0, 0.3)',
           }"
@@ -51,9 +50,6 @@
             </span>
             <span v-else> (just now) </span>
           </p>
-          <InfoBtn class="ml-1">
-            Authorization expires every hour for security reasons
-          </InfoBtn>
         </div>
         <div
           class="my-4"
