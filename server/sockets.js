@@ -1,3 +1,10 @@
+/**
+ * @description This file is responsible for handling all socket logic.
+ * @module sockets
+ * @requires server
+ * @requires socket.io
+*/
+
 const { server } = require('./server')
 const socketIO = require('socket.io')
 

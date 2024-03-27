@@ -1,3 +1,11 @@
+/**
+ * @description logic for interacting with google sheets
+ * @module GoogleSheet
+ * @requires googleapis
+ * @requires constants
+ * @exports GoogleSheet class
+*/
+
 const { google } = require("googleapis")
 const { OAuth2 } = google.auth;
 const { GOOGLE_OAUTH_CLIENT_ID, GOOGLE_OAUTH_CLIENT_SECRET } = process.env;

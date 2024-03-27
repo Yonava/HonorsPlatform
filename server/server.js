@@ -1,3 +1,12 @@
+/**
+ * @description creates a new express server and listens on a specified port
+ * @module server
+ * @requires http
+ * @requires express
+ * @requires cors
+ * @exports express server instance
+*/
+
 const http = require('http');
 const express = require('express');
 const cors = require('cors');

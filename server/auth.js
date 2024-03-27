@@ -148,6 +148,14 @@ function generateGoogleOAuthURL() {
   });
 }
 
+/**
+ * @description middleware fn that takes a request with a client token and adds an access token to the request object.
+ * If the client token is invalid, it will terminate the request with
+ * @param {Request} req
+ * @param {Response} res
+ * @param {NextFunction} next
+ * @returns {void}
+ */
 async function provideAccessToken(req, res, next) {
   // get the bearer token from the headers
   const { authorization } = req.headers;
