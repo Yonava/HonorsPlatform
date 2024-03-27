@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const { google } = require('googleapis');
-const { redirectUri, AUTH_ERRORS, googleOAuthScope } = require('./constants');
+const { redirectUri, AUTH_ERRORS, googleOAuthScope } = require('../constants');
 const { OAuth2 } = google.auth;
 const {
   GOOGLE_OAUTH_CLIENT_ID,

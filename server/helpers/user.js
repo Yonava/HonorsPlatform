@@ -8,7 +8,7 @@
 const { google } = require('googleapis');
 const { OAuth2 } = google.auth;
 const { GOOGLE_OAUTH_CLIENT_ID, GOOGLE_OAUTH_CLIENT_SECRET } = process.env;
-const { redirectUri } = require('./constants');
+const { redirectUri } = require('../constants');
 
 /**
   * @typedef {Object} GoogleProfile

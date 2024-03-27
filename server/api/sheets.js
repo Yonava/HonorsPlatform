@@ -6,8 +6,8 @@
 */
 
 const express = require('express');
-const { provideAccessToken } = require('../auth');
-const { attachSheetInstanceToRequest } = require('../sheets');
+const { provideAccessToken } = require('../helpers/auth');
+const { attachSheetInstanceToRequest } = require('../helpers/sheets');
 
 const router = express.Router();
 

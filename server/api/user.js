@@ -1,7 +1,7 @@
 const express = require("express");
 const GoogleSheet = require('../GoogleSheet');
-const { getGoogleProfileData } = require('../user');
-const { provideAccessToken } = require('../auth');
+const { getGoogleProfileData } = require('../helpers/user');
+const { provideAccessToken } = require('../helpers/auth');
 
 const router = express.Router();
 

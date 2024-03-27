@@ -4,7 +4,7 @@
  * @description This module exports all middleware functions for the sheets route
 */
 
-const GoogleSheet = require('./GoogleSheet');
+const GoogleSheet = require('../GoogleSheet');
 
 /**
  * @description Middleware to attach a GoogleSheet instance to the request object

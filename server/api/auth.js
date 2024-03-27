@@ -5,12 +5,12 @@
 */
 
 const express = require('express');
-const { getGoogleProfileData } = require('../user');
+const { getGoogleProfileData } = require('../helpers/user');
 const {
   generateGoogleOAuthURL,
   generateClientTokenWithOAuthCode,
   getAccessTokenFromClientToken
-} = require('../auth');
+} = require('../helpers/auth');
 
 const router = express.Router();
 
