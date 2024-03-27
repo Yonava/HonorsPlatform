@@ -1,22 +1,18 @@
+/**
+ * @module api/sheets
+ * @requires express
+ * @description exposes routes for interacting with Google Sheets API
+ * @exports express.Router
+*/
+
 const express = require('express');
-const GoogleSheet = require('../GoogleSheet');
 const { provideAccessToken } = require('../auth');
+const { attachSheetInstanceToRequest } = require('../sheets');
 
 const router = express.Router();
 
 router.use(provideAccessToken);
-
-// insert the sheet instance into the request object
-router.use((req, res, next) => {
-  const { accessToken } = req;
-  try {
-    req.sheet = new GoogleSheet(accessToken);
-  } catch (e) {
-    res.status(401).json({ error: 'Sheet Instance Creation Failed' });
-    return;
-  }
-  next();
-});
+router.use(attachSheetInstanceToRequest);
 
 router.get("/range/:range", async (req, res) => {
   const { range } = req.params;
