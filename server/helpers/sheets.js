@@ -19,7 +19,10 @@ async function attachSheetInstanceToRequest(req, res, next) {
   try {
     req.sheet = new GoogleSheet(accessToken);
   } catch (e) {
-    res.status(401).json({ error: 'Sheet Instance Creation Failed' });
+    res.status(401).json({
+      error: 'Sheet Instance Creation Failed',
+      details: e,
+    });
     return;
   }
   next();

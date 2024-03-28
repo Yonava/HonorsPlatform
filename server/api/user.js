@@ -7,7 +7,11 @@ const router = express.Router();
 
 router.use(provideAccessToken);
 
-// get user profile from google
+/**
+ * @name GET/api/user
+ * @description sends the client the user's google profile data
+ * @returns {GoogleProfile} googleProfileData
+*/
 router.get('/', async (req, res) => {
   const { accessToken } = req;
 
@@ -20,7 +24,14 @@ router.get('/', async (req, res) => {
   }
 });
 
-// get user permissions for sheet
+/**
+ * @name GET/api/user/permissions
+ * @description sends the client the user's google sheet permissions
+ * @returns {Object} permissions
+ * @returns {boolean} permissions.read
+ * @returns {boolean} permissions.write
+ * @throws {Error} if the google sheet permissions are invalid
+*/
 router.get('/permissions', async (req, res) => {
   const { accessToken } = req;
 

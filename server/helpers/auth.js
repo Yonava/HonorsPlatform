@@ -22,6 +22,7 @@ const {
  * @returns {ClientToken} a client token
  */
 function generateClientToken(googleOAuthAccessToken, googleOAuthRefreshToken) {
+  console.log('generating client token', googleOAuthAccessToken, googleOAuthRefreshToken)
   return jwt.sign({
     googleOAuthAccessToken,
     googleOAuthRefreshToken,
@@ -43,8 +44,9 @@ async function generateGoogleOAuthAccessToken(googleOAuthRefreshToken) {
 
   try {
     auth.setCredentials({ refresh_token: googleOAuthRefreshToken });
-    const { tokens } = await auth.refreshAccessToken();
-    return tokens.access_token;
+    const tokens  = await auth.refreshAccessToken();
+    console.log('new access token', tokens.credentials.access_token)
+    return tokens.credentials.access_token;
   } catch (e) {
     throw new Error(AUTH_ERRORS.INVALID_GOOGLE_OAUTH_REFRESH_TOKEN)
   }
@@ -92,9 +94,10 @@ async function handleIncomingClientToken(clientToken) {
     const isExpired = Date.now() >= payload.exp * 1000;
     if (!isExpired) return clientToken;
 
-    const accessToken = generateGoogleOAuthAccessToken(clientToken);
     const { googleOAuthRefreshToken: refreshToken } = payload;
-
+    console.log('refresh token', refreshToken)
+    const accessToken = await generateGoogleOAuthAccessToken(refreshToken);
+    console.log('new access token', accessToken)
     return generateClientToken(accessToken, refreshToken);
   } catch (e) {
     throw new Error(AUTH_ERRORS.INVALID_CLIENT_TOKEN);
@@ -109,8 +112,9 @@ async function handleIncomingClientToken(clientToken) {
 */
 async function getAccessTokenFromClientToken(clientToken) {
   try {
-    const { googleOAuthAccessToken } = jwt.verify(clientToken, JWT_SECRET);
-    return googleOAuthAccessToken;
+    const payload = jwt.verify(clientToken, JWT_SECRET);
+    console.log('total jwt payload', payload)
+    return payload.googleOAuthAccessToken;
   } catch (e) {
     throw e;
   }
@@ -161,7 +165,7 @@ async function provideAccessToken(req, res, next) {
   const { authorization } = req.headers;
   const clientToken = authorization.split(' ')[1];
 
-  console.log('incoming client token', clientToken)
+  // console.log('incoming client token', clientToken)
 
   try {
     const validToken = await handleIncomingClientToken(clientToken);

@@ -239,7 +239,6 @@ export const useSocket = defineStore("socket", {
             this.connectedSockets = []
             this.focusData = {}
             this.accessTokenOnSocketDisconnect = local.get(localKeys.googleOAuthAccessToken)
-            console.log('Socket connection disconnected', this.timeOfSocketDisconnect.toLocaleTimeString())
           }
         },
         {
