@@ -2,6 +2,7 @@
   <div>
     <NavDrawerBlockBtn
       @click="action"
+      :disabled="readOnlyMode"
       :style="style"
       :icon="icon"
     >
@@ -18,7 +19,7 @@ import { useDocumentCache } from '@store/useDocumentCache';
 import { useKeyBindings } from '@composables/useKeyBindings';
 import NavDrawerBlockBtn from './NavDrawerBlockBtn.vue';
 
-const { getActivePanel } = storeToRefs(useSheetManager());
+const { getActivePanel, readOnlyMode } = storeToRefs(useSheetManager());
 const { addItem } = useDocumentCache();
 
 const success = ref(false);

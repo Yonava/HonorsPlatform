@@ -42,13 +42,13 @@
 </template>
 
 <script setup lang="ts">
-import PanelTitle from "./PanelTitle.vue";
-import AppBarNavDrawer from "./AppBarNavDrawer.vue";
-import AppBarSearch from "./AppBarSearch.vue";
 import { ref, computed, watchEffect } from "vue";
+import { storeToRefs } from "pinia";
 import { useDialog } from "@store/useDialog";
 import { useSheetManager } from "@store/useSheetManager";
-import { storeToRefs } from "pinia";
+import AppBarNavDrawer from "./AppBarNavDrawer.vue";
+import PanelTitle from "./PanelTitle.vue";
+import AppBarSearch from "./AppBarSearch.vue";
 
 defineProps<{
   color: string

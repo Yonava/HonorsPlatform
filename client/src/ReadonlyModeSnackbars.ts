@@ -6,7 +6,7 @@ export const readonlySnackbar = () => {
 
   return {
     activated: () => openSnackbar({
-      text: 'You Have Been Placed In Read-Only Mode.',
+      text: 'You Have Been Placed In Read-Only Mode',
       closable: false,
       action: {
         text: 'Learn More',
@@ -25,7 +25,7 @@ export const readonlySnackbar = () => {
       timeout: SNACKBAR_OPEN_DUR_MS
     }),
     deactivated: () => openSnackbar({
-      text: 'You Have Been Placed Off Read-Only Mode.',
+      text: 'You Have Been Placed Off Read-Only Mode',
       timeout: SNACKBAR_OPEN_DUR_MS
     })
   }

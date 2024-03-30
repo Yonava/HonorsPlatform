@@ -19,7 +19,7 @@ import { computed } from "vue"
 
 const props = defineProps<{
   icon?: string,
-  style?: StyleValue
+  style?: StyleValue,
 }>()
 
 const styles = computed(() => {
