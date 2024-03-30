@@ -67,17 +67,12 @@ const title = computed(() => {
     case 'NO_SHEET_ACCESS':
       return {
         large: 'Access Not Granted',
-        small: 'The Google Account You Have Attempted To Logged In With Has Not Been Granted Access To The Honors Program, Please Contact Dr. Matthews For Further Assistance'
+        small: 'The Google Account You Have Attempted To Log In With Has Not Been Granted Access To The Honors Program, Please Contact Honors Staff For Further Assistance'
       }
     case 'SESSION_EXPIRED':
       return {
         large: 'Session Expired',
         small: 'Your Session Has Expired, Please Login Again'
-      }
-    case 'REMOTE_LOGOUT':
-      return {
-        large: 'Logged Out',
-        small: 'You Have Been Logged Out Of Your Account From Another Device or Browser, Please Login Again'
       }
     case 'LOGOUT':
       return {
@@ -91,13 +86,26 @@ const title = computed(() => {
 })
 
 const auth = useAuth()
-const { endSessionAndPromptOAuth: authorize, userLoginFlow } = auth
+const {
+  endSessionAndPromptOAuth: authorize,
+  userLoginFlow,
+  authorizeSession
+} = auth
 
 onMounted(async () => {
-  // check if google servers have redirected with a code
+
   const code = (route.query.code ?? '') as string
+
   if (!code) {
-    loading.value = false
+    const error = await authorizeSession()
+    if (error) {
+      console.error('authorizeSession error', error)
+      loading.value = false
+    } else {
+      router.push({
+        name: 'panel'
+      })
+    }
     return
   }
 

@@ -21,8 +21,8 @@ export type ServerError =
   'USER_DATA_FETCH_FAILED' |
   'access_denied' // Google OAuth Error defined by Google
 
-const getAuthErrorURL = <T extends ServerError>(error: T) => `/auth?error=${error}` as const
-const getServerAuthEndpoint = <T extends string>(route: T) => `/api/auth/${route}` as const
+export const getAuthErrorURL = <T extends ServerError>(error: T) => `/auth?error=${error}` as const
+export const getServerAuthEndpoint = <T extends string>(route: T) => `/api/auth/${route}` as const
 
 export const useAuth = defineStore('auth', {
   state: () => ({
@@ -39,26 +39,23 @@ export const useAuth = defineStore('auth', {
         throw new Error('Could not get auth url')
       }
     },
-    async authorizeSession() {
+    async authorizeSession(): Promise<ServerError | void> {
       const clientToken = local.get(localKeys.clientToken)
 
       if (!clientToken) {
-        location.replace(getAuthErrorURL('NO_CLIENT_TOKEN'))
-        throw 'No client token found'
+        return 'NO_CLIENT_TOKEN'
       }
 
       if (!this.user) {
         try {
           this.user = await getUser()
         } catch (e) {
-          location.replace(getAuthErrorURL('USER_DATA_FETCH_FAILED'))
-          throw 'Could not get user profile data'
+          return 'USER_DATA_FETCH_FAILED'
         }
       }
 
       if (!this.user.sheetPermissions.read) {
-        location.replace(getAuthErrorURL('NO_SHEET_ACCESS'))
-        throw 'No sheet access'
+        return 'NO_SHEET_ACCESS'
       }
 
       if (!this.user.sheetPermissions.write) {
@@ -96,6 +93,8 @@ export const useAuth = defineStore('auth', {
       goToAuthPage: boolean,
       error: ServerError
     }) {
+
+      local.remove(localKeys.clientToken)
 
       if (goToAuthPage) {
         router.push({
