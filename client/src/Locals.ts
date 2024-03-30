@@ -6,11 +6,9 @@ export const localKeys = {
   // comma separated list of pinned item sysIds for each panel
   pinned: (panelName: PanelName) => `pinned-${panelName}` as const,
   // temporary google token needed for all google api calls
-  googleOAuthAccessToken: 'access-token',
+  clientToken: 'client-token',
   // google oauth code
   googleOAuthCode: 'code',
-  // time of last login flow
-  timeOfLastAuth: 'last-auth',
   // controls whether or not window.close() is called after google oauth
   closeAfterAuth: 'close-window',
   // width of the list item container on panel page

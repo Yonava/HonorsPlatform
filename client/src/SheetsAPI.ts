@@ -1,25 +1,13 @@
 import axios from "axios";
 import { useAuth } from "@store/useAuth";
-import { local, localKeys } from "@locals";
+import { URIs, requestHeaders } from "./APIs";
+import type { PanelRange } from '@panels'
 
-export type Range = "Students" | "Modules" | "Graduates" | "Completed Modules" | "Announcements" | "Grad Engagements" | "Registrar List" | "Theses" | "Temporary Data";
+export type NonPanelRanges = "Announcements" | "Registrar List" | "Temporary Data"
+export type Range = PanelRange | NonPanelRanges
 
 export type HeaderRows = { [key in Range]?: string[] }
 export const headerRowMemo: HeaderRows = {}
-
-const URIs = {
-  sheets: '/api/sheets',
-  user: '/api/user',
-  auth: '/api/auth',
-} as const;
-
-function requestHeaders() {
-  return {
-    headers: {
-      Authorization: `Bearer ${local.get(localKeys.googleOAuthAccessToken)}`,
-    } as const
-  }
-}
 
 export async function getRange(range: Range): Promise<string[][]> {
   try {
@@ -117,30 +105,6 @@ export async function replaceRange(range: Range, data: string[][]) {
   } catch {
     await useAuth().authorizeBeforeContinuing();
     await replaceRange(range, data);
-  }
-}
-
-export async function getUserProfileData(): Promise<any> {
-  try {
-    const { data } = await axios.get(URIs.user, requestHeaders());
-    if (!data) {
-      throw new Error("No user profile data received");
-    }
-    return data;
-  } catch {
-    throw new Error("Unable to get user profile data");
-  }
-}
-
-export async function getUserSheetPermissions(): Promise<{ read: boolean, write: boolean }> {
-  try {
-    const { data } = await axios.get(`${URIs.user}/permissions`, requestHeaders());
-    if (!data) {
-      throw new Error("No user permissions data received");
-    }
-    return data;
-  } catch {
-    throw new Error("Unable to get user permissions data");
   }
 }
 

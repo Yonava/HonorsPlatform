@@ -117,12 +117,12 @@ import MailingListMenu from './MailingLists/MailingListMenu.vue';
 import BuildRegistrarList from './BuildRegistrarList.vue';
 
 const auth = useAuth();
-const { googleProfile } = storeToRefs(auth);
+const { user } = storeToRefs(auth);
 
 const sheetManager = useSheetManager();
 const { readOnlyMode } = storeToRefs(sheetManager);
 
 const menuOffset = [10, 0];
 
-const profilePicture = computed(() => googleProfile.value ? googleProfile.value.picture : '');
+const profilePicture = computed(() => user.value ? user.value.googleProfile.picture : '');
 </script>

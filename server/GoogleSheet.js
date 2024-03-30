@@ -9,7 +9,7 @@
 const { google } = require("googleapis")
 const { OAuth2 } = google.auth;
 const { GOOGLE_OAUTH_CLIENT_ID, GOOGLE_OAUTH_CLIENT_SECRET } = process.env;
-const { spreadsheetIds, redirectUri } = require("./constants.js");
+const { spreadsheetIds, redirectUri, AUTH_ERRORS } = require("./constants.js");
 
 module.exports = class GoogleSheet {
   spreadsheetId;
@@ -27,19 +27,25 @@ module.exports = class GoogleSheet {
   }
 
   constructor(accessToken) {
+    this.spreadsheetId = spreadsheetIds[process.env.NODE_ENV ?? 'dev'];
     const auth = new OAuth2(
       GOOGLE_OAUTH_CLIENT_ID,
       GOOGLE_OAUTH_CLIENT_SECRET,
       redirectUri
     );
-    auth.setCredentials({
-      access_token: accessToken
-    });
-    this.sheets = google.sheets({
-      version: 'v4',
-      auth,
-    });
-    this.spreadsheetId = spreadsheetIds[process.env.NODE_ENV ?? 'dev'];
+
+    try {
+      auth.setCredentials({
+        access_token: accessToken
+      });
+
+      this.sheets = google.sheets({
+        version: 'v4',
+        auth,
+      });
+    } catch (err) {
+      throw AUTH_ERRORS.INVALID_ACCESS_TOKEN;
+    }
   }
 
   // ping to check if access token is valid

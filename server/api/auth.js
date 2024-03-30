@@ -5,11 +5,9 @@
 */
 
 const express = require('express');
-const { getGoogleProfileData } = require('../helpers/user');
 const {
   generateGoogleOAuthURL,
   generateClientTokenWithOAuthCode,
-  getAccessTokenFromClientToken
 } = require('../helpers/auth');
 
 const router = express.Router();
@@ -26,7 +24,7 @@ router.get('/url', (req, res) => {
 /**
  * @name GET/api/auth/token/:googleOAuthCode
  * @param {string} googleOAuthCode
- * @description takes a google oauth code and a client token
+ * @description takes a google oauth code and returns a client token
  * @returns {string} clientToken
  * @throws {Error} if the google oauth code is invalid
 */
@@ -35,12 +33,7 @@ router.get('/token/:googleOAuthCode', async (req, res) => {
   console.log('googleOAuthCode', googleOAuthCode)
   try {
     const clientToken = await generateClientTokenWithOAuthCode(googleOAuthCode);
-    console.log('clientToken generated')
-    const accessToken = await getAccessTokenFromClientToken(clientToken);
-    console.log('access token generated')
-    const profile = await getGoogleProfileData(accessToken);
-    console.log('profile generated')
-    res.json({ accessToken: clientToken, profile });
+    res.json(clientToken);
   } catch (e) {
     console.log('erroring out')
     res.status(401).json({ error: e.message });

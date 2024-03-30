@@ -2,7 +2,9 @@ import { defineStore } from "pinia";
 import { local, localKeys } from "@locals";
 import { type PanelName, panels } from "@panels";
 import { io } from "socket.io-client";
-import { useAuth, type GoogleProfile } from "@store/useAuth";
+import type { Socket } from "socket.io-client";
+import { useAuth } from "@store/useAuth";
+import type { UserGoogleProfile } from "@utils/users";
 import { useSyncState } from "@store/useSyncState";
 import { useSheetManager } from "@store/useSheetManager";
 import { useDocumentCache } from "@store/useDocumentCache";
@@ -60,25 +62,29 @@ type LastActionData = {
   serverIsUp: boolean,
 }
 
-type FocusData = {
-  [key in string]: {
-    sysId: string | undefined,
-    embeddedSysId: string | undefined,
-    panelName: PanelName,
-    googleId: string
-  }
-}
+type FocusData = Record<string, {
+  sysId: string | undefined,
+  embeddedSysId: string | undefined,
+  panelName: PanelName,
+  googleId: string
+}>
 
-export type ConnectedSocket = GoogleProfile & { socketId: string }
+export type ConnectedSocket = UserGoogleProfile & { socketId: string }
+
+type SocketStore = {
+  socket: Socket | null,
+  connectedSockets: ConnectedSocket[],
+  focusData: FocusData,
+  timeOfSocketDisconnect: Date | null,
+}
 
 export const useSocket = defineStore("socket", {
   state: () => ({
-    socket: null as any,
-    connectedSockets: [] as ConnectedSocket[],
-    focusData: {} as FocusData,
-    timeOfSocketDisconnect: null as Date | null,
-    accessTokenOnSocketDisconnect: null as string | null,
-  }),
+    socket: null,
+    connectedSockets: [],
+    focusData: {},
+    timeOfSocketDisconnect: null,
+  } as SocketStore),
   getters: {
     getConnectedSockets: (state) => state.connectedSockets,
     getUniqueConnectedSockets: (state) => {
@@ -106,50 +112,29 @@ export const useSocket = defineStore("socket", {
 
       this.disconnect()
 
-      const accessToken = local.get(localKeys.googleOAuthAccessToken);
-      if (!accessToken) throw new Error('Access Token Must Be Set To Connect To Socket')
+      const { userLogoutFlow, user } = useAuth()
 
-      const { userLogoutFlow, googleProfile } = useAuth()
-
-      if (!googleProfile) throw new Error('Google Profile Must Be Set To Connect To Socket')
+      if (!user) throw 'User Must Be Logged In To Connect To Socket'
 
       const socketUrl = window.location.hostname === 'localhost' ? 'http://localhost:3001' : '/'
       this.socket = io(socketUrl);
 
-      await new Promise((resolve, reject) => {
-        this.socket.on('connect', () => {
-          const accessToken = local.get(localKeys.googleOAuthAccessToken)
-          if (this.accessTokenOnSocketDisconnect && this.accessTokenOnSocketDisconnect !== accessToken) {
-
-            userLogoutFlow({
-              goToAuthPage: true,
-              error: 'INVALID_ACCESS_TOKEN',
-              broadcastLogoutEvent: false,
-            })
-            return
-          }
-          resolve('SOCKET_CONNECTED')
-        })
-
-        this.socket.on('connect_error', (error: any) => {
-          console.error('Socket connection error', error)
-          userLogoutFlow({
-            goToAuthPage: true,
-            error: 'SOCKET_EXCEPTION',
-            broadcastLogoutEvent: false,
-          })
-          reject(error)
+      this.socket.on('connect_error', () => {
+        userLogoutFlow({
+          goToAuthPage: true,
+          error: 'SOCKET_EXCEPTION',
         })
       })
 
       const { focusedItemSysId, focusedEmbeddedItem, getActivePanel } = useSheetManager()
+
       this.socket.emit('connectAccount', {
-        googleProfile,
+        googleProfile: user.googleProfile,
         initialFocusState: {
           sysId: focusedItemSysId,
           embeddedSysId: focusedEmbeddedItem?.sysId,
           panelName: getActivePanel.panelName,
-          googleId: googleProfile?.id
+          googleId: user.googleProfile.id
         }
       }, this.checkForActionsDuringDisconnect)
 
@@ -161,35 +146,40 @@ export const useSocket = defineStore("socket", {
       }
     },
     emitUserAction(action: ActionPayload) {
+      if (!this.socket) {
+        console.error('emitUserAction: no socket found')
+        return
+      }
+      const { user } = useAuth()
+      if (!user) {
+        console.error('emitUserAction: no user found')
+        return
+      }
       this.socket.emit('userAction', {
         ...action,
-        googleId: useAuth().googleProfile?.id
+        googleId: user.googleProfile.id
       })
     },
     emitUserFocus() {
-      const { googleProfile } = useAuth()
+      const { user } = useAuth()
       const { focusedItemSysId, focusedEmbeddedItem, getActivePanel } = useSheetManager()
 
-      if (!googleProfile) {
+      if (!user) {
         console.error('emitUserFocus: no google profile found')
         return
       }
 
+      if (!this.socket) {
+        console.error('emitUserFocus: no socket found')
+        return
+      }
+
       this.socket.emit('userFocus', {
-        googleId: googleProfile.id,
+        googleId: user.googleProfile.id,
         sysId: focusedItemSysId,
         embeddedSysId: focusedEmbeddedItem?.sysId,
         panelName: getActivePanel.panelName
       })
-    },
-    emitUserLogout() {
-      const { googleProfile } = useAuth()
-      if (!googleProfile) {
-        console.error('emitUserLogout: no google profile found')
-        return
-      }
-
-      this.socket.emit('userLogout', googleProfile.id)
     },
     async checkForActionsDuringDisconnect(lastAction: LastActionData) {
       const { time: timeOfLastBroadcastedAction, serverIsUp } = lastAction
@@ -238,7 +228,6 @@ export const useSocket = defineStore("socket", {
             this.timeOfSocketDisconnect = new Date()
             this.connectedSockets = []
             this.focusData = {}
-            this.accessTokenOnSocketDisconnect = local.get(localKeys.googleOAuthAccessToken)
           }
         },
         {
@@ -246,19 +235,6 @@ export const useSocket = defineStore("socket", {
           action: (connectedSockets: ConnectedSocket[]) => {
             this.connectedSockets = connectedSockets
           }
-        },
-        {
-          name: 'userLogout',
-          action: (googleId: string) => {
-            const { userLogoutFlow, googleProfile } = useAuth()
-            if (googleId === googleProfile?.id) {
-              userLogoutFlow({
-                goToAuthPage: true,
-                error: 'REMOTE_LOGOUT',
-                broadcastLogoutEvent: false,
-              })
-            }
-          },
         },
         {
           name: 'userAction',

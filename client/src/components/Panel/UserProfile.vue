@@ -1,6 +1,6 @@
 <template>
   <v-sheet
-    v-if="googleProfile"
+    v-if="user"
     @click.stop
     class="d-flex flex-column align-center"
     style="border-radius: 20px; min-width: 350px; max-width: 450px"
@@ -8,8 +8,8 @@
     <v-sheet class="pa-4 d-flex flex-column align-center" style="width: 100%">
       <div style="width: 100px; height: 100px; position: relative">
         <img
-          :src="googleProfile.picture"
-          :alt="`Profile picture for ${googleProfile.name}`"
+          :src="user.googleProfile.picture"
+          :alt="`Profile picture for ${user.googleProfile.name}`"
           :style="{
             borderRadius: '50%',
             width: '100%',
@@ -29,7 +29,7 @@
         >
           <v-icon> mdi-bullhorn-outline </v-icon>
           <v-tooltip activator="parent">
-            Make Announcement as {{ googleProfile.given_name }}
+            Make Announcement as {{ user.googleProfile.given_name }}
           </v-tooltip>
         </v-btn>
       </div>
@@ -40,9 +40,10 @@
         class="pa-3 d-flex flex-column align-center"
       >
         <h1>
-          {{ googleProfile.name }}
+          {{ user.googleProfile.name }}
         </h1>
-        <div class="d-flex flex-row align-center">
+        <!-- TODO: Reimplement last login with JWT issue date -->
+        <!-- <div class="d-flex flex-row align-center">
           <p v-if="lastLogin" style="font-size: 0.9rem">
             logged in at {{ lastLogin }}
             <span v-if="minutesSinceLastLogin">
@@ -50,7 +51,7 @@
             </span>
             <span v-else> (just now) </span>
           </p>
-        </div>
+        </div> -->
         <div
           class="my-4"
           style="width: 100%; height: 1px; background: rgb(106, 106, 106)"
@@ -105,32 +106,16 @@ import { useAuth } from "@store/useAuth";
 import { useSheetManager } from "@store/useSheetManager";
 import { useDocumentCache } from "@store/useDocumentCache";
 import { useDialog } from "@store/useDialog";
-import { local } from "@locals";
 import PostAnnouncement from "./PostAnnouncement.vue";
-import InfoBtn from "./InfoBtn.vue";
 
 const auth = useAuth();
 const { userLogoutFlow } = auth;
-const { googleProfile } = storeToRefs(auth);
+const { user } = storeToRefs(auth);
 
 const sheetManager = useSheetManager();
-const { getActivePanel, focusedItemSysId, readOnlyMode } =
-  storeToRefs(sheetManager);
+const { getActivePanel, focusedItemSysId, readOnlyMode } = storeToRefs(sheetManager);
 
 const { getItemBySysId } = useDocumentCache();
-
-const lastLoginStore = local.get('last-auth');
-
-const lastLogin = computed(() => {
-  if (lastLoginStore) {
-    const date = new Date(parseInt(lastLoginStore));
-    return date.toLocaleTimeString([], {
-      hour: "numeric",
-      minute: "numeric",
-    });
-  }
-  return false;
-});
 
 const logoutButtonStyle = {
   position: "absolute",
@@ -141,16 +126,6 @@ const logoutButtonStyle = {
   textAlign: "center",
   borderRadius: "0 0 20px 20px",
 } satisfies StyleValue;
-
-const minutesSinceLastLogin = computed(() => {
-  if (lastLoginStore) {
-    const date = new Date(parseInt(lastLoginStore));
-    const now = new Date();
-    const diff = now.getTime() - date.getTime();
-    return Math.floor(diff / 1000 / 60);
-  }
-  return false;
-});
 
 const itemFocused = computed(() => {
   if (focusedItemSysId.value) {
@@ -168,7 +143,6 @@ const logout = () => {
   userLogoutFlow({
     goToAuthPage: true,
     error: "LOGOUT",
-    broadcastLogoutEvent: true,
   });
 };
 </script>

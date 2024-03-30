@@ -10,9 +10,9 @@
 </template>
 
 <script setup lang="ts">
-import { useSheetManager } from '../../../store/useSheetManager';
-import { storeToRefs } from 'pinia';
 import { computed } from 'vue';
+import { storeToRefs } from 'pinia';
+import { useSheetManager } from '@store/useSheetManager';
 
 const sheetManager = useSheetManager();
 const {
