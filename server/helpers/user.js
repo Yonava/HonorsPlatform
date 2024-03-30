@@ -27,7 +27,7 @@ const { redirectUri } = require('../constants');
  * @returns {Promise<GoogleProfile>} a promise that resolves with the user's google profile data
  * @throws {Error} if the access token is invalid
 */
-async function getGoogleProfileData(accessToken) {
+async function getUserGoogleProfile(accessToken) {
   try {
     const auth = new OAuth2(
       GOOGLE_OAUTH_CLIENT_ID,
@@ -45,5 +45,5 @@ async function getGoogleProfileData(accessToken) {
 }
 
 module.exports = {
-  getGoogleProfileData
+  getUserGoogleProfile
 }

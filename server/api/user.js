@@ -1,6 +1,6 @@
 const express = require("express");
 const GoogleSheet = require('../GoogleSheet');
-const { getGoogleProfileData } = require('../helpers/user');
+const { getUserGoogleProfile } = require('../helpers/user');
 const { provideAccessToken } = require('../helpers/auth');
 
 const router = express.Router();
@@ -16,7 +16,7 @@ router.get('/', async (req, res) => {
   const { accessToken } = req;
 
   try {
-    const data = await getGoogleProfileData(accessToken);
+    const data = await getUserGoogleProfile(accessToken);
     res.json(data);
   } catch (e) {
     console.log(e)

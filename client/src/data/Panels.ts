@@ -282,4 +282,4 @@ export type PanelRange = typeof panels[PanelName]['sheetRange'];
 export type Panel = typeof panels[PanelName];
 export const getPanel = <T extends PanelName>(panelName: T) => panels[panelName];
 
-export const version = 'prerelease v0.92.1 (beta)';
+export const version = 'prerelease v0.93 (beta)';

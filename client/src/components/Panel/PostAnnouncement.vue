@@ -62,7 +62,7 @@ import { useSheetManager } from "@store/useSheetManager";
 import { panels } from "@panels";
 
 const auth = useAuth();
-const { googleProfile } = storeToRefs(auth);
+const { user } = storeToRefs(auth);
 
 const documentCache = useDocumentCache();
 const { postAnnouncement } = documentCache;
@@ -106,8 +106,8 @@ const panelType = ref<string[]>([]);
 const postNewAnnouncement = async () => {
   posting.value = true;
 
-  if (!googleProfile.value) {
-    console.error("No google profile found");
+  if (!user.value) {
+    console.error("PostAnnouncement.vue: User not found.");
     open({
       title: "Announcement Failed To Post",
       description: "You must be signed in to post an announcement.",
@@ -127,8 +127,8 @@ const postNewAnnouncement = async () => {
   await postAnnouncement({
     sysId: useSheetManager().newSysId(),
     content: announcement.value,
-    posterName: googleProfile.value.name,
-    posterPhoto: googleProfile.value.picture,
+    posterName: user.value.googleProfile.name,
+    posterPhoto: user.value.googleProfile.picture,
     datePosted: new Date().toString(),
     expiryDate: expiryDate.value.toString(),
     panelType: panelType.value.join(", "),
