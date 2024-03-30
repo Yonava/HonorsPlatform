@@ -89,7 +89,7 @@
     </v-sheet>
     <div class="mb-8"></div>
     <v-sheet
-      @click="logout"
+      @click.stop="logout()"
       color="red"
       :style="logoutButtonStyle"
       class="py-1"
@@ -109,7 +109,7 @@ import { useDialog } from "@store/useDialog";
 import PostAnnouncement from "./PostAnnouncement.vue";
 
 const auth = useAuth();
-const { userLogoutFlow } = auth;
+const { logout } = auth;
 const { user } = storeToRefs(auth);
 
 const sheetManager = useSheetManager();
@@ -137,12 +137,5 @@ const itemFocused = computed(() => {
 const makeAnnouncement = () => {
   const { open } = useDialog();
   open({ component: PostAnnouncement });
-};
-
-const logout = () => {
-  userLogoutFlow({
-    goToAuthPage: true,
-    error: "LOGOUT",
-  });
 };
 </script>

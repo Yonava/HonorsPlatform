@@ -110,21 +110,18 @@ export const useSocket = defineStore("socket", {
   actions: {
     async connect() {
 
+      console.log('Connecting to socket')
+
       this.disconnect()
 
-      const { userLogoutFlow, user } = useAuth()
+      const { logout, user } = useAuth()
 
       if (!user) throw 'User Must Be Logged In To Connect To Socket'
 
       const socketUrl = window.location.hostname === 'localhost' ? 'http://localhost:3001' : '/'
       this.socket = io(socketUrl);
 
-      this.socket.on('connect_error', () => {
-        userLogoutFlow({
-          goToAuthPage: true,
-          error: 'SOCKET_EXCEPTION',
-        })
-      })
+      this.socket.on('connect_error', () => logout('SOCKET_EXCEPTION'))
 
       const { focusedItemSysId, focusedEmbeddedItem, getActivePanel } = useSheetManager()
 

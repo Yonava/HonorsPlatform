@@ -62,8 +62,7 @@ export const useAuth = defineStore('auth', {
         useSheetManager().setReadOnlyMode(true)
       }
     },
-    async userLoginFlow(googleOAuthCode: string) {
-
+    async setGoogleOAuthCode(googleOAuthCode: string) {
       local.remove(localKeys.closeAfterAuth)
       local.remove(localKeys.googleOAuthCode)
 
@@ -75,36 +74,10 @@ export const useAuth = defineStore('auth', {
       } catch {
         location.replace(getAuthErrorURL('INVALID_OAUTH_CODE'))
       }
-
-      try {
-        this.user = await getUser()
-      } catch {
-        location.replace(getAuthErrorURL('USER_DATA_FETCH_FAILED'))
-      }
-
-      try {
-        const { connect } = useSocket()
-        await connect()
-      } catch {
-        location.replace(getAuthErrorURL('SOCKET_EXCEPTION'))
-      }
     },
-    userLogoutFlow({ goToAuthPage, error }: {
-      goToAuthPage: boolean,
-      error: ServerError
-    }) {
-
+    logout(reason: ServerError = 'LOGOUT') {
       local.remove(localKeys.clientToken)
-
-      if (goToAuthPage) {
-        router.push({
-          name: 'auth',
-          query: {
-            error
-          }
-        })
-        return
-      }
+      location.replace(getAuthErrorURL(reason))
     },
     async endSessionAndPromptOAuth(googleAuthUrl?: string) {
       try {
@@ -136,7 +109,7 @@ export const useAuth = defineStore('auth', {
       const pollOAuthCode = setInterval(async () => {
         const code = local.get(localKeys.googleOAuthCode)
         if (code) {
-          await this.userLoginFlow(code)
+          await this.setGoogleOAuthCode(code)
           clearInterval(pollOAuthCode)
           useDialog().close()
         }

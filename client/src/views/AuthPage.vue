@@ -88,7 +88,7 @@ const title = computed(() => {
 const auth = useAuth()
 const {
   endSessionAndPromptOAuth: authorize,
-  userLoginFlow,
+  setGoogleOAuthCode,
   authorizeSession
 } = auth
 
@@ -119,9 +119,11 @@ onMounted(async () => {
   }
 
   try {
-    await userLoginFlow(code)
+    await setGoogleOAuthCode(code)
   } catch (e) {
-    console.error('userloginflow error', e)
+    console.error('setGoogleOAuthCode error', e)
+    loading.value = false
+    return
   }
 
   router.push({

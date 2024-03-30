@@ -50,7 +50,7 @@ export type PanelSpecificSidebarAction = {
  * @param itemInput The sheet item to which the sidebar actions apply.
  * @param panelSpecificActions Panel-specific sidebar actions.
  * @returns Computed property representing all active/valid sidebar actions.
- */
+*/
 export function useSidebarActions<T extends SheetItem, K extends PanelSpecificSidebarAction>(
   itemInput: MaybeRefOrGetter<T>,
   panelSpecificActions: K
@@ -85,9 +85,7 @@ export function useSidebarActions<T extends SheetItem, K extends PanelSpecificSi
     const actionGeneratingFns = [defaultActions.pin, panelSpecificAction, defaultActions.delete]
 
     const actionFilter = (action: SidebarAction) => {
-      if (!action) return false
-      if (action.disableInReadOnlyMode && readOnlyMode.value) return false
-      return true
+      return !(!action || (action.disableInReadOnlyMode && readOnlyMode.value))
     }
 
     const actions = actionGeneratingFns.map((actionFn) => actionFn(item.value as any)) as SidebarAction[]
