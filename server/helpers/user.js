@@ -1,5 +1,5 @@
 /**
- * @module user
+ * @module helper/user
  * @description all functions related to the retrieval of data bound to user identity
  * @requires googleapis
  * @requires constants

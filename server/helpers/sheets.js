@@ -1,5 +1,5 @@
 /**
- * @module sheets
+ * @module helper/sheets
  * @requires GoogleSheet
  * @description This module exports all middleware functions for the sheets route
 */

@@ -34,7 +34,9 @@ if (process.env.NODE_ENV === 'production') {
 const port = process.env.PORT || 1010;
 
 server.listen(port, () => {
-  console.log("Rest endpoints listening on port " + port);
+  console.log("Listening on port " + port);
 });
 
-module.exports = { server };
+module.exports = {
+  server
+};

@@ -1,3 +1,11 @@
+/**
+ * @module helpers/auth
+ * @requires jwt
+ * @requires googleapis
+ * @requires constants
+ * @description all functions related to the authentication process
+*/
+
 const jwt = require('jsonwebtoken');
 const { google } = require('googleapis');
 const { redirectUri, AUTH_ERRORS, googleOAuthScope } = require('../constants');
@@ -83,7 +91,7 @@ async function generateGoogleOAuthTokens(googleOAuthCode) {
  * 1. the same client token if it is valid and has not expired
  * 2. a new client token if the client token is valid but has expired
  * 3. throws an error if the client token is invalid
- * @returns {Promise<clientToken>} a promise that resolves with a client token
+ * @returns {Promise<ClientToken>} a promise that resolves with a client token
 */
 async function handleIncomingClientToken(clientToken) {
   try {
@@ -123,7 +131,7 @@ async function getAccessTokenFromClientToken(clientToken) {
 /**
  * @param {string} googleOAuthCode
  * @description takes in a google oauth code and returns a client token
- * @returns {Promise<clientToken>} a promise that resolves with a client token
+ * @returns {Promise<ClientToken>} a promise that resolves with a client token
  * @throws {Error} if the google oauth code is invalid
 */
 async function generateClientTokenWithOAuthCode(googleOAuthCode) {
@@ -138,6 +146,7 @@ async function generateClientTokenWithOAuthCode(googleOAuthCode) {
 /**
  * @description generates a google oauth url for the client to visit
  * @returns {string} a google oauth url
+ * @throws {Error} if the google oauth url fails to generate
 */
 function generateGoogleOAuthURL() {
   const auth = new OAuth2(
@@ -146,10 +155,15 @@ function generateGoogleOAuthURL() {
     redirectUri
   );
 
-  return auth.generateAuthUrl({
-    access_type: 'offline',
-    scope: googleOAuthScope,
-  });
+  try {
+    return auth.generateAuthUrl({
+      access_type: 'offline',
+      scope: googleOAuthScope,
+    });
+  } catch (e) {
+    console.log('error generating oauth url')
+    throw AUTH_ERRORS.GOOGLE_OAUTH_URL_GENERATION_FAILED;
+  }
 }
 
 /**
