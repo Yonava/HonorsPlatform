@@ -9,6 +9,7 @@
 - New ServerError 'NO_CLIENT_TOKEN' and 'USER_DATA_FETCH_FAILED' when client has no token or user google data cannot be fetched
 - ListTransition API for PanelList permanently removed
 - Added number of items for each panel to PanelTitle panel selection dropdown menu
+- Sidebar Actions API Refactor with SidebarActions.vue and useSidebarActions.ts
 
 ### prerelease 0.92 (Jan. 24)
 - Feature / Mailing Lists: Build and store custom mailing lists with emails of students or grads
