@@ -1,6 +1,4 @@
-import axios from "axios";
-import { useAuth } from "@store/useAuth";
-import { URIs, requestHeaders, callProtectedResources } from "./APIs";
+import { URIs, callProtectedResources } from "./APIs";
 import type { PanelRange } from '@panels'
 
 export type NonPanelRanges = "Announcements" | "Registrar List" | "Temporary Data"

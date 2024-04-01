@@ -1,5 +1,4 @@
-import axios from 'axios'
-import { URIs, requestHeaders } from '../APIs'
+import { URIs, callProtectedResources } from '../APIs'
 
 export type UserGoogleProfile = {
   id: string,
@@ -22,7 +21,15 @@ export type User = {
 
 export async function getUserGoogleProfile() {
   try {
-    const { data: profile } = await axios.get<UserGoogleProfile>(URIs.user, requestHeaders());
+    const profile = await callProtectedResources<UserGoogleProfile>({
+      method: "GET",
+      url: URIs.user
+    });
+
+    if (!profile) {
+      throw 'No user profile data'
+    }
+
     return profile;
   } catch (e) {
     console.error(e);
@@ -32,7 +39,15 @@ export async function getUserGoogleProfile() {
 
 export async function getUserSheetPermissions() {
   try {
-    const { data: perms } = await axios.get<UserSheetPermissions>(`${URIs.user}/permissions`, requestHeaders());
+    const perms = await callProtectedResources<UserSheetPermissions>({
+      method: "GET",
+      url: `${URIs.user}/permissions`
+    });
+
+    if (!perms) {
+      throw 'No user sheet permissions data'
+    }
+
     return perms;
   } catch (e) {
     console.error(e);

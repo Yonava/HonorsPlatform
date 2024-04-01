@@ -1,5 +1,6 @@
+import axios from 'axios';
+import type { Method } from 'axios';
 import { local, localKeys } from '@locals';
-import axios, { type AxiosRequestConfig, type Method } from 'axios';
 import { useAuth } from '@store/useAuth';
 
 export const URIs = {
@@ -31,7 +32,6 @@ export const callProtectedResources = async <
   TReturn = any,
   TRequestBody = any
 >(reqOptions: RequestOptions<TRequestBody>): Promise<TReturn | undefined> => {
-  console.log('interacting with protected resources', reqOptions.method, reqOptions.url)
   try {
     const { data } = await axios<TReturn>({
       ...reqOptions,
@@ -47,7 +47,7 @@ export const callProtectedResources = async <
       await useAuth().authorizeBeforeContinuing();
     } else {
       console.warn('unrecognized error', e)
-      return undefined;
+      return;
     }
 
     return callProtectedResources<TReturn, TRequestBody>(reqOptions);

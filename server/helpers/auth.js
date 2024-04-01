@@ -152,6 +152,13 @@ function generateGoogleOAuthURL() {
   });
 }
 
+/**
+ * @param {Response} res
+ * @description returns a function that will handle a client token that is invalid or has expired
+ * @returns {Function} a function that will try to issue a new client token and send it to the client
+ * @param {string} clientToken
+ * @returns {Promise<void>}
+*/
 function clientTokenInvalidOrExpiredFallback(res) {
   return async (clientToken) => {
     try {
@@ -185,7 +192,6 @@ async function provideAccessToken(req, res, next) {
   // try to verify the client token and add the access token to the request object
   try {
     const payload = jwt.verify(clientToken, JWT_SECRET);
-    console.log('token verified', payload)
     req.accessToken = payload.googleOAuthAccessToken;
     console.log('added access token to req')
   } catch {
