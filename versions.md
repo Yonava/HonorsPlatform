@@ -1,4 +1,14 @@
-# Current Version: prerelease 0.92
+# Current Version: prerelease 0.93
+
+### prerelease 0.93 (Mar. 31)
+- Feature / Better Tokens: added jwt clientTokens encoded using refresh_tokens for keeping users logged in longer
+- Server structural and JSDoc overhaul. Added custom auth middleware to handle new clientToken spec
+- Improvement / Authenticated users now rerouted back to panel if they land on auth page
+- Added tab autocomplete to all input fields for filling in button/suggested quick fill content
+- Revamped AddStudentNote for better UI/UX
+- New ServerError 'NO_CLIENT_TOKEN' and 'USER_DATA_FETCH_FAILED' when client has no token or user google data cannot be fetched
+- ListTransition API for PanelList permanently removed
+- Added number of items for each panel to PanelTitle panel selection dropdown menu
 
 ### prerelease 0.92 (Jan. 24)
 - Feature / Mailing Lists: Build and store custom mailing lists with emails of students or grads
