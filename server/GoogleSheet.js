@@ -1,12 +1,15 @@
+/**
+ * @description logic for interacting with google sheets
+ * @module GoogleSheet
+ * @requires googleapis
+ * @requires constants
+ * @exports GoogleSheet class
+*/
+
 const { google } = require("googleapis")
 const { OAuth2 } = google.auth;
 const { GOOGLE_OAUTH_CLIENT_ID, GOOGLE_OAUTH_CLIENT_SECRET } = process.env;
-const { redirectUri } = require("./index.js");
-
-const spreadsheetIds = {
-  dev: '1Wh1rIfVQd8ekvrNloaU9vbxMkgdsDlAz2sqwH5YDLe0',
-  production: '1bW-aQRn-GAbTsNkV2VB9xtBFT3n-LPrSJXua_NA2G6Y',
-}
+const { spreadsheetIds, redirectUri, AUTH_ERRORS } = require("./constants.js");
 
 module.exports = class GoogleSheet {
   spreadsheetId;
@@ -24,19 +27,25 @@ module.exports = class GoogleSheet {
   }
 
   constructor(accessToken) {
+    this.spreadsheetId = spreadsheetIds[process.env.NODE_ENV ?? 'dev'];
     const auth = new OAuth2(
       GOOGLE_OAUTH_CLIENT_ID,
       GOOGLE_OAUTH_CLIENT_SECRET,
       redirectUri
     );
-    auth.setCredentials({
-      access_token: accessToken
-    });
-    this.sheets = google.sheets({
-      version: 'v4',
-      auth,
-    });
-    this.spreadsheetId = spreadsheetIds[process.env.NODE_ENV ?? 'dev'];
+
+    try {
+      auth.setCredentials({
+        access_token: accessToken
+      });
+
+      this.sheets = google.sheets({
+        version: 'v4',
+        auth,
+      });
+    } catch (err) {
+      throw AUTH_ERRORS.INVALID_ACCESS_TOKEN;
+    }
   }
 
   // ping to check if access token is valid
@@ -163,13 +172,7 @@ module.exports = class GoogleSheet {
       range,
     });
 
-    await this.sheets.spreadsheets.values.update({
-      spreadsheetId: this.spreadsheetId,
-      range,
-      valueInputOption: 'RAW',
-      resource: {
-        values: data
-      }
-    });
+    const payload = this.writable(range, data);
+    await this.sheets.spreadsheets.values.update(payload);
   }
 }

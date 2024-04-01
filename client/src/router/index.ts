@@ -3,9 +3,9 @@ import Panel from '../views/PanelPage.vue'
 import Leaderboard from '../views/LeaderboardPage.vue'
 import Auth from '../views/AuthPage.vue'
 
-import { useDocumentCache } from '../store/useDocumentCache'
-import { useSocket } from '../store/useSocket'
-import { useAuth } from '../store/useAuth'
+import { useDocumentCache } from '@store/useDocumentCache'
+import { useSocket } from '@store/useSocket'
+import { useAuth, getAuthErrorURL, type ServerError } from '@store/useAuth'
 
 const routes = [
   {
@@ -37,22 +37,25 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to, from) => {
-  const defaultTitle = 'Honors Program'
-  const name = to.name as string ?? defaultTitle
+  const TITLE = 'Honors Program'
+  const name = to.name as string ?? TITLE
   const goingTo = to.name as typeof routes[number]['name']
   const comingFrom = from.name as typeof routes[number]['name']
 
   if (goingTo === 'panel' && comingFrom !== 'panel') {
     const { getAllDocuments } = useDocumentCache()
     const { connect } = useSocket()
-    const { authorizeSession } = useAuth()
-    await authorizeSession()
+    const { authorizeSession, user } = useAuth()
+    if (!user) {
+      const error = await authorizeSession()
+      if (error) location.replace(getAuthErrorURL(error))
+    }
     await getAllDocuments()
     await connect()
   }
 
-  if (name === defaultTitle || to.name === 'panel') return
-  document.title = `${name[0].toUpperCase()}${name.slice(1)} - Honors Program`
+  if (name === TITLE || to.name === 'panel') return
+  document.title = `${name[0].toUpperCase()}${name.slice(1)} - ${TITLE}`
 })
 
 export default router

@@ -1,47 +1,50 @@
 <template>
   <div
     class="mb-4 d-flex flex-column align-center"
-    style="gap: 10px"
+    style="gap: 8px"
   >
-    <div
-      v-if="googleProfile"
-      style="width: 50px; height: 50px; position: relative;"
-    >
       <v-menu
-        :offset="[10, 0]"
+        :offset="menuOffset"
         location="top"
       >
         <template v-slot:activator="{ props }">
-          <img
+          <div
             v-bind="props"
-            :src="googleProfile.picture"
-            alt="Profile"
             :style="{
+              width: '50px',
+              height: '50px',
               borderRadius: '50%',
-              width: '100%',
-              aspectRatio: '1 / 1',
-              objectFit: 'cover',
+              cursor: 'pointer',
+              border: '4px solid white',
               boxShadow: '0 0 5px rgba(0, 0, 0, 0.3)',
-              border: '3px solid white',
-              cursor: 'pointer'
             }"
-          />
+          >
+            <img
+              :src="profilePicture"
+              alt="Profile"
+              :style="{
+                width: '100%',
+                height: '100%',
+                borderRadius: '50%',
+                objectFit: 'cover',
+              }"
+            />
+
+          <v-tooltip
+            activator="parent"
+            location="end"
+          >
+            View Profile
+          </v-tooltip>
+          </div>
         </template>
 
         <UserProfile />
 
       </v-menu>
 
-      <v-tooltip
-        activator="parent"
-        location="end"
-      >
-        View Profile
-      </v-tooltip>
-    </div>
-
     <v-menu
-      :offset="[10, 0]"
+      :offset="menuOffset"
       location="top"
     >
       <template v-slot:activator="{ props }">
@@ -72,7 +75,7 @@
     </v-menu>
 
     <v-menu
-      :offset="[10, 0]"
+      :offset="menuOffset"
       location="top"
     >
       <template v-slot:activator="{ props }">
@@ -105,6 +108,7 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue';
 import { useAuth } from '@store/useAuth';
 import { useSheetManager } from '@store/useSheetManager';
 import { storeToRefs } from 'pinia';
@@ -113,8 +117,12 @@ import MailingListMenu from './MailingLists/MailingListMenu.vue';
 import BuildRegistrarList from './BuildRegistrarList.vue';
 
 const auth = useAuth();
-const { googleProfile } = storeToRefs(auth);
+const { user } = storeToRefs(auth);
 
 const sheetManager = useSheetManager();
 const { readOnlyMode } = storeToRefs(sheetManager);
+
+const menuOffset = [10, 0];
+
+const profilePicture = computed(() => user.value ? user.value.googleProfile.picture : '');
 </script>

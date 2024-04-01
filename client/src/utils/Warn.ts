@@ -4,15 +4,19 @@ export type Resolution = string | number
 export type ResolveStates = 'CONFIRMED'
 export type RejectStates = 'CANCELLED' | 'CANCELLED_BACKGROUND'
 
-export type WarnOptions<T extends Resolution, K extends Resolution> = {
-  title?: string,
-  description?: string,
-  persistent?: boolean,
-  buttons?: (
-    resolve: (r: T) => void,
-    reject: (r: K) => void
-  ) => DialogButton[]
+type WarnButton<T extends Resolution, K extends Resolution> = (
+  resolve: (r: T) => void,
+  reject: (r: K) => void
+) => DialogButton[]
+
+type Warn<T extends Resolution, K extends Resolution> = {
+  title: string,
+  description: string,
+  persistent: boolean,
+  buttons: WarnButton<T, K>
 }
+
+export type WarnOptions<T extends Resolution, K extends Resolution> = Partial<Warn<T, K>>
 
 const defaults = {
   title: 'Warning',

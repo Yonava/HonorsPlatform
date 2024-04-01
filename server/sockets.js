@@ -1,4 +1,11 @@
-const { server } = require('./index.js')
+/**
+ * @description This file is responsible for handling all socket logic.
+ * @module sockets
+ * @requires server
+ * @requires socket.io
+*/
+
+const { server } = require('./server')
 const socketIO = require('socket.io')
 
 const SOCKET_SERVER = process.env.NODE_ENV === 'production' ? server : 3001
@@ -40,7 +47,7 @@ io.on('connection', (socket) => {
     focusData[socket.id] = initialFocusState
 
     console.log(`${googleProfile.name} (${socket.id}) connected`)
-    console.log('connectedSockets', connectedSockets)
+    // console.log('connectedSockets', connectedSockets)
 
     io.emit('connectedSockets', connectedSockets)
     io.emit('userFocus', focusData)

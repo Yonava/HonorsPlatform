@@ -154,7 +154,8 @@ const props = defineProps<{
 }>()
 
 const checkForTabAutocomplete = (e: KeyboardEvent) => {
-  if (e.key === 'Tab' && props.button && props.button.condition && !props.button.disableCondition) {
+  const buttonActive = props.button && props.button.condition && !props.button.disableCondition
+  if ( e.key === 'Tab' && !readOnlyMode.value && buttonActive) {
     e.preventDefault()
     e.stopPropagation()
     content.value = props.button.newPropValue()

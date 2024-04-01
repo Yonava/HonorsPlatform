@@ -1,48 +1,35 @@
 import { defineStore } from "pinia";
 import axios from "axios";
-import router from "../router";
-import { useDialog } from "@store/useDialog";
 import { local, localKeys } from "@locals";
-import { getUserProfileData, getUserSheetPermissions } from "../SheetsAPI";
-import { useSheetManager } from "./useSheetManager";
+import { useDialog } from "@store/useDialog";
+import { useSheetManager } from "@store/useSheetManager";
 import { useSocket } from "@store/useSocket";
-
-export type GoogleProfile = {
-  id: string,
-  name: string,
-  given_name: string,
-  family_name: string,
-  picture: string,
-  locale: string
-}
-
-export type ConnectedSocket = GoogleProfile & { socketId: string }
+import { getUser } from "@utils/users";
+import type { User } from "@utils/users";
+import router from "../router";
 
 export type ServerError =
   'NO_SHEET_ACCESS' |
-  'INVALID_ACCESS_TOKEN' |
+  'INVALID_CLIENT_TOKEN' |
   'INVALID_OAUTH_CODE' |
   'SESSION_EXPIRED' |
-  'NO_ACCESS_TOKEN' |
-  'REMOTE_LOGOUT' |
+  'NO_CLIENT_TOKEN' |
   'LOGOUT' |
   'SOCKET_EXCEPTION' |
   'PERMISSION_REQUEST_FAILED' |
   'END_SESSION_FALLBACK' |
+  'USER_DATA_FETCH_FAILED' |
   'access_denied' // Google OAuth Error defined by Google
 
-const getAuthErrorURL = <T extends ServerError>(error: T) => `/auth?error=${error}` as const
-const getServerAuthEndpoint = <T extends string>(route: T) => `/api/auth/${route}` as const
+export const getAuthErrorURL = <T extends ServerError>(error: T) => `/auth?error=${error}` as const
+export const getServerAuthEndpoint = <T extends string>(route: T) => `/api/auth/${route}` as const
 
 export const useAuth = defineStore('auth', {
   state: () => ({
     authorizationPromptOpen: false,
-    googleProfile: null as GoogleProfile | null,
+    user: null as User | null,
   }),
   actions: {
-    setGoogleProfile(profile: GoogleProfile | null) {
-      this.googleProfile = profile
-    },
     async getGoogleOAuthURL() {
       const urlRoute = getServerAuthEndpoint('url')
       try {
@@ -52,95 +39,45 @@ export const useAuth = defineStore('auth', {
         throw new Error('Could not get auth url')
       }
     },
-    async authorizeSession() {
-      const accessToken = local.get('access-token')
+    async authorizeSession(): Promise<ServerError | void> {
+      const clientToken = local.get(localKeys.clientToken)
 
-      if (!accessToken) {
-        location.replace(getAuthErrorURL('NO_ACCESS_TOKEN'))
-        throw new Error('No access token found')
+      if (!clientToken) {
+        return 'NO_CLIENT_TOKEN'
       }
 
-      if (!this.googleProfile) {
+      if (!this.user) {
         try {
-          this.googleProfile = await getUserProfileData()
+          this.user = await getUser()
         } catch (e) {
-          location.replace(getAuthErrorURL('SESSION_EXPIRED'))
-          throw new Error('Session expired')
+          return 'USER_DATA_FETCH_FAILED'
         }
       }
 
-      try {
-        const { read: hasReadPerms, write: hasWritePerms } = await getUserSheetPermissions()
-        if (!hasReadPerms) {
-          location.replace(getAuthErrorURL('NO_SHEET_ACCESS'))
-          throw new Error('No sheet access')
-        } else if (!hasWritePerms) {
-          useSheetManager().setReadOnlyMode(true)
-        }
-      } catch (e) {
-        location.replace(getAuthErrorURL('PERMISSION_REQUEST_FAILED'))
-        throw new Error('Could not access permission status of user')
+      if (!this.user.sheetPermissions.read) {
+        return 'NO_SHEET_ACCESS'
+      }
+
+      if (!this.user.sheetPermissions.write) {
+        useSheetManager().setReadOnlyMode(true)
       }
     },
-    async userLoginFlow(googleOAuthCode: string) {
-
+    async setGoogleOAuthCode(googleOAuthCode: string) {
       local.remove(localKeys.closeAfterAuth)
       local.remove(localKeys.googleOAuthCode)
 
-      const code = encodeURIComponent(googleOAuthCode)
-      const oauthCodeValidationURI = getServerAuthEndpoint(code)
-
-      const { data } = await axios.get<{
-        accessToken: string,
-        profile: GoogleProfile,
-      } | { error: ServerError }>(oauthCodeValidationURI)
-
-      if ('error' in data) {
-        location.replace(getAuthErrorURL(data.error))
-        throw new Error('Authorization Failed')
-      }
-
-      this.setGoogleProfile(data.profile)
-      local.set(localKeys.googleOAuthAccessToken, data.accessToken)
-
-      const { connect } = useSocket()
-
       try {
-        await connect()
+        const code = encodeURIComponent(googleOAuthCode)
+        const oauthCodeValidationURI = `/api/auth/token/${code}`
+        const { data: token } = await axios.get<string>(oauthCodeValidationURI)
+        local.set(localKeys.clientToken, token)
       } catch {
-        console.log('Could not connect to socket')
+        location.replace(getAuthErrorURL('INVALID_OAUTH_CODE'))
       }
-
-      const timeSinceEpoch = Date.now()
-      local.set(localKeys.timeOfLastAuth, timeSinceEpoch.toString())
-
-      return {
-        status: 'Authorized',
-        at: timeSinceEpoch,
-        user: data.profile
-      } as const
     },
-    userLogoutFlow({ goToAuthPage, broadcastLogoutEvent, error }: {
-      goToAuthPage: boolean,
-      error: ServerError,
-      broadcastLogoutEvent: boolean,
-    }) {
-      local.remove(localKeys.timeOfLastAuth)
-
-      if (broadcastLogoutEvent) {
-        const { emitUserLogout } = useSocket()
-        emitUserLogout()
-      }
-
-      if (goToAuthPage) {
-        router.push({
-          name: 'auth',
-          query: {
-            error
-          }
-        })
-        return
-      }
+    logout(reason: ServerError = 'LOGOUT') {
+      local.remove(localKeys.clientToken)
+      location.replace(getAuthErrorURL(reason))
     },
     async endSessionAndPromptOAuth(googleAuthUrl?: string) {
       try {
@@ -165,14 +102,14 @@ export const useAuth = defineStore('auth', {
         throw new Error('Could not open authorization window')
       }
 
-      local.remove(localKeys.googleOAuthAccessToken)
+      local.remove(localKeys.clientToken)
       local.remove(localKeys.googleOAuthCode)
       local.set(localKeys.closeAfterAuth, 'true')
 
       const pollOAuthCode = setInterval(async () => {
         const code = local.get(localKeys.googleOAuthCode)
         if (code) {
-          await this.userLoginFlow(code)
+          await this.setGoogleOAuthCode(code)
           clearInterval(pollOAuthCode)
           useDialog().close()
         }
