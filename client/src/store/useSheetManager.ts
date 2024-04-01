@@ -81,7 +81,7 @@ export const useSheetManager = defineStore('sheetManager', {
     },
     getActiveEmbeddedPanel(state) {
       const { panel } = state
-      if (!panel?.embedded) {
+      if (!('embedded' in panel)) {
         return null
       }
       const { panel: embeddedPanelName } = panel?.embedded

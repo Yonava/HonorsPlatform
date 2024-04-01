@@ -1,5 +1,4 @@
-import { computed, toRef } from "vue"
-import type { MaybeRefOrGetter } from "vue"
+import { computed } from "vue"
 import { storeToRefs } from "pinia"
 import { useSheetManager } from "@store/useSheetManager"
 import { useDocumentCache } from "@store/useDocumentCache"
@@ -52,17 +51,16 @@ export type PanelSpecificSidebarAction = {
  * @returns Computed property representing all active/valid sidebar actions.
 */
 export function useSidebarActions<T extends SheetItem, K extends PanelSpecificSidebarAction>(
-  itemInput: MaybeRefOrGetter<T>,
+  item: T,
   panelSpecificActions: K
 ) {
-  const item = toRef(itemInput)
 
   const { deleteItem } = useDocumentCache()
   const { getPinnedItem, removePinnedItem, addPinnedItem } = useSheetManager()
   const { getActivePanel, readOnlyMode } = storeToRefs(useSheetManager())
 
-  const togglePin = () => isPinned.value ? removePinnedItem(item.value) : addPinnedItem(item.value)
-  const isPinned = computed(() => !!getPinnedItem(item.value))
+  const togglePin = () => isPinned.value ? removePinnedItem(item) : addPinnedItem(item)
+  const isPinned = computed(() => !!getPinnedItem(item))
 
   const defaultActions = {
     pin: () => ({
@@ -74,7 +72,7 @@ export function useSidebarActions<T extends SheetItem, K extends PanelSpecificSi
     delete: () => ({
       icon: (isHovered: boolean) => isHovered ? 'mdi-delete' : 'mdi-delete-outline',
       tooltip: 'Delete',
-      onClick: () => deleteItem({ item: item.value }),
+      onClick: () => deleteItem({ item }),
       disableInReadOnlyMode: true,
       actionId: 'delete'
     } as const)
@@ -84,11 +82,11 @@ export function useSidebarActions<T extends SheetItem, K extends PanelSpecificSi
     const panelSpecificAction = panelSpecificActions[getActivePanel.value.panelName]
     const actionGeneratingFns = [defaultActions.pin, panelSpecificAction, defaultActions.delete]
 
-    const actionFilter = (action: SidebarAction) => {
-      return !(!action || (action.disableInReadOnlyMode && readOnlyMode.value))
+    const actionFilter = (action: ReturnType<SidebarActionFunction>) => {
+      return action && !(action.disableInReadOnlyMode && readOnlyMode.value)
     }
 
-    const actions = actionGeneratingFns.map((actionFn) => actionFn(item.value as any)) as SidebarAction[]
+    const actions = actionGeneratingFns.map((actionFn) => actionFn(item as any)) as SidebarAction[]
     return actions.filter(actionFilter)
   })
 }

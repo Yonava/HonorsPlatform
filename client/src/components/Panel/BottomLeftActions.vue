@@ -9,6 +9,7 @@
       >
         <template v-slot:activator="{ props }">
           <div
+            v-bind="props"
             :style="{
               width: '50px',
               height: '50px',
@@ -19,7 +20,6 @@
             }"
           >
             <img
-              v-bind="props"
               :src="profilePicture"
               alt="Profile"
               :style="{

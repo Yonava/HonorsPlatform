@@ -26,7 +26,7 @@ function generateClientToken(googleOAuthAccessToken, googleOAuthRefreshToken) {
   return jwt.sign({
     googleOAuthAccessToken,
     googleOAuthRefreshToken,
-  }, JWT_SECRET, { expiresIn: '45m' });
+  }, JWT_SECRET, { expiresIn: '55m' });
 }
 
 /**
@@ -48,7 +48,7 @@ async function generateGoogleOAuthAccessToken(googleOAuthRefreshToken) {
     console.log('new access token', tokens.credentials.access_token)
     return tokens.credentials.access_token;
   } catch (e) {
-    throw new Error(AUTH_ERRORS.INVALID_GOOGLE_OAUTH_REFRESH_TOKEN)
+    throw AUTH_ERRORS.INVALID_GOOGLE_OAUTH_REFRESH_TOKEN;
   }
 }
 
@@ -73,7 +73,7 @@ async function generateGoogleOAuthTokens(googleOAuthCode) {
     }
   } catch (e) {
     console.log('error', e)
-    throw new Error(AUTH_ERRORS.INVALID_GOOGLE_OAUTH_CODE);
+    throw AUTH_ERRORS.INVALID_GOOGLE_OAUTH_CODE;
   }
 }
 
@@ -152,6 +152,21 @@ function generateGoogleOAuthURL() {
   });
 }
 
+async function clientTokenInvalidOrExpiredFallback(clientToken) {
+  try {
+    const newClientToken = await handleIncomingClientToken(clientToken);
+    res.status(401).json({
+      error: AUTH_ERRORS.NEW_CLIENT_TOKEN_ISSUED,
+      issuedClientToken: newClientToken
+    })
+  } catch {
+    console.log('failed to generate new client token')
+    res.status(401).json({
+      error: AUTH_ERRORS.INVALID_CLIENT_TOKEN
+    });
+  }
+}
+
 /**
  * @description middleware fn that takes a request with a client token and adds an access token to the request object.
  * If the client token is invalid, it will terminate the request with
@@ -161,20 +176,18 @@ function generateGoogleOAuthURL() {
  * @returns {void}
  */
 async function provideAccessToken(req, res, next) {
-  // get the bearer token from the headers
   const { authorization } = req.headers;
   const clientToken = authorization.split(' ')[1];
 
-  // console.log('incoming client token', clientToken)
-
+  // try to verify the client token and add the access token to the request object
   try {
-    const validToken = await handleIncomingClientToken(clientToken);
-    const accessToken = await getAccessTokenFromClientToken(validToken);
-    req.accessToken = accessToken;
-    console.log('added access token to req', accessToken)
-  } catch (e) {
-    console.log('failed to add access token to req')
-    res.status(401).json({ error: 'Forbidden' });
+    const payload = jwt.verify(clientToken, JWT_SECRET);
+    console.log('token verified', payload)
+    req.accessToken = payload.googleOAuthAccessToken;
+    console.log('added access token to req')
+  } catch {
+    console.log('failed to add access token to req, generating new token')
+    await clientTokenInvalidOrExpiredFallback(clientToken);
     return;
   }
 

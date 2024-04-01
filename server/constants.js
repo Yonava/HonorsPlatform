@@ -18,9 +18,15 @@ const redirectUri = process.env.NODE_ENV ? prodUri : localUri;
  * @description enumerable error states encountered during the auth process
 */
 const AUTH_ERRORS = {
+  // when the client token is invalid or empty
   INVALID_CLIENT_TOKEN: 'INVALID_CLIENT_TOKEN',
+  // when the client token is expired, and a new one has been issued in the response
+  NEW_CLIENT_TOKEN_ISSUED: 'NEW_CLIENT_TOKEN_ISSUED',
+  // when the google oauth code provided by the client is invalid
   INVALID_GOOGLE_OAUTH_CODE: 'INVALID_GOOGLE_OAUTH_CODE',
+  // when the google oauth refresh token is invalid
   INVALID_GOOGLE_OAUTH_REFRESH_TOKEN: 'INVALID_GOOGLE_OAUTH_REFRESH_TOKEN',
+  // when the google oauth access token is invalid
   INVALID_GOOGLE_OAUTH_ACCESS_TOKEN: 'INVALID_GOOGLE_OAUTH_ACCESS_TOKEN',
 }
 

@@ -17,8 +17,8 @@ const defaultPanelCover = (show: boolean = false): PanelCoverData => {
 }
 
 export type DialogButton = {
-  text: string;
   onClick: () => void;
+  text: string;
   color?: string;
 };
 
@@ -30,31 +30,31 @@ type PanelCoverData = {
   loading: boolean;
 }
 
-type SnackbarOptions = {
-  text?: string;
-  color?: string;
-  img?: string;
-  action?: {
-    onClick: () => void,
-    text: string,
-    color?: string,
-  } | null;
-  timeout?: number;
-  closable?: boolean;
+type Snackbar = {
+  text: string;
+  img: string;
+  color: string;
+  action: DialogButton;
+  timeout: number;
+  closable: boolean;
 }
 
-export type DialogBody = {
-  title?: string;
-  description?: string;
-  buttons?: DialogButton[];
-};
+type SnackbarOptions = Partial<Snackbar>;
 
-export type DialogComponent = {
+type DialogBody = {
+  title: string;
+  description: string;
+  buttons: DialogButton[];
+}
+
+export type DialogBodyOptions = Partial<DialogBody>
+
+export type DialogComponentOptions = {
   component: Component;
   props?: Record<string, any>;
 };
 
-export type DialogContentOptions = DialogBody | DialogComponent;
+export type DialogContentOptions = DialogBodyOptions | DialogComponentOptions;
 
 type DialogCloseResolutions = 'BACKGROUND_CLOSE' | 'ACTION_CLOSE'
 

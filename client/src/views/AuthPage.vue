@@ -33,7 +33,7 @@
         </div>
       </div>
       <v-btn
-        @click="authorize()"
+        @click.stop="authorize()"
         color="red-darken-2"
         elevation="3"
         class="mb-12"
