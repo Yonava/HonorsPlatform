@@ -152,18 +152,21 @@ function generateGoogleOAuthURL() {
   });
 }
 
-async function clientTokenInvalidOrExpiredFallback(clientToken) {
-  try {
-    const newClientToken = await handleIncomingClientToken(clientToken);
-    res.status(401).json({
-      error: AUTH_ERRORS.NEW_CLIENT_TOKEN_ISSUED,
-      issuedClientToken: newClientToken
-    })
-  } catch {
-    console.log('failed to generate new client token')
-    res.status(401).json({
-      error: AUTH_ERRORS.INVALID_CLIENT_TOKEN
-    });
+function clientTokenInvalidOrExpiredFallback(res) {
+  return async (clientToken) => {
+    try {
+      const newClientToken = await handleIncomingClientToken(clientToken);
+      console.log('successfully issued new client token')
+      res.status(401).json({
+        error: AUTH_ERRORS.NEW_CLIENT_TOKEN_ISSUED,
+        issuedClientToken: newClientToken
+      })
+    } catch {
+      console.log('failed to issue new client token')
+      res.status(401).json({
+        error: AUTH_ERRORS.INVALID_CLIENT_TOKEN
+      });
+    }
   }
 }
 
@@ -187,7 +190,7 @@ async function provideAccessToken(req, res, next) {
     console.log('added access token to req')
   } catch {
     console.log('failed to add access token to req, generating new token')
-    await clientTokenInvalidOrExpiredFallback(clientToken);
+    await clientTokenInvalidOrExpiredFallback(res)(clientToken);
     return;
   }
 

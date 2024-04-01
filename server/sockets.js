@@ -47,7 +47,7 @@ io.on('connection', (socket) => {
     focusData[socket.id] = initialFocusState
 
     console.log(`${googleProfile.name} (${socket.id}) connected`)
-    console.log('connectedSockets', connectedSockets)
+    // console.log('connectedSockets', connectedSockets)
 
     io.emit('connectedSockets', connectedSockets)
     io.emit('userFocus', focusData)
