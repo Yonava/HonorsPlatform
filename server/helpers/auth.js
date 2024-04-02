@@ -75,6 +75,7 @@ async function generateGoogleOAuthTokens(googleOAuthCode) {
 
   try {
     const { tokens } = await auth.getToken(googleOAuthCode);
+    console.log('generated tokens', tokens)
     return {
       accessToken: tokens.access_token,
       refreshToken: tokens.refresh_token
