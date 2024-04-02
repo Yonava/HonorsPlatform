@@ -95,11 +95,16 @@ async function generateGoogleOAuthTokens(googleOAuthCode) {
 */
 async function handleIncomingClientToken(clientToken) {
   try {
+
+    console.log('the client token is', clientToken)
+    console.log('the jwt secret is', JWT_SECRET)
     const payload = jwt.verify(clientToken, JWT_SECRET, {
       ignoreExpiration: true
     });
+    console.log('payload', payload)
 
     const isExpired = Date.now() >= payload.exp * 1000;
+    console.log('is expired', isExpired)
     if (!isExpired) return clientToken;
 
     const { googleOAuthRefreshToken: refreshToken } = payload;
