@@ -28,20 +28,11 @@ type TokenErrorResponse = {
   error: 'INVALID_CLIENT_TOKEN'
 }
 
-let currentlyGettingToken = false;
-
 export const callProtectedResources = async <
   TReturn = any,
   TRequestBody = any
 >(reqOptions: RequestOptions<TRequestBody>): Promise<TReturn | undefined> => {
   console.log('calling protected resources', reqOptions.method, reqOptions.url)
-
-  if (currentlyGettingToken) {
-    console.log('deferring call to protected resources while getting token')
-    return new Promise(resolve => setTimeout(() => {
-      resolve(callProtectedResources<TReturn, TRequestBody>(reqOptions))
-    }, 2000))
-  }
 
   try {
     const { data } = await axios<TReturn>({
@@ -50,9 +41,6 @@ export const callProtectedResources = async <
     });
     return data;
   } catch (e) {
-
-    currentlyGettingToken = true;
-
     const err = e as { response: { data: TokenErrorResponse } };
     const { error } = err.response.data;
     if (error === 'NEW_CLIENT_TOKEN_ISSUED') {
@@ -61,11 +49,8 @@ export const callProtectedResources = async <
       await useAuth().authorizeBeforeContinuing();
     } else {
       console.warn('unrecognized error', e);
-      currentlyGettingToken = false;
       return;
     }
-
-    currentlyGettingToken = false;
 
     return callProtectedResources<TReturn, TRequestBody>(reqOptions);
   }

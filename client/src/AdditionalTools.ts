@@ -12,9 +12,7 @@ type Tool = {
   tooltip?: string,
 }
 
-type Tools = {
-  [key in (PanelName | 'ALL')]: Tool[]
-}
+type Tools = Record<PanelName | 'ALL', Tool[]>
 
 export const tools: Tools = {
   ALL: [

@@ -4,7 +4,7 @@ import type { PanelRange } from '@panels'
 export type NonPanelRanges = "Announcements" | "Registrar List" | "Temporary Data"
 export type Range = PanelRange | NonPanelRanges
 
-export type HeaderRows = { [key in Range]?: string[] }
+export type HeaderRows = Partial<Record<Range, string[]>>
 export const headerRowMemo: HeaderRows = {}
 
 export async function getRange(range: Range) {

@@ -45,8 +45,8 @@
 </template>
 
 <script setup lang="ts">
-import { useDialog } from '@store/useDialog';
 import { storeToRefs } from 'pinia';
+import { useDialog } from '@store/useDialog';
 
 const dialogState = useDialog();
 const { snackbar } = storeToRefs(dialogState);

@@ -34,7 +34,7 @@ function generateClientToken(googleOAuthAccessToken, googleOAuthRefreshToken) {
   return jwt.sign({
     googleOAuthAccessToken,
     googleOAuthRefreshToken,
-  }, JWT_SECRET, { expiresIn: '1m' });
+  }, JWT_SECRET, { expiresIn: '55m' });
 }
 
 /**

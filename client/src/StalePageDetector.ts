@@ -1,5 +1,5 @@
 import { onUnmounted, ref, watch } from "vue"
-import { useSocket } from "./store/useSocket"
+import { useSocket } from "@store/useSocket"
 
 export const useStalePageDetector = () => {
   const pageVisible = ref(true)
