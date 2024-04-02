@@ -163,6 +163,7 @@ function generateGoogleOAuthURL() {
 
   try {
     return auth.generateAuthUrl({
+      prompt: 'consent',
       access_type: 'offline',
       scope: googleOAuthScope,
     });
