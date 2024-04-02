@@ -66,10 +66,12 @@ export const useAuth = defineStore('auth', {
       local.remove(localKeys.closeAfterAuth)
       local.remove(localKeys.googleOAuthCode)
 
+      console.log('setting google oauth code')
       try {
         const code = encodeURIComponent(googleOAuthCode)
         const oauthCodeValidationURI = `/api/auth/token/${code}`
         const { data: token } = await axios.get<string>(oauthCodeValidationURI)
+        console.log('set google oauth code and received token')
         local.set(localKeys.clientToken, token)
       } catch {
         location.replace(getAuthErrorURL('INVALID_OAUTH_CODE'))

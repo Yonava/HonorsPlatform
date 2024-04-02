@@ -5,7 +5,7 @@ import Auth from '../views/AuthPage.vue'
 
 import { useDocumentCache } from '@store/useDocumentCache'
 import { useSocket } from '@store/useSocket'
-import { useAuth, getAuthErrorURL, type ServerError } from '@store/useAuth'
+import { useAuth, getAuthErrorURL } from '@store/useAuth'
 
 const routes = [
   {
