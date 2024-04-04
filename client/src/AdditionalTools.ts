@@ -8,7 +8,7 @@ type Tool = {
   name: string,
   handler: () => void,
   icon: string
-  disableInReadOnly?: boolean,
+  disableInReadOnly?: boolean, // defaults to false
   tooltip?: string,
 }
 

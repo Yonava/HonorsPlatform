@@ -275,11 +275,12 @@ export type PanelToSheetType = {
   GRADUATE_ENGAGEMENTS: Items.GradEngagement
 }
 
-export type PanelName = keyof typeof panels;
+export type PanelObject = typeof panels
+export type PanelName = keyof PanelObject;
 
-export type PanelRange = typeof panels[PanelName]['sheetRange'];
+export type PanelRange = PanelObject[PanelName]['sheetRange'];
 
-export type Panel = typeof panels[PanelName];
+export type Panel = PanelObject[PanelName];
 export const getPanel = <T extends PanelName>(panelName: T) => panels[panelName];
 
 export const version = 'prerelease v0.93.1 (beta)';

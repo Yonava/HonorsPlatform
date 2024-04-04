@@ -1,8 +1,8 @@
 import { URIs, callProtectedResources } from "./APIs";
 import type { PanelRange } from '@panels'
 
-export type NonPanelRanges = "Announcements" | "Registrar List" | "Temporary Data"
-export type Range = PanelRange | NonPanelRanges
+export type NonPanelRange = "Announcements" | "Registrar List" | "Temporary Data"
+export type Range = PanelRange | NonPanelRange
 
 export type HeaderRows = Partial<Record<Range, string[]>>
 export const headerRowMemo: HeaderRows = {}
