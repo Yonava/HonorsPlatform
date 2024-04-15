@@ -1,12 +1,12 @@
 <template>
-  <p style="font-size: 0.8rem; cursor: default;">
+  <div style="font-size: 0.8rem; cursor: default; height: 20px;">
     {{ postDateDisplay }} ({{ term }})
     <v-tooltip
       activator="parent"
     >
       {{ fullDateTime }}
     </v-tooltip>
-  </p>
+  </div>
 </template>
 
 <script setup lang="ts">
