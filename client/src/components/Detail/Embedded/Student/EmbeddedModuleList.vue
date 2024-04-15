@@ -26,28 +26,37 @@
           </span>
         </div>
       </div>
-      <v-icon
-        v-if="!readOnlyMode"
-        @click.stop="remove(mod)"
-        color="white"
-        style="cursor: pointer; margin-left: auto;"
-        class="delete-module"
+
+      <v-spacer></v-spacer>
+
+      <div
+        class="d-flex"
+        style="gap: 10px;"
       >
-        mdi-close
-      </v-icon>
+
+        <ActionButtons
+          v-if="!readOnlyMode"
+          :item="mod"
+          :actions="actions"
+        />
+
+      </div>
     </v-sheet>
+
   </div>
 </template>
 
 <script setup lang="ts">
-import type { Module } from "@apptypes/sheetItems"
-import { useSheetManager } from '@store/useSheetManager'
 import { storeToRefs } from "pinia";
+import { useSheetManager } from '@store/useSheetManager'
+import type { Module } from "@apptypes/sheetItems"
+import ActionButtons from './ActionButtons.vue';
+import { useActions } from './EAction';
 
 const sheetManager = useSheetManager()
 const { getActiveEmbeddedPanel, readOnlyMode } = storeToRefs(sheetManager)
 
-const props = defineProps<{
+defineProps<{
   items: Module[];
 }>();
 
@@ -58,6 +67,8 @@ const emits = defineEmits([
 
 const select = (event: Module) => emits('selected', event);
 const remove = (event: Module) => emits('delete', event);
+
+const actions = useActions(remove)
 </script>
 
 <style scoped>
@@ -70,13 +81,5 @@ const remove = (event: Module) => emits('delete', event);
 
 .module-card:hover {
   background: rgb(255, 145, 19) !important;
-}
-
-.delete-module {
-  transition: 300ms;
-}
-
-.delete-module:hover {
-  transform: scale(1.15);
 }
 </style>
