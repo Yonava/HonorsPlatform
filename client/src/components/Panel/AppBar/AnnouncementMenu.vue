@@ -106,17 +106,9 @@
               </p>
             </div>
             <v-spacer></v-spacer>
-            <p
-              style="font-size: 0.8rem; position: absolute; top: 5px; right: 10px;"
-              class="ma-3"
-            >
-              {{ daysAgo(announcement.datePosted) }}
-              <v-tooltip
-                activator="parent"
-              >
-                {{ fullDateTime(announcement.datePosted) }}
-              </v-tooltip>
-            </p>
+            <AnnouncementDate
+              :date="announcement.datePosted"
+            />
           </div>
         </v-list-item>
       </div>
@@ -126,9 +118,10 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import { storeToRefs } from 'pinia';
+import { storeToRefs } from 'pinia'
 import { useDisplay } from 'vuetify'
 import { useDocumentCache } from '@store/useDocumentCache'
+import AnnouncementDate from './AnnouncementDate.vue'
 
 const { smAndDown } = useDisplay()
 
@@ -173,36 +166,6 @@ const icon = computed(() => {
 
   return `mdi-message-${innerIcon}${outlined}`
 })
-
-const daysAgo = (date: string) => {
-  const today = new Date()
-  const datePosted = new Date(date)
-  const diff = today.getTime() - datePosted.getTime()
-  const days = Math.floor(diff / (1000 * 60 * 60 * 24))
-
-  if (days === 0) {
-    return 'Today'
-  } else if (days === 1) {
-    return 'Yesterday'
-  } else {
-    return `${days} days ago`
-  }
-}
-
-const fullDateTime = (date: string) => {
-  const datePosted = new Date(date)
-  const dateString = datePosted.toLocaleDateString([], {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  })
-  const timeString = datePosted.toLocaleTimeString([], {
-    hour: '2-digit',
-    minute: '2-digit'
-  })
-  return `${dateString} at ${timeString}`
-}
 </script>
 
 <style scoped>
