@@ -1,7 +1,6 @@
 <template>
   <ModalContent
     v-model="showDialog"
-
   >
     <div class="d-flex justify-center align-center">
       <v-card

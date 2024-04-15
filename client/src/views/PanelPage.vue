@@ -58,7 +58,7 @@
           :style="panelListResizeTabStyles"
         ></v-sheet>
 
-        <ItemDetail v-if="mdAndUp"/>
+        <ItemDetail v-if="mdAndUp" />
 
       </div>
 

@@ -34,6 +34,7 @@ export type SidebarAction = {
 /**
  * Represents a sidebar action generating function that takes a sheet item and returns a sidebar action.
  * if the action cannot be performed on the item, it should return undefined so that it can be filtered out.
+ * We call it an action generating function because it generates the action based on the item.
  * @template T The type of the sheet item.
  */
 export type SidebarActionFunction<T extends SheetItem = SheetItem> = (item: T) => SidebarAction | undefined

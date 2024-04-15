@@ -1,10 +1,13 @@
 <template>
   <div>
     <div class="d-flex flex-row align-center mb-2">
+
       <h2>
         {{ text.title }}
       </h2>
+
       <v-spacer></v-spacer>
+
       <v-btn
         @click="addEmbeddedItem"
         :disabled="readOnlyMode"
@@ -16,7 +19,9 @@
         </v-icon>
         {{ text.add }}
       </v-btn>
+
     </div>
+
     <div
       v-if="loadingItems"
       class="d-flex flex-row justify-center"
@@ -27,15 +32,17 @@
         class="ma-4"
       ></v-progress-circular>
     </div>
+
     <div
       v-else-if="displayedItems.length === 0"
       style="font-weight: 200; color: red; font-size: 25px"
     >
       {{ text.noItemsToDisplay }}
     </div>
+
     <div
       v-else
-      style="max-height: 300px; overflow: auto"
+      style="max-height: 300px; overflow: auto;"
     >
       <component
         :is="getActivePanel.embedded.list"
@@ -44,6 +51,7 @@
         :items="displayedItems"
       />
     </div>
+
     <component
       v-if="focusedEmbeddedItem && item.sysId === focusedEmbeddedItem.studentSysId"
       :is="getActivePanel.embedded.detail"

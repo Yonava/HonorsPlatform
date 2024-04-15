@@ -68,6 +68,10 @@ const remove = (event: Module) => emits('delete', event);
   cursor: pointer;
 }
 
+.module-card:hover {
+  background: rgb(255, 145, 19) !important;
+}
+
 .delete-module {
   transition: 300ms;
 }
