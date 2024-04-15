@@ -18,7 +18,7 @@
     <v-tooltip
       v-if="!smAndDown"
       activator="parent"
-      location="top"
+      location="bottom"
     >
       {{ action.tooltip }}
     </v-tooltip>
