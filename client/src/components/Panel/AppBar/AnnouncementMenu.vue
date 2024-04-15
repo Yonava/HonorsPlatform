@@ -1,7 +1,7 @@
 <template>
   <v-menu
     v-model="open"
-    :offset="[8, 0]"
+    :offset="smAndDown ? [8, 0] : [0, 0]"
   >
     <template v-slot:activator="{ props }">
       <div
@@ -129,6 +129,11 @@ watch(announcements, (newList) => {
   }
 
   previousListLength.value = newList.length
+
+  // reset badge number if the menu is already open
+  if (open.value) {
+    badgeNumber.value = 0
+  }
 }, { deep: true })
 
 const icon = computed(() => {
