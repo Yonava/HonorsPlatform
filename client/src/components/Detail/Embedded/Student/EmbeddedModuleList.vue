@@ -4,7 +4,7 @@
       v-for="mod in items"
       :key="mod.sysId"
       @click="select(mod)"
-      :color="getActiveEmbeddedPanel.color + '-darken-2'"
+      :color="getActiveEmbeddedPanel!.color + '-darken-2'"
       class="module-card pa-2 mt-2 d-flex flex-row align-center"
     >
       <div>
@@ -41,6 +41,7 @@
         />
 
       </div>
+
     </v-sheet>
 
   </div>
@@ -50,8 +51,8 @@
 import { storeToRefs } from "pinia";
 import { useSheetManager } from '@store/useSheetManager'
 import type { Module } from "@apptypes/sheetItems"
-import ActionButtons from './ActionButtons.vue';
-import { useActions } from './EAction';
+import ActionButtons from '../ActionButtons.vue';
+import { useActions } from '../EAction';
 
 const sheetManager = useSheetManager()
 const { getActiveEmbeddedPanel, readOnlyMode } = storeToRefs(sheetManager)

@@ -7,8 +7,10 @@
   >
 
     <v-icon
-      :color="hoveredAction === index ? 'white' : 'rgba(255,255,255,0.5)'"
-      class="action-icon"
+      :color="itemColor(index)"
+      :class="{
+        'action-icon': !smAndDown,
+      }"
     >
       {{ action.icon(hoveredAction === index) }}
     </v-icon>
@@ -26,11 +28,14 @@
 <script setup lang="ts" generic="T">
 import { ref, computed } from 'vue'
 import { storeToRefs } from "pinia";
+import { useDisplay } from 'vuetify'
 import { useSheetManager } from '@store/useSheetManager'
 import type { Action } from './EAction';
 
 const sheetManager = useSheetManager()
 const { readOnlyMode } = storeToRefs(sheetManager)
+
+const { smAndDown } = useDisplay()
 
 const hoveredAction = ref(-1);
 
@@ -42,6 +47,11 @@ const props = defineProps<{
 const displayedActions = computed(() => {
   return props.actions.filter(action => !action.disableInReadOnlyMode || !readOnlyMode)
 })
+
+const itemColor = (index: number) => {
+  if (smAndDown.value) return 'white'
+  return hoveredAction.value === index ? 'white' : 'rgba(255,255,255,0.5)'
+}
 </script>
 
 <style scoped>
