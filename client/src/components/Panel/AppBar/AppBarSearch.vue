@@ -1,6 +1,7 @@
 <template>
   <input
     v-model="searchFilter"
+    ref="searchBar"
     placeholder="Search"
     class="search-input"
     type="text"
@@ -9,10 +10,18 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from "vue";
+import { useDisplay } from 'vuetify'
 import { useSheetManager } from "@store/useSheetManager";
 import { storeToRefs } from "pinia";
+import { useFocusOnMount } from "@composables/useInputFocus";
 
 const { searchFilter } = storeToRefs(useSheetManager())
+
+const { smAndDown } = useDisplay()
+
+const searchBar = ref()
+if (smAndDown.value) useFocusOnMount(searchBar)
 </script>
 
 <style scoped>

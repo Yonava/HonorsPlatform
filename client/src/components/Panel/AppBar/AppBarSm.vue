@@ -7,13 +7,18 @@
     :color="color"
     v-bind="$attrs"
   >
+
     <AppBarSearch
       v-if="searching"
       style="width: 100%"
       class="mr-3"
     />
+
     <PanelTitle v-else />
+
+
     <v-spacer v-if="!searching"></v-spacer>
+
     <div
       class="d-flex"
       style="gap: 4px"
@@ -63,12 +68,6 @@ const searchIcon = computed(() => searching.value ? "mdi-close" : "mdi-magnify")
 
 const toggleSearch = () => {
   searching.value = !searching.value
-  if (searching.value) {
-    setTimeout(() => {
-      const searchBar = document.getElementById("search-bar")!
-      searchBar.focus()
-    }, 10)
-  }
 }
 
 watchEffect(() => {
