@@ -18,6 +18,7 @@
     <v-spacer></v-spacer>
 
     <v-btn
+      v-if="!smAndDown"
       @click.stop="makeAnnouncement"
       :color="getActivePanel.color"
       icon
@@ -36,9 +37,12 @@
 
 <script setup lang="ts">
 import { storeToRefs } from "pinia";
+import { useDisplay } from "vuetify";
 import { useDialog } from "@store/useDialog";
 import { useSheetManager } from "@store/useSheetManager";
 import PostAnnouncement from "@components/Panel/PostAnnouncement.vue";
+
+const { smAndDown } = useDisplay();
 
 const sheetManager = useSheetManager();
 const { getActivePanel } = storeToRefs(sheetManager);

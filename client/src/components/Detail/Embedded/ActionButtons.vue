@@ -16,6 +16,7 @@
     </v-icon>
 
     <v-tooltip
+      v-if="!smAndDown"
       activator="parent"
       location="top"
     >

@@ -39,7 +39,7 @@
     </template>
 
     <v-list
-      style="max-width: 90vw; width: 500px"
+      style="max-width: 95vw; width: 500px"
       class="pa-3"
     >
 
