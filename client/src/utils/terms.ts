@@ -1,3 +1,6 @@
+import { computed, toRef } from 'vue';
+import type { MaybeRefOrGetter } from 'vue';
+
 /*
   the first 2 numbers should be the year
   the following characters contain the season identifier
@@ -48,11 +51,19 @@ export function termInputValidator() {
   return [(v: string) => termValidator(v) || 'Potentially Invalid Term']
 }
 
-export function getCurrentTerm() {
-  const date = new Date();
+export function getTerm(date: Date) {
   const year = date.getFullYear() - 2000;
   const month = date.getMonth();
 
   let seasonIdentifier = month < 7 ? 'SPDAY' : 'FADAY';
   return `${year}${seasonIdentifier}`;
+}
+
+export function getCurrentTerm() {
+  return getTerm(new Date());
+}
+
+export function useTerm(termInput: MaybeRefOrGetter<string>) {
+  const term = toRef(termInput);
+  return computed(() => getTerm(new Date(term.value)));
 }

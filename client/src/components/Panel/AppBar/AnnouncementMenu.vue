@@ -1,5 +1,8 @@
 <template>
-  <v-menu v-model="open">
+  <v-menu
+    v-model="open"
+    :offset="[8, 0]"
+  >
     <template v-slot:activator="{ props }">
       <div
         v-bind="props"

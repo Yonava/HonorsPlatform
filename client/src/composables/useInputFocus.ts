@@ -10,9 +10,10 @@ export function useInputFocus<T extends HTMLElement | null | undefined>(
   el: Ref<T>,
   options: InputFocusOptions = {}
 ) {
+
   const {
     focusOnMounted = false,
-    delayMs = 250
+    delayMs = 25
   } = options
 
   const engageFocus = () => {

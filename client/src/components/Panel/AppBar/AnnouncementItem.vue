@@ -1,7 +1,8 @@
 <template>
   <v-sheet
-    class="d-flex flex-row announcement pa-3 mb-2"
+    class="d-flex announcement pa-3 mb-2"
     style="gap: 12px; position: relative;"
+    ref="announcementItem"
     color="grey-lighten-3"
   >
 
@@ -15,6 +16,10 @@
       <h4>
         {{ announcement.posterName }}
       </h4>
+      <AnnouncementDate
+        v-if="collapseDate"
+        :date="announcement.datePosted"
+      />
       <p>
         {{ announcement.content }}
       </p>
@@ -22,14 +27,24 @@
 
     <v-spacer></v-spacer>
 
-    <AnnouncementDate :date="announcement.datePosted" />
+    <AnnouncementDate
+      v-if="!collapseDate"
+      :date="announcement.datePosted"
+    />
 
   </v-sheet>
 </template>
 
 <script setup lang="ts">
+import { ref, computed } from 'vue'
+import { useElementSize } from '@vueuse/core'
 import type { Announcement } from '@apptypes/misc'
 import AnnouncementDate from './AnnouncementDate.vue'
+
+const announcementItem = ref()
+const { width } = useElementSize(announcementItem)
+
+const collapseDate = computed(() => width.value < 420)
 
 defineProps<{
   announcement: Announcement

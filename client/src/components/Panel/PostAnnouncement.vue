@@ -8,6 +8,7 @@
       <v-textarea
         v-model="announcement"
         :disabled="posting"
+        ref="announcementInput"
         label="Announcement"
         variant="outlined"
         prepend-inner-icon="mdi-message-text"
@@ -45,7 +46,9 @@
         size="large"
         class="mt-4"
       >
-        <v-icon class="mr-2"> mdi-message-arrow-right </v-icon>
+        <v-icon class="mr-2">
+          mdi-message-arrow-right
+        </v-icon>
         Post
       </v-btn>
     </v-card>
@@ -55,11 +58,15 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import { storeToRefs } from "pinia";
+import { panels, PanelRange } from "@panels";
 import { useDialog } from "@store/useDialog";
 import { useAuth } from "@store/useAuth";
 import { useDocumentCache } from "@store/useDocumentCache";
 import { useSheetManager } from "@store/useSheetManager";
-import { panels } from "@panels";
+import { useFocusOnMount } from "@composables/useInputFocus";
+
+const announcementInput = ref();
+useFocusOnMount(announcementInput);
 
 const auth = useAuth();
 const { user } = storeToRefs(auth);
@@ -101,7 +108,7 @@ const expiryDateOptions = [
 
 const expiryDate = ref(expiryDateOptions[0]);
 
-const panelType = ref<string[]>([]);
+const panelType = ref<PanelRange[]>([]);
 
 const postNewAnnouncement = async () => {
   posting.value = true;
