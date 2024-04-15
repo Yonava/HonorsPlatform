@@ -36,24 +36,12 @@
     </template>
 
     <v-list
-      style="max-width: 80vw; width: 500px"
-      class="pa-5"
+      style="max-width: 90vw; width: 500px"
+      class="pa-3"
     >
-      <div
-        class="d-flex align-center mb-4"
-      >
-        <v-icon
-          size="x-large"
-          class="mr-3"
-        >
-          mdi-bullhorn-variant
-        </v-icon>
-        <h1
-          style="line-height: 1"
-        >
-          Announcements
-        </h1>
-      </div>
+
+      <AnnouncementHeader />
+
       <div
         v-if="cacheRefreshInProgress"
         class="d-flex justify-center"
@@ -64,6 +52,7 @@
           class="ma-10"
         ></v-progress-circular>
       </div>
+
       <div
         v-else-if="announcements.length === 0"
         class="d-flex justify-center"
@@ -78,39 +67,19 @@
           No Active Announcements!
         </h2>
       </div>
-      <div style="max-height: 400px; overflow: auto">
-        <v-list-item
-          v-for="announcement in announcements"
-          :key="announcement.content"
-          :style="{
-            background: `rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 0.5)`
-          }"
-          class="announcement pa-3 mt-3"
-        >
-          <div
-            class="d-flex flex-row"
-            style="gap: 12px;"
-          >
-            <img
-              style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%"
-              :src="announcement.posterPhoto"
-              alt="Poster Photo"
-            >
 
-            <div>
-              <h4>
-                {{ announcement.posterName }}
-              </h4>
-              <p>
-                {{ announcement.content }}
-              </p>
-            </div>
-            <v-spacer></v-spacer>
-            <AnnouncementDate
-              :date="announcement.datePosted"
-            />
-          </div>
-        </v-list-item>
+      <div
+        v-else
+        style="max-height: 400px; overflow: auto"
+      >
+
+        <div
+          v-for="announcement in announcements"
+          :key="announcement.sysId"
+        >
+          <AnnouncementItem :announcement="announcement" />
+        </div>
+
       </div>
     </v-list>
   </v-menu>
@@ -121,7 +90,8 @@ import { ref, computed, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useDisplay } from 'vuetify'
 import { useDocumentCache } from '@store/useDocumentCache'
-import AnnouncementDate from './AnnouncementDate.vue'
+import AnnouncementItem from './AnnouncementItem.vue'
+import AnnouncementHeader from './AnnouncementHeader.vue'
 
 const { smAndDown } = useDisplay()
 
@@ -171,6 +141,7 @@ const icon = computed(() => {
 <style scoped>
 .announcement {
   font-size: 1.2rem;
-  border-radius: 5px;
+  border-radius: 20px;
+  box-shadow: 5px 1px 5px 0 rgba(0, 0, 0, 0.05);
 }
 </style>

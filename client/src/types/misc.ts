@@ -6,7 +6,7 @@ export type Primitive = string | number | boolean | null | undefined;
 export const thesisDecisions = ["Pending", "Approved", "Rejected"] as const;
 export type ThesisDecision = typeof thesisDecisions[number];
 
-export interface Announcement {
+export type Announcement = {
   sysId: string,
   posterName: string,
   posterPhoto: string,

@@ -1,6 +1,6 @@
 <template>
   <p
-    style="font-size: 0.8rem; position: absolute; top: 5px; right: 10px;"
+    style="font-size: 0.8rem; position: absolute; top: 5px; right: 10px; cursor: default;"
     class="ma-3"
   >
     {{ postDateDisplay }}
