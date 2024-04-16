@@ -3,10 +3,8 @@ import axios from "axios";
 import { local, localKeys } from "@locals";
 import { useDialog } from "@store/useDialog";
 import { useSheetManager } from "@store/useSheetManager";
-import { useSocket } from "@store/useSocket";
 import { getUser } from "@utils/users";
 import type { User } from "@utils/users";
-import router from "../router";
 
 export type ServerError =
   'NO_SHEET_ACCESS' |

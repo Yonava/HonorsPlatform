@@ -83,6 +83,7 @@ export const callProtectedResources = async <
       return;
     }
 
+    // TODO add check for max recursive depth
     return callProtectedResources<TReturn, TRequestBody>(reqOptions);
   }
 }
