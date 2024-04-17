@@ -3,6 +3,7 @@
     style="height: 100%; width: 100%; overflow: auto; position: relative;"
     class="d-flex flex-grow-1 flex-row align-center"
   >
+
     <div
       v-if="movementObject"
       @dragenter="dragStateMove = true"
@@ -20,6 +21,7 @@
         gap: '10px',
       }"
     ></div>
+
     <v-sheet
       v-if="movementObject && !readOnlyMode"
       :color="movementObject.to.color"
@@ -50,6 +52,7 @@
         color="green"
         class="d-flex align-center justify-center"
       >
+
         <v-icon
           v-if="!movingItem"
           :style="{
@@ -62,11 +65,14 @@
         >
           mdi-arrow-right
         </v-icon>
+
         <v-progress-circular
           v-else
           indeterminate
         ></v-progress-circular>
+
       </v-sheet>
+
       <div style="color: white">
         <v-icon
           size="x-large"
@@ -78,7 +84,9 @@
           Drag To {{ movementObject.to.title.plural }}
         </b>
       </div>
+
     </v-sheet>
+
     <div
       @dragenter="dragState = true"
       @dragleave="dragState = false"
@@ -92,6 +100,7 @@
         pointerEvents: allowPointerEvents ? 'all' : 'none'
       }"
     ></div>
+
     <v-sheet
       v-for="item in useDocumentCache()[getActivePanel.sheetRange].selected"
       :key="item.sysId"
@@ -108,6 +117,7 @@
         :item="item"
       />
     </v-sheet>
+
     <v-sheet
       v-if="dragState"
       :color="getActivePanel.color"
@@ -122,6 +132,7 @@
         {{ getActivePanel.icon }}
       </v-icon>
     </v-sheet>
+
     <div
       v-if="!useDocumentCache()[getActivePanel.sheetRange].selected.length && !dragState"
       class="justify-center d-flex"
@@ -131,6 +142,7 @@
         {{ getActivePanel.icon }}
       </v-icon>
     </div>
+
   </v-sheet>
 </template>
 
@@ -139,11 +151,14 @@ import { ref, computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useSheetManager } from '@store/useSheetManager';
 import { useDocumentCache } from '@store/useDocumentCache';
+import { useDialog } from '@store/useDialog';
 import { SheetItem } from '@apptypes/sheetItems';
 import { useMoveItem } from '@composables/useMoveItem'
 
 const dragState = ref(false)
 const dragStateMove = ref(false)
+
+const { openSnackbar } = useDialog()
 
 const sheetManager = useSheetManager()
 const {
@@ -152,9 +167,10 @@ const {
   focusedItemSysId,
   readOnlyMode
 } = storeToRefs(sheetManager)
+
 const { setFocusedItem } = sheetManager
 
-const { addSelectedItem } = useDocumentCache()
+const { addSelectedItem, getSelectedItems } = useDocumentCache()
 
 const moveWidgetActive = computed(() => {
   return listItemBeingDragged.value || movingItem.value
@@ -162,12 +178,25 @@ const moveWidgetActive = computed(() => {
 
 const { moveItem, movingItem, movementObject } = useMoveItem()
 
+const MAX_SELECTED_ITEMS = 4
+
 const drop = () => {
+
   dragState.value = false
   const item = listItemBeingDragged.value
-  if (item) {
-    addSelectedItem({ item })
+  if (!item) return
+
+  const selectedItems = getSelectedItems()
+
+  if (selectedItems.length >= MAX_SELECTED_ITEMS) {
+    const text = `
+      You may only actively edit ${MAX_SELECTED_ITEMS} ${getActivePanel.value.title.plural.toLowerCase()} at a time
+    `
+    openSnackbar({ text });
+    return
   }
+
+  addSelectedItem({ item })
 }
 
 const dropMove = () => {
