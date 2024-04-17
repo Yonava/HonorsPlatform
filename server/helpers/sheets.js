@@ -48,7 +48,7 @@ function executeGoogleSheetRequest(req, res) {
       res.status(200).json(data);
     } catch (e) {
 
-      console.log('Request failed', e)
+      console.log('Request to', req.originalUrl, 'failed');
 
       // Check if the error is a 401 or 403, if so, return the error
       if (e.code === 401 || e.code === 403) {
@@ -60,13 +60,15 @@ function executeGoogleSheetRequest(req, res) {
         return;
       }
 
+      console.log('Error to', req.originalUrl, 'failed with error:', e, 'Retrying...');
+
       if (retries < MAX_RETRIES) {
         console.log('Retrying in', RETRY_INTERVAL, 'ms');
         await new Promise((resolve) => setTimeout(resolve, RETRY_INTERVAL));
         return makeRequest(fn, retries + 1);
       }
 
-      console.log('Failed to execute request');
+      console.log('Request to', req.originalUrl, 'failed after', MAX_RETRIES, 'retries');
 
       res.status(500).json({
         error: 'Failed to execute request',
