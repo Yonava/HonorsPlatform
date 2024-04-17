@@ -42,8 +42,6 @@
 
     </InputCoupler>
 
-    {{ module.row || 'No Row Assigned' }}
-
     <template #right-button>
       <v-btn
         @click="moveItem(module)"

@@ -70,7 +70,7 @@
 
 <script setup lang="ts">
 import { watch } from 'vue'
-import { get, useVirtualList } from '@vueuse/core'
+import { useVirtualList } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { useSheetManager } from '@store/useSheetManager'
 import { useDocumentCache } from '@store/useDocumentCache'
@@ -85,6 +85,7 @@ const { getSelectedItems } = useDocumentCache()
 watch(searchFilter, () => scrollTo(0))
 
 watch(getActivePanel, (panel) => {
+  scrollTo(0)
   const [ item ] = getSelectedItems(panel)
   if (!item) return
   const index = filteredItems.value.findIndex((i) => i.sysId === item.sysId);

@@ -1,5 +1,5 @@
 <template>
-  <div
+  <button
     v-for="(action, index) in displayedActions"
     @click.stop="action.onClick(props.item)"
     @mouseover="hoveredAction = index"
@@ -23,7 +23,7 @@
       {{ action.tooltip }}
     </v-tooltip>
 
-  </div>
+  </button>
 </template>
 
 <script setup lang="ts" generic="T">
@@ -51,7 +51,7 @@ const displayedActions = computed(() => {
 
 const itemColor = (index: number) => {
   if (smAndDown.value) return 'white'
-  return hoveredAction.value === index ? 'white' : 'rgba(255,255,255,0.5)'
+  return hoveredAction.value === index ? 'white' : 'rgba(255, 255, 255, 0.7)'
 }
 </script>
 
@@ -62,5 +62,13 @@ const itemColor = (index: number) => {
 
 .action-icon:hover {
   transform: scale(1.25);
+}
+
+/*
+  when using a keyboard to tab over, action-icon should be white
+  TODO debug why this is not working
+*/
+.action-icon:focus {
+  color: white !important;
 }
 </style>
