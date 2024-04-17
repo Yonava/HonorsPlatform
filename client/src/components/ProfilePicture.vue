@@ -23,6 +23,6 @@ const errorLoadingImage = ref(false)
 const BACKUP_IMAGE = 'https://images.emojiterra.com/mozilla/1024px/2753.png'
 
 const profilePicture = computed(() => {
-  return errorLoadingImage.value ? BACKUP_IMAGE : props.src
+  return errorLoadingImage.value ? BACKUP_IMAGE : BACKUP_IMAGE
 })
 </script>

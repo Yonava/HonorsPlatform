@@ -6,10 +6,14 @@
       :timeout="snackbar.timeout"
     >
       <div class="d-flex flex-row align-center">
-        <img
+        <ProfilePicture
           v-if="snackbar.img"
           :src="snackbar.img"
-          style="width: 34px; height: 34px; border-radius: 50%; margin-right: 8px;"
+          :style="{
+            width: '34px',
+            height: '34px',
+            marginRight: '8px'
+          }"
         />
 
         {{ snackbar.text }}
@@ -47,6 +51,7 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia';
 import { useDialog } from '@store/useDialog';
+import ProfilePicture from './components/ProfilePicture.vue';
 
 const dialogState = useDialog();
 const { snackbar } = storeToRefs(dialogState);

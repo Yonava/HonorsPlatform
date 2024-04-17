@@ -83,21 +83,16 @@
                 cursor: 'pointer',
               }"
             >
-              <img
-                :src="account.picture"
-                :style="{
-                  width: '100%',
-                  height: '100%',
-                  borderRadius: '50%',
-                  objectFit: 'cover',
-                }"
-              />
+
+              <ProfilePicture :src="account.picture" />
+
               <v-tooltip
                 activator="parent"
                 location="bottom"
               >
                 {{ account.given_name }}
               </v-tooltip>
+
             </div>
           </div>
         </v-sheet>
@@ -114,6 +109,7 @@ import { panels, type Panel, type PanelName } from "@panels";
 import { useSheetManager } from "@store/useSheetManager";
 import { useSocket } from "@store/useSocket";
 import { useDocumentCache } from "@store/useDocumentCache";
+import ProfilePicture from "../../ProfilePicture.vue";
 
 const { getUniqueConnectedSockets, focusData } = storeToRefs(useSocket());
 const { lgAndUp } = useDisplay();

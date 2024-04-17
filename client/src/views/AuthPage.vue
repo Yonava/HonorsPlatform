@@ -3,17 +3,20 @@
     class="d-flex align-center justify-center flex-column"
     height="100%"
   >
+
     <v-progress-circular
       v-if="loading"
       indeterminate
       color="blue-darken-2"
       size="64"
     ></v-progress-circular>
+
     <img
       v-if="!loading"
       src="../assets/honorsLogo.jpeg"
       class="logo"
     />
+
     <v-sheet
       v-if="!loading"
       class="d-flex align-center justify-center flex-column"
