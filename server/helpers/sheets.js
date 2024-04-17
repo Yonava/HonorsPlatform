@@ -14,7 +14,7 @@ const GoogleSheet = require('../GoogleSheet');
  * @returns {void}
  * @throws {Object} - responds with a 401 status code if GoogleSheet constructor throws
 */
-async function attachSheetInstanceToRequest(req, res, next) {
+async function attachSheetInstance(req, res, next) {
   const { accessToken } = req;
   try {
     req.sheet = new GoogleSheet(accessToken);
@@ -39,16 +39,17 @@ async function attachSheetInstanceToRequest(req, res, next) {
 function executeGoogleSheetRequest(req, res) {
   const MAX_RETRIES = 3;
   const RETRY_INTERVAL = 2000;
+  const identifier = `${req.method} ${req.originalUrl}`;
 
   const makeRequest = async (fn, retries = 0) => {
     try {
-      console.log('Requesting to', req.originalUrl)
+      console.log('Request to', identifier, 'pending')
       const data = await fn(req.sheet);
-      console.log('Request to', req.originalUrl, 'successful');
+      console.log('Request to', identifier, 'successful');
       res.status(200).json(data);
     } catch (e) {
 
-      console.log('Request to', req.originalUrl, 'failed');
+      console.log('Request to', identifier, 'failed');
 
       // Check if the error is a 401 or 403, if so, return the error
       if (e.code === 401 || e.code === 403) {
@@ -60,7 +61,7 @@ function executeGoogleSheetRequest(req, res) {
         return;
       }
 
-      console.log('Error to', req.originalUrl, 'failed with error:', e, 'Retrying...');
+      console.log('Error to', identifier, 'failed with error:', e, 'Retrying...');
 
       if (retries < MAX_RETRIES) {
         console.log('Retrying in', RETRY_INTERVAL, 'ms');
@@ -68,7 +69,7 @@ function executeGoogleSheetRequest(req, res) {
         return makeRequest(fn, retries + 1);
       }
 
-      console.log('Request to', req.originalUrl, 'failed after', MAX_RETRIES, 'retries');
+      console.log('Request to', identifier, 'failed after', MAX_RETRIES, 'retries');
 
       res.status(500).json({
         error: 'Failed to execute request',
@@ -80,12 +81,12 @@ function executeGoogleSheetRequest(req, res) {
   return makeRequest;
 }
 
-function addExecuteGoogleSheetRequest(req, res, next) {
+function attachExecuteGoogleSheetRequest(req, res, next) {
   req.execSheetRequest = executeGoogleSheetRequest(req, res);
   next();
 }
 
 module.exports = {
-  attachSheetInstanceToRequest,
-  addExecuteGoogleSheetRequest,
+  attachSheetInstance,
+  attachExecuteGoogleSheetRequest,
 };

@@ -6,9 +6,9 @@
     @mouseleave="setHovered(false)"
     :draggable="mdAndUp && !isSelected"
     :class="[
+      isSelected ? 'selected-item-card' : '',
       'item-card',
       'pa-4',
-      isSelected ? 'selected-item-card' : '',
       'd-flex',
       'flex-row'
     ]"

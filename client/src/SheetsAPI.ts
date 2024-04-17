@@ -81,16 +81,16 @@ export async function updateByRow(range: Range, row: number, data: string[][]) {
 }
 
 export async function postInRange(range: Range, data: string[][]) {
-  const res = await callProtectedResources<{ row: number }>({
+  const row = await callProtectedResources<number>({
     method: "POST",
     url: `${URIs.sheets}/range/${range}`,
     data
   })
-  if (!res) {
+  if (!row) {
     console.error("no row returned from postInRange")
     throw new Error("no row returned from postInRange")
   }
-  return res.row;
+  return row;
 }
 
 export function getHeaderRowCache(range: Range) {

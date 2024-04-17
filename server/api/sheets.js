@@ -8,15 +8,15 @@
 const express = require('express');
 const { provideAccessToken } = require('../helpers/auth');
 const {
-  attachSheetInstanceToRequest,
-  addExecuteGoogleSheetRequest
+  attachSheetInstance,
+  attachExecuteGoogleSheetRequest
 } = require('../helpers/sheets');
 
 const router = express.Router();
 
 router.use(provideAccessToken);
-router.use(attachSheetInstanceToRequest);
-router.use(addExecuteGoogleSheetRequest);
+router.use(attachSheetInstance);
+router.use(attachExecuteGoogleSheetRequest);
 
 router.get("/range/:range", async (req) => {
   const { range } = req.params;

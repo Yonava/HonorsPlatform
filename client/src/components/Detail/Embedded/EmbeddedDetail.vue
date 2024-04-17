@@ -27,7 +27,7 @@
       class="d-flex flex-row justify-center"
     >
       <v-progress-circular
-        :color="getActiveEmbeddedPanel.color"
+        :color="getActiveEmbeddedPanel!.color"
         indeterminate
         class="ma-4"
       ></v-progress-circular>
@@ -45,9 +45,9 @@
       style="max-height: 300px; overflow: auto;"
     >
       <component
-        :is="getActivePanel.embedded.list"
         @selected="setFocusedEmbeddedItem($event)"
         @delete="deleteEmbeddedItem($event)"
+        :is="getActivePanel.embedded.list"
         :items="displayedItems"
       />
     </div>
@@ -56,16 +56,17 @@
       v-if="focusedEmbeddedItem && item.sysId === focusedEmbeddedItem.studentSysId"
       :is="getActivePanel.embedded.detail"
     />
+
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed, toRefs } from 'vue'
+import { storeToRefs } from 'pinia'
 import { SheetItem } from '@apptypes/sheetItems'
 import { useSheetManager } from '@store/useSheetManager'
 import { useUpdateManager } from '@store/useUpdateManager'
 import { useDocumentCache } from '@store/useDocumentCache'
-import { storeToRefs } from 'pinia'
 
 const sheetManager = useSheetManager()
 const { getActivePanel, getActiveEmbeddedPanel, setFocusedEmbeddedItem } = sheetManager
@@ -83,7 +84,7 @@ const props = defineProps<{
   item: SheetItem
 }>()
 
-const { list: items } = toRefs(documents[getActiveEmbeddedPanel.sheetRange])
+const { list: items } = toRefs(documents[getActiveEmbeddedPanel!.sheetRange])
 
 const displayedItems = computed(() => {
   if (!props.item[filterBy.outer]) {
@@ -97,12 +98,12 @@ const addEmbeddedItem = async () => {
   if (!props.item.row) {
     postItem({
       item: props.item,
-      panelName: getActiveEmbeddedPanel.panelName,
+      panelName: getActiveEmbeddedPanel!.panelName,
     })
   }
 
   const createdItem = await addItem({
-    panelName: getActiveEmbeddedPanel.panelName,
+    panelName: getActiveEmbeddedPanel!.panelName,
     columns: [
       props.item[filterBy.outer],
     ],
@@ -114,7 +115,7 @@ const addEmbeddedItem = async () => {
 const deleteEmbeddedItem = async (item: SheetItem) => {
   await deleteItem({
     item,
-    panelName: getActiveEmbeddedPanel.panelName,
+    panelName: getActiveEmbeddedPanel!.panelName,
   })
 }
 </script>

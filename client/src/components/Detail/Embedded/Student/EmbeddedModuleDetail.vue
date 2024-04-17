@@ -42,13 +42,15 @@
 
     </InputCoupler>
 
+    {{ module.row || 'No Row Assigned' }}
+
     <template #right-button>
       <v-btn
         @click="moveItem(module)"
         :loading="movingItem"
         :disabled="readOnlyMode"
         variant="outlined"
-        :color="getActiveEmbeddedPanel.color + '-darken-2'"
+        :color="getActiveEmbeddedPanel!.color + '-darken-2'"
       >
         complete
       </v-btn>
