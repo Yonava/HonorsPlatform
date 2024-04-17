@@ -6,10 +6,10 @@
     <div
       v-for="(account, i) in getUniqueConnectedSockets"
       @click="profileClicked(account)"
-      :key="account.id"
+      :key="account.socketId"
       :style="{
-        width: '100%',
-        height: '100%',
+        width: '50px',
+        height: '50px',
         transform: `translateX(${i * 80 * (reversed ? 1 : -1)}%)`,
         border: '2px solid rgba(255, 255, 255, 1)',
         cursor: 'pointer',
@@ -17,10 +17,9 @@
         boxShadow: '0 0 10px rgba(0, 0, 0, 0.5)',
       }"
     >
-      <img
-        style="width: 100%; height: 100%; border-radius: 50%;"
-        :src="account.picture"
-      />
+
+      <ProfilePicture :src="account.picture" />
+
       <v-tooltip
         :disabled="smAndDown"
         activator="parent"
@@ -28,6 +27,7 @@
       >
         {{ accountTooltip(account) }}
       </v-tooltip>
+
     </div>
   </div>
 </template>
@@ -39,8 +39,13 @@ import { useDisplay } from 'vuetify';
 import { panels } from '@panels';
 import { useSheetManager } from '@store/useSheetManager';
 import { useDocumentCache } from '@store/useDocumentCache';
-import { useSocket, type ConnectedSocket } from '@store/useSocket';
+import { useSocket } from '@store/useSocket';
+import type { ConnectedSocket } from '@store/useSocket';
+import ProfilePicture from '../../ProfilePicture.vue';
 
+/**
+ * @default justify = 'left'
+ */
 const props = defineProps<{
   justify?: 'left' | 'right'
 }>()

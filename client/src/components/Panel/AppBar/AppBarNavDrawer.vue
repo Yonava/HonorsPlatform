@@ -5,19 +5,25 @@
     width="350"
     class="pa-4"
   >
+
     <div
       class="d-flex"
       style="height: 48px;"
     >
+
       <ActiveAccounts />
+
       <v-spacer></v-spacer>
+
       <Announcements />
+
     </div>
 
     <div
       class="my-4 d-flex flex-column"
       style="gap: 12px;"
     >
+
       <AddItemBtn />
 
       <NavDrawerBlockBtn

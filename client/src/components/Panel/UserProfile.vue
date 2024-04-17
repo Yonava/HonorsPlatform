@@ -7,15 +7,10 @@
   >
     <v-sheet class="pa-4 d-flex flex-column align-center" style="width: 100%">
       <div style="width: 100px; height: 100px; position: relative">
-        <img
-          @error="errorLoadingPfp = true"
-          :src="profilePicture"
-          :alt="`Profile picture for ${user.googleProfile.name}`"
+
+        <ProfilePicture
+          :src="user.googleProfile.picture"
           :style="{
-            borderRadius: '50%',
-            width: '100px',
-            height: '100px',
-            objectFit: 'cover',
             boxShadow: '0 0 5px rgba(0, 0, 0, 0.3)',
           }"
         />
@@ -111,12 +106,11 @@ import { useSheetManager } from "@store/useSheetManager";
 import { useDocumentCache } from "@store/useDocumentCache";
 import { useDialog } from "@store/useDialog";
 import PostAnnouncement from "./PostAnnouncement.vue";
+import ProfilePicture from "../ProfilePicture.vue";
 
 const auth = useAuth();
 const { logout } = auth;
 const { user } = storeToRefs(auth);
-
-const errorLoadingPfp = ref(false);
 
 const sheetManager = useSheetManager();
 const { getActivePanel, focusedItemSysId, readOnlyMode } = storeToRefs(sheetManager);
@@ -144,11 +138,4 @@ const makeAnnouncement = () => {
   const { open } = useDialog();
   open({ component: PostAnnouncement });
 };
-
-const profilePicture = computed(() => {
-  if (errorLoadingPfp.value || !user.value) {
-    return 'https://images.emojiterra.com/mozilla/1024px/2753.png';
-  }
-  return user.value.googleProfile.picture;
-})
 </script>
