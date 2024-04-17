@@ -8,8 +8,8 @@
       @click="profileClicked(account)"
       :key="account.socketId"
       :style="{
-        width: '50px',
-        height: '50px',
+        width: '100%',
+        height: '100%',
         transform: `translateX(${i * 80 * (reversed ? 1 : -1)}%)`,
         border: '2px solid rgba(255, 255, 255, 1)',
         cursor: 'pointer',

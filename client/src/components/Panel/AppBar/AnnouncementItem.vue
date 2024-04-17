@@ -11,14 +11,11 @@
 
     <div class="d-flex align-center">
 
-      <img
+      <ProfilePicture
         :src="announcement.posterPhoto"
-        alt="Poster Photo"
         :style="{
           width: '50px',
           height: '50px',
-          objectFit: 'cover',
-          borderRadius: '50%',
           boxShadow: '0 0 5px 0 rgba(0, 0, 0, 0.2)'
         }"
       />
@@ -45,6 +42,7 @@
 import { ref, computed } from 'vue'
 import type { Announcement } from '@apptypes/misc'
 import AnnouncementDate from './AnnouncementDate.vue'
+import ProfilePicture from '../../ProfilePicture.vue';
 
 defineProps<{
   announcement: Announcement

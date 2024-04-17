@@ -48,15 +48,7 @@
             cursor: 'pointer',
           }"
         >
-          <img
-            :src="account.picture"
-            :style="{
-              width: '100%',
-              aspectRatio: '1 / 1',
-              borderRadius: '50%',
-              objectFit: 'cover',
-            }"
-          />
+          <ProfilePicture :src="account.picture" />
         </div>
 
       </div>
@@ -82,6 +74,7 @@ import { useDocumentCache } from '@store/useDocumentCache'
 import { useSocket } from '@store/useSocket'
 import type { SheetItem } from '@apptypes/sheetItems'
 import SidebarActions from './SidebarActions.vue'
+import ProfilePicture from '../../ProfilePicture.vue'
 
 const props = defineProps<{
   item: SheetItem

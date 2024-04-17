@@ -19,23 +19,16 @@
               boxShadow: '0 0 5px rgba(0, 0, 0, 0.3)',
             }"
           >
-            <img
-              :src="profilePicture"
-              alt="Profile"
-              :style="{
-                width: '100%',
-                height: '100%',
-                borderRadius: '50%',
-                objectFit: 'cover',
-              }"
-            />
 
-          <v-tooltip
-            activator="parent"
-            location="end"
-          >
-            View Profile
-          </v-tooltip>
+            <ProfilePicture :src="profilePicture" />
+
+            <v-tooltip
+              activator="parent"
+              location="end"
+            >
+              View Profile
+            </v-tooltip>
+
           </div>
         </template>
 
@@ -48,21 +41,26 @@
       location="top"
     >
       <template v-slot:activator="{ props }">
+
         <v-btn
           v-bind="props"
           :disabled="readOnlyMode"
           icon
         >
+
           <v-icon>
             mdi-list-box-outline
           </v-icon>
+
           <v-tooltip
             activator="parent"
             location="end"
           >
             Create Registrar List
           </v-tooltip>
+
         </v-btn>
+
       </template>
 
       <v-sheet
@@ -72,6 +70,7 @@
       >
         <BuildRegistrarList />
       </v-sheet>
+
     </v-menu>
 
     <v-menu
@@ -79,6 +78,7 @@
       location="top"
     >
       <template v-slot:activator="{ props }">
+
         <v-btn
           v-bind="props"
           icon
@@ -93,6 +93,7 @@
             My Mailing Lists
           </v-tooltip>
         </v-btn>
+
       </template>
 
       <v-sheet
@@ -102,6 +103,7 @@
       >
         <MailingListMenu />
       </v-sheet>
+
     </v-menu>
 
   </div>
@@ -115,6 +117,7 @@ import { storeToRefs } from 'pinia';
 import UserProfile from './UserProfile.vue';
 import MailingListMenu from './MailingLists/MailingListMenu.vue';
 import BuildRegistrarList from './BuildRegistrarList.vue';
+import ProfilePicture from '../ProfilePicture.vue';
 
 const auth = useAuth();
 const { user } = storeToRefs(auth);

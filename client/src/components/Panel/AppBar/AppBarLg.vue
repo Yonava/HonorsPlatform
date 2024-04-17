@@ -1,15 +1,21 @@
 <template>
   <v-app-bar :color="color">
+
     <PanelTitle />
+
     <AppBarSearch class="ml-4" />
+
     <v-spacer></v-spacer>
+
     <div
       class="mr-4"
       style="height: 40px"
     >
       <ActiveAccounts justify="right" />
     </div>
+
     <AddItemBtn />
+
     <div
       class="d-flex justify-space-around ml-4"
       style="width: 100px;"
@@ -17,6 +23,7 @@
       <Announcements />
       <AdditionalTools />
     </div>
+
   </v-app-bar>
 </template>
 
