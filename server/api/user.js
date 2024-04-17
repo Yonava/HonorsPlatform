@@ -7,6 +7,8 @@ const router = express.Router();
 
 router.use(provideAccessToken);
 
+const log = (route, error) => console.log(`Error in ${route}: ${error}`);
+
 /**
  * @name GET/api/user
  * @description sends the client the user's google profile data
@@ -19,8 +21,8 @@ router.get('/', async (req, res) => {
     const data = await getUserGoogleProfile(accessToken);
     res.json(data);
   } catch (e) {
-    console.log(e)
-    res.status(401).json({ error: 'Forbidden' });
+    log('/user', e);
+    res.status(403).json({ error: 'Forbidden' });
   }
 });
 
@@ -40,8 +42,8 @@ router.get('/permissions', async (req, res) => {
     const { read, write } = await sheet.getSheetPermissions();
     res.json({ read, write });
   } catch (e) {
-    console.log(e)
-    res.status(401).json({ error: 'Forbidden' });
+    log('/user/permissions', e);
+    res.status(403).json({ error: 'Forbidden' });
   }
 });
 

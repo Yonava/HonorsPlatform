@@ -72,6 +72,7 @@ export const callProtectedResources = async <
     });
     return data;
   } catch (e) {
+    console.error('error from protected resources', e);
     const err = e as { response: { data: TokenErrorResponse } };
     const { error } = err.response.data;
     if (error === 'NEW_CLIENT_TOKEN_ISSUED') {

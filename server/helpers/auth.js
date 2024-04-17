@@ -30,7 +30,7 @@ const {
  * @returns {ClientToken} a client token
  */
 function generateClientToken(googleOAuthAccessToken, googleOAuthRefreshToken) {
-  console.log('generating client token', googleOAuthAccessToken, googleOAuthRefreshToken)
+  // console.log('generating client token', googleOAuthAccessToken, googleOAuthRefreshToken)
   return jwt.sign({
     googleOAuthAccessToken,
     googleOAuthRefreshToken,
@@ -53,7 +53,7 @@ async function generateGoogleOAuthAccessToken(googleOAuthRefreshToken) {
   try {
     auth.setCredentials({ refresh_token: googleOAuthRefreshToken });
     const tokens  = await auth.refreshAccessToken();
-    console.log('new access token', tokens.credentials.access_token)
+    // console.log('new access token', tokens.credentials.access_token)
     return tokens.credentials.access_token;
   } catch (e) {
     throw AUTH_ERRORS.INVALID_GOOGLE_OAUTH_REFRESH_TOKEN;
@@ -75,7 +75,7 @@ async function generateGoogleOAuthTokens(googleOAuthCode) {
 
   try {
     const { tokens } = await auth.getToken(googleOAuthCode);
-    console.log('generated tokens', tokens)
+    // console.log('generated tokens', tokens)
     return {
       accessToken: tokens.access_token,
       refreshToken: tokens.refresh_token
@@ -97,21 +97,20 @@ async function generateGoogleOAuthTokens(googleOAuthCode) {
 async function handleIncomingClientToken(clientToken) {
   try {
 
-    console.log('the client token is', clientToken)
-    console.log('the jwt secret is', JWT_SECRET)
+    // console.log('the client token is', clientToken)
     const payload = jwt.verify(clientToken, JWT_SECRET, {
       ignoreExpiration: true
     });
-    console.log('payload', payload)
+    // console.log('payload', payload)
 
     const isExpired = Date.now() >= payload.exp * 1000;
-    console.log('is expired', isExpired)
+    // console.log('is expired', isExpired)
     if (!isExpired) return clientToken;
 
     const { googleOAuthRefreshToken: refreshToken } = payload;
-    console.log('refresh token', refreshToken)
+    // console.log('refresh token', refreshToken)
     const accessToken = await generateGoogleOAuthAccessToken(refreshToken);
-    console.log('new access token', accessToken)
+    // console.log('new access token', accessToken)
     return generateClientToken(accessToken, refreshToken);
   } catch (e) {
     throw new Error(AUTH_ERRORS.INVALID_CLIENT_TOKEN);
@@ -127,7 +126,7 @@ async function handleIncomingClientToken(clientToken) {
 async function getAccessTokenFromClientToken(clientToken) {
   try {
     const payload = jwt.verify(clientToken, JWT_SECRET);
-    console.log('total jwt payload', payload)
+    // console.log('total jwt payload', payload)
     return payload.googleOAuthAccessToken;
   } catch (e) {
     throw e;
@@ -168,7 +167,7 @@ function generateGoogleOAuthURL() {
       scope: googleOAuthScope,
     });
   } catch (e) {
-    console.log('error generating oauth url')
+    // console.log('error generating oauth url')
     throw AUTH_ERRORS.GOOGLE_OAUTH_URL_GENERATION_FAILED;
   }
 }
@@ -184,13 +183,13 @@ function clientTokenInvalidOrExpiredFallback(res) {
   return async (clientToken) => {
     try {
       const newClientToken = await handleIncomingClientToken(clientToken);
-      console.log('successfully issued new client token')
+      // console.log('successfully issued new client token')
       res.status(401).json({
         error: AUTH_ERRORS.NEW_CLIENT_TOKEN_ISSUED,
         issuedClientToken: newClientToken
       })
     } catch {
-      console.log('failed to issue new client token')
+      // console.log('failed to issue new client token')
       res.status(401).json({
         error: AUTH_ERRORS.INVALID_CLIENT_TOKEN
       });
@@ -214,9 +213,9 @@ async function provideAccessToken(req, res, next) {
   try {
     const payload = jwt.verify(clientToken, JWT_SECRET);
     req.accessToken = payload.googleOAuthAccessToken;
-    console.log('added access token to req')
+    // console.log('added access token to req')
   } catch {
-    console.log('failed to add access token to req, generating new token')
+    // console.log('failed to add access token to req, generating new token')
     await clientTokenInvalidOrExpiredFallback(res)(clientToken);
     return;
   }

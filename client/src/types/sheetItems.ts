@@ -24,11 +24,7 @@ export type IncludeByProp<
   O extends SheetItem = SheetItem
 > = O extends SheetItem ? InObj<T, O> extends never ? never : O : never
 
-type t = IncludeByProp<'studentSysId'>
-
-type CustomField = {
-  [K in number]: Primitive;
-};
+type CustomField = Record<string, Primitive>
 
 export interface SheetEntry extends CustomField {
   row: number | null | undefined;

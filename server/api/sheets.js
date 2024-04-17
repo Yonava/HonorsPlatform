@@ -7,118 +7,59 @@
 
 const express = require('express');
 const { provideAccessToken } = require('../helpers/auth');
-const { attachSheetInstanceToRequest } = require('../helpers/sheets');
+const {
+  attachSheetInstanceToRequest,
+  addExecuteGoogleSheetRequest
+} = require('../helpers/sheets');
 
 const router = express.Router();
 
 router.use(provideAccessToken);
 router.use(attachSheetInstanceToRequest);
+router.use(addExecuteGoogleSheetRequest);
 
-router.get("/range/:range", async (req, res) => {
+router.get("/range/:range", async (req) => {
   const { range } = req.params;
-
-  try {
-    const data = await req.sheet.getRange(range);
-    res.json(data);
-  } catch (e) {
-    res.status(401).json({ error: 'Forbidden' });
-    return;
-  }
+  req.execSheetRequest(async (sheet) => await sheet.getRange(range));
 });
 
-router.post("/ranges", async (req, res) => {
+router.post("/ranges", async (req) => {
   const { ranges } = req.body;
-
-  try {
-    const data = await req.sheet.getRanges(ranges);
-    res.json(data);
-  } catch (e) {
-    res.status(401).json({ error: 'Forbidden' });
-    return;
-  }
+  req.execSheetRequest(async (sheet) => await sheet.getRanges(ranges));
 });
 
-router.put("/range/:range/:row", async (req, res) => {
+router.put("/range/:range/:row", async (req) => {
   const { range, row } = req.params;
   const data = req.body;
-
-  try {
-    await req.sheet.updateByRow(range, row, data);
-    res.json({ success: true });
-  } catch (e) {
-    res.status(401).json({ error: 'Forbidden' });
-    return;
-  }
+  req.execSheetRequest(async (sheet) => await sheet.updateByRow(range, row, data));
 });
 
-router.put("/range/:range", async (req, res) => {
+router.put("/range/:range", async (req) => {
   const { range } = req.params;
   const data = req.body;
-
-  try {
-    await req.sheet.replaceRange(range, data);
-    res.json({ success: true });
-  } catch (e) {
-    res.status(401).json({ error: 'Forbidden' });
-    return;
-  }
+  req.execSheetRequest(async (sheet) => await sheet.replaceRange(range, data));
 });
 
-router.delete("/range/:range/:row", async (req, res) => {
+router.delete("/range/:range/:row", async (req) => {
   const { range, row } = req.params;
-
-  try {
-    await req.sheet.deleteByRow(range, row);
-    res.json({ success: true });
-  } catch (e) {
-    console.log(e)
-    res.status(401).json({ error: 'Forbidden' });
-    return;
-  }
+  req.execSheetRequest(async (sheet) => await sheet.deleteByRow(range, row));
 });
 
-router.delete("/range/:range", async (req, res) => {
+router.delete("/range/:range", async (req) => {
   const { range } = req.params;
   const data = req.body;
-
-  try {
-    await req.sheet.deleteRowByRowData(range, data);
-    res.json({ success: true });
-  } catch (e) {
-    if (e === 'ROW_NOT_FOUND') {
-      res.status(401).json({ error: 'ROW_NOT_FOUND' });
-    } else {
-      res.status(401).json({ error: 'Forbidden' });
-    }
-  }
+  req.execSheetRequest(async (sheet) => await sheet.deleteRowByRowData(range, data));
 });
 
-router.post("/range/:range", async (req, res) => {
+router.post("/range/:range", async (req) => {
   const { range } = req.params;
   const data = req.body;
-
-  try {
-    const rowInsertedAt = await req.sheet.postInRange(range, data);
-    res.json({
-      row: rowInsertedAt,
-      success: true
-    });
-  } catch (e) {
-    res.status(401).json({ error: 'Forbidden' });
-    return;
-  }
+  req.execSheetRequest(async (sheet) => await sheet.postInRange(range, data));
 });
 
-router.put("/batch", async (req, res) => {
+router.put("/batch", async (req) => {
   const data = req.body;
-
-  try {
-    await req.sheet.batchUpdate(data);
-    res.json({ success: true });
-  } catch (e) {
-    res.status(401).json({ error: 'Forbidden' });
-    return;
-  }
+  req.execSheetRequest(async (sheet) => await sheet.batchUpdate(data));
 });
 
 module.exports = router;

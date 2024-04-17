@@ -30,7 +30,7 @@ router.get('/url', (req, res) => {
 */
 router.get('/token/:googleOAuthCode', async (req, res) => {
   const { googleOAuthCode } = req.params;
-  console.log('googleOAuthCode', googleOAuthCode)
+  // console.log('googleOAuthCode', googleOAuthCode)
   try {
     const clientToken = await generateClientTokenWithOAuthCode(googleOAuthCode);
     res.json(clientToken);

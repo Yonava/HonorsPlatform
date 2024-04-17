@@ -32,7 +32,7 @@ io.on('connection', (socket) => {
     if (index === -1) {
       return
     }
-    console.log(`${connectedSockets[index].name} (${connectedSockets[index].socketId}) disconnected`)
+    // console.log(`${connectedSockets[index].name} (${connectedSockets[index].socketId}) disconnected`)
     connectedSockets.splice(index, 1)
     delete focusData[socket.id]
     io.emit('connectedSockets', connectedSockets)
@@ -46,7 +46,7 @@ io.on('connection', (socket) => {
     })
     focusData[socket.id] = initialFocusState
 
-    console.log(`${googleProfile.name} (${socket.id}) connected`)
+    // console.log(`${googleProfile.name} (${socket.id}) connected`)
     // console.log('connectedSockets', connectedSockets)
 
     io.emit('connectedSockets', connectedSockets)

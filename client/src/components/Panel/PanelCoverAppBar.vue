@@ -195,4 +195,4 @@ const deleteItems = async (itemsToDelete: SheetItem[]) => {
 .filter-input::placeholder {
   color: rgba(255, 255, 255, 0.569);
 }
-</style>../../utils/Warn
+</style>

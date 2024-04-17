@@ -73,6 +73,7 @@ module.exports = class GoogleSheet {
         write: true,
       };
     } catch (err) {
+      console.log(err)
       perms.write = false;
     }
 

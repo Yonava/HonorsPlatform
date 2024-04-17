@@ -1,6 +1,6 @@
 import { onUnmounted } from "vue"
 
-type KeyBindings = { [key: string]: () => void }
+type KeyBindings = Record<string, () => void>
 
 type KeyBindingOptions = {
   caseSensitive?: boolean

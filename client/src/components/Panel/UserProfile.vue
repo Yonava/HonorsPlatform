@@ -8,11 +8,13 @@
     <v-sheet class="pa-4 d-flex flex-column align-center" style="width: 100%">
       <div style="width: 100px; height: 100px; position: relative">
         <img
-          :src="user.googleProfile.picture"
+          @error="errorLoadingPfp = true"
+          :src="profilePicture"
           :alt="`Profile picture for ${user.googleProfile.name}`"
           :style="{
             borderRadius: '50%',
-            width: '100%',
+            width: '100px',
+            height: '100px',
             objectFit: 'cover',
             boxShadow: '0 0 5px rgba(0, 0, 0, 0.3)',
           }"
@@ -94,13 +96,15 @@
       :style="logoutButtonStyle"
       class="py-1"
     >
-      <h2>Logout</h2>
+      <h2>
+        Logout
+      </h2>
     </v-sheet>
   </v-sheet>
 </template>
 
 <script setup lang="ts">
-import { computed, StyleValue } from "vue";
+import { computed, ref, StyleValue } from "vue";
 import { storeToRefs } from "pinia";
 import { useAuth } from "@store/useAuth";
 import { useSheetManager } from "@store/useSheetManager";
@@ -111,6 +115,8 @@ import PostAnnouncement from "./PostAnnouncement.vue";
 const auth = useAuth();
 const { logout } = auth;
 const { user } = storeToRefs(auth);
+
+const errorLoadingPfp = ref(false);
 
 const sheetManager = useSheetManager();
 const { getActivePanel, focusedItemSysId, readOnlyMode } = storeToRefs(sheetManager);
@@ -138,4 +144,11 @@ const makeAnnouncement = () => {
   const { open } = useDialog();
   open({ component: PostAnnouncement });
 };
+
+const profilePicture = computed(() => {
+  if (errorLoadingPfp.value || !user.value) {
+    return 'https://images.emojiterra.com/mozilla/1024px/2753.png';
+  }
+  return user.value.googleProfile.picture;
+})
 </script>
