@@ -105,7 +105,7 @@ import { useAuth } from "@store/useAuth";
 import { useSheetManager } from "@store/useSheetManager";
 import { useDocumentCache } from "@store/useDocumentCache";
 import { useDialog } from "@store/useDialog";
-import PostAnnouncement from "./PostAnnouncement.vue";
+import PostAnnouncement from './Announcements/PostAnnouncement.vue';
 import ProfilePicture from "../ProfilePicture.vue";
 
 const auth = useAuth();

@@ -109,7 +109,6 @@ export const useSheetManager = defineStore('sheetManager', {
       this.searchFilter = filter;
     },
     async setPanel(panelName: PanelName, jumpTo?: JumpObject) {
-      console.log('setPanel', panelName, jumpTo)
       if (!this.panelSwitchCooldown) {
         return;
       }

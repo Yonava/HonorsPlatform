@@ -31,7 +31,7 @@
 import PanelTitle from "./PanelTitle.vue";
 import AppBarSearch from "./AppBarSearch.vue";
 import AddItemBtn from "./AddItemBtn.vue";
-import Announcements from "./AnnouncementMenu.vue";
+import Announcements from "../Announcements/AnnouncementMenu.vue";
 import AdditionalTools from "./AdditionalTools.vue";
 import ActiveAccounts from "./ActiveAccounts.vue";
 

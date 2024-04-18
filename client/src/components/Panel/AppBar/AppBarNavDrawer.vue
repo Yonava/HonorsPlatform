@@ -71,7 +71,7 @@ import { useSheetManager } from "@store/useSheetManager";
 import { version } from "@panels";
 import AddItemBtn from "./AddItemBtn.vue";
 import ActiveAccounts from "./ActiveAccounts.vue";
-import Announcements from "./AnnouncementMenu.vue";
+import Announcements from "../Announcements/AnnouncementMenu.vue";
 import AdditionalTools from "./AdditionalTools.vue";
 import NavDrawerBlockBtn from "./NavDrawerBlockBtn.vue";
 import SortPanel from "../SortPanel.vue";
