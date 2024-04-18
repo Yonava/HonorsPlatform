@@ -57,8 +57,10 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
+import { useLocalStorage } from "@vueuse/core";
 import { storeToRefs } from "pinia";
 import { panels, PanelRange } from "@panels";
+import { localKeys } from "@locals";
 import { useDialog } from "@store/useDialog";
 import { useAuth } from "@store/useAuth";
 import { useDocumentCache } from "@store/useDocumentCache";
@@ -80,7 +82,8 @@ const { getActivePanel } = storeToRefs(sheetManager);
 const dialog = useDialog();
 const { open, close, openSnackbar } = dialog;
 
-const announcement = ref("");
+const announcement = useLocalStorage(localKeys.unsavedAnnouncement, "");
+
 const posting = ref(false);
 
 const thingsThatWillNeverHappen = [
@@ -142,6 +145,7 @@ const postNewAnnouncement = async () => {
   });
 
   posting.value = false;
+  announcement.value = "";
 
   openSnackbar({
     text: "Announcement Posted",

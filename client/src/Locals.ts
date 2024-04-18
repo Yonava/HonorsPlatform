@@ -17,6 +17,8 @@ export const localKeys = {
   mailingLists: 'mailing-lists',
   // stores notes in the meeting note editor before they are saved
   unsavedNote: (sysId: string) => `unsaved-note-${sysId}` as const,
+  // stores announcement draft
+  unsavedAnnouncement: 'unsaved-announcement',
 } as const
 
 type LocalTypes = {
