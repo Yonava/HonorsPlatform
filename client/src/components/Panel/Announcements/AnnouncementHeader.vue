@@ -40,7 +40,7 @@ import { storeToRefs } from "pinia";
 import { useDisplay } from "vuetify";
 import { useDialog } from "@store/useDialog";
 import { useSheetManager } from "@store/useSheetManager";
-import PostAnnouncement from "@components/Panel/Announcements/PostAnnouncement.vue";
+import PostAnnouncement from "./PostAnnouncement.vue";
 
 const { smAndDown } = useDisplay();
 

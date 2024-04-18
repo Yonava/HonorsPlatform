@@ -1,6 +1,6 @@
 <template>
   <v-sheet
-    @click.stop
+    @click.stop="selected"
     @mouseover="isHovered = true"
     @mouseleave="isHovered = false"
     :color="itemColor"
@@ -40,11 +40,13 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { useDialog } from '@store/useDialog'
 import type { Announcement } from '@apptypes/misc'
 import AnnouncementDate from './AnnouncementDate.vue'
+import AnnouncementDetail from './AnnouncementDetail.vue'
 import ProfilePicture from '../../ProfilePicture.vue';
 
-defineProps<{
+const props = defineProps<{
   announcement: Announcement
 }>()
 
@@ -54,4 +56,13 @@ const isHovered = ref(false)
 const itemColor = computed(() => {
   return isHovered.value ? 'grey-lighten-2' : 'grey-lighten-4'
 })
+
+const selected = () => {
+  useDialog().open({
+    component: AnnouncementDetail,
+    props: {
+      announcement: props.announcement
+    }
+  })
+}
 </script>
