@@ -90,6 +90,7 @@ import { storeToRefs } from 'pinia'
 import { useDisplay } from 'vuetify'
 import { local, localKeys } from '@locals'
 import { panels, version } from '@panels'
+import type { PanelName } from '@panels'
 import { useSheetManager } from '@store/useSheetManager'
 import { useDialog } from '@store/useDialog'
 import { useKeyBindings } from '@composables/useKeyBindings'
@@ -152,11 +153,11 @@ const panelListCollapsed = ref(false)
 const itemListTransition = ref(false)
 
 const panelHopBindings = () => {
-  const panelKeys = Object.keys(panels) as (keyof typeof panels)[]
-  return panelKeys.reduce((acc, key, i) => {
-    acc[i + 1] = () => setPanel(key)
-    return acc
-  }, {} as Record<number, () => void>)
+  const panelKeys = Object.keys(panels) as PanelName[]
+  return panelKeys.reduce<Record<number, () => void>>((record, key, i) => {
+    record[i + 1] = () => setPanel(key)
+    return record
+  }, {})
 }
 
 useKeyBindings({
@@ -218,6 +219,7 @@ const itemListWidth = computed(() => {
   return panelListWidth.value
 })
 
+// TODO replace this entire bs mechanism with vueuse useLocalStorage!!!
 watch(pinnedSysIds, (newIds) => {
   const storableIds = newIds.join(',')
   local.set(localKeys.pinned(getActivePanel.value.panelName), storableIds)

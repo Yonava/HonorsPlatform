@@ -79,7 +79,8 @@ router.beforeEach(async (to, from) => {
 
   if (name === TITLE || to.name === PAGES.PANEL.name) {
     const { setPanel, panel: currPanel } = useSheetManager()
-    const queryPanelName = to.query.type!.toString().toUpperCase() as string
+    const queryPanelNameRaw = typeof to.query.type === 'string' ? to.query.type : ''
+    const queryPanelName = queryPanelNameRaw.toUpperCase()
     const onCorrectPanel = queryPanelName === currPanel.panelName
     if (onCorrectPanel) return
     const newActivePanelName = (queryPanelName in panels ? queryPanelName : DEFAULT_PANEL.panelName) as PanelName
