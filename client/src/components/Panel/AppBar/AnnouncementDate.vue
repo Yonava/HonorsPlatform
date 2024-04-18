@@ -1,5 +1,5 @@
 <template>
-  <div style="font-size: 0.8rem; cursor: default; height: 20px; white-space: nowrap;">
+  <div style="font-size: 0.8rem; height: 20px; white-space: nowrap;">
     {{ postDateDisplay }} ({{ term }})
     <v-tooltip activator="parent">
       {{ fullDateTime }}

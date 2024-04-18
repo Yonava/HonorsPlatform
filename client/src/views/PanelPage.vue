@@ -86,7 +86,6 @@ import {
   watch,
   type StyleValue
 } from 'vue'
-import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useDisplay } from 'vuetify'
 import { local, localKeys } from '@locals'
@@ -142,17 +141,6 @@ useStalePageDetector()
 const { setPanel } = useSheetManager()
 const { getActivePanel, pinnedSysIds, focusedItemSysId, listItemBeingDragged } = storeToRefs(useSheetManager())
 const { getPanelCover } = storeToRefs(useDialog())
-
-const route = useRoute()
-
-if (route.query.type) {
-  const panelIndex = Object.values(panels).findIndex((p) => p.title.plural.toLowerCase() === route.query.type)
-  const panelKeys = Object.keys(panels) as (keyof typeof panels)[]
-  if (panelIndex !== -1) setPanel(panelKeys[panelIndex])
-} else {
-  document.title = getActivePanel.value.title.plural + ' - Honors Program'
-  pinnedSysIds.value = local.get(localKeys.pinned(getActivePanel.value.panelName))?.split(',') || []
-}
 
 const { mdAndUp } = useDisplay()
 

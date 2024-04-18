@@ -1,31 +1,52 @@
 import { createWebHistory, createRouter } from 'vue-router'
-import Panel from '../views/PanelPage.vue'
+import PanelPage from '../views/PanelPage.vue'
 import Leaderboard from '../views/LeaderboardPage.vue'
 import Auth from '../views/AuthPage.vue'
 
+import { panels, type PanelName } from '@panels'
 import { useDocumentCache } from '@store/useDocumentCache'
+import { useSheetManager } from '@store/useSheetManager'
 import { useSocket } from '@store/useSocket'
 import { useAuth, getAuthErrorURL } from '@store/useAuth'
 
+export const PAGES = {
+  HOME: {
+    name: 'home',
+    path: '/'
+  },
+  PANEL: {
+    name: 'panel',
+    path: '/panel'
+  },
+  AUTH: {
+    name: 'auth',
+    path: '/auth'
+  },
+  LEADERBOARD: {
+    name: 'leaderboard',
+    path: '/leaderboard'
+  }
+} as const
+
 const routes = [
   {
-    path: '/',
-    name: 'home',
+    path: PAGES.HOME.path,
+    name: PAGES.HOME.name,
     redirect: '/panel'
   },
   {
-    path: '/panel',
-    name: 'panel',
-    component: Panel
+    path: PAGES.PANEL.path,
+    name: PAGES.PANEL.name,
+    component: PanelPage
   },
   {
-    path: '/auth',
-    name: 'auth',
+    path: PAGES.AUTH.path,
+    name: PAGES.AUTH.name,
     component: Auth
   },
   {
-    path: '/leaderboard',
-    name: 'leaderboard',
+    path: PAGES.LEADERBOARD.path,
+    name: PAGES.LEADERBOARD.name,
     component: Leaderboard
   }
 ] as const
@@ -37,12 +58,13 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to, from) => {
+
   const TITLE = 'Honors Program'
   const name = to.name as string ?? TITLE
   const goingTo = to.name as typeof routes[number]['name']
   const comingFrom = from.name as typeof routes[number]['name']
 
-  if (goingTo === 'panel' && comingFrom !== 'panel') {
+  if (goingTo === PAGES.PANEL.name && comingFrom !== PAGES.PANEL.name) {
     const { getAllDocuments } = useDocumentCache()
     const { connect } = useSocket()
     const { authorizeSession, user } = useAuth()
@@ -54,8 +76,21 @@ router.beforeEach(async (to, from) => {
     await connect()
   }
 
-  if (name === TITLE || to.name === 'panel') return
-  document.title = `${name[0].toUpperCase()}${name.slice(1)} - ${TITLE}`
+  if (name === TITLE || to.name === PAGES.PANEL.name) {
+    const { setPanel, panel: currPanel } = useSheetManager()
+    const defaultPanelName: PanelName = 'STUDENTS'
+    const queryPanelName = to.query.type!.toString().toUpperCase() as string
+    const onCorrectPanel = queryPanelName === currPanel.panelName
+    if (onCorrectPanel) return
+    const newActivePanelName = (queryPanelName in panels ? queryPanelName : defaultPanelName) as PanelName
+    setPanel(newActivePanelName)
+    return
+  }
+
+  const capitalize = (str: string) => str[0].toUpperCase() + str.slice(1)
+
+  document.title = `${capitalize(name)} - ${TITLE}`
+
 })
 
 export default router

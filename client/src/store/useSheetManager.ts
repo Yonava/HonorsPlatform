@@ -109,6 +109,7 @@ export const useSheetManager = defineStore('sheetManager', {
       this.searchFilter = filter;
     },
     async setPanel(panelName: PanelName, jumpTo?: JumpObject) {
+      console.log('setPanel', panelName, jumpTo)
       if (!this.panelSwitchCooldown) {
         return;
       }
@@ -122,6 +123,7 @@ export const useSheetManager = defineStore('sheetManager', {
       });
 
       this.panel = getPanel(panelName);
+      document.title = this.panel.title.plural + ' - Honors Program'
       this.pinnedSysIds = local.get(localKeys.pinned(panelName))?.split(',') || []
       this.setSearchFilter('');
 
@@ -131,11 +133,10 @@ export const useSheetManager = defineStore('sheetManager', {
         showLoading: false
       })
 
-      document.title = this.panel.title.plural + ' - Honors Program';
       router.push({
         name: 'panel',
         query: {
-          type: this.panel.title.plural.toLowerCase()
+          type: this.panel.panelName.toLowerCase()
         }
       });
 
