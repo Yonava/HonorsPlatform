@@ -3,7 +3,8 @@ import PanelPage from '../views/PanelPage.vue'
 import Leaderboard from '../views/LeaderboardPage.vue'
 import Auth from '../views/AuthPage.vue'
 
-import { panels, type PanelName } from '@panels'
+import { panels, DEFAULT_PANEL } from '@panels'
+import type { PanelName } from '@panels'
 import { useDocumentCache } from '@store/useDocumentCache'
 import { useSheetManager } from '@store/useSheetManager'
 import { useSocket } from '@store/useSocket'
@@ -78,17 +79,15 @@ router.beforeEach(async (to, from) => {
 
   if (name === TITLE || to.name === PAGES.PANEL.name) {
     const { setPanel, panel: currPanel } = useSheetManager()
-    const defaultPanelName: PanelName = 'STUDENTS'
     const queryPanelName = to.query.type!.toString().toUpperCase() as string
     const onCorrectPanel = queryPanelName === currPanel.panelName
     if (onCorrectPanel) return
-    const newActivePanelName = (queryPanelName in panels ? queryPanelName : defaultPanelName) as PanelName
+    const newActivePanelName = (queryPanelName in panels ? queryPanelName : DEFAULT_PANEL.panelName) as PanelName
     setPanel(newActivePanelName)
     return
   }
 
   const capitalize = (str: string) => str[0].toUpperCase() + str.slice(1)
-
   document.title = `${capitalize(name)} - ${TITLE}`
 
 })
