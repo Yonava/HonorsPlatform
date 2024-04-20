@@ -13,5 +13,5 @@ export type Announcement = {
   content: string,
   datePosted: string,
   expiryDate: string,
-  panelType: string,
+  associatedPanels: string, // comma-separated list of panel names
 }

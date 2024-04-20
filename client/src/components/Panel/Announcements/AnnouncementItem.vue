@@ -25,9 +25,11 @@
           {{ announcement.posterName }}
         </h4>
 
-        <AnnouncementDate
-          :date="announcement.datePosted"
-        />
+        <div class="d-flex">
+          <AnnouncementDate
+            :date="announcement.datePosted"
+          />
+        </div>
       </div>
     </div>
 

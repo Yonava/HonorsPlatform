@@ -109,6 +109,8 @@ export const useSocket = defineStore("socket", {
   },
   actions: {
     async connect() {
+      // TEMPORARY
+      return
       this.disconnect()
 
       const { user } = useAuth()

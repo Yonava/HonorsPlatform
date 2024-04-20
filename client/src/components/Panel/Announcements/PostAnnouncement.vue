@@ -15,9 +15,9 @@
       ></v-textarea>
 
       <v-select
-        v-model="expiryDate"
+        v-model="selectedUserExpiryOption"
         :disabled="posting"
-        :items="expiryDateOptions"
+        :items="userExpiryOptions"
         variant="outlined"
         label="Remove After"
         hint="How long do you want the announcement to stay up for?"
@@ -27,14 +27,14 @@
       ></v-select>
 
       <v-select
-        v-model="panelType"
+        v-model="associatedPanels"
         variant="outlined"
-        :items="Object.values(panels).map((panel) => panel.sheetRange)"
+        :items="panelNames"
         chips
-        label="Post To"
         multiple
-        hint="Select the panels you intend to post to, or leave blank to post to all panels."
         persistent-hint
+        label="Post To"
+        hint="Select the panels you intend to post to, or leave blank to post to all panels."
         style="width: 100%"
       ></v-select>
 
@@ -59,7 +59,8 @@
 import { ref } from "vue";
 import { useLocalStorage } from "@vueuse/core";
 import { storeToRefs } from "pinia";
-import { panels, PanelRange } from "@panels";
+import { panelNames } from "@panels";
+import type { PanelName } from "@panels";
 import { localKeys } from "@locals";
 import { useDialog } from "@store/useDialog";
 import { useAuth } from "@store/useAuth";
@@ -86,7 +87,7 @@ const announcement = useLocalStorage(localKeys.unsavedAnnouncement, "");
 
 const posting = ref(false);
 
-const thingsThatWillNeverHappen = [
+const neverExpires = [
   "When Pigs Fly 🐷🛩️",
   "MySNHU Becomes User Friendly",
   "Dine SNHU Wins A Michelin Star",
@@ -98,20 +99,19 @@ const thingsThatWillNeverHappen = [
   "Unicorns Are Discovered 🦄✨",
 ] as const;
 
-const expiryDateOptions = [
-  thingsThatWillNeverHappen[
-    Math.floor(Math.random() * thingsThatWillNeverHappen.length)
-  ],
-  "A Day",
-  "A Week",
-  "A Month",
-  "A Year",
-  "Custom",
-] as const;
+const expiryDateOptions = {
+  [neverExpires[Math.floor(Math.random() * neverExpires.length)]]: "",
+  "A Day": new Date(Date.now() + 1000 * 60 * 60 * 24).toString(),
+  "A Week": new Date(Date.now() + 1000 * 60 * 60 * 24 * 7).toString(),
+  "A Month": new Date(Date.now() + 1000 * 60 * 60 * 24 * 30).toString(),
+  "A Year": new Date(Date.now() + 1000 * 60 * 60 * 24 * 365).toString(),
+  "Custom": "",
+} as const;
 
-const expiryDate = ref(expiryDateOptions[0]);
+const userExpiryOptions = Object.keys(expiryDateOptions)
+const selectedUserExpiryOption = ref(userExpiryOptions[0])
 
-const panelType = ref<PanelRange[]>([]);
+const associatedPanels = ref<PanelName[]>([]);
 
 const postNewAnnouncement = async () => {
   posting.value = true;
@@ -140,8 +140,8 @@ const postNewAnnouncement = async () => {
     posterName: user.value.googleProfile.name,
     posterPhoto: user.value.googleProfile.picture,
     datePosted: new Date().toString(),
-    expiryDate: expiryDate.value.toString(),
-    panelType: panelType.value.join(", "),
+    expiryDate: expiryDateOptions[selectedUserExpiryOption.value] ?? '',
+    associatedPanels: associatedPanels.value.join(","),
   });
 
   posting.value = false;

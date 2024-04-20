@@ -276,9 +276,12 @@ export type PanelToSheetType = {
 }
 
 export type PanelObject = typeof panels
+
 export type PanelName = keyof PanelObject;
+export const panelNames = Object.keys(panels) as PanelName[];
 
 export type PanelRange = PanelObject[PanelName]['sheetRange'];
+export const panelRanges = panelNames.map(panelName => panels[panelName].sheetRange);
 
 export type Panel = PanelObject[PanelName];
 export const getPanel = <T extends PanelName>(panelName: T) => panels[panelName];
