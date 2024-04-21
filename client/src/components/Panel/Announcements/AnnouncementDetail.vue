@@ -4,43 +4,59 @@
     <div
       class="d-flex align-center"
       style="gap: 12px"
+
     >
 
-      <div
-        :style="{
-          width: `${PFP_SIZE_PX}px`,
-          height: `${PFP_SIZE_PX}px`,
-        }"
-      >
+      <div>
         <ProfilePicture
           :src="announcement.posterPhoto"
+            :style="{
+            width: `${PFP_SIZE_PX}px`,
+            height: `${PFP_SIZE_PX}px`,
+          }"
         />
       </div>
 
       <div>
 
-        <v-sheet
-          v-for="panel in panelNamesDisplay"
-          :key="panel.text"
-          :color="panel.color"
-          class="px-2"
-          :style="{
-            color: 'white',
-            borderRadius: '50px',
-            display: 'inline-block',
-            marginRight: '4px',
-          }"
-        >
-          {{ panel.text }}
-        </v-sheet>
+        <div class="d-flex flex-wrap" style="gap: 6px">
+          <v-sheet
+            v-for="panel in panelNamesDisplay"
+            :key="panel.text"
+            :color="panel.color + '-darken-1'"
+            class="d-flex px-3 align-center"
+            :style="{
+              borderRadius: '50px',
+              fontWeight: 'bold',
+              gap: '4px',
+            }"
+          >
+            <p>
+              {{ panel.text }}
+            </p>
+            <v-icon size="small">
+              mdi-close-circle
+            </v-icon>
+          </v-sheet>
+        </div>
 
-        <h1>{{ announcement.posterName }}</h1>
+        <h1>
+          {{ announcement.posterName }}
+        </h1>
 
       </div>
 
     </div>
 
-    <p>{{ announcement.content }}</p>
+    <v-textarea
+      v-model="announcement.content"
+      no-resize
+      label="Announcement"
+      variant="outlined"
+      prepend-inner-icon="mdi-message-text"
+      style="margin-top: 12px"
+    >
+    </v-textarea>
 
     <br>
 
