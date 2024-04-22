@@ -48,6 +48,10 @@
 
     </div>
 
+    <div>
+      {{ expiryDateDisplay }}
+    </div>
+
     <v-textarea
       v-model="announcement.content"
       no-resize
@@ -58,18 +62,29 @@
     >
     </v-textarea>
 
-    <br>
-
-    <!-- <div>
-      {{ JSON.stringify(announcement, null, 2) }}
-    </div> -->
+    <div class="d-flex align-center">
+      <v-btn
+        :color="getActivePanel.color + '-darken-1'"
+      >
+        Update Announcement
+      </v-btn>
+      <v-spacer></v-spacer>
+      <v-btn
+        color="red"
+      >
+        Delete Announcement
+      </v-btn>
+    </div>
   </v-sheet>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import { useTimeAgo } from '@vueuse/core'
+import { storeToRefs } from 'pinia';
 import { panels } from '@panels'
 import type { PanelName } from '@panels';
+import { useSheetManager } from '@store/useSheetManager';
 import { Announcement } from '@apptypes/misc'
 import ProfilePicture from '../../ProfilePicture.vue';
 
@@ -77,7 +92,18 @@ const props = defineProps<{
   announcement: Announcement
 }>()
 
+const { getActivePanel } = storeToRefs(useSheetManager())
+
 const PFP_SIZE_PX = 75;
+
+const expiryDate = useTimeAgo(props.announcement.expiryDate)
+
+const expiryDateDisplay = computed(() => {
+  if (!props.announcement.expiryDate) {
+    return 'This announcement is set to stay up indefinitely.'
+  }
+  return `This announcement is set to remain active until ${expiryDate.value}.`
+})
 
 const panelNamesDisplay = computed(() => {
 
