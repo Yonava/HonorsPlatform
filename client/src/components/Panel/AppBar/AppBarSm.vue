@@ -59,7 +59,7 @@ defineProps<{
   color: string
 }>()
 
-const { show: dialogOpen } = storeToRefs(useDialog())
+const { show: isDialogOpen } = storeToRefs(useDialog())
 const { focusedItemSysId } = storeToRefs(useSheetManager())
 
 const open = ref(false)
@@ -71,7 +71,7 @@ const toggleSearch = () => {
 }
 
 watchEffect(() => {
-  if (dialogOpen.value || focusedItemSysId.value) {
+  if (isDialogOpen.value || focusedItemSysId.value) {
     open.value = false
   }
 });

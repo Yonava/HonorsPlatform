@@ -20,6 +20,10 @@ import { useDialog } from '../../store/useDialog';
 
 const { xs } = useDisplay()
 
+/**
+ * @default location = right
+ * @default size = x-small
+ */
 const props = defineProps<{
   location?: 'top' | 'bottom' | 'left' | 'right',
   size?: 'small' | 'medium' | 'large'
