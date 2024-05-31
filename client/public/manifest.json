@@ -1,7 +1,7 @@
 {
   "name": "SNHU Honors Program Tracker",
   "short_name": "Honors Program",
-  "start_url": "https://www.snhuhonors.com/",
+  "start_url": "https://honors.up.railway.app/",
   "display": "standalone",
   "background_color": "#FFA500",
   "theme_color": "#FFA500",
