@@ -27,6 +27,7 @@ type SheetManagerState = {
   focusedItemSysId: string
   focusedEmbeddedItem: SheetItem | null
   readOnlyMode: boolean
+  panelListScrollTo: (sysId: string) => void
 }
 
 export const useSheetManager = defineStore('sheetManager', {
@@ -46,7 +47,10 @@ export const useSheetManager = defineStore('sheetManager', {
     listItemBeingDragged: null,
     focusedItemSysId: '',
     focusedEmbeddedItem: null,
-    readOnlyMode: false
+    readOnlyMode: false,
+    panelListScrollTo: () => {
+      console.warn('panelListScrollTo not implemented by panel list component')
+    }
   } as SheetManagerState),
   getters: {
     filteredItems(state) {
@@ -151,21 +155,26 @@ export const useSheetManager = defineStore('sheetManager', {
       }, this.panelSwitchDebounce);
     },
     async jumpToItem({ key = 'sysId', value, fallbackFn = () => null }: JumpObject) {
+      console.log('jumpToItem', key, value)
       const { setSelectedItemByKeyValue, cacheRefreshInProgress } = useDocumentCache();
 
       if (cacheRefreshInProgress) {
         await cacheRefreshInProgress;
       }
 
-      const success = setSelectedItemByKeyValue({
+      const targetItem = setSelectedItemByKeyValue({
         key,
         value
       });
 
-      if (!success) {
-        console.error('jumpToItem: item not found');
+      if (!targetItem) {
+        console.error('target item not found');
         fallbackFn()
+        return
       }
+
+      // wait a tick for the new panel to render
+      queueMicrotask(() => this.panelListScrollTo(targetItem.sysId))
     },
     setPinnedItem({ items = [] }: { items: SheetItem[] }) {
       this.pinnedSysIds = items.map((item) => item.sysId);

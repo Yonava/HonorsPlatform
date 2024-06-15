@@ -69,29 +69,34 @@
 </template>
 
 <script setup lang="ts">
-import { watch } from 'vue'
+import { watch, onMounted } from 'vue'
 import { useVirtualList } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { useSheetManager } from '@store/useSheetManager'
-import { useDocumentCache } from '@store/useDocumentCache'
 import { setSelectedItem } from './SetSelectedItem'
 import ListItemActionProvider from '../ListItem/Actions/ListItemActionProvider.vue'
 
 const sheetManager = useSheetManager()
-const { filteredItems, loadingItems, getActivePanel, searchFilter } = storeToRefs(sheetManager)
 
-const { getSelectedItems } = useDocumentCache()
+const {
+  filteredItems,
+  loadingItems,
+  getActivePanel,
+  searchFilter
+} = storeToRefs(sheetManager)
+
+const scrollToItem = (sysId: string) => {
+  const index = filteredItems.value.findIndex((i) => i.sysId === sysId)
+  if (index === -1) return console.warn('item not found in list')
+  scrollTo(index)
+}
+
+onMounted(() => {
+  // set the scrollTo handler on sheet manager
+  sheetManager.panelListScrollTo = scrollToItem
+})
 
 watch(searchFilter, () => scrollTo(0))
-
-watch(getActivePanel, (panel) => {
-  scrollTo(0)
-  const [ item ] = getSelectedItems(panel)
-  if (!item) return
-  const index = filteredItems.value.findIndex((i) => i.sysId === item.sysId);
-  if (index === -1) return
-  queueMicrotask(() => scrollTo(index))
-})
 
 const LIST_ITEM_HEIGHT_PX = 105
 

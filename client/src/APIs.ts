@@ -67,13 +67,13 @@ export const callProtectedResources = async <
 
   console.log('calling protected resources', reqOptions.method, reqOptions.url)
 
-  if (cache[`${reqOptions.url}-${reqOptions.method}`]) {
-    console.log('cache hit', reqOptions.url, reqOptions.method)
-    return cache[`${reqOptions.url}-${reqOptions.method}`] as TReturn;
-  } else {
-    console.log('cache miss', reqOptions.url, reqOptions.method)
-    return -1;
-  }
+  // if (cache[`${reqOptions.url}-${reqOptions.method}`]) {
+  //   console.log('cache hit', reqOptions.url, reqOptions.method)
+  //   return cache[`${reqOptions.url}-${reqOptions.method}`] as TReturn;
+  // } else {
+  //   console.log('cache miss', reqOptions.url, reqOptions.method)
+  //   return -1;
+  // }
 
   try {
     const { data } = await axios<TReturn>({
