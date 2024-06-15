@@ -92,6 +92,7 @@ const scrollToItem = (sysId: string) => {
 }
 
 onMounted(() => {
+  console.log('implementing scrollToItem')
   // set the scrollTo handler on sheet manager
   sheetManager.panelListScrollTo = scrollToItem
 })

@@ -20,6 +20,7 @@ import { useKeyBindings } from '@composables/useKeyBindings';
 import NavDrawerBlockBtn from './NavDrawerBlockBtn.vue';
 
 const { getActivePanel, readOnlyMode } = storeToRefs(useSheetManager());
+const { panelListScrollTo } = useSheetManager();
 const { addItem } = useDocumentCache();
 
 const success = ref(false);
@@ -31,7 +32,8 @@ const style = computed(() => (success.value ? { background: 'rgb(34, 159, 34)' }
 const action = async () => {
   if (success.value) return;
   try {
-    await addItem();
+    const { sysId } = await addItem();
+    panelListScrollTo(sysId);
   } catch (e) {
     console.error(e);
     throw new Error('Failed to add item');

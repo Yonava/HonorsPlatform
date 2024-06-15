@@ -102,9 +102,9 @@
     ></div>
 
     <v-sheet
-      v-for="item in useDocumentCache()[getActivePanel.sheetRange].selected"
+      v-for="(item) in useDocumentCache()[getActivePanel.sheetRange].selected"
       :key="item.sysId"
-      @click="setFocusedItem(item.sysId)"
+      @click="itemDetailClicked(item)"
       :style="{
         width: '100%',
         height: '100%',
@@ -168,13 +168,19 @@ const {
   readOnlyMode
 } = storeToRefs(sheetManager)
 
-const { setFocusedItem } = sheetManager
 
-const { addSelectedItem, getSelectedItems } = useDocumentCache()
+const documents = useDocumentCache()
+const { addSelectedItem, getSelectedItems } = documents
 
 const moveWidgetActive = computed(() => {
   return listItemBeingDragged.value || movingItem.value
 })
+
+const itemDetailClicked = (item: SheetItem) => {
+  const { setFocusedItem, panelListScrollTo } = sheetManager
+  setFocusedItem(item.sysId)
+  panelListScrollTo(item.sysId)
+}
 
 const { moveItem, movingItem, movementObject } = useMoveItem()
 

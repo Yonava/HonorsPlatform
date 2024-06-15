@@ -155,7 +155,6 @@ export const useSheetManager = defineStore('sheetManager', {
       }, this.panelSwitchDebounce);
     },
     async jumpToItem({ key = 'sysId', value, fallbackFn = () => null }: JumpObject) {
-      console.log('jumpToItem', key, value)
       const { setSelectedItemByKeyValue, cacheRefreshInProgress } = useDocumentCache();
 
       if (cacheRefreshInProgress) {
