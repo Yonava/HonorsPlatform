@@ -1,6 +1,9 @@
 {
   "scripts": {
-    "start": "node server/index.js"
+    "start": "node server/index.js",
+    "dev": "concurrently \"npm run dev-client\" \"npm run dev-server\"",
+    "dev-client": "cd client && npm run dev",
+    "dev-server": "cd server && npm run dev"
   },
   "dependencies": {
     "@mdx-js/loader": "^2.3.0",
