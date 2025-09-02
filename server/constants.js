@@ -5,7 +5,7 @@
 */
 
 const localUri = 'http://localhost:5177/auth';
-const prodUri = 'https://honors.up.railway.app/auth';
+const prodUri = 'https://honorsplatform-production-3763.up.railway.app/auth';
 
 /**
  * @type {string}
